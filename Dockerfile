@@ -36,7 +36,7 @@ RUN npm run build
 RUN npm install -g serve
 
 # Expose the port for the HTTP server
-EXPOSE 5172
+EXPOSE 5157
 
 # Command to serve the app
-CMD ["serve", "-s", "dist", "-l", "5172"]
+CMD ["serve", "-s", "dist", "-l", "5157"]
