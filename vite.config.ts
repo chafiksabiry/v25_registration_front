@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import qiankun from 'vite-plugin-qiankun';
 
 const isQiankun = process.env.QIANKUN === 'true'; // Use an environment variable to differentiate modes
+const isProduction = process.env.NODE_ENV === 'production';
 
 export default defineConfig({
   base: isQiankun ? './' : '/', // Set base path dynamically for qiankun compatibility
@@ -12,15 +13,18 @@ export default defineConfig({
       // Disable React Fast Refresh in production build
       jsxRuntime: process.env.NODE_ENV === 'development' ? 'automatic' : 'classic', // Use jsxRuntime instead of fastRefresh
     }),
-    qiankun('app-name', { useDevMode: true }), // Plugin Qiankun, si utilisé
+    qiankun('app1', { useDevMode: !isProduction }), // Plugin Qiankun, si utilisé
   ],
   server: {
-    port: 5172, // Set the development server to use port 5172
-    cors: true, // Enable CORS to allow cross-origin requests
-    headers: {
-      'Access-Control-Allow-Origin': '*', // Required for Qiankun cross-origin isolation
-    },
-    hmr: false, // Disable Hot Module Replacement (HMR) to prevent issues with Qiankun
+      host: '0.0.0.0', // Allow access from Docker
+      port: 5157,
+      cors: {
+        origin: "http://38.242.208.242:3000",
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true, // Allow cookies to be sent with requests (if needed)
+      },
+      hmr: false,
   },
   build: {
     target: 'esnext', // Ensure compatibility with modern browsers for qiankun
@@ -28,7 +32,7 @@ export default defineConfig({
     cssCodeSplit: true, // Enable CSS splitting for modular builds
     rollupOptions: {
       output: {
-        format: 'system', // Use SystemJS for Qiankun integration
+        format: 'es', // Use SystemJS for Qiankun integration
         entryFileNames: '[name].js', // Output JavaScript files with `.js` extensions
         chunkFileNames: '[name].js',
         assetFileNames: '[name].[ext]',
