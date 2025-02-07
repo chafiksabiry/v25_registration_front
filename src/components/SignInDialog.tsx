@@ -85,7 +85,7 @@ else{
         setToken(resultverificationEmail.token);
         setStep('success');
         setTimeout(() => {
-          window.location.href = '/dashboard';
+          window.location.href = '/app2';
         }, 1500);
       }
       }
