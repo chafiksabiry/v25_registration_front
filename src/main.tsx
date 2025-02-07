@@ -1,9 +1,12 @@
+import React from "react"; // Ajoute ceci en haut du fichier
 import { StrictMode } from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import App from './App';
 import './index.css';
 import './public-path'; // For Qiankun public path setup
 import 'systemjs';
+
+window.React = React;
 
 // Keep a reference to the React Root instance
 let root: Root | null = null;
