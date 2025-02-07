@@ -10,8 +10,6 @@ export default defineConfig({
   base: isQiankun ? './' : '/', // Set base path dynamically for qiankun compatibility
   plugins: [
     react({
-      // Disable React Fast Refresh in production build
-      jsxRuntime: process.env.NODE_ENV === 'development' ? 'automatic' : 'classic', // Use jsxRuntime instead of fastRefresh
     }),
     qiankun('app1', { useDevMode: !isProduction }), // Plugin Qiankun, si utilisé
   ],
