@@ -5,10 +5,11 @@ import SignInDialog from './components/SignInDialog';
 import RegistrationDialog from './components/RegistrationDialog';
 import PasswordRecoveryDialog from './components/PasswordRecoveryDialog';
 import Dashboard from './components/BackOffice/Dashboard';
-
+import LinkedInCallback from './components/LinkedInCallback'; // Import the LinkedIn callback component
+import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-
+  const token = localStorage.getItem("auth_token");
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -17,7 +18,7 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!token) {
     return <Navigate to="/auth" replace />;
   }
 
@@ -51,6 +52,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/auth/*" element={<AuthRoutes />} />
+          <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} /> {/* 👈 Add this line */}
+          <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} /> 
           <Route
             path="/dashboard"
             element={
