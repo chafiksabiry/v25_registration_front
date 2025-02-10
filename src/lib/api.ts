@@ -64,6 +64,11 @@ export const auth = {
     const response= await api.post('/auth/change-password',{ email,newPassword});
     console.log("responsechangePassword",response);
     return response.data;
+  },
+  linkedinSignIn: async (code: string) => {
+    const response= await api.post('/auth/signin/linkedin',{ code });
+    console.log("responsSignInLinkedin",response);
+    return response.data;
   }
 };
 
