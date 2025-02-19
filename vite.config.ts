@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: 'http://localhost:5157/',
+    base: 'http://38.242.208.242:5157/',
     plugins: [
       react({
         jsxRuntime: 'classic',
