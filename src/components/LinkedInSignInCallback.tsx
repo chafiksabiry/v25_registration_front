@@ -41,7 +41,7 @@ const LinkedInSignInCallback = () => {
         (async () => {
           try {
             await handleLinkedInSignInCallback(code, state);
-            navigate("/dashboard");
+            navigate("/app2");
           } catch (err) {
             console.error("LinkedIn sign-in failed:", err);
             navigate("/login?error=linkedin_auth_failed");
