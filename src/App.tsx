@@ -55,12 +55,12 @@ function App() {
           <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} /> {/* 👈 Add this line */}
           <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} /> 
           <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
+            path="/app2"
+            //element={
+              //<PrivateRoute>
+                //<Dashboard />
+              //</PrivateRoute>
+            //}
           />
           <Route
             path="/profile-completion"

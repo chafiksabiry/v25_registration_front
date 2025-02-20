@@ -1,54 +1,70 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import path from 'path';
 import qiankun from 'vite-plugin-qiankun';
+import * as cheerio from 'cheerio';
 
-const isQiankun = process.env.QIANKUN === 'true'; // Use an environment variable to differentiate modes
-const isProduction = process.env.NODE_ENV === 'production';
+// Plugin to remove React Refresh preamble
+const removeReactRefreshScript = () => {
+  return {
+    name: 'remove-react-refresh',
+    transformIndexHtml(html: any) {
+      const $ = cheerio.load(html);
+      $('script[src="/@react-refresh"]').remove();
+      return $.html();
+    },
+  };
+};
 
-export default defineConfig({
-  base: isQiankun ? './' : '/', // Set base path dynamically for qiankun compatibility
-  plugins: [
-    react({
-    }),
-    qiankun('app1', { useDevMode: !isProduction }), // Plugin Qiankun, si utilisé
-  ],
-  server: {
-      host: '0.0.0.0', // Allow access from Docker
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+
+  return {
+    base: 'http://38.242.208.242:5157/',
+    plugins: [
+      react({
+        jsxRuntime: 'classic',
+      }),
+      qiankun('app1', {
+        useDevMode: true,
+      }),
+      removeReactRefreshScript(), // Add the script removal plugin
+    ],
+
+    define: {
+      'import.meta.env': env,
+    },
+    server: {
       port: 5157,
-      cors: {
-        origin: "http://38.242.208.242:3000",
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'Authorization'],
-        credentials: true, // Allow cookies to be sent with requests (if needed)
-      },
+      cors: true,
       hmr: false,
-  },
-  build: {
-    target: 'esnext', // Ensure compatibility with modern browsers for qiankun
-    modulePreload: true,
-    cssCodeSplit: true, // Enable CSS splitting for modular builds
-    rollupOptions: {
-      output: {
-        format: 'es', // Use SystemJS for Qiankun integration
-        entryFileNames: '[name].js', // Output JavaScript files with `.js` extensions
-        chunkFileNames: '[name].js',
-        assetFileNames: '[name].[ext]',
+      fs: {
+        strict: true, // Ensure static assets are correctly resolved
       },
-      external: isQiankun
-        ? ['react', 'react-dom'] // Treat React and ReactDOM as external to avoid duplication in host and microfrontend
-        : [],
     },
-    outDir: 'dist', // Output directory for the build files
-    sourcemap: true, // Generate source maps for debugging (optional)
-    
-  },
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'), // Alias for cleaner imports
+    build: {
+      target: 'esnext',
+      cssCodeSplit: false,
+      rollupOptions: {
+        output: {
+          format: 'umd',
+          name: 'app1',
+          entryFileNames: 'index.js', // Fixed name for the JS entry file
+          chunkFileNames: 'chunk-[name].js', // Fixed name for chunks
+          assetFileNames: (assetInfo) => {
+            // Ensure CSS files are consistently named
+            if (assetInfo.name.endsWith('.css')) {
+              return 'index.css';
+            }
+            return '[name].[ext]'; // Default for other asset types
+          },
+        },
+      },
     },
-  },
-  optimizeDeps: {
-    exclude: isQiankun ? ['react', 'react-dom'] : [], // Exclude dependencies to prevent duplication in Qiankun
-  },
-});
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src'),
+      },
+    },
+  };
+ });
