@@ -12,7 +12,7 @@ const LinkedInCallback = () => {
 console.log(code,state);
     if (code && state) {
       handleLinkedInCallback(code, state)
-        .then(() => navigate('/dashboard')) // Redirect to dashboard on success
+        .then(() => navigate('/app2')) // Redirect to dashboard on success
         .catch((err) => {
           console.error('LinkedIn authentication failed:', err);
           navigate('/login?error=linkedin_auth_failed'); // Redirect to login on error
