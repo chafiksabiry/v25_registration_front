@@ -31,9 +31,9 @@ function render(props: { container?: HTMLElement }) {
   }
 
   root.render(
-    <StrictMode>
+   // <StrictMode>
       <App />
-    </StrictMode>
+   // </StrictMode>
   );
 }
 

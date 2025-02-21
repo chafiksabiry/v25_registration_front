@@ -16,7 +16,7 @@ ENV VITE_SUPABASE_URL=https://ubmusernkksbnxhvsgox.supabase.co
 #dev
 #ENV VITE_API_URL=http://localhost:5000/api
 #preprod
-ENV VITE_API_URL=http://38.242.208.242:5000/api
+ENV VITE_API_URL=https://api-registration.harx.ai:5000/api
 
 #aws
 ENV VITE_AWS_REGION=eu-west-3
