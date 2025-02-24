@@ -56,11 +56,11 @@ function App() {
           <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} /> 
           <Route
             path="/app2"
-            //element={
-              //<PrivateRoute>
-                //<Dashboard />
-              //</PrivateRoute>
-            //}
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
           />
           <Route
             path="/profile-completion"
