@@ -4,6 +4,7 @@ import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { sendVerificationEmail } from '../utils/aws';
 import {handleLinkedInSignUp} from '../utils/Linkedin';
+import Cookies from 'js-cookie';
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
 interface RegistrationDialogProps {
@@ -94,7 +95,9 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
   
             if (RegisterResult && RegisterResult.data) {
               console.log("RegisterResult", RegisterResult);
-              localStorage.setItem('userId', RegisterResult.data._id);
+              Cookies.set('userId', RegisterResult.data._id, { expires: 7, domain: 'harx.ai' }); // Expire dans 7 jours
+              const storedUserId = Cookies.get('userId');
+              console.log('Stored userId from cookie:', storedUserId);
               // Send verification email
               const verificationMail = await sendVerificationEmail(formData.email, RegisterResult.data.code);
               console.log("verification", verificationMail);
@@ -155,7 +158,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   setShowProfilePrompt(true);
   
                   setTimeout(() => {
-                    window.location.href = '/app2';
+                    window.location.href = '/choicepage';
                   }, 1500);
                 } else {
                   newErrors.general = accountVerificationResult.message;
