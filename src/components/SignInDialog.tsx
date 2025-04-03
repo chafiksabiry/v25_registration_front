@@ -14,6 +14,7 @@ interface SignInDialogProps {
 export default function SignInDialog({ onRegister, onForgotPassword }: SignInDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<SignInStep>('credentials');
+  const [isFirstTimeVisitor, setIsFirstTimeVisitor] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -23,6 +24,17 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
+
+  useEffect(() => {
+    // Check if user has visited before
+    const hasVisited = localStorage.getItem('hasVisitedBefore');
+    if (hasVisited) {
+      setIsFirstTimeVisitor(false);
+    } else {
+      // Mark as visited
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+  }, []);
 
   useEffect(() => {
     let timer: number;
@@ -85,7 +97,7 @@ else{
         setToken(resultverificationEmail.token);
         setStep('success');
         setTimeout(() => {
-          window.location.href = '/app2';
+          window.location.href = isFirstTimeVisitor ? '/choicepage' : '/dashboardcompany';
         }, 1500);
       }
       }
@@ -116,7 +128,14 @@ else{
 
           {step === 'credentials' && (
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {isFirstTimeVisitor ? 'Welcome to HARX!' : 'Welcome Back to HARX!'}
+              </h2>
+              <p className="text-gray-600">
+                {isFirstTimeVisitor 
+                  ? 'Please sign in to access your account' 
+                  : 'Sign in to continue to your account'}
+              </p>
               
               <div className="space-y-4">
                 <div className="relative">
@@ -200,7 +219,11 @@ else{
           {step === 'success' && (
             <div className="space-y-4 text-center">
               <h2 className="text-2xl font-bold text-gray-800">Login Successful!</h2>
-              <p className="text-gray-600">Redirecting to dashboard...</p>
+              <p className="text-gray-600">
+                {isFirstTimeVisitor 
+                  ? 'Redirecting to choice page...' 
+                  : 'Redirecting to dashboard...'}
+              </p>
               <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
             </div>
           )}

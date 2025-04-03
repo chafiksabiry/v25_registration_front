@@ -10,8 +10,8 @@ type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' |
 interface RegistrationDialogProps {
   onSignIn: () => void;
 }
-const storedUserId = localStorage.getItem('userId');
-console.log('Stored userId:', storedUserId);
+const userId = localStorage.getItem('userId');
+console.log('Stored userId:', userId);
 export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<Step>('name');
@@ -96,8 +96,8 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             if (RegisterResult && RegisterResult.data) {
               console.log("RegisterResult", RegisterResult);
               Cookies.set('userId', RegisterResult.data._id, { expires: 7, domain: 'harx.ai' }); // Expire dans 7 jours
-              const storedUserId = Cookies.get('userId');
-              console.log('Stored userId from cookie:', storedUserId);
+              const userId = Cookies.get('userId');
+              console.log('Stored userId from cookie:', userId);
               // Send verification email
               const verificationMail = await sendVerificationEmail(formData.email, RegisterResult.data.code);
               console.log("verification", verificationMail);
@@ -132,14 +132,14 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               console.log("Email verification success");
   
               // Vérifier l'OTP
-              const storedUserId = localStorage.getItem('userId');
-              console.log('Stored userId:', storedUserId);
+              const userId = Cookies.get('userId');
+              console.log('Stored userId from cookie:', userId);
 
-              if(!storedUserId){ newErrors.general = 'User ID not found in localStorage. Please try again.';}
+              if(!userId){ newErrors.general = 'User ID not found in localStorage. Please try again.';}
 
               else{
 
-              const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
+              const otpVerificationResult = await auth.verifyOTP(userId, formData.phoneOTP);
               console.log("otpVerificationResult.error",otpVerificationResult.error);
 
               if (otpVerificationResult.error) {
@@ -148,7 +148,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 console.log("OTP verification success");
   
                 // Vérifier et activer le compte si tout est correct
-                const accountVerificationResult = await auth.verifyAccount(storedUserId);
+                const accountVerificationResult = await auth.verifyAccount(userId);
                 if (accountVerificationResult.success) {
                   console.log("Account verification success");
   

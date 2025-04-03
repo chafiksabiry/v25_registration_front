@@ -55,7 +55,7 @@ function App() {
           <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} /> {/* 👈 Add this line */}
           <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} /> 
           <Route
-            path="/app2"
+            path="/choicepage"
             element={
               <PrivateRoute>
                 <Dashboard />
