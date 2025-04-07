@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import { sendVerificationEmail } from '../utils/aws';
+//import { sendVerificationEmail } from '../utils/aws';
 import {handleLinkedInSignIn} from '../utils/Linkedin';
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -66,7 +66,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
        const result= await auth.login({ email: formData.email, password: formData.password });
        console.log("result",result);
-          const verification= await sendVerificationEmail(formData.email, result.data.code);
+          const verification= await auth.sendVerificationEmail(formData.email, result.data.code);
           console.log("verification",verification);
         setStep('2fa');
         setResendTimeout(30); // Set initial cooldown

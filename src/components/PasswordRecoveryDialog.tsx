@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle } from 'lucide-react';
 import { auth } from '../lib/api';
-import { sendVerificationEmail } from '../utils/aws';
+//import { sendVerificationEmail } from '../utils/aws';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
 
@@ -30,7 +30,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
         }
 const verificationCode= await auth.generateVerificationCode(formData.email);
 console.log("verificationCode",verificationCode);
-        const verification= await sendVerificationEmail(formData.email, verificationCode.verificationCode);
+        const verification= await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
          console.log("verificationRECOVERY",verification);
         setStep('verification');
         break;

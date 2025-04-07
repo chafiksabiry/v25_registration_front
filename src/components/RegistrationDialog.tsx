@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Check, Lock, Mail, Phone, User, CheckCircle,Linkedin } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import { sendVerificationEmail } from '../utils/aws';
 import {handleLinkedInSignUp} from '../utils/Linkedin';
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
@@ -84,29 +83,42 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
           } else {
             setIsLoading(true);
             
+            let RegisterResult: any;
             // Register User
-            const RegisterResult = await auth.register({
-              fullName: formData.fullName,
-              email: formData.email,
-              password: formData.password,
-              phone: formData.phone
-            });
-  
-            if (RegisterResult && RegisterResult.data) {
-              console.log("RegisterResult", RegisterResult);
-              localStorage.setItem('userId', RegisterResult.data._id);
-              // Send verification email
-              const verificationMail = await sendVerificationEmail(formData.email, RegisterResult.data.code);
-              console.log("verification", verificationMail);
-  
-              // Send OTP
-              const OtpSendResult = await auth.sendOTP(RegisterResult.data._id, formData.phone);
-              console.log("OtpSendResult::", OtpSendResult);
-  
-              setStep('verification');
-            } else {
-              newErrors.general = 'Registration failed, please try again later';
+            try {
+              RegisterResult = await auth.register({
+                fullName: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                phone: formData.phone
+              });
+
+              if (RegisterResult && RegisterResult.data) {
+                console.log("RegisterResult", RegisterResult);
+                localStorage.setItem('userId', RegisterResult.data._id);
+              }
+            } catch (error) {
+              if ((error as any).response?.data?.message === 'Email already registered') {
+                newErrors.email = 'This email is already registered';
+                setStep('email');
+                setErrors(newErrors);
+                return;
+              } else {
+                newErrors.general = 'Registration failed, please try again';
+                setErrors(newErrors);
+                return;
+              }
             }
+            
+            // Send verification email
+            const verificationMail = await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
+            console.log("verification", verificationMail);
+
+            // Send OTP
+            const OtpSendResult = await auth.sendOTP(RegisterResult.data._id, formData.phone);
+            console.log("OtpSendResult::", OtpSendResult);
+
+            setStep('verification');
           }
           break;
   
