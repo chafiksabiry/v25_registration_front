@@ -69,6 +69,11 @@ export const auth = {
     const response= await api.post('/auth/signin/linkedin',{ code });
     console.log("responsSignInLinkedin",response);
     return response.data;
+  },
+  sendVerificationEmail: async (email: string, code: string) => {
+    const response= await api.post('/auth/send-verification-email',{ email,code });
+    console.log("responseSendVerificationEmail",response);
+    return response.data;
   }
 };
 
