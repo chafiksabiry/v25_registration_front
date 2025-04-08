@@ -3,13 +3,11 @@ import { Check, Lock, Mail, Phone, User, CheckCircle,Linkedin } from 'lucide-rea
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import {handleLinkedInSignUp} from '../utils/Linkedin';
-import Cookies from 'js-cookie';
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
 interface RegistrationDialogProps {
   onSignIn: () => void;
 }
-
 const storedUserId = localStorage.getItem('userId');
 console.log('Stored userId:', storedUserId);
 export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps) {
@@ -97,9 +95,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
 
               if (RegisterResult && RegisterResult.data) {
                 console.log("RegisterResult", RegisterResult);
-                //localStorage.setItem('userId', RegisterResult.data._id);
-                Cookies.set('userId', RegisterResult.data._id);
-                console.log("userId", Cookies.get('userId'));
+                localStorage.setItem('userId', RegisterResult.data._id);
               }
             } catch (error) {
               if ((error as any).response?.data?.message === 'Email already registered') {
