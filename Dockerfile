@@ -14,9 +14,9 @@ ENV VITE_LINKEDIN_CLIENT_SECRET=WPL_AP1.T45rXV4XwyxtS5pl.cTa72w
 ENV VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVibXVzZXJua2tzYm54aHZzZ294Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzcwNTg4NDMsImV4cCI6MjA1MjYzNDg0M30.EtRoTBjDoEOmYvDKVfgKjcXN2mUcxkpFucEOAnEpl78
 ENV VITE_SUPABASE_URL=https://ubmusernkksbnxhvsgox.supabase.co
 #dev
-#ENV VITE_API_URL=http://localhost:5000/api
+ENV VITE_API_URL=http://localhost:5000/api
 #preprod
-ENV VITE_API_URL=https://api-registration.harx.ai/api
+#ENV VITE_API_URL=https://api-registration.harx.ai/api
 
 #aws
 ENV VITE_AWS_REGION=eu-west-3
