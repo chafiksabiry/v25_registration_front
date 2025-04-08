@@ -3,7 +3,10 @@ import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin } from 'lucide-r
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 //import { sendVerificationEmail } from '../utils/aws';
+import Cookies from 'js-cookie';
 import {handleLinkedInSignIn} from '../utils/Linkedin';
+import { jwtDecode } from "jwt-decode";
+
 type SignInStep = 'credentials' | '2fa' | 'success';
 
 interface SignInDialogProps {
@@ -82,7 +85,13 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
         });
 if(resultverificationEmail.result.error){  setError('Invalid email verification code');}
 else{
+        // Decode the token to get the payload
+        const decoded: any = jwtDecode(resultverificationEmail.token);
+        // Assuming userId is in the payload, like: { userId: "12345", ... }
+        const userId = decoded.userId;
         setToken(resultverificationEmail.token);
+        Cookies.set('userId', userId); // Save only the userId
+        console.log("userId", Cookies.get('userId'));
         setStep('success');
         setTimeout(() => {
           window.location.href = '/app2';
