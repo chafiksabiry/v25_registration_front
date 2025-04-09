@@ -95,7 +95,9 @@ else{
         setStep('success');
         const checkFirstLogin= await auth.checkFirstLogin(userId);
         console.log("checkFirstLogin", checkFirstLogin);
-        const redirectTo = checkFirstLogin ? '/app7' : '/app2';
+        const checkUserType= await auth.checkUserType(userId);
+        console.log("checkUserType", checkUserType);
+        const redirectTo = checkFirstLogin.isFirstLogin ? '/app2' : checkUserType.userType === 'company' ? '/app7': '/app8';
         setTimeout(() => {
           window.location.href = redirectTo;
         }, 1500);

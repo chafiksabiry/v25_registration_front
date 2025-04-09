@@ -78,6 +78,10 @@ export const auth = {
   checkFirstLogin: async (userId: string) => {
     const response = await api.post('/auth/check-first-login', { userId });
     return response.data;
+  },
+  checkUserType: async(userId: String) =>{
+    const response = await api.post('/auth/check-user-type', { userId });
+    return response.data;
   }
 };
 
