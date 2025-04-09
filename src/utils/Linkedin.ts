@@ -2,8 +2,8 @@ import { redirect } from 'react-router-dom';
 import { auth } from '../lib/api';
 
 const LINKEDIN_SCOPE = 'openid profile email';
-console.log("REDIRECT_URI",window.location.origin);
-const REDIRECT_URI = window.location.origin + '/auth/linkedin/callback';
+console.log("REDIRECT_URI",'https://registration.harx.ai');
+const REDIRECT_URI = 'https://registration.harx.ai/auth/linkedin/callback';
 console.log("REDIRECT_URI",REDIRECT_URI);
 
 export const handleLinkedInSignUp = () => {
@@ -100,7 +100,7 @@ export const handleLinkedInSignInCallback = async (code: string, state: string) 
 };
 export const handleLinkedInSignIn =async () => {
     const clientId = import.meta.env.VITE_LINKEDIN_CLIENT_ID;
-    const redirectUri = `${window.location.origin}/auth/linkedin/signin/callback`;
+    const redirectUri = `https://registration.harx.ai/auth/linkedin/signin/callback`;
     const scope = 'openid profile email';
     const state = Math.random().toString(36).substring(7);
     
