@@ -2,7 +2,7 @@ import { redirect } from 'react-router-dom';
 import { auth } from '../lib/api';
 
 const LINKEDIN_SCOPE = 'openid profile email';
-console.log("REDIRECT_URI",window.location.origin);
+console.log("REDIRECT_URI",'https://registration.harx.ai');
 const REDIRECT_URI = window.location.origin + '/auth/linkedin/callback';
 console.log("REDIRECT_URI",REDIRECT_URI);
 
