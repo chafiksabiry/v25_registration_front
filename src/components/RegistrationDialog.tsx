@@ -167,7 +167,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   setShowProfilePrompt(true);
   
                   setTimeout(() => {
-                    window.location.href = '/app2';
+                    window.location.href = '/auth';
                   }, 1500);
                 } else {
                   newErrors.general = accountVerificationResult.message;
