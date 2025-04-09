@@ -74,6 +74,10 @@ export const auth = {
     const response= await api.post('/auth/send-verification-email',{ email,code });
     console.log("responseSendVerificationEmail",response);
     return response.data;
+  },
+  checkFirstLogin: async (userId: string) => {
+    const response = await api.post('/auth/check-first-login', { userId });
+    return response.data;
   }
 };
 
@@ -106,5 +110,6 @@ export const files = {
   togglePublic: async (id: string) => {
     const response = await api.patch(`/files/${id}/toggle-public`);
     return response.data;
-  }
+  },
+  
 };

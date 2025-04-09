@@ -93,8 +93,11 @@ else{
         Cookies.set('userId', userId); // Save only the userId
         console.log("userId", Cookies.get('userId'));
         setStep('success');
+        const checkFirstLogin= await auth.checkFirstLogin(userId);
+        console.log("checkFirstLogin", checkFirstLogin);
+        const redirectTo = checkFirstLogin ? '/app7' : '/app2';
         setTimeout(() => {
-          window.location.href = '/app2';
+          window.location.href = redirectTo;
         }, 1500);
       }
       }
