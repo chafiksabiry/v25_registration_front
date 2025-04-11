@@ -8,8 +8,7 @@ type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' |
 interface RegistrationDialogProps {
   onSignIn: () => void;
 }
-const storedUserId = localStorage.getItem('userId');
-console.log('Stored userId:', storedUserId);
+
 export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<Step>('name');
@@ -167,7 +166,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   setShowProfilePrompt(true);
   
                   setTimeout(() => {
-                    window.location.href = '/app2';
+                    window.location.href = '/auth';
                   }, 1500);
                 } else {
                   newErrors.general = accountVerificationResult.message;
