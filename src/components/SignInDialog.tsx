@@ -103,12 +103,17 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           return;
         }
 
-       const result= await auth.login({ email: formData.email, password: formData.password });
-       console.log("result",result);
-          const verification= await auth.sendVerificationEmail(formData.email, result.data.code);
+        try {
+          const result = await auth.login({ email: formData.email, password: formData.password });
+          console.log("result",result);
+          const verification = await auth.sendVerificationEmail(formData.email, result.data.code);
           console.log("verification",verification);
-        setStep('2fa');
-        setResendTimeout(30); // Set initial cooldown
+          setStep('2fa');
+          setResendTimeout(30); // Set initial cooldown
+        } catch (err) {
+          setError('Invalid email or password. Please try again.');
+          return;
+        }
       } else if (step === '2fa') {
         if (formData.verificationCode.length !== 6) {
           setError('Please enter a valid verification code.');
@@ -147,7 +152,7 @@ else{
       }
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+      setError('An unexpected error occurred. Please try again later.');
     } finally {
       setIsLoading(false);
     }
