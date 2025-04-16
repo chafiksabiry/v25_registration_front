@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: 'https://preprod-registration.harx.ai/',
+    base: 'https://registration.harx.ai/',
     plugins: [
       react({
         jsxRuntime: 'classic',
