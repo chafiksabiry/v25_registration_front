@@ -9,7 +9,7 @@ import LinkedInCallback from './components/LinkedInCallback'; // Import the Link
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
-  const token = localStorage.getItem("auth_token");
+  const token = localStorage.getItem("token");
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
