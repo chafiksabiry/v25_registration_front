@@ -43,7 +43,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           } else if (checkUserType.userType === 'company') {
             redirectTo = '/app7';
           } else {
-            redirectTo = '/app8';
+            redirectTo = '/repdashboard';
           }
           
           setIsAlreadyLoggedIn(true);
@@ -144,7 +144,7 @@ else{
         } else if (checkUserType.userType === 'company') {
           redirectTo = '/app7';
         } else {
-          redirectTo = '/app8';
+          redirectTo = '/repdashboard';
         }
         setTimeout(() => {
           window.location.href = redirectTo;
