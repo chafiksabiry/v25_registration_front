@@ -82,10 +82,6 @@ export const auth = {
   checkUserType: async(userId: String) =>{
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
-  },
-  checkCompanyOnboarding: async(userId: string) => {
-    const response = await api.get(`/onboarding/companies/${userId}/onboarding`);
-    return response.data;
   }
 };
 
