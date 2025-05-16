@@ -34,9 +34,10 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   useEffect(() => {
     const checkExistingUser = async () => {
       const userId = Cookies.get('userId');
-      if (userId && !isRedirecting) {
+      const hasRedirected = localStorage.getItem('hasRedirected');
+      
+      if (userId && !hasRedirected) {
         try {
-          setIsRedirecting(true);
           const checkFirstLogin = await auth.checkFirstLogin(userId);
           const checkUserType = await auth.checkUserType(userId);
           let redirectTo;
@@ -50,8 +51,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
                 !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
               console.log("we are here to redirect to orchestrator");
               redirectTo = '/app11';
-              // Clear the userId cookie before redirecting to orchestrator
-             // Cookies.remove('userId');
             } else {
               redirectTo = '/app7';
             }
@@ -61,6 +60,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           
           setIsAlreadyLoggedIn(true);
           setRedirectPath(redirectTo);
+          localStorage.setItem('hasRedirected', 'true');
           
           // Redirect after showing the message for 2 seconds
           setTimeout(() => {
@@ -68,14 +68,18 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           }, 2000);
         } catch (error) {
           console.error('Error checking user type:', error);
-          setIsRedirecting(false);
-          // If there's an error, we'll let the user sign in normally
+          localStorage.removeItem('hasRedirected');
         }
       }
     };
 
     checkExistingUser();
-  }, [isRedirecting]);
+    
+    // Cleanup function to remove the redirect flag when component unmounts
+    return () => {
+      localStorage.removeItem('hasRedirected');
+    };
+  }, []);
 
   useEffect(() => {
     let timer: number;
