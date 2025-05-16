@@ -16,14 +16,13 @@ ENV VITE_SUPABASE_URL=https://ubmusernkksbnxhvsgox.supabase.co
 #dev
 #ENV VITE_API_URL=http://localhost:5000/api
 #preprod
-ENV VITE_API_URL=https://preprod-api-registration.harx.ai/api
+ENV VITE_API_URL=https://api-registration.harx.ai/api
 
 #aws
 ENV VITE_AWS_REGION=eu-west-3
 ENV VITE_AWS_ACCESS_KEY_ID=AKIAWODTAOGLI4ZJPWA7
 ENV VITE_AWS_SECRET_ACCESS_KEY=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
 ENV VITE_AWS_SES_FROM_EMAIL=chafik.sabiry@harx.ai
-ENV VITE_COMPANY_API_URL=https://api-companysearchwizard.harx.ai/api
 # Install dependencies
 RUN npm install
 

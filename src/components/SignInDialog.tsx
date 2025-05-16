@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin } from 'lucide-react';
-import axios from 'axios';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 //import { sendVerificationEmail } from '../utils/aws';
@@ -42,15 +41,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
             redirectTo = '/app2';
           } else if (checkUserType.userType === 'company') {
-            // Check company onboarding progress
-            const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-            console.log("onboardingProgress", onboardingProgress);
-            if (onboardingProgress.currentPhase !== 4 || 
-                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-              redirectTo = '/app11';
-            } else {
-              redirectTo = '/app7';
-            }
+            redirectTo = '/app7';
           } else {
             redirectTo = '/app8';
           }
@@ -151,14 +142,7 @@ else{
         if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
           redirectTo = '/app2';
         } else if (checkUserType.userType === 'company') {
-          // Check company onboarding progress
-          const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboarding`);
-          if (onboardingProgress.currentPhase !== 4 || 
-              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-            redirectTo = '/app11';
-          } else {
-            redirectTo = '/app7';
-          }
+          redirectTo = '/app7';
         } else {
           redirectTo = '/app8';
         }
