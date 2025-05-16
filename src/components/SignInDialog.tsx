@@ -49,9 +49,9 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
             if (onboardingProgress.currentPhase !== 4 || 
                 !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
               console.log("we are here to redirect to orchestrator");
-              redirectTo = '/orchestrator';
+              redirectTo = '/app11';
               // Clear the userId cookie before redirecting to orchestrator
-              Cookies.remove('userId');
+             // Cookies.remove('userId');
             } else {
               redirectTo = '/app7';
             }
@@ -156,7 +156,16 @@ else{
         if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
           redirectTo = '/app2';
         } else if (checkUserType.userType === 'company') {
-          redirectTo = '/app7';
+          const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
+          console.log("onboardingProgress", onboardingProgress);
+          if (onboardingProgress.currentPhase !== 4 || 
+              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+            console.log("we are here to redirect to orchestrator");
+            redirectTo = '/app11';
+           
+          } else {
+            redirectTo = '/app7';
+          }
         } else {
           redirectTo = '/app8';
         }
