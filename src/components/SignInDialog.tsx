@@ -49,7 +49,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
             if (onboardingProgress.currentPhase !== 4 || 
                 !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
               console.log("we are here to redirect to orchestrator");
-              redirectTo = '/orchestrator';
+              redirectTo = '/app11';
               // Clear the userId cookie before redirecting to orchestrator
               Cookies.remove('userId');
             } else {
