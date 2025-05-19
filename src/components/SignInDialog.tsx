@@ -5,7 +5,7 @@ import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 //import { sendVerificationEmail } from '../utils/aws';
 import Cookies from 'js-cookie';
-import {handleLinkedInSignIn} from '../utils/Linkedin';
+import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from "jwt-decode";
 
 type SignInStep = 'credentials' | '2fa' | 'success';
@@ -38,25 +38,56 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           const checkFirstLogin = await auth.checkFirstLogin(userId);
           const checkUserType = await auth.checkUserType(userId);
           let redirectTo;
-          
+
           if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
             redirectTo = '/app2';
           } else if (checkUserType.userType === 'company') {
             const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
             console.log("onboardingProgress", onboardingProgress);
-            if (onboardingProgress.currentPhase !== 4 || 
-                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+            if (onboardingProgress.currentPhase !== 4 ||
+              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
               redirectTo = '/app11';
             } else {
               redirectTo = '/app7';
             }
-          }else {
-            redirectTo = '/app8';
+          } else {
+            //user type is rep
+            try {
+              const token = localStorage.getItem('token'); // Get token from localStorage
+              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
+              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
+              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
+              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
+
+              const { data: profileData } = await axios.get(
+                `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`
+                  }
+                }
+              );
+              console.log('profileData', profileData);
+              Cookies.set('agentId', profileData._id);
+              
+              if (!profileData.isBasicProfileCompleted) {
+                redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
+              } else {
+                redirectTo = profileData.onboardingProgress.currentPhase >= 6 
+                  ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
+                  : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+              }
+              console.log('Selected redirect URL:', redirectTo);
+            } catch (error) {
+              console.error('Error fetching rep profile:', error);
+              // If there's an error fetching the profile, default to profile creation
+              redirectTo = `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+            }
           }
-          
+
           setIsAlreadyLoggedIn(true);
           setRedirectPath(redirectTo);
-          
+
           // Redirect after showing the message for 2 seconds
           setTimeout(() => {
             window.location.href = redirectTo;
@@ -85,10 +116,10 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
   const handleResendOTP = async () => {
     if (resendTimeout > 0) return;
-    
+
     setError(null);
     setIsLoading(true);
-    
+
     try {
       await auth.resendVerification(formData.email);
       setResendTimeout(30); // 30 seconds cooldown
@@ -113,9 +144,9 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
         try {
           const result = await auth.login({ email: formData.email, password: formData.password });
-          console.log("result",result);
+          console.log("result", result);
           const verification = await auth.sendVerificationEmail(formData.email, result.data.code);
-          console.log("verification",verification);
+          console.log("verification", verification);
           setStep('2fa');
           setResendTimeout(30); // Set initial cooldown
         } catch (err) {
@@ -132,32 +163,63 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           email: formData.email,
           code: formData.verificationCode
         });
-if(resultverificationEmail.result.error){  setError('Invalid email verification code');}
-else{
-        // Decode the token to get the payload
-        const decoded: any = jwtDecode(resultverificationEmail.token);
-        // Assuming userId is in the payload, like: { userId: "12345", ... }
-        const userId = decoded.userId;
-        setToken(resultverificationEmail.token);
-        Cookies.set('userId', userId); // Save only the userId
-        console.log("userId", Cookies.get('userId'));
-        setStep('success');
-        const checkFirstLogin= await auth.checkFirstLogin(userId);
-        console.log("checkFirstLogin", checkFirstLogin);
-        const checkUserType= await auth.checkUserType(userId);
-        console.log("checkUserType", checkUserType);
-        let redirectTo;
-        if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
-          redirectTo = '/app2';
-        } else if (checkUserType.userType === 'company') {
-          redirectTo = '/app7';
-        } else {
-          redirectTo = '/repdashboard';
+        if (resultverificationEmail.result.error) { setError('Invalid email verification code'); }
+        else {
+          // Decode the token to get the payload
+          const decoded: any = jwtDecode(resultverificationEmail.token);
+          // Assuming userId is in the payload, like: { userId: "12345", ... }
+          const userId = decoded.userId;
+          setToken(resultverificationEmail.token);
+          localStorage.setItem('token', resultverificationEmail.token); // Store token in localStorage
+          Cookies.set('userId', userId); // Save only the userId
+          console.log("userId", Cookies.get('userId'));
+          setStep('success');
+          const checkFirstLogin = await auth.checkFirstLogin(userId);
+          console.log("checkFirstLogin", checkFirstLogin);
+          const checkUserType = await auth.checkUserType(userId);
+          console.log("checkUserType", checkUserType);
+          let redirectTo;
+          if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
+            redirectTo = '/app2';
+          } else if (checkUserType.userType === 'company') {
+            redirectTo = '/app7';
+          } else {
+            // User type is rep
+            try {
+              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
+              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
+              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
+              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
+
+              const { data: profileData } = await axios.get(
+                `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${resultverificationEmail.token}`
+                  }
+                }
+              );
+              console.log('profileData', profileData);
+              Cookies.set('agentId', profileData._id);
+              
+              if (!profileData.isBasicProfileCompleted) {
+                redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
+              } else {
+                redirectTo = profileData.onboardingProgress.currentPhase >= 6 
+                  ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
+                  : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+              }
+              console.log('Selected redirect URL:', redirectTo);
+            } catch (error) {
+              console.error('Error fetching rep profile:', error);
+              // If there's an error fetching the profile, default to profile creation
+              redirectTo = `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+            }
+          }
+          setTimeout(() => {
+            window.location.href = redirectTo;
+          }, 1500);
         }
-        setTimeout(() => {
-          window.location.href = redirectTo;
-        }, 1500);
-      }
       }
     } catch (err) {
       setError('An unexpected error occurred. Please try again later.');
@@ -174,7 +236,7 @@ else{
         <div className="space-y-6">
           <div className="text-center space-y-4">
             <div className="flex flex-col items-center space-y-2">
-              <img 
+              <img
                 src="https://scontent.frba3-2.fna.fbcdn.net/v/t39.30808-1/467741355_452110527907673_4983439529100518747_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=110&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=-YE5FaXH0hcQ7kNvgE2nDHx&_nc_zt=24&_nc_ht=scontent.frba3-2.fna&_nc_gid=Ax-CIxXnWM_QdtmKEUcxH88&oh=00_AYAUcOFMQeSbLOljzwEKsJUhX6eN60ArhQthk2trelP6Uw&oe=6792D8A3"
                 alt="HARX Logo"
                 className="h-12 w-12 rounded-full object-cover"
@@ -195,7 +257,7 @@ else{
               {step === 'credentials' && (
                 <div className="space-y-4">
                   <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
-                  
+
                   <div className="space-y-4">
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -229,8 +291,8 @@ else{
                         />
                         <span className="text-sm text-gray-600">Remember me</span>
                       </label>
-                      
-                      <button 
+
+                      <button
                         onClick={onForgotPassword}
                         className="text-sm text-blue-600 hover:underline"
                       >
@@ -245,7 +307,7 @@ else{
                 <div className="space-y-4">
                   <h2 className="text-2xl font-bold text-gray-800">Email Verification</h2>
                   <p className="text-gray-600">We sent a 6-digit code to {formData.email}. Please enter it to complete the login process.</p>
-                  
+
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                     <input
@@ -261,9 +323,8 @@ else{
                   <button
                     onClick={handleResendOTP}
                     disabled={resendTimeout > 0 || isLoading}
-                    className={`w-full flex items-center justify-center space-x-2 text-sm ${
-                      resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:text-blue-700'
-                    }`}
+                    className={`w-full flex items-center justify-center space-x-2 text-sm ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:text-blue-700'
+                      }`}
                   >
                     <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
                     <span>
@@ -295,9 +356,8 @@ else{
                   <button
                     onClick={handleSignIn}
                     disabled={isLoading}
-                    className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${
-                      isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                      }`}
                   >
                     {isLoading ? (
                       <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
@@ -329,9 +389,8 @@ else{
                 <button
                   onClick={handleSignIn}
                   disabled={isLoading}
-                  className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${
-                    isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                  }`}
+                  className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
+                    }`}
                 >
                   {isLoading ? (
                     <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
