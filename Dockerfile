@@ -23,6 +23,14 @@ ENV VITE_AWS_REGION=eu-west-3
 ENV VITE_AWS_ACCESS_KEY_ID=AKIAWODTAOGLI4ZJPWA7
 ENV VITE_AWS_SECRET_ACCESS_KEY=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
 ENV VITE_AWS_SES_FROM_EMAIL=chafik.sabiry@harx.ai
+#Rep API
+ENV VITE_REP_API_URL=https://api-repcreationwizard.harx.ai/api
+#Rep Orchestrator termination
+ENV VITE_REP_ORCHESTRATOR_URL=/reporchestrator
+#Rep Profile Creation Termination
+ENV VITE_REP_CREATION_PROFILE_URL=/repcreationprofile
+#Rep Dashboard Termination
+ENV VITE_REP_DASHBOARD_URL=/repdashboard/profile
 # Install dependencies
 RUN npm install
 
