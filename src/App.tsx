@@ -18,9 +18,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!token) {
+   if (!token) {
     return <Navigate to="/auth" replace />;
-  }
+  } 
 
   return <>{children}</>;
 }
@@ -67,6 +67,14 @@ function App() {
             element={
               <PrivateRoute>
                 <div>Profile Completion Page (To be implemented)</div>
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path="/app11"
+            element={
+              <PrivateRoute>
+                <div>orchestrator Page</div>
               </PrivateRoute>
             }
           />

@@ -29,11 +29,14 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   const [resendTimeout, setResendTimeout] = useState(0);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   useEffect(() => {
     const checkExistingUser = async () => {
       const userId = Cookies.get('userId');
-      if (userId) {
+      const hasRedirected = localStorage.getItem('hasRedirected');
+      
+      if (userId && !hasRedirected) {
         try {
           const checkFirstLogin = await auth.checkFirstLogin(userId);
           const checkUserType = await auth.checkUserType(userId);
@@ -44,8 +47,9 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           } else if (checkUserType.userType === 'company') {
             const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
             console.log("onboardingProgress", onboardingProgress);
-            if (onboardingProgress.currentPhase !== 4 ||
-              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+            if (onboardingProgress.currentPhase !== 4 || 
+                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+              console.log("we are here to redirect to orchestrator");
               redirectTo = '/app11';
             } else {
               redirectTo = '/app7';
@@ -87,19 +91,25 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
           setIsAlreadyLoggedIn(true);
           setRedirectPath(redirectTo);
-
+          localStorage.setItem('hasRedirected', 'true');
+          
           // Redirect after showing the message for 2 seconds
           setTimeout(() => {
             window.location.href = redirectTo;
           }, 2000);
         } catch (error) {
           console.error('Error checking user type:', error);
-          // If there's an error, we'll let the user sign in normally
+          localStorage.removeItem('hasRedirected');
         }
       }
     };
 
     checkExistingUser();
+    
+    // Cleanup function to remove the redirect flag when component unmounts
+    return () => {
+      localStorage.removeItem('hasRedirected');
+    };
   }, []);
 
   useEffect(() => {
@@ -182,7 +192,16 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
             redirectTo = '/app2';
           } else if (checkUserType.userType === 'company') {
-            redirectTo = '/app7';
+          const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
+          console.log("onboardingProgress", onboardingProgress);
+          if (onboardingProgress.currentPhase !== 4 || 
+              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+            console.log("we are here to redirect to orchestrator");
+            redirectTo = '/app11';
+           
+          } else {
+              redirectTo = '/app7';
+          }
           } else {
             // User type is rep
             try {
