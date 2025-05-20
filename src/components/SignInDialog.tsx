@@ -85,7 +85,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
             } catch (error) {
               console.error('Error fetching rep profile:', error);
               // If there's an error fetching the profile, default to profile creation
-              redirectTo = `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
             }
           }
 
@@ -232,7 +232,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
             } catch (error) {
               console.error('Error fetching rep profile:', error);
               // If there's an error fetching the profile, default to profile creation
-              redirectTo = `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
             }
           }
           setTimeout(() => {
