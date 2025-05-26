@@ -77,7 +77,12 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
               if (!profileData.isBasicProfileCompleted) {
                 redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
               } else {
-                redirectTo = profileData.onboardingProgress.currentPhase >= 6 
+                redirectTo = (
+                  profileData.onboardingProgress.phases.phase1.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase2.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase3.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase4.status === "completed"
+                )
                   ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
                   : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
               }
@@ -224,7 +229,12 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
               if (!profileData.isBasicProfileCompleted) {
                 redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
               } else {
-                redirectTo = profileData.onboardingProgress.currentPhase >= 6 
+                redirectTo = (
+                  profileData.onboardingProgress.phases.phase1.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase2.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase3.status === "completed" &&
+                  profileData.onboardingProgress.phases.phase4.status === "completed"
+                )
                   ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
                   : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
               }
