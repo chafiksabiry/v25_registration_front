@@ -32,6 +32,7 @@ ENV VITE_REP_ORCHESTRATOR_URL=/reporchestrator
 ENV VITE_REP_CREATION_PROFILE_URL=/repcreationprofile
 #Rep Dashboard Termination
 ENV VITE_REP_DASHBOARD_URL=/repdashboard/profile
+ENV VITE_FRONT_URL=https://registration.harx.ai/
 # Install dependencies
 RUN npm install
 
