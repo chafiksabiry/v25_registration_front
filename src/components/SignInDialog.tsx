@@ -266,9 +266,9 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           <div className="text-center space-y-4">
             <div className="flex flex-col items-center space-y-2">
               <img
-                src="https://scontent.frba3-2.fna.fbcdn.net/v/t39.30808-1/467741355_452110527907673_4983439529100518747_n.jpg?stp=dst-jpg_s480x480_tt6&_nc_cat=110&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=-YE5FaXH0hcQ7kNvgE2nDHx&_nc_zt=24&_nc_ht=scontent.frba3-2.fna&_nc_gid=Ax-CIxXnWM_QdtmKEUcxH88&oh=00_AYAUcOFMQeSbLOljzwEKsJUhX6eN60ArhQthk2trelP6Uw&oe=6792D8A3"
+                src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
                 alt="HARX Logo"
-                className="h-12 w-12 rounded-full object-cover"
+                className="h-12 w-12 rounded-lg object-cover"
               />
               <h1 className="text-2xl font-bold text-gray-800">HARX</h1>
               <p className="text-sm text-gray-600">We inspire growth</p>
