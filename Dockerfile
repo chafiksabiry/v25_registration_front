@@ -15,24 +15,24 @@ ENV VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 ENV VITE_SUPABASE_URL=https://ubmusernkksbnxhvsgox.supabase.co
 #dev
 #ENV VITE_API_URL=http://localhost:5000/api
-#preprod   https://preprod-api-registration.harx.ai/
-ENV VITE_API_URL=https://preprod-api-registration.harx.ai/api
-#preprod
-ENV VITE_COMPANY_API_URL=https://preprod-api-companysearchwizard.harx.ai/api
+#prod   https://prod-api-registration.harx.ai/
+ENV VITE_API_URL=https://prod-api-registration.harx.ai/api
+#prod
+ENV VITE_COMPANY_API_URL=https://prod-api-companysearchwizard.harx.ai/api
 #aws
 ENV VITE_AWS_REGION=eu-west-3
 ENV VITE_AWS_ACCESS_KEY_ID=AKIAWODTAOGLI4ZJPWA7
 ENV VITE_AWS_SECRET_ACCESS_KEY=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
 ENV VITE_AWS_SES_FROM_EMAIL=chafik.sabiry@harx.ai
 #Rep API
-ENV VITE_REP_API_URL=https://preprod-api-repcreationwizard.harx.ai/api
+ENV VITE_REP_API_URL=https://prod-api-repcreationwizard.harx.ai/api
 #Rep Orchestrator termination
 ENV VITE_REP_ORCHESTRATOR_URL=/reporchestrator
 #Rep Profile Creation Termination
 ENV VITE_REP_CREATION_PROFILE_URL=/repcreationprofile
 #Rep Dashboard Termination
 ENV VITE_REP_DASHBOARD_URL=/repdashboard/profile
-ENV VITE_FRONT_URL=https://preprod-registration.harx.ai/
+ENV VITE_FRONT_URL=https://prod-registration.harx.ai/
 # Install dependencies
 RUN npm install
 
