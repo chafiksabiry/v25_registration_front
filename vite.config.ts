@@ -20,7 +20,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: 'https://registration.harx.ai/',
+    base: 'https://harx25register.netlify.app/',
     plugins: [
       react({
         jsxRuntime: 'classic',
