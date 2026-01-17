@@ -1,0 +1,13 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "VITE_LINKEDIN_CLIENT_ID,VITE_REP_CREATION_PROFILE_URL,VITE_COMPANY_API_URL,VITE_REP_API_URL,VITE_REP_ORCHESTRATOR_URL,VITE_REP_DASHBOARD_URL,VITE_API_URL,VITE_FRONT_URL,VITE_OPENAI_API_KEY,VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
