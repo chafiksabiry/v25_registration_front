@@ -35,7 +35,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     const checkExistingUser = async () => {
       const userId = Cookies.get('userId');
       const hasRedirected = localStorage.getItem('hasRedirected');
-      
+
       if (userId && !hasRedirected) {
         try {
           const checkFirstLogin = await auth.checkFirstLogin(userId);
@@ -45,14 +45,24 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
             redirectTo = '/app2';
           } else if (checkUserType.userType === 'company') {
-            const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-            console.log("onboardingProgress", onboardingProgress);
-            if (onboardingProgress.currentPhase !== 4 || 
+            try {
+              const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
+              console.log("onboardingProgress", onboardingProgress);
+              if (onboardingProgress.currentPhase !== 4 ||
                 !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-              console.log("we are here to redirect to orchestrator");
-              redirectTo = '/app11';
-            } else {
-              redirectTo = '/app7';
+                console.log("we are here to redirect to orchestrator");
+                redirectTo = '/app11';
+              } else {
+                redirectTo = '/app7';
+              }
+            } catch (error: any) {
+              // If 404 (No progress found), redirect to start of onboarding
+              if (error.response && error.response.status === 404) {
+                console.log("No onboarding progress found (New User) -> Redirecting to Wizard Start");
+                redirectTo = '/app11';
+              } else {
+                throw error;
+              }
             }
           } else {
             //user type is rep
@@ -73,7 +83,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
               );
               console.log('profileData', profileData);
               Cookies.set('agentId', profileData._id);
-              
+
               if (!profileData.isBasicProfileCompleted) {
                 redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
               } else {
@@ -97,7 +107,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           setIsAlreadyLoggedIn(true);
           setRedirectPath(redirectTo);
           localStorage.setItem('hasRedirected', 'true');
-          
+
           // Redirect after showing the message for 2 seconds
           setTimeout(() => {
             window.location.href = redirectTo;
@@ -110,7 +120,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     };
 
     checkExistingUser();
-    
+
     // Cleanup function to remove the redirect flag when component unmounts
     return () => {
       localStorage.removeItem('hasRedirected');
@@ -197,16 +207,26 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
             redirectTo = '/app2';
           } else if (checkUserType.userType === 'company') {
-          const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-          console.log("onboardingProgress", onboardingProgress);
-          if (onboardingProgress.currentPhase !== 4 || 
-              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-            console.log("we are here to redirect to orchestrator");
-            redirectTo = '/app11';
-           
-          } else {
-              redirectTo = '/app7';
-          }
+            try {
+              const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
+              console.log("onboardingProgress", onboardingProgress);
+              if (onboardingProgress.currentPhase !== 4 ||
+                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+                console.log("we are here to redirect to orchestrator");
+                redirectTo = '/app11';
+
+              } else {
+                redirectTo = '/app7';
+              }
+            } catch (error: any) {
+              // If 404, it means onboarding hasn't started -> redirect to orchestrator
+              if (error.response && error.response.status === 404) {
+                console.log("Onboarding progress not found, redirecting to orchestrator");
+                redirectTo = '/app11';
+              } else {
+                throw error;
+              }
+            }
           } else {
             // User type is rep
             try {
@@ -225,7 +245,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
               );
               console.log('profileData', profileData);
               Cookies.set('agentId', profileData._id);
-              
+
               if (!profileData.isBasicProfileCompleted) {
                 redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
               } else {
