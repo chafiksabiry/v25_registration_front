@@ -146,7 +146,8 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     setIsLoading(true);
 
     try {
-      await auth.resendVerification(formData.email);
+      const response = await auth.resendVerification(formData.email);
+      console.log("Resend response:", response);
       setResendTimeout(30); // 30 seconds cooldown
       setFormData(prev => ({ ...prev, verificationCode: '' }));
     } catch (err) {
