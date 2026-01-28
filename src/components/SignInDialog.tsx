@@ -162,7 +162,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   };
 
   const handleSendSMS = async () => {
-    if (resendTimeout > 0) return;
+
     if (!formData.userId || !formData.phone) {
       setError('Phone number not available. Cannot send SMS.');
       return;
