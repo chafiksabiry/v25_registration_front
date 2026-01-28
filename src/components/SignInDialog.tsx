@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone } from 'lucide-react';
 import axios from 'axios';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -22,8 +22,11 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     email: '',
     password: '',
     rememberMe: false,
-    verificationCode: ''
+    verificationCode: '',
+    userId: '',
+    phone: '',
   });
+  const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
@@ -148,6 +151,7 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     try {
       const response = await auth.resendVerification(formData.email);
       console.log("Resend response:", response);
+      console.log("RESENT VERIFICATION CODE:", response.data?.code);
       setResendTimeout(30); // 30 seconds cooldown
       setFormData(prev => ({ ...prev, verificationCode: '' }));
     } catch (err) {
@@ -155,6 +159,33 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSendSMS = async () => {
+    if (resendTimeout > 0) return;
+    if (!formData.userId || !formData.phone) {
+      setError('Phone number not available. Cannot send SMS.');
+      return;
+    }
+
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await auth.sendOTP(formData.userId, formData.phone);
+      setResendTimeout(30);
+      setFormData(prev => ({ ...prev, verificationCode: '' }));
+    } catch (err) {
+      setError('Failed to send SMS code');
+      setVerificationMethod('email'); // Revert if failed
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSwitchToSMS = async () => {
+    setVerificationMethod('sms');
+    await handleSendSMS();
   };
 
   const handleSignIn = async () => {
@@ -171,9 +202,19 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
         try {
           const result = await auth.login({ email: formData.email, password: formData.password });
           console.log("result", result);
+
+          // Store userId and phone from response
+          setFormData(prev => ({
+            ...prev,
+            userId: result.data.userId,
+            phone: result.data.phone
+          }));
+
+          console.log("LOGIN VERIFICATION CODE:", result.data?.code);
           const verification = await auth.sendVerificationEmail(formData.email, result.data.code);
           console.log("verification", verification);
           setStep('2fa');
+          setVerificationMethod('email'); // Reset to email default
           setResendTimeout(30); // Set initial cooldown
         } catch (err) {
           setError('Invalid email or password. Please try again.');
@@ -185,92 +226,110 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           return;
         }
 
-        const resultverificationEmail = await auth.verifyEmail({
-          email: formData.email,
-          code: formData.verificationCode
-        });
-        if (resultverificationEmail.result.error) { setError('Invalid email verification code'); }
-        else {
-          // Decode the token to get the payload
-          const decoded: any = jwtDecode(resultverificationEmail.token);
-          // Assuming userId is in the payload, like: { userId: "12345", ... }
-          const userId = decoded.userId;
-          setToken(resultverificationEmail.token);
-          localStorage.setItem('token', resultverificationEmail.token); // Store token in localStorage
-          Cookies.set('userId', userId); // Save only the userId
-          console.log("userId", Cookies.get('userId'));
-          setStep('success');
-          const checkFirstLogin = await auth.checkFirstLogin(userId);
-          console.log("checkFirstLogin", checkFirstLogin);
-          const checkUserType = await auth.checkUserType(userId);
-          console.log("checkUserType", checkUserType);
-          let redirectTo;
-          if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
-            redirectTo = '/app2';
-          } else if (checkUserType.userType === 'company') {
-            try {
-              const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-              console.log("onboardingProgress", onboardingProgress);
-              if (onboardingProgress.currentPhase !== 4 ||
-                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-                console.log("we are here to redirect to orchestrator");
-                redirectTo = '/app11';
+        let resultData;
 
-              } else {
-                redirectTo = '/app7';
-              }
-            } catch (error: any) {
-              // If 404, it means onboarding hasn't started -> redirect to orchestrator
-              if (error.response && error.response.status === 404) {
-                console.log("Onboarding progress not found, redirecting to orchestrator");
-                redirectTo = '/app11';
-              } else {
-                throw error;
-              }
+        if (verificationMethod === 'email') {
+          const resultverificationEmail = await auth.verifyEmail({
+            email: formData.email,
+            code: formData.verificationCode
+          });
+          if (resultverificationEmail.result.error) {
+            setError('Invalid email verification code');
+            setIsLoading(false);
+            return;
+          }
+          resultData = resultverificationEmail;
+        } else {
+          // SMS Verification
+          const resultOTP = await auth.verifyOTP(formData.userId, formData.verificationCode);
+          if (resultOTP.error) {
+            setError('Invalid SMS verification code');
+            setIsLoading(false);
+            return;
+          }
+          resultData = resultOTP;
+        }
+
+        // Decode the token to get the payload
+        const decoded: any = jwtDecode(resultData.token);
+        // Assuming userId is in the payload, like: { userId: "12345", ... }
+        const userId = decoded.userId;
+        setToken(resultData.token);
+        localStorage.setItem('token', resultData.token); // Store token in localStorage
+        Cookies.set('userId', userId); // Save only the userId
+        console.log("userId", Cookies.get('userId'));
+        setStep('success');
+        const checkFirstLogin = await auth.checkFirstLogin(userId);
+        console.log("checkFirstLogin", checkFirstLogin);
+        const checkUserType = await auth.checkUserType(userId);
+        console.log("checkUserType", checkUserType);
+        let redirectTo;
+        if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
+          redirectTo = '/app2';
+        } else if (checkUserType.userType === 'company') {
+          try {
+            const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
+            console.log("onboardingProgress", onboardingProgress);
+            if (onboardingProgress.currentPhase !== 4 ||
+              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
+              console.log("we are here to redirect to orchestrator");
+              redirectTo = '/app11';
+
+            } else {
+              redirectTo = '/app7';
             }
-          } else {
-            // User type is rep
-            try {
-              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
-              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
-              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
-              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
-
-              const { data: profileData } = await axios.get(
-                `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${resultverificationEmail.token}`
-                  }
-                }
-              );
-              console.log('profileData', profileData);
-              Cookies.set('agentId', profileData._id);
-
-              if (!profileData.isBasicProfileCompleted) {
-                redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
-              } else {
-                redirectTo = (
-                  profileData.onboardingProgress.phases.phase1.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase2.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase3.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase4.status === "completed"
-                )
-                  ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
-                  : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
-              }
-              console.log('Selected redirect URL:', redirectTo);
-            } catch (error) {
-              console.error('Error fetching rep profile:', error);
-              // If there's an error fetching the profile, default to profile creation
-              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
+          } catch (error: any) {
+            // If 404, it means onboarding hasn't started -> redirect to orchestrator
+            if (error.response && error.response.status === 404) {
+              console.log("Onboarding progress not found, redirecting to orchestrator");
+              redirectTo = '/app11';
+            } else {
+              throw error;
             }
           }
-          setTimeout(() => {
-            window.location.href = redirectTo;
-          }, 1500);
+        } else {
+          // User type is rep
+          try {
+            console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
+            console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
+            console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
+            console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
+
+            const { data: profileData } = await axios.get(
+              `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${resultData.token}`
+                }
+              }
+            );
+            console.log('profileData', profileData);
+            Cookies.set('agentId', profileData._id);
+
+            if (!profileData.isBasicProfileCompleted) {
+              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
+            } else {
+              redirectTo = (
+                profileData.onboardingProgress.phases.phase1.status === "completed" &&
+                profileData.onboardingProgress.phases.phase2.status === "completed" &&
+                profileData.onboardingProgress.phases.phase3.status === "completed" &&
+                profileData.onboardingProgress.phases.phase4.status === "completed"
+              )
+                ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
+                : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
+            }
+            console.log('Selected redirect URL:', redirectTo);
+          } catch (error) {
+            console.error('Error fetching rep profile:', error);
+            // If there's an error fetching the profile, default to profile creation
+            redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
+          }
         }
+        setTimeout(() => {
+          window.location.href = redirectTo;
+        }, 1500);
       }
+
     } catch (err) {
       setError('An unexpected error occurred. Please try again later.');
     } finally {
@@ -355,8 +414,14 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
               {step === '2fa' && (
                 <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Email Verification</h2>
-                  <p className="text-gray-600">We sent a 6-digit code to {formData.email}. Please enter it to complete the login process.</p>
+                  <h2 className="text-2xl font-bold text-gray-800">
+                    {verificationMethod === 'email' ? 'Email Verification' : 'SMS Verification'}
+                  </h2>
+                  <p className="text-gray-600">
+                    {verificationMethod === 'email'
+                      ? `We sent a 6-digit code to ${formData.email}. Please enter it to complete the login process.`
+                      : `We sent a 6-digit code to your phone. Please enter it to complete the login process.`}
+                  </p>
 
                   <div className="relative">
                     <KeyRound className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
@@ -383,6 +448,29 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
                         : 'Resend verification code'}
                     </span>
                   </button>
+
+                  {verificationMethod === 'email' && formData.phone && (
+                    <div className="text-center mt-2">
+                      <button
+                        onClick={handleSwitchToSMS}
+                        disabled={isLoading}
+                        className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center justify-center w-full gap-2"
+                      >
+                        <Phone className="h-4 w-4" />
+                        <span>Try SMS verification instead</span>
+                      </button>
+                    </div>
+                  )}
+                  {verificationMethod === 'sms' && (
+                    <button
+                      onClick={() => { setVerificationMethod('email'); setError(null); }}
+                      disabled={isLoading}
+                      className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center justify-center w-full gap-2 mt-2"
+                    >
+                      <Mail className="h-4 w-4" />
+                      <span>Try Email verification instead</span>
+                    </button>
+                  )}
                 </div>
               )}
 
