@@ -143,6 +143,52 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     };
   }, [resendTimeout]);
 
+  const handleOtpChange = (index: number, value: string) => {
+    // Determine the new verification code based on input
+    const currentCode = formData.verificationCode || '';
+    let newCodeArray = currentCode.padEnd(6, ' ').split('');
+
+    // Handle paste if string is longer than 1 char
+    if (value.length > 1) {
+      const pastedCode = value.slice(0, 6).replace(/\D/g, '');
+      setFormData(prev => ({ ...prev, verificationCode: pastedCode }));
+
+      // Focus last filled input or the next empty one
+      const nextIndex = Math.min(pastedCode.length, 5);
+      const nextInput = document.getElementById(`otp-${nextIndex}`);
+      if (nextInput) nextInput.focus();
+      return;
+    }
+
+    newCodeArray[index] = value;
+    const newCode = newCodeArray.join('').trim();
+
+    setFormData(prev => ({ ...prev, verificationCode: newCode }));
+
+    // Focus next input if value is entered
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (!formData.verificationCode[index] && index > 0) {
+        // Move to previous input on backspace if current is empty
+        const prevInput = document.getElementById(`otp-${index - 1}`);
+        if (prevInput) {
+          prevInput.focus();
+          // Optional: clear previous input value when moving back
+          // const currentCode = formData.verificationCode || '';
+          // let newCodeArray = currentCode.padEnd(6, ' ').split('');
+          // newCodeArray[index - 1] = '';
+          // setFormData(prev => ({ ...prev, verificationCode: newCodeArray.join('').trim() }));
+        }
+      }
+    }
+  };
+
   const handleResendOTP = async () => {
     if (resendTimeout > 0) return;
 
@@ -437,16 +483,20 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
                       : `We sent a 6-digit code to your phone. Please enter it to complete the login process.`}
                   </p>
 
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={formData.verificationCode}
-                      onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
-                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter 6-digit code"
-                    />
+                  <div className="flex justify-between gap-2 mb-4">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                      <input
+                        key={index}
+                        id={`otp-${index}`}
+                        type="text"
+                        maxLength={6} // Allow paste of full code
+                        value={formData.verificationCode[index] || ''}
+                        onChange={(e) => handleOtpChange(index, e.target.value)}
+                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                        className="w-12 h-12 border border-gray-300 rounded-lg text-center text-xl font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                        placeholder="-"
+                      />
+                    ))}
                   </div>
 
                   <button
