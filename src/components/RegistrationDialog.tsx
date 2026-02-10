@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Check, Lock, Mail, Phone, User, CheckCircle,Linkedin } from 'lucide-react';
+import { Check, Lock, Mail, Phone, User, CheckCircle, Linkedin, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import {handleLinkedInSignUp} from '../utils/Linkedin';
+import { handleLinkedInSignUp } from '../utils/Linkedin';
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
 interface RegistrationDialogProps {
@@ -13,6 +13,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
   const { setToken } = useAuth();
   const [step, setStep] = useState<Step>('name');
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -25,7 +26,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
- 
+
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
@@ -41,7 +42,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
 
   const handleNext = async () => {
     const newErrors: Record<string, string> = {};
-  
+
     try {
       switch (step) {
         case 'name':
@@ -51,7 +52,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             setStep('email');
           }
           break;
-  
+
         case 'email':
           if (!validateEmail(formData.email)) {
             newErrors.email = 'Please enter a valid email address';
@@ -59,7 +60,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             setStep('password');
           }
           break;
-  
+
         case 'password':
           if (!validatePassword(formData.password)) {
             newErrors.password = 'Password must be at least 8 characters with letters and numbers';
@@ -67,7 +68,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             setStep('phone');
           }
           break;
-  
+
         case 'phone':
           if (!validatePhone(formData.phone)) {
             newErrors.phone = 'Please enter a valid phone number';
@@ -75,13 +76,13 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             setStep('terms');
           }
           break;
-  
+
         case 'terms':
           if (!formData.termsAccepted) {
             newErrors.terms = 'Please accept the terms and conditions';
           } else {
             setIsLoading(true);
-            
+
             let RegisterResult: any;
             // Register User
             try {
@@ -108,7 +109,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 return;
               }
             }
-            
+
             // Send verification email
             const verificationMail = await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
             console.log("verification", verificationMail);
@@ -120,63 +121,63 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             setStep('verification');
           }
           break;
-  
+
         case 'verification':
           // Vérifier que l'utilisateur a entré un code de vérification pour l'email et l'OTP
           if (!formData.emailOTP || !formData.phoneOTP) {
             newErrors.verification = 'Please enter both the email verification code and the OTP code';
           } else {
             setIsLoading(true);
-  
+
             // Vérifier l'email
             const emailVerificationResult = await auth.verifyEmail({
               email: formData.email,
               code: formData.emailOTP
             });
-           console.log("emailVerificationResult",emailVerificationResult);
+            console.log("emailVerificationResult", emailVerificationResult);
             if (emailVerificationResult.result.error) {
               newErrors.general = 'Invalid email verification code';
             } else {
               console.log("Email verification success");
-  
+
               // Vérifier l'OTP
               const storedUserId = localStorage.getItem('userId');
               console.log('Stored userId:', storedUserId);
 
-              if(!storedUserId){ newErrors.general = 'User ID not found in localStorage. Please try again.';}
+              if (!storedUserId) { newErrors.general = 'User ID not found in localStorage. Please try again.'; }
 
-              else{
+              else {
 
-              const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
-              console.log("otpVerificationResult.error",otpVerificationResult.error);
+                const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
+                console.log("otpVerificationResult.error", otpVerificationResult.error);
 
-              if (otpVerificationResult.error) {
-                newErrors.general = 'Invalid OTP. Please try again.';
-              } else {
-                console.log("OTP verification success");
-  
-                // Vérifier et activer le compte si tout est correct
-                const accountVerificationResult = await auth.verifyAccount(storedUserId);
-                if (accountVerificationResult.success) {
-                  console.log("Account verification success");
-  
-                  // Tout est validé, envoyer le token et rediriger
-                  setToken(emailVerificationResult.token);
-                  setStep('success');
-                  setShowProfilePrompt(true);
-  
-                  setTimeout(() => {
-                    window.location.href = '/auth';
-                  }, 1500);
+                if (otpVerificationResult.error) {
+                  newErrors.general = 'Invalid OTP. Please try again.';
                 } else {
-                  newErrors.general = accountVerificationResult.message;
+                  console.log("OTP verification success");
+
+                  // Vérifier et activer le compte si tout est correct
+                  const accountVerificationResult = await auth.verifyAccount(storedUserId);
+                  if (accountVerificationResult.success) {
+                    console.log("Account verification success");
+
+                    // Tout est validé, envoyer le token et rediriger
+                    setToken(emailVerificationResult.token);
+                    setStep('success');
+                    setShowProfilePrompt(true);
+
+                    setTimeout(() => {
+                      window.location.href = '/auth';
+                    }, 1500);
+                  } else {
+                    newErrors.general = accountVerificationResult.message;
+                  }
                 }
-              }
               }
             }
           }
           break;
-  
+
         default:
           break;
       }
@@ -187,8 +188,8 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
       setErrors(newErrors);
     }
   };
-  
-  
+
+
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
@@ -196,7 +197,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
         <div className="space-y-6">
           <div className="text-center space-y-4">
             <div className="flex flex-col items-center space-y-2">
-              <img 
+              <img
                 src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
                 alt="HARX Logo"
                 className="h-12 w-12 rounded-lg object-cover"
@@ -249,12 +250,23 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 focus:outline-none"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
               {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
             </div>
@@ -315,17 +327,17 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 />
               </div>
               <div>
-                  <p className="text-gray-600 mb-2">Enter the 6-digit code sent to your phone</p>
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={formData.phoneOTP}
-                    onChange={(e) => setFormData({ ...formData, phoneOTP: e.target.value })}
-                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="000000"
-                  />
-                </div>
-                {errors.verification && <p className="text-red-500 text-sm">{errors.verification}</p>}
+                <p className="text-gray-600 mb-2">Enter the 6-digit code sent to your phone</p>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={formData.phoneOTP}
+                  onChange={(e) => setFormData({ ...formData, phoneOTP: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  placeholder="000000"
+                />
+              </div>
+              {errors.verification && <p className="text-red-500 text-sm">{errors.verification}</p>}
 
             </div>
           )}
@@ -370,24 +382,24 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 )}
               </button>
             )}
-            
+
             {step === 'name' && (
-                 <>
-                       <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+              <>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  </div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-              <button
-                onClick={handleLinkedInSignUp}
-                className="w-full flex items-center justify-center space-x-2 bg-[#0077b5] text-white py-3 px-4 rounded-lg hover:bg-[#006396] transition-colors"
-              >
-                <Linkedin className="h-5 w-5" />
-                <span>Sign up with LinkedIn</span>
-              </button><p className="text-center text-sm text-gray-600">
+                <button
+                  onClick={handleLinkedInSignUp}
+                  className="w-full flex items-center justify-center space-x-2 bg-[#0077b5] text-white py-3 px-4 rounded-lg hover:bg-[#006396] transition-colors"
+                >
+                  <Linkedin className="h-5 w-5" />
+                  <span>Sign up with LinkedIn</span>
+                </button><p className="text-center text-sm text-gray-600">
                   Already have an account?{' '}
                   <button
                     onClick={onSignIn}
