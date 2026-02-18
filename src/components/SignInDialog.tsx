@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowRight, CheckCircle2 } from 'lucide-react';
 import axios from 'axios';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-//import { sendVerificationEmail } from '../utils/aws';
 import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from "jwt-decode";
+import { Link } from 'react-router-dom';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -32,7 +32,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   const [resendTimeout, setResendTimeout] = useState(0);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
   const [redirectPath, setRedirectPath] = useState<string | null>(null);
-  const [isRedirecting, setIsRedirecting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -51,18 +50,14 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           } else if (checkUserType.userType === 'company') {
             try {
               const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-              console.log("onboardingProgress", onboardingProgress);
               if (onboardingProgress.currentPhase !== 4 ||
                 !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-                console.log("we are here to redirect to orchestrator");
                 redirectTo = '/app11';
               } else {
                 redirectTo = '/app7';
               }
             } catch (error: any) {
-              // If 404 (No progress found), redirect to start of onboarding
               if (error.response && error.response.status === 404) {
-                console.log("No onboarding progress found (New User) -> Redirecting to Wizard Start");
                 redirectTo = '/app11';
               } else {
                 throw error;
@@ -71,21 +66,11 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           } else {
             //user type is rep
             try {
-              const token = localStorage.getItem('token'); // Get token from localStorage
-              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
-              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
-              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
-              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
-
+              const token = localStorage.getItem('token');
               const { data: profileData } = await axios.get(
                 `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
-                }
+                { headers: { Authorization: `Bearer ${token}` } }
               );
-              console.log('profileData', profileData);
               Cookies.set('agentId', profileData._id);
 
               if (!profileData.isBasicProfileCompleted) {
@@ -100,10 +85,8 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
                   ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
                   : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
               }
-              console.log('Selected redirect URL:', redirectTo);
             } catch (error) {
               console.error('Error fetching rep profile:', error);
-              // If there's an error fetching the profile, default to profile creation
               redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
             }
           }
@@ -112,7 +95,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           setRedirectPath(redirectTo);
           localStorage.setItem('hasRedirected', 'true');
 
-          // Redirect after showing the message for 2 seconds
           setTimeout(() => {
             window.location.href = redirectTo;
           }, 2000);
@@ -124,8 +106,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     };
 
     checkExistingUser();
-
-    // Cleanup function to remove the redirect flag when component unmounts
     return () => {
       localStorage.removeItem('hasRedirected');
     };
@@ -144,28 +124,19 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   }, [resendTimeout]);
 
   const handleOtpChange = (index: number, value: string) => {
-    // Determine the new verification code based on input
     const currentCode = formData.verificationCode || '';
     let newCodeArray = currentCode.padEnd(6, ' ').split('');
 
-    // Handle paste if string is longer than 1 char
     if (value.length > 1) {
       const pastedCode = value.slice(0, 6).replace(/\D/g, '');
       setFormData(prev => ({ ...prev, verificationCode: pastedCode }));
-
-      // Focus last filled input or the next empty one
-      const nextIndex = Math.min(pastedCode.length, 5);
-      const nextInput = document.getElementById(`otp-${nextIndex}`);
-      if (nextInput) nextInput.focus();
       return;
     }
 
     newCodeArray[index] = value;
     const newCode = newCodeArray.join('').trim();
-
     setFormData(prev => ({ ...prev, verificationCode: newCode }));
 
-    // Focus next input if value is entered
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`);
       if (nextInput) nextInput.focus();
@@ -175,31 +146,19 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace') {
       if (!formData.verificationCode[index] && index > 0) {
-        // Move to previous input on backspace if current is empty
         const prevInput = document.getElementById(`otp-${index - 1}`);
-        if (prevInput) {
-          prevInput.focus();
-          // Optional: clear previous input value when moving back
-          // const currentCode = formData.verificationCode || '';
-          // let newCodeArray = currentCode.padEnd(6, ' ').split('');
-          // newCodeArray[index - 1] = '';
-          // setFormData(prev => ({ ...prev, verificationCode: newCodeArray.join('').trim() }));
-        }
+        if (prevInput) prevInput.focus();
       }
     }
   };
 
   const handleResendOTP = async () => {
     if (resendTimeout > 0) return;
-
     setError(null);
     setIsLoading(true);
-
     try {
-      const response = await auth.resendVerification(formData.email);
-      console.log("Resend response:", response);
-      console.log("RESENT VERIFICATION CODE:", response.data?.code);
-      setResendTimeout(30); // 30 seconds cooldown
+      await auth.resendVerification(formData.email);
+      setResendTimeout(30);
       setFormData(prev => ({ ...prev, verificationCode: '' }));
     } catch (err) {
       setError('Failed to resend verification code');
@@ -209,22 +168,19 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
   };
 
   const handleSendSMS = async () => {
-
     if (!formData.userId || !formData.phone) {
       setError('Phone number not available. Cannot send SMS.');
       return;
     }
-
     setError(null);
     setIsLoading(true);
-
     try {
       await auth.sendOTP(formData.userId, formData.phone);
       setResendTimeout(30);
       setFormData(prev => ({ ...prev, verificationCode: '' }));
     } catch (err) {
       setError('Failed to send SMS code');
-      setVerificationMethod('email'); // Revert if failed
+      setVerificationMethod('email');
     } finally {
       setIsLoading(false);
     }
@@ -248,21 +204,15 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
 
         try {
           const result = await auth.login({ email: formData.email, password: formData.password });
-          console.log("result", result);
-
-          // Store userId and phone from response
           setFormData(prev => ({
             ...prev,
             userId: result.data.userId,
             phone: result.data.phone
           }));
-
-          console.log("LOGIN VERIFICATION CODE:", result.data?.code);
-          const verification = await auth.sendVerificationEmail(formData.email, result.data.code);
-          console.log("verification", verification);
+          await auth.sendVerificationEmail(formData.email, result.data.code);
           setStep('2fa');
-          setVerificationMethod('email'); // Reset to email default
-          setResendTimeout(30); // Set initial cooldown
+          setVerificationMethod('email');
+          setResendTimeout(30);
         } catch (err) {
           setError('Invalid email or password. Please try again.');
           return;
@@ -274,7 +224,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
         }
 
         let resultData;
-
         if (verificationMethod === 'email') {
           const resultverificationEmail = await auth.verifyEmail({
             email: formData.email,
@@ -287,7 +236,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           }
           resultData = resultverificationEmail;
         } else {
-          // SMS Verification
           const resultOTP = await auth.verifyOTP(formData.userId, formData.verificationCode);
           if (resultOTP.error) {
             setError('Invalid SMS verification code');
@@ -297,60 +245,42 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           resultData = resultOTP;
         }
 
-        // Decode the token to get the payload
         const decoded: any = jwtDecode(resultData.token);
-        // Assuming userId is in the payload, like: { userId: "12345", ... }
         const userId = decoded.userId;
         setToken(resultData.token);
-        localStorage.setItem('token', resultData.token); // Store token in localStorage
-        Cookies.set('userId', userId); // Save only the userId
-        console.log("userId", Cookies.get('userId'));
+        localStorage.setItem('token', resultData.token);
+        Cookies.set('userId', userId);
+
         setStep('success');
+
         const checkFirstLogin = await auth.checkFirstLogin(userId);
-        console.log("checkFirstLogin", checkFirstLogin);
         const checkUserType = await auth.checkUserType(userId);
-        console.log("checkUserType", checkUserType);
         let redirectTo;
+
         if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
           redirectTo = '/app2';
         } else if (checkUserType.userType === 'company') {
           try {
             const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-            console.log("onboardingProgress", onboardingProgress);
             if (onboardingProgress.currentPhase !== 4 ||
               !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-              console.log("we are here to redirect to orchestrator");
               redirectTo = '/app11';
-
             } else {
               redirectTo = '/app7';
             }
           } catch (error: any) {
-            // If 404, it means onboarding hasn't started -> redirect to orchestrator
             if (error.response && error.response.status === 404) {
-              console.log("Onboarding progress not found, redirecting to orchestrator");
               redirectTo = '/app11';
             } else {
               throw error;
             }
           }
         } else {
-          // User type is rep
           try {
-            console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
-            console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
-            console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
-            console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
-
             const { data: profileData } = await axios.get(
               `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${resultData.token}`
-                }
-              }
+              { headers: { Authorization: `Bearer ${resultData.token}` } }
             );
-            console.log('profileData', profileData);
             Cookies.set('agentId', profileData._id);
 
             if (!profileData.isBasicProfileCompleted) {
@@ -365,10 +295,8 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
                 ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
                 : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
             }
-            console.log('Selected redirect URL:', redirectTo);
           } catch (error) {
             console.error('Error fetching rep profile:', error);
-            // If there's an error fetching the profile, default to profile creation
             redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
           }
         }
@@ -376,7 +304,6 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
           window.location.href = redirectTo;
         }, 1500);
       }
-
     } catch (err) {
       setError('An unexpected error occurred. Please try again later.');
     } finally {
@@ -384,237 +311,258 @@ export default function SignInDialog({ onRegister, onForgotPassword }: SignInDia
     }
   };
 
-
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
-        <div className="space-y-6">
-          <div className="text-center space-y-4">
-            <div className="flex flex-col items-center space-y-2">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient animate-fade-in relative overflow-hidden">
+
+      {/* Abstract Background Shapes */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] bg-blue-600/20 blur-[120px] rounded-full animate-float"></div>
+        <div className="absolute top-[40%] -right-[10%] w-[40%] h-[60%] bg-indigo-600/20 blur-[130px] rounded-full animate-float" style={{ animationDelay: '2s' }}></div>
+      </div>
+
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative z-10 min-h-[700px]">
+
+        {/* Left Side - Brand Section */}
+        <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-900/80 to-slate-900/40 text-white relative">
+          <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:32px_32px]"></div>
+          <div className="relative z-10">
+            <div className="flex items-center space-x-3 mb-12">
               <img
                 src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
                 alt="HARX Logo"
-                className="h-12 w-12 rounded-lg object-cover"
+                className="h-10 w-10 rounded-lg shadow-lg border border-white/10"
               />
-              <h1 className="text-2xl font-bold text-gray-800">HARX</h1>
-              <p className="text-sm text-gray-600">We inspire growth</p>
+              <span className="text-xl font-bold tracking-tight">HARX<span className="text-blue-400">.AI</span></span>
             </div>
+            <h1 className="text-4xl font-bold leading-tight mb-6">
+              Welcome to the Future of <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Professional Growth</span>
+            </h1>
+            <p className="text-slate-300 text-lg leading-relaxed">
+              Join our ecosystem and unlock your potential with AI-driven tools designed for success.
+            </p>
           </div>
 
-          {isAlreadyLoggedIn ? (
-            <div className="space-y-4 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">Already Logged In</h2>
-              <p className="text-gray-600">You are already logged in. Redirecting you to your dashboard...</p>
-              <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+          <div className="relative z-10 space-y-6">
+            <div className="flex items-center space-x-2 text-sm text-slate-400">
+              <div className="flex items-center">
+                <div className="w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                Operational Systems Online
+              </div>
             </div>
-          ) : (
-            <>
-              {step === 'credentials' && (
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
+          </div>
+        </div>
 
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your email"
-                      />
-                    </div>
+        {/* Right Side - Form Section */}
+        <div className="lg:col-span-3 bg-white p-8 lg:p-16 flex flex-col justify-center relative">
 
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full pl-10 pr-12 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your password"
-                      />
-                      {formData.password.length > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => setShowPassword(!showPassword)}
-                          className="absolute right-3 top-3 text-gray-400 hover:text-gray-600 focus:outline-none"
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-5 w-5" />
-                          ) : (
-                            <Eye className="h-5 w-5" />
-                          )}
-                        </button>
-                      )}
+          <div className="max-w-md mx-auto w-full">
+            <div className="text-center mb-10 lg:text-left">
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                {step === 'credentials' ? 'Sign in to your account' : step === '2fa' ? 'Verify Identity' : 'Welcome Back'}
+              </h2>
+              <p className="text-gray-500">
+                {step === 'credentials' ? 'Enter your details ensuring security.' : step === '2fa' ? 'We sent a code to your device.' : 'Logging you in...'}
+              </p>
+            </div>
+
+            {error && (
+              <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 flex items-start space-x-3 animate-fade-in text-left">
+                <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+                <p className="text-sm text-red-600 font-medium">{error}</p>
+              </div>
+            )}
+
+            {isAlreadyLoggedIn ? (
+              <div className="flex flex-col items-center justify-center space-y-4 py-8">
+                <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-600 font-medium">Redirecting to your dashboard...</p>
+              </div>
+            ) : (
+              <>
+                {step === 'credentials' && (
+                  <div className="space-y-6 animate-fade-in">
+                    <div className="space-y-4">
+                      <div className="relative group">
+                        <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                        <input
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          className="input-premium"
+                          placeholder="Email address"
+                        />
+                      </div>
+
+                      <div className="relative group">
+                        <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={formData.password}
+                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          className="input-premium pr-12"
+                          placeholder="Password"
+                        />
+                        {formData.password.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-3.5 text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+                          >
+                            {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                          </button>
+                        )}
+                      </div>
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <label className="flex items-center space-x-2">
+                      <label className="flex items-center space-x-2 cursor-pointer group">
                         <input
                           type="checkbox"
                           checked={formData.rememberMe}
                           onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4 transition-all"
                         />
-                        <span className="text-sm text-gray-600">Remember me</span>
+                        <span className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors">Remember me</span>
                       </label>
 
                       <button
                         onClick={onForgotPassword}
-                        className="text-sm text-blue-600 hover:underline"
+                        className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition-colors"
                       >
                         Forgot password?
                       </button>
                     </div>
-                  </div>
-                </div>
-              )}
 
-              {step === '2fa' && (
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-gray-800">
-                    {verificationMethod === 'email' ? 'Email Verification' : 'SMS Verification'}
-                  </h2>
-                  <p className="text-gray-600">
-                    {verificationMethod === 'email'
-                      ? `We sent a 6-digit code to ${formData.email}. Please enter it to complete the login process.`
-                      : `We sent a 6-digit code to your phone. Please enter it to complete the login process.`}
-                  </p>
-
-                  <div className="flex justify-between gap-2 mb-4">
-                    {[0, 1, 2, 3, 4, 5].map((index) => (
-                      <input
-                        key={index}
-                        id={`otp-${index}`}
-                        type="text"
-                        maxLength={6} // Allow paste of full code
-                        value={formData.verificationCode[index] || ''}
-                        onChange={(e) => handleOtpChange(index, e.target.value)}
-                        onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className="w-12 h-12 border border-gray-300 rounded-lg text-center text-xl font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                        placeholder="-"
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    onClick={handleResendOTP}
-                    disabled={resendTimeout > 0 || isLoading}
-                    className={`w-full flex items-center justify-center space-x-2 text-sm ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:text-blue-700'
-                      }`}
-                  >
-                    <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    <span>
-                      {resendTimeout > 0
-                        ? `Resend code in ${resendTimeout}s`
-                        : 'Resend verification code'}
-                    </span>
-                  </button>
-
-                  {verificationMethod === 'email' && formData.phone && (
-                    <div className="text-center mt-2">
-                      <button
-                        onClick={handleSwitchToSMS}
-                        disabled={isLoading}
-                        className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center justify-center w-full gap-2"
-                      >
-                        <Phone className="h-4 w-4" />
-                        <span>Try SMS verification instead</span>
-                      </button>
-                    </div>
-                  )}
-                  {verificationMethod === 'sms' && (
                     <button
-                      onClick={() => { setVerificationMethod('email'); setError(null); }}
+                      onClick={handleSignIn}
                       disabled={isLoading}
-                      className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center justify-center w-full gap-2 mt-2"
+                      className={`btn-primary flex items-center justify-center space-x-2 ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
                     >
-                      <Mail className="h-4 w-4" />
-                      <span>Try Email verification instead</span>
+                      {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <>
+                          <span>Sign In</span>
+                          <ArrowRight className="h-5 w-5" />
+                        </>
+                      )}
                     </button>
-                  )}
-                </div>
-              )}
 
-              {step === 'success' && (
-                <div className="space-y-4 text-center">
-                  <h2 className="text-2xl font-bold text-gray-800">Login Successful!</h2>
-                  <p className="text-gray-600">Redirecting to dashboard...</p>
-                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                </div>
-              )}
-
-              {error && (
-                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                  <AlertCircle className="h-5 w-5" />
-                  <p className="text-sm">{error}</p>
-                </div>
-              )}
-
-              {step === 'credentials' && (
-                <div className="space-y-4">
-                  <button
-                    onClick={handleSignIn}
-                    disabled={isLoading}
-                    className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                      }`}
-                  >
-                    {isLoading ? (
-                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                    ) : (
-                      'Sign In'
-                    )}
-                  </button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
+                    <div className="relative py-2">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-100"></div>
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-4 bg-white text-gray-400 font-medium">Or continue with</span>
+                      </div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">Or continue with</span>
+
+                    <button
+                      onClick={handleLinkedInSignIn}
+                      className="w-full py-3 px-6 bg-[#0077b5] hover:bg-[#006097] text-white font-semibold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 active:scale-[0.98]"
+                    >
+                      <Linkedin className="h-5 w-5" />
+                      <span>Sign in with LinkedIn</span>
+                    </button>
+                  </div>
+                )}
+
+                {step === '2fa' && (
+                  <div className="space-y-8 animate-fade-in">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                      <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                        {verificationMethod === 'email' ? <Mail className="h-8 w-8 text-blue-600" /> : <Phone className="h-8 w-8 text-blue-600" />}
+                      </div>
+                      <p className="text-center text-gray-600 max-w-xs mx-auto">
+                        {verificationMethod === 'email'
+                          ? `We sent a 6-digit code to ${formData.email}`
+                          : `We sent a 6-digit code to your phone end with ${formData.phone.slice(-4)}`}
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between gap-2">
+                      {[0, 1, 2, 3, 4, 5].map((index) => (
+                        <input
+                          key={index}
+                          id={`otp-${index}`}
+                          type="text"
+                          maxLength={6}
+                          value={formData.verificationCode[index] || ''}
+                          onChange={(e) => handleOtpChange(index, e.target.value)}
+                          onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                          className="w-12 h-14 border border-gray-200 rounded-xl text-center text-2xl font-bold focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm focus:shadow-md bg-gray-50"
+                          placeholder="•"
+                        />
+                      ))}
+                    </div>
+
+                    <div className="space-y-4">
+                      <button
+                        onClick={handleSignIn}
+                        disabled={isLoading}
+                        className="btn-primary"
+                      >
+                        {isLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto"></div>
+                        ) : (
+                          'Verify & Continue'
+                        )}
+                      </button>
+
+                      <button
+                        onClick={handleResendOTP}
+                        disabled={resendTimeout > 0 || isLoading}
+                        className={`w-full flex items-center justify-center space-x-2 text-sm font-medium transition-colors ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:text-blue-800'}`}
+                      >
+                        <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                        <span>{resendTimeout > 0 ? `Resend code in ${resendTimeout}s` : 'Resend verification code'}</span>
+                      </button>
+
+                      {verificationMethod === 'email' && formData.phone && (
+                        <button onClick={handleSwitchToSMS} className="text-sm text-gray-500 hover:text-gray-800 w-full text-center underline decoration-gray-300">
+                          Try SMS verification instead
+                        </button>
+                      )}
+                      {verificationMethod === 'sms' && (
+                        <button onClick={() => { setVerificationMethod('email'); setError(null); }} className="text-sm text-gray-500 hover:text-gray-800 w-full text-center underline decoration-gray-300">
+                          Try Email verification instead
+                        </button>
+                      )}
                     </div>
                   </div>
+                )}
 
-                  <button
-                    onClick={handleLinkedInSignIn}
-                    className="w-full flex items-center justify-center space-x-2 bg-[#0077b5] text-white py-3 px-4 rounded-lg hover:bg-[#006396] transition-colors"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                    <span>Sign in with LinkedIn</span>
-                  </button>
-                </div>
-              )}
+                {step === 'success' && (
+                  <div className="flex flex-col items-center justify-center space-y-6 py-10 animate-fade-in">
+                    <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                      <CheckCircle2 className="h-10 w-10 text-green-600" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">Login Successful</h3>
+                    <p className="text-gray-500">Redirecting to your dashboard...</p>
+                    <div className="w-full max-w-xs bg-gray-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="bg-green-500 h-full w-full animate-[shimmer_1s_infinite]"></div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
 
-              {step === '2fa' && (
-                <button
-                  onClick={handleSignIn}
-                  disabled={isLoading}
-                  className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                    }`}
-                >
-                  {isLoading ? (
-                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                  ) : (
-                    'Verify'
-                  )}
-                </button>
-              )}
-
-              {step === 'credentials' && (
-                <p className="text-center text-sm text-gray-600">
+            {!isAlreadyLoggedIn && step === 'credentials' && (
+              <div className="mt-8 text-center">
+                <p className="text-gray-500 text-sm">
                   Don't have an account?{' '}
-                  <button
-                    onClick={onRegister}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Sign up
+                  <button onClick={onRegister} className="text-blue-600 font-semibold hover:underline">
+                    Sign up now
                   </button>
                 </p>
-              )}
-            </>
-          )}
+              </div>
+            )}
+
+            <div className="mt-8 text-center lg:hidden">
+              <p className="text-xs text-gray-400">© 2026 HARX Inc. All rights reserved.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
