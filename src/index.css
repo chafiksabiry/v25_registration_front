@@ -3,38 +3,61 @@
 @tailwind utilities;
 
 @layer components {
-  .backdrop-blur-custom {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+  /* Premium Backgrounds */
+  .bg-premium-gradient {
+    @apply bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900;
+  }
+  
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl;
+  }
+
+  /* Form Elements */
+  .input-premium {
+    @apply w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-700;
+  }
+
+  .input-premium:hover {
+    @apply bg-white border-gray-300;
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 px-6 rounded-lg font-semibold transition-all duration-300 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center;
+    @apply w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98];
   }
 
-  .card-hover {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  .btn-secondary {
+    @apply w-full py-3 px-6 bg-white text-gray-700 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200;
   }
-  
-  .card-hover:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
   }
-}
 
-::-webkit-scrollbar {
-  width: 8px;
-}
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
 
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+  }
 }
