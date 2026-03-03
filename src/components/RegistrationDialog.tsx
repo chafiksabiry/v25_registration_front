@@ -277,7 +277,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                     className="w-full py-3 px-6 bg-[#0077b5] hover:bg-[#006097] text-white font-semibold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 active:scale-[0.98]"
                   >
                     <Linkedin className="h-5 w-5" />
-                    <span>Sign up with LinkedIn</span>
+                    {/* <span>Sign up with LinkedIn</span> */}
                   </button>
                 </div>
               )}
