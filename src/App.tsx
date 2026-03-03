@@ -18,9 +18,9 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-   if (!token) {
+  if (!token) {
     return <Navigate to="/auth" replace />;
-  } 
+  }
 
   return <>{children}</>;
 }
@@ -53,7 +53,7 @@ function App() {
         <Routes>
           <Route path="/auth/*" element={<AuthRoutes />} />
           <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} /> {/* 👈 Add this line */}
-          <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} /> 
+          <Route path="/auth/linkedin/signin/callback" element={<LinkedInSignInCallback />} />
           <Route
             path="/app2"
             element={
@@ -70,7 +70,7 @@ function App() {
               </PrivateRoute>
             }
           />
-           <Route
+          <Route
             path="/app11"
             element={
               <PrivateRoute>
