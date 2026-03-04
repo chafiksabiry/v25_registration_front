@@ -263,22 +263,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   </div>
                   {errors.name && <p className="text-red-500 text-sm pl-2">{errors.name}</p>}
 
-                  <div className="relative py-4">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-100"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-4 bg-white text-gray-400 font-medium">Or sign up with</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleLinkedInSignUp}
-                    className="w-full py-3 px-6 bg-[#0077b5] hover:bg-[#006097] text-white font-semibold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center space-x-2 transform hover:-translate-y-0.5 active:scale-[0.98]"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                    {/* <span>Sign up with LinkedIn</span> */}
-                  </button>
+                  {/* LinkedIn Sign Up hidden */}
                 </div>
               )}
 
