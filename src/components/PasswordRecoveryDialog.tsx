@@ -98,7 +98,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
             <div className="flex flex-col items-center mb-4">
               <div className="relative w-full max-w-[140px] mx-auto mb-3">
                 <img
-                  src="/mascotte.png"
+                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
                   alt="HARX Mascotte"
                   className="w-full h-auto object-contain"
                   loading="eager"
