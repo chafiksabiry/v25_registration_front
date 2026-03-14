@@ -347,22 +347,6 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
                         'Sign In'
                       )}
                     </button>
-                    <div className="relative">
-                      <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-gray-200" />
-                      </div>
-                      <div className="relative flex justify-center text-sm">
-                        <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={handleLinkedInSignIn}
-                      className="w-full flex items-center justify-center gap-2 bg-[#0077b5] text-white py-3 px-4 rounded-xl hover:bg-[#006396] transition-colors shadow-sm"
-                    >
-                      <Linkedin className="h-5 w-5" />
-                      Sign in with LinkedIn
-                    </button>
                   </div>
                 )}
 
