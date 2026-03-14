@@ -169,41 +169,50 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient animate-fade-in relative overflow-hidden">
 
-      {/* Abstract Background Shapes */}
+      {/* HARX-style background shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-blue-600/20 blur-[100px] rounded-full animate-float"></div>
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-indigo-600/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/20 blur-[100px] rounded-full animate-float"></div>
+        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
       </div>
 
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/10 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden relative z-10 min-h-[700px]">
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
 
-        {/* Left Side - Brand Section */}
-        <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-900/80 to-slate-900/40 text-white relative">
-          <div className="absolute inset-0 bg-grid-white/[0.05] bg-[length:32px_32px]"></div>
+        {/* Left Side - Brand Section (HARX colors) */}
+        <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
+          <div className="absolute inset-0 bg-[length:32px_32px] opacity-5" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }}></div>
           <div className="relative z-10">
-            <div className="flex items-center space-x-3 mb-12">
+            <div className="flex items-center space-x-3 mb-6">
               <img
                 src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
                 alt="HARX Logo"
                 className="h-10 w-10 rounded-lg shadow-lg border border-white/10"
               />
-              <span className="text-xl font-bold tracking-tight">HARX<span className="text-blue-400">.AI</span></span>
+              <span className="text-xl font-bold tracking-tight">HARX<span className="text-harx-400">.AI</span></span>
+            </div>
+            <div className="relative w-full max-w-[180px] mx-auto mb-6">
+              <img
+                src="/mascotte.png"
+                alt="HARX Mascotte"
+                className="w-full h-auto object-contain"
+                loading="eager"
+              />
+              <div className="absolute -inset-3 bg-gradient-to-r from-harx-400/20 to-harx-alt-400/20 rounded-lg blur-xl -z-10" />
             </div>
             <h1 className="text-4xl font-bold leading-tight mb-6">
               Start Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-400">Journey Today</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">Journey Today</span>
             </h1>
-            <p className="text-slate-300 text-lg leading-relaxed">
+            <p className="text-gray-300 text-lg leading-relaxed">
               Create an account to access premium tools, real-time analytics, and a community of professionals.
             </p>
           </div>
 
           <div className="relative z-10 space-y-4">
             <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
-              <p className="text-slate-300 italic text-sm">"The most comprehensive platform for growth I've ever used."</p>
+              <p className="text-gray-300 italic text-sm">"The most comprehensive platform for growth I've ever used."</p>
               <div className="mt-3 flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-full bg-blue-500"></div>
-                <span className="text-xs font-semibold text-slate-200">Sarah J., Senior Manager</span>
+                <div className="w-6 h-6 rounded-full bg-gradient-harx"></div>
+                <span className="text-xs font-semibold text-gray-200">Sarah J., Senior Manager</span>
               </div>
             </div>
           </div>
@@ -251,7 +260,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               {step === 'name' && (
                 <div className="space-y-6">
                   <div className="relative group">
-                    <User className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <User className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
                     <input
                       type="text"
                       value={formData.fullName}
@@ -270,7 +279,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               {step === 'email' && (
                 <div className="space-y-6">
                   <div className="relative group">
-                    <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
                     <input
                       type="email"
                       value={formData.email}
@@ -287,7 +296,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               {step === 'password' && (
                 <div className="space-y-6">
                   <div className="relative group">
-                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={formData.password}
@@ -312,7 +321,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               {step === 'phone' && (
                 <div className="space-y-6">
                   <div className="relative group">
-                    <Phone className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-blue-500 transition-colors" />
+                    <Phone className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
                     <input
                       type="tel"
                       value={formData.phone}
@@ -330,12 +339,12 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 <div className="space-y-6">
                   <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
                     <div className="flex items-start space-x-3">
-                      <ShieldCheck className="h-6 w-6 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <ShieldCheck className="h-6 w-6 text-harx-500 mt-0.5 flex-shrink-0" />
                       <p className="text-sm text-gray-600 leading-relaxed">
                         By creating an account, you agree to comply with our{' '}
-                        <a href="#" className="text-blue-600 font-medium hover:underline">Terms of Service</a>{' '}
+                        <a href="#" className="text-harx-600 font-medium hover:underline">Terms of Service</a>{' '}
                         and acknowledge our{' '}
-                        <a href="#" className="text-blue-600 font-medium hover:underline">Privacy Policy</a>.
+                        <a href="#" className="text-harx-600 font-medium hover:underline">Privacy Policy</a>.
                         We prioritize your data security.
                       </p>
                     </div>
@@ -346,7 +355,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                       type="checkbox"
                       checked={formData.termsAccepted}
                       onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-5 h-5 transition-all"
+                      className="rounded border-gray-300 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
                     />
                     <span className="text-gray-700 font-medium">I agree to the Terms & Conditions</span>
                   </label>
@@ -416,7 +425,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                 <div className="mt-8 text-center border-t border-gray-100 pt-6">
                   <p className="text-gray-500 text-sm">
                     Already have an account?{' '}
-                    <button onClick={onSignIn} className="text-blue-600 font-semibold hover:underline">
+                    <button onClick={onSignIn} className="text-harx-600 font-semibold hover:underline">
                       Sign in
                     </button>
                   </p>

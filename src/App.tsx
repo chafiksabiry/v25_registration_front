@@ -29,7 +29,7 @@ function AuthRoutes() {
   const [view, setView] = useState<'signin' | 'register' | 'recovery'>('signin');
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gradient-to-b from-harx-50 to-white">
       {view === 'signin' && (
         <SignInDialog
           onRegister={() => setView('register')}

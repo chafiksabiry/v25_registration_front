@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 @layer components {
-  /* Premium Backgrounds */
+  /* HARX-style backgrounds (same as HARXWEBSITE) */
   .bg-premium-gradient {
-    @apply bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900;
-  }
-  
-  .glass-card {
-    @apply bg-white/95 backdrop-blur-xl border border-white/20 shadow-2xl;
+    @apply bg-gradient-to-b from-harx-50 to-white;
   }
 
-  /* Form Elements */
+  .bg-premium-gradient-dark {
+    @apply bg-gradient-to-br from-gray-900 via-harx-950/30 to-gray-900;
+  }
+
+  .glass-card {
+    @apply bg-white/95 backdrop-blur-xl border border-harx-100 shadow-2xl;
+  }
+
+  /* Form elements - HARX focus/accents */
   .input-premium {
-    @apply w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 placeholder-gray-400 text-gray-700;
+    @apply w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 transition-all duration-200 placeholder-gray-400 text-gray-700;
   }
 
   .input-premium:hover {
@@ -22,11 +26,16 @@
   }
 
   .btn-primary {
-    @apply w-full py-3 px-6 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/40 transform hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98];
+    @apply w-full py-3 px-6 bg-gradient-harx text-white font-semibold rounded-xl shadow-lg shadow-harx-500/30 hover:shadow-harx-500/40 hover:opacity-90 transform hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98];
   }
 
   .btn-secondary {
-    @apply w-full py-3 px-6 bg-white text-gray-700 font-medium border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all duration-200;
+    @apply w-full py-3 px-6 bg-white text-gray-700 font-medium border-2 border-harx-500 rounded-xl hover:bg-harx-50 hover:border-harx-600 transition-all duration-200;
+  }
+
+  /* HARX gradient text */
+  .text-gradient-harx {
+    @apply bg-clip-text text-transparent bg-gradient-harx;
   }
 
   /* Animations */
@@ -48,7 +57,6 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
-  /* Scrollbar */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -58,6 +66,6 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full hover:bg-gray-400 transition-colors;
+    @apply bg-harx-200 rounded-full hover:bg-harx-300 transition-colors;
   }
 }
