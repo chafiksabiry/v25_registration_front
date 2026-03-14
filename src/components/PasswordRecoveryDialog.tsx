@@ -105,11 +105,6 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                 />
                 <div className="absolute -inset-2 bg-gradient-to-r from-harx-400/15 to-harx-alt-400/15 rounded-lg blur-lg -z-10" />
               </div>
-              <img
-                src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
-                alt="HARX Logo"
-                className="h-12 w-12 rounded-2xl object-cover shadow-lg mb-2 border border-harx-100"
-              />
               <h1 className="text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent">HARX</h1>
               <p className="text-gray-500 font-medium tracking-wide">We inspire growth</p>
             </div>
