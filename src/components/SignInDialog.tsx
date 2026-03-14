@@ -186,200 +186,212 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
         <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
-      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-harx-100 p-8 lg:p-12 relative z-10">
-        {/* Left: Form */}
-        <div className="order-2 lg:order-1 animate-slide-in-left">
-          {isAlreadyLoggedIn ? (
-          <div className="space-y-4 text-center">
-            <h2 className="text-xl font-bold text-gray-800">Already Logged In</h2>
-            <p className="text-gray-600">Redirecting you to your dashboard...</p>
-            <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
+      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
+        {/* Left Side - Brand Section (same as Sign up) */}
+        <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
+          <div className="absolute inset-0 bg-[length:32px_32px] opacity-5" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+          <div className="relative z-10">
+            <div className="relative w-full max-w-[180px] mx-auto mb-6">
+              <img
+                src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
+                alt="HARX Mascotte"
+                className="w-full h-auto object-contain"
+                loading="eager"
+              />
+              <div className="absolute -inset-3 bg-gradient-to-r from-harx-400/20 to-harx-alt-400/20 rounded-lg blur-xl -z-10" />
+            </div>
+            <h1 className="text-4xl font-bold leading-tight mb-6">
+              Start Your <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">Journey Today</span>
+            </h1>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              Create an account to access premium tools, real-time analytics, and a community of professionals.
+            </p>
           </div>
-        ) : (
-          <>
-            {step === 'credentials' && (
-              <>
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Welcome Back</h2>
-                <div className="space-y-4">
-                  <div className="relative group">
-                    <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="input-premium"
-                      placeholder="Enter your email"
-                    />
-                  </div>
-                  <div className="relative group">
-                    <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
-                    <input
-                      type="password"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="input-premium"
-                      placeholder="Enter your password"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={formData.rememberMe}
-                        onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                        className="rounded border-gray-300 text-harx-500 focus:ring-harx-500"
-                      />
-                      <span className="text-sm text-gray-600">Remember me</span>
-                    </label>
-                    <button type="button" onClick={onForgotPassword} className="text-sm text-harx-600 font-medium hover:underline">
-                      Forgot password?
-                    </button>
-                  </div>
-                </div>
-              </>
-            )}
-
-            {step === '2fa' && (
-              <>
-                <h2 className="text-xl font-bold text-gray-900 mb-2">
-                  {verificationMethod === 'email' ? 'Email Verification' : 'SMS Verification'}
-                </h2>
-                <p className="text-gray-500 text-sm mb-6">
-                  {verificationMethod === 'email'
-                    ? `We sent a 6-digit code to ${formData.email}. Enter it below.`
-                    : 'We sent a 6-digit code to your phone. Enter it below.'}
-                </p>
-                <div className="relative group mb-4">
-                  <KeyRound className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
-                  <input
-                    type="text"
-                    maxLength={6}
-                    value={formData.verificationCode}
-                    onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
-                    className="input-premium text-center tracking-widest text-lg font-semibold"
-                    placeholder="000000"
-                  />
-                </div>
-                <button
-                  type="button"
-                  onClick={handleResendOTP}
-                  disabled={resendTimeout > 0 || isLoading}
-                  className={`w-full flex items-center justify-center gap-2 text-sm mb-4 ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-harx-600 hover:text-harx-700'}`}
-                >
-                  <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                  {resendTimeout > 0 ? `Resend code in ${resendTimeout}s` : 'Resend verification code'}
-                </button>
-                {verificationMethod === 'email' && formData.phone && (
-                  <button
-                    type="button"
-                    onClick={handleSwitchToSMS}
-                    disabled={isLoading}
-                    className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-600 hover:text-harx-alt-700"
-                  >
-                    <Phone className="h-4 w-4" /> Try SMS verification instead
-                  </button>
-                )}
-                {verificationMethod === 'sms' && (
-                  <button
-                    type="button"
-                    onClick={() => { setVerificationMethod('email'); setError(null); }}
-                    disabled={isLoading}
-                    className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-600 hover:text-harx-alt-700 mt-2"
-                  >
-                    <Mail className="h-4 w-4" /> Try Email verification instead
-                  </button>
-                )}
-              </>
-            )}
-
-            {step === 'success' && (
-              <div className="space-y-4 text-center py-4">
-                <h2 className="text-xl font-bold text-gray-800">Login Successful!</h2>
-                <p className="text-gray-600">Redirecting to your dashboard...</p>
-                <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
-              </div>
-            )}
-
-            {error && (
-              <div className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-100 p-3 rounded-xl mt-4">
-                <AlertCircle className="h-5 w-5 flex-shrink-0" />
-                <p className="text-sm">{error}</p>
-              </div>
-            )}
-
-            {step === 'credentials' && (
-              <div className="mt-6 space-y-4">
-                <button
-                  type="button"
-                  onClick={handleSignIn}
-                  disabled={isLoading}
-                  className="btn-primary flex items-center justify-center"
-                >
-                  {isLoading ? (
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    'Sign In'
-                  )}
-                </button>
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-gray-200" />
-                  </div>
-                  <div className="relative flex justify-center text-sm">
-                    <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleLinkedInSignIn}
-                  className="w-full flex items-center justify-center gap-2 bg-[#0077b5] text-white py-3 px-4 rounded-xl hover:bg-[#006396] transition-colors shadow-sm"
-                >
-                  <Linkedin className="h-5 w-5" />
-                  Sign in with LinkedIn
-                </button>
-              </div>
-            )}
-
-            {step === '2fa' && (
-              <button
-                type="button"
-                onClick={handleSignIn}
-                disabled={isLoading}
-                className="btn-primary flex items-center justify-center mt-6"
-              >
-                {isLoading ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  'Verify'
-                )}
-              </button>
-            )}
-
-            {step === 'credentials' && (
-              <p className="text-center text-sm text-gray-500 mt-6 pt-4 border-t border-gray-100">
-                Don&apos;t have an account?{' '}
-                <button type="button" onClick={onRegister} className="text-harx-600 font-semibold hover:underline">
-                  Sign up
-                </button>
-              </p>
-            )}
-          </>
-        )}
         </div>
 
-        {/* Right: Mascotte */}
-        <div className="order-1 lg:order-2 flex flex-col items-center justify-center animate-slide-in-right">
-          <div className="relative w-full max-w-[240px] lg:max-w-[280px] mx-auto">
-            <img
-              src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-              alt="HARX Mascotte"
-              className="w-full h-auto object-contain"
-              loading="eager"
-            />
-            <div className="absolute -inset-4 bg-gradient-to-r from-harx-400/20 to-harx-alt-400/20 rounded-xl blur-xl -z-10 animate-float" />
+        {/* Right Side - Form Section (same layout as Sign up) */}
+        <div className="lg:col-span-3 bg-white p-8 lg:p-16 flex flex-col justify-center relative">
+          <div className="max-w-md mx-auto w-full">
+            {isAlreadyLoggedIn ? (
+              <div className="space-y-4 text-center">
+                <h2 className="text-xl font-bold text-gray-800">Already Logged In</h2>
+                <p className="text-gray-600">Redirecting you to your dashboard...</p>
+                <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
+              </div>
+            ) : (
+              <>
+                <div className="text-center mb-10 lg:text-left">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
+                  <p className="text-gray-500">Sign in to your account to continue.</p>
+                </div>
+
+                {step === 'credentials' && (
+                  <div className="space-y-4">
+                    <div className="relative group">
+                      <Mail className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
+                      <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        className="input-premium"
+                        placeholder="Enter your email"
+                      />
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
+                      <input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        className="input-premium"
+                        placeholder="Enter your password"
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.rememberMe}
+                          onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                          className="rounded border-gray-300 text-harx-500 focus:ring-harx-500"
+                        />
+                        <span className="text-sm text-gray-600">Remember me</span>
+                      </label>
+                      <button type="button" onClick={onForgotPassword} className="text-sm text-harx-600 font-medium hover:underline">
+                        Forgot password?
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {step === '2fa' && (
+                  <>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                      {verificationMethod === 'email' ? 'Email Verification' : 'SMS Verification'}
+                    </h2>
+                    <p className="text-gray-500 text-sm mb-6">
+                      {verificationMethod === 'email'
+                        ? `We sent a 6-digit code to ${formData.email}. Enter it below.`
+                        : 'We sent a 6-digit code to your phone. Enter it below.'}
+                    </p>
+                    <div className="relative group mb-4">
+                      <KeyRound className="absolute left-4 top-3.5 h-5 w-5 text-gray-400 group-focus-within:text-harx-500 transition-colors" />
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={formData.verificationCode}
+                        onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
+                        className="input-premium text-center tracking-widest text-lg font-semibold"
+                        placeholder="000000"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResendOTP}
+                      disabled={resendTimeout > 0 || isLoading}
+                      className={`w-full flex items-center justify-center gap-2 text-sm mb-4 ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-harx-600 hover:text-harx-700'}`}
+                    >
+                      <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                      {resendTimeout > 0 ? `Resend code in ${resendTimeout}s` : 'Resend verification code'}
+                    </button>
+                    {verificationMethod === 'email' && formData.phone && (
+                      <button
+                        type="button"
+                        onClick={handleSwitchToSMS}
+                        disabled={isLoading}
+                        className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-600 hover:text-harx-alt-700"
+                      >
+                        <Phone className="h-4 w-4" /> Try SMS verification instead
+                      </button>
+                    )}
+                    {verificationMethod === 'sms' && (
+                      <button
+                        type="button"
+                        onClick={() => { setVerificationMethod('email'); setError(null); }}
+                        disabled={isLoading}
+                        className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-600 hover:text-harx-alt-700 mt-2"
+                      >
+                        <Mail className="h-4 w-4" /> Try Email verification instead
+                      </button>
+                    )}
+                  </>
+                )}
+
+                {step === 'success' && (
+                  <div className="space-y-4 text-center py-4">
+                    <h2 className="text-2xl font-bold text-gray-800">Login Successful!</h2>
+                    <p className="text-gray-600">Redirecting to your dashboard...</p>
+                    <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
+                  </div>
+                )}
+
+                {error && (
+                  <div className="flex items-center gap-2 text-red-600 bg-red-50 border border-red-100 p-3 rounded-xl mt-4">
+                    <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                    <p className="text-sm">{error}</p>
+                  </div>
+                )}
+
+                {step === 'credentials' && (
+                  <div className="mt-6 space-y-4">
+                    <button
+                      type="button"
+                      onClick={handleSignIn}
+                      disabled={isLoading}
+                      className="btn-primary flex items-center justify-center"
+                    >
+                      {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        'Sign In'
+                      )}
+                    </button>
+                    <div className="relative">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-200" />
+                      </div>
+                      <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleLinkedInSignIn}
+                      className="w-full flex items-center justify-center gap-2 bg-[#0077b5] text-white py-3 px-4 rounded-xl hover:bg-[#006396] transition-colors shadow-sm"
+                    >
+                      <Linkedin className="h-5 w-5" />
+                      Sign in with LinkedIn
+                    </button>
+                  </div>
+                )}
+
+                {step === '2fa' && (
+                  <button
+                    type="button"
+                    onClick={handleSignIn}
+                    disabled={isLoading}
+                    className="btn-primary flex items-center justify-center mt-6"
+                  >
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      'Verify'
+                    )}
+                  </button>
+                )}
+
+                {step === 'credentials' && (
+                  <p className="text-center text-sm text-gray-500 mt-6 pt-4 border-t border-gray-100">
+                    Don&apos;t have an account?{' '}
+                    <button type="button" onClick={onRegister} className="text-harx-600 font-semibold hover:underline">
+                      Sign up
+                    </button>
+                  </p>
+                )}
+              </>
+            )}
           </div>
-          <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent mt-4">HARX</h1>
-          <p className="text-gray-500 text-sm mt-1">We inspire growth</p>
         </div>
       </div>
     </div>
