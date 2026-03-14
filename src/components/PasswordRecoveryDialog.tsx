@@ -91,22 +91,31 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-custom flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-3xl w-full max-w-xl p-6 md:p-8 relative shadow-2xl border border-gray-100 card-hover">
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient">
+      <div className="bg-white rounded-3xl w-full max-w-xl p-6 md:p-8 relative shadow-2xl border border-harx-100">
         <div className="space-y-6">
           <div className="text-center">
             <div className="flex flex-col items-center mb-4">
+              <div className="relative w-full max-w-[140px] mx-auto mb-3">
+                <img
+                  src="/mascotte.png"
+                  alt="HARX Mascotte"
+                  className="w-full h-auto object-contain"
+                  loading="eager"
+                />
+                <div className="absolute -inset-2 bg-gradient-to-r from-harx-400/15 to-harx-alt-400/15 rounded-lg blur-lg -z-10" />
+              </div>
               <img
                 src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
                 alt="HARX Logo"
-                className="h-14 w-14 rounded-2xl object-cover shadow-lg mb-3"
+                className="h-12 w-12 rounded-2xl object-cover shadow-lg mb-2 border border-harx-100"
               />
-              <h1 className="text-3xl font-bold text-gray-900">HARX</h1>
+              <h1 className="text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent">HARX</h1>
               <p className="text-gray-500 font-medium tracking-wide">We inspire growth</p>
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6 mb-4">
+          <div className="bg-gradient-to-br from-harx-50 to-harx-100/80 border border-harx-200 rounded-2xl p-6 mb-4">
             {step === 'email' && (
               <div className="space-y-4">
                 <div className="text-left">
@@ -115,12 +124,12 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                 </div>
 
                 <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-gray-400"
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all placeholder:text-gray-400"
                     placeholder="Enter your email"
                   />
                 </div>
@@ -131,17 +140,17 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
               <div className="space-y-4 text-left">
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify Your Identity</h2>
                 <p className="text-gray-600 leading-relaxed">
-                  We sent a 6-digit code to <span className="font-semibold text-blue-600">{formData.email}</span>. Please enter it below.
+                  We sent a 6-digit code to <span className="font-semibold text-harx-600">{formData.email}</span>. Please enter it below.
                 </p>
 
                 <div className="relative">
-                  <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
+                  <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                   <input
                     type="text"
                     maxLength={6}
                     value={formData.verificationCode}
                     onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all tracking-[0.5em] text-center font-bold text-lg"
+                    className="w-full pl-12 pr-4 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all tracking-[0.5em] text-center font-bold text-lg"
                     placeholder="000000"
                   />
                 </div>
@@ -154,12 +163,12 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                 <p className="text-gray-600 mb-4">Set a strong password for your account.</p>
                 <div className="space-y-3">
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                     <input
                       type={showNewPassword ? "text" : "password"}
                       value={formData.newPassword}
                       onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      className="w-full pl-12 pr-12 py-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
                       placeholder="New password"
                     />
                     {formData.newPassword.length > 0 && (
@@ -178,12 +187,12 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                   </div>
 
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-500" />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                     <input
                       type={showConfirmPassword ? "text" : "password"}
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full pl-12 pr-12 py-3 bg-white border border-blue-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                      className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
                       placeholder="Confirm new password"
                     />
                     {formData.confirmPassword.length > 0 && (
