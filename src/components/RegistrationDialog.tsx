@@ -198,16 +198,6 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
               Create an account to access premium tools, real-time analytics, and a community of professionals.
             </p>
           </div>
-
-          <div className="relative z-10 space-y-4">
-            <div className="p-4 bg-white/5 rounded-xl border border-white/10 backdrop-blur-sm">
-              <p className="text-gray-300 italic text-sm">"The most comprehensive platform for growth I've ever used."</p>
-              <div className="mt-3 flex items-center space-x-2">
-                <div className="w-6 h-6 rounded-full bg-gradient-harx"></div>
-                <span className="text-xs font-semibold text-gray-200">Sarah J., Senior Manager</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* Right Side - Form Section */}
