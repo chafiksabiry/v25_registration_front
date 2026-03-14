@@ -191,7 +191,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             </div>
             <div className="relative w-full max-w-[180px] mx-auto mb-6">
               <img
-                src="/mascotte.png"
+                src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
                 alt="HARX Mascotte"
                 className="w-full h-auto object-contain"
                 loading="eager"

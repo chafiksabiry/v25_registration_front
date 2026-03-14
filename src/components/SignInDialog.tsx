@@ -190,7 +190,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
         <div className="text-center mb-8">
           <div className="relative w-full max-w-[200px] mx-auto mb-4">
             <img
-              src="/mascotte.png"
+              src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
               alt="HARX Mascotte"
               className="w-full h-auto object-contain"
               loading="eager"
