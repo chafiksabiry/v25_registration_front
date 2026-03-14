@@ -181,14 +181,6 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
         <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
           <div className="absolute inset-0 bg-[length:32px_32px] opacity-5" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }}></div>
           <div className="relative z-10">
-            <div className="flex items-center space-x-3 mb-6">
-              <img
-                src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
-                alt="HARX Logo"
-                className="h-10 w-10 rounded-lg shadow-lg border border-white/10"
-              />
-              <span className="text-xl font-bold tracking-tight">HARX<span className="text-harx-400">.AI</span></span>
-            </div>
             <div className="relative w-full max-w-[180px] mx-auto mb-6">
               <img
                 src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}

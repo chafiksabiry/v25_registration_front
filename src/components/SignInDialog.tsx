@@ -186,27 +186,10 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
         <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
-      <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-harx-100 p-8 lg:p-10 relative z-10">
-        <div className="text-center mb-8">
-          <div className="relative w-full max-w-[200px] mx-auto mb-4">
-            <img
-              src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-              alt="HARX Mascotte"
-              className="w-full h-auto object-contain"
-              loading="eager"
-            />
-            <div className="absolute -inset-2 bg-gradient-to-r from-harx-400/15 to-harx-alt-400/15 rounded-lg blur-lg -z-10" />
-          </div>
-          <img
-            src={`${import.meta.env.VITE_FRONT_URL || ''}harx_ai_logo.jpeg`}
-            alt="HARX Logo"
-            className="h-10 w-10 rounded-xl object-cover mx-auto mb-2 border border-harx-100"
-          />
-          <h1 className="text-2xl font-bold bg-gradient-harx bg-clip-text text-transparent">HARX</h1>
-          <p className="text-sm text-gray-500 mt-1">We inspire growth</p>
-        </div>
-
-        {isAlreadyLoggedIn ? (
+      <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-harx-100 p-8 lg:p-12 relative z-10">
+        {/* Left: Form */}
+        <div className="order-2 lg:order-1 animate-slide-in-left">
+          {isAlreadyLoggedIn ? (
           <div className="space-y-4 text-center">
             <h2 className="text-xl font-bold text-gray-800">Already Logged In</h2>
             <p className="text-gray-600">Redirecting you to your dashboard...</p>
@@ -382,6 +365,22 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
             )}
           </>
         )}
+        </div>
+
+        {/* Right: Mascotte */}
+        <div className="order-1 lg:order-2 flex flex-col items-center justify-center animate-slide-in-right">
+          <div className="relative w-full max-w-[240px] lg:max-w-[280px] mx-auto">
+            <img
+              src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
+              alt="HARX Mascotte"
+              className="w-full h-auto object-contain"
+              loading="eager"
+            />
+            <div className="absolute -inset-4 bg-gradient-to-r from-harx-400/20 to-harx-alt-400/20 rounded-xl blur-xl -z-10 animate-float" />
+          </div>
+          <h1 className="text-2xl lg:text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent mt-4">HARX</h1>
+          <p className="text-gray-500 text-sm mt-1">We inspire growth</p>
+        </div>
       </div>
     </div>
   );
