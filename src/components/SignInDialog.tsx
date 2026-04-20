@@ -92,11 +92,11 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
           );
           if (onboardingProgress.currentPhase !== 4 ||
             !onboardingProgress.phases?.find((p: any) => p.id === 4)?.completed) {
-            return '/app11';
+            return '/company';
           }
           return '/app7';
         } catch (e: any) {
-          if (e.response?.status === 404) return '/app11';
+          if (e.response?.status === 404) return '/company';
           throw e;
         }
       }
