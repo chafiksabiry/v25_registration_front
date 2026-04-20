@@ -71,7 +71,7 @@ function App() {
             }
           />
           <Route
-            path="/app11"
+            path="/company/*"
             element={
               <PrivateRoute>
                 <div>orchestrator Page</div>
