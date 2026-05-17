@@ -30,6 +30,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('token', newToken);
     } else {
       localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userType');
+      localStorage.removeItem('companyId');
+      localStorage.removeItem('companyName');
+      localStorage.removeItem('companyLogo');
+      localStorage.removeItem('userFullName');
+      localStorage.removeItem('companyOnboardingProgress');
+      localStorage.removeItem('selectedGigId');
     }
     setTokenState(newToken);
   };
