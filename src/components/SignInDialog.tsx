@@ -82,9 +82,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
 
   const getRedirectUrl = async (userId: string, token: string): Promise<string> => {
     try {
-      const checkFirstLogin = await auth.checkFirstLogin(userId);
       const checkUserType = await auth.checkUserType(userId);
-      if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) return '/app2';
+      if (checkUserType.userType == null) return '/app2';
       if (checkUserType.userType === 'company') {
         try {
           const { data: onboardingProgress } = await axios.get(

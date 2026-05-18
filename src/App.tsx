@@ -5,6 +5,7 @@ import SignInDialog from './components/SignInDialog';
 import RegistrationDialog from './components/RegistrationDialog';
 import PasswordRecoveryDialog from './components/PasswordRecoveryDialog';
 import Dashboard from './components/BackOffice/Dashboard';
+import ChoicePage from './components/ChoicePage';
 import LinkedInCallback from './components/LinkedInCallback'; // Import the LinkedIn callback component
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 function PrivateRoute({ children }: { children: React.ReactNode }) {
@@ -26,10 +27,21 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AuthRoutes() {
-  const [view, setView] = useState<'signin' | 'register' | 'recovery'>('signin');
+  const [view, setView] = useState<'choice' | 'signin' | 'register' | 'recovery'>('choice');
+
+  const handleSelectRole = (role: 'company' | 'rep') => {
+    localStorage.setItem('pendingUserType', role);
+    setView('register');
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-harx-50 to-white">
+      {view === 'choice' && (
+        <ChoicePage
+          onSelectRole={handleSelectRole}
+          onSignIn={() => setView('signin')}
+        />
+      )}
       {view === 'signin' && (
         <SignInDialog
           onRegister={() => setView('register')}
