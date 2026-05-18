@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Check, Lock, Mail, Phone, User, CheckCircle, Linkedin, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import { handleLinkedInSignUp } from '../utils/Linkedin';
 
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
@@ -132,7 +131,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   const accountVerificationResult = await auth.verifyAccount(storedUserId);
                   if (accountVerificationResult.success) {
                     setToken(emailVerificationResult.token);
-                    
+
                     // Apply pending user type if exists
                     const pendingUserType = localStorage.getItem('pendingUserType');
                     if (pendingUserType) {
