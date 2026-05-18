@@ -132,6 +132,18 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
                   const accountVerificationResult = await auth.verifyAccount(storedUserId);
                   if (accountVerificationResult.success) {
                     setToken(emailVerificationResult.token);
+                    
+                    // Apply pending user type if exists
+                    const pendingUserType = localStorage.getItem('pendingUserType');
+                    if (pendingUserType) {
+                      try {
+                        await auth.changeUserType(storedUserId, pendingUserType as 'company' | 'rep');
+                        localStorage.removeItem('pendingUserType');
+                      } catch (err) {
+                        console.error('Failed to change user type:', err);
+                      }
+                    }
+
                     setStep('success');
                     setShowProfilePrompt(true);
                     setTimeout(() => {
