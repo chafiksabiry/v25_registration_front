@@ -74,5 +74,5 @@ if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
 } else {
   console.log('[App1] Running inside Qiankun');
   // Qiankun will control the lifecycle
-  render({});
+  // render({});
 }
