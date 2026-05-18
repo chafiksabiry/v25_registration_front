@@ -12,13 +12,7 @@ export default function ChoicePage({ onSelectRole, onSignIn }: ChoicePageProps) 
       {/* Navbar */}
       <nav className="absolute top-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
         <div className="text-2xl font-bold text-harx-600">HARX</div>
-        <button
-          onClick={onSignIn}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-harx text-white hover:opacity-90 rounded-xl font-bold uppercase tracking-wider text-xs transition-all shadow-md hover:shadow-lg hover:shadow-harx-500/30 active:scale-[0.98]"
-        >
-          <LogIn className="w-4 h-4" />
-          Sign In
-        </button>
+
       </nav>
 
       <div
