@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
+import { Header } from './LandingPage/Header';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -13,9 +14,10 @@ interface SignInDialogProps {
   onRegister: () => void;
   onForgotPassword: () => void;
   onSuccess?: () => void;
+  onGetStarted?: () => void;
 }
 
-export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }: SignInDialogProps) {
+export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted }: SignInDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState({
@@ -179,13 +181,16 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-hidden">
+      <Header onSignIn={() => {}} onGetStarted={onGetStarted || (() => {})} />
+      
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/20 blur-[100px] rounded-full animate-float" />
         <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
       </div>
 
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
         {/* Left Side - Brand Section (same as Sign up) */}
         <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
           <div className="absolute inset-0 bg-[length:32px_32px] opacity-5" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />

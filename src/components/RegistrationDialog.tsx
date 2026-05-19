@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { Check, Lock, Mail, Phone, User, CheckCircle, Linkedin, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import Cookies from 'js-cookie';
+import { Header } from './LandingPage/Header';
 
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
 
 interface RegistrationDialogProps {
   onSignIn: () => void;
+  onGetStarted?: () => void;
 }
 
-export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps) {
+export default function RegistrationDialog({ onSignIn, onGetStarted }: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<Step>('name');
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
@@ -178,7 +181,8 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-hidden">
+      <Header onSignIn={onSignIn} onGetStarted={onGetStarted || (() => {})} />
 
       {/* HARX-style background shapes */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
@@ -186,7 +190,8 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
         <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/20 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
       </div>
 
-      <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
 
         {/* Left Side - Brand Section (HARX colors) */}
         <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
@@ -427,6 +432,7 @@ export default function RegistrationDialog({ onSignIn }: RegistrationDialogProps
             </div>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
