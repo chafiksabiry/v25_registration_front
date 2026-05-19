@@ -149,7 +149,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
                     setStep('success');
                     setShowProfilePrompt(true);
                     setTimeout(() => {
-                      window.location.href = '/';
+                      onSignIn();
                     }, 1500);
                   } else {
                     newErrors.general = accountVerificationResult.message;
