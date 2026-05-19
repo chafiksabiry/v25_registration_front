@@ -181,7 +181,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-auto">
       <Header onSignIn={() => {}} onGetStarted={onGetStarted || (() => {})} />
       
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
