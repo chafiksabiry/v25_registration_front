@@ -191,7 +191,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
       </div>
 
       <div className="flex-1 flex items-center justify-center p-4">
-        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10 min-h-[700px]">
+        <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-5 bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl border border-harx-100 overflow-hidden relative z-10">
 
         {/* Left Side - Brand Section (HARX colors) */}
         <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-gray-900 via-harx-900/90 to-gray-900 text-white relative">
