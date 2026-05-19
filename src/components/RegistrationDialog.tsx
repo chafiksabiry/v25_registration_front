@@ -181,7 +181,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-hidden">
+    <div className="min-h-screen w-full flex flex-col bg-premium-gradient animate-fade-in relative overflow-auto">
       <Header onSignIn={onSignIn} onGetStarted={onGetStarted || (() => {})} />
 
       {/* HARX-style background shapes */}
