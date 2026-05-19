@@ -12,13 +12,9 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    e.preventDefault();
-    // For now, we don't have smooth scroll to sections if they are not rendered yet or in the same file.
-    // We can just call onGetStarted or ignore for now if it's just anchor links.
-    // If we render all sections, we can use the original scrollToSection logic.
-    // Let's keep it simple or implement a simple scrollToSection if we can find the element.
     const element = document.getElementById(sectionId);
     if (element) {
+      e.preventDefault();
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsMenuOpen(false);
@@ -38,7 +34,7 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
 
           <div className="hidden md:flex items-center space-x-8">
             <a
-              href="#how-it-works"
+              href="/#how-it-works"
               className="relative font-medium text-lg group"
               onClick={(e) => handleNavClick(e, 'how-it-works')}
             >
@@ -48,7 +44,7 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
             </a>
             <a
-              href="#pricing"
+              href="/#pricing"
               className="relative font-medium text-lg group"
               onClick={(e) => handleNavClick(e, 'pricing')}
             >
@@ -58,7 +54,7 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
             </a>
             <a
-              href="#about"
+              href="/#about"
               className="relative font-medium text-lg group"
               onClick={(e) => handleNavClick(e, 'about')}
             >
@@ -68,7 +64,7 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
             </a>
             <a
-              href="#clients"
+              href="/#clients"
               className="relative font-medium text-lg group"
               onClick={(e) => handleNavClick(e, 'clients')}
             >
@@ -78,7 +74,7 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
             </a>
             <a
-              href="#reps"
+              href="/#reps"
               className="relative font-medium text-lg group"
               onClick={(e) => handleNavClick(e, 'reps')}
             >

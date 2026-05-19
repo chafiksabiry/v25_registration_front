@@ -1,5 +1,6 @@
 import React from 'react';
 import { Building2, Users, ArrowRight, Headphones, PhoneCall, MessagesSquare, Phone, HeadphonesIcon, Target, LogIn } from 'lucide-react';
+import { Header } from './LandingPage/Header';
 
 interface ChoicePageProps {
   onSelectRole: (role: 'company' | 'rep') => void;
@@ -10,10 +11,7 @@ export default function ChoicePage({ onSelectRole, onSignIn }: ChoicePageProps) 
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-harx-50 to-white flex flex-col animate-fade-in relative">
       {/* Navbar */}
-      <nav className="absolute top-0 left-0 right-0 z-30 bg-white/90 backdrop-blur-md border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
-        <div className="text-2xl font-bold text-harx-600">HARX</div>
-
-      </nav>
+      <Header onSignIn={onSignIn} onGetStarted={() => {}} />
 
       <div
         className="h-[42vh] bg-cover bg-center relative flex-shrink-0"
