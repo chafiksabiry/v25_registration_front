@@ -51,7 +51,7 @@ function AuthRoutes() {
       )}
       {view === 'signin' && (
         <SignInDialog
-          onRegister={() => setView('register')}
+          onRegister={() => setView('choice')}
           onForgotPassword={() => setView('recovery')}
           onGetStarted={() => setView('choice')}
         />
