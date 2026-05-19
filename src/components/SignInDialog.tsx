@@ -382,6 +382,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           </div>
         </div>
       </div>
+      </div>
     </div>
   );
 }
