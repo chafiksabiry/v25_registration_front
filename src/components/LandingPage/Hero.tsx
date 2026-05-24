@@ -91,8 +91,8 @@ export function Hero({ onGetStarted }: HeroProps) {
               <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 mx-auto shadow-lg shadow-harx-500/10">
                 <Brain className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-350">Advanced AI Technology</h3>
-              <ul className="space-y-4 text-left flex-grow text-slate-300">
+              <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-[0_1px_8px_rgba(255,77,77,0.25)]">Advanced AI Technology</h3>
+              <ul className="space-y-4 text-left flex-grow text-slate-200">
                 <li className="flex items-start">
                   <Bot className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
                   <span>AI-augmented agents with real-time decision support</span>
@@ -127,8 +127,8 @@ export function Hero({ onGetStarted }: HeroProps) {
               <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 mx-auto shadow-lg shadow-harx-500/10">
                 <Heart className="h-7 w-7 text-white" />
               </div>
-              <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-350">Transaction-as-a-Service</h3>
-              <ul className="space-y-4 text-left flex-grow text-slate-300">
+              <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-[0_1px_8px_rgba(236,72,153,0.25)]">Transaction-as-a-Service</h3>
+              <ul className="space-y-4 text-left flex-grow text-slate-200">
                 <li className="flex items-start">
                   <Coins className="h-5 w-5 text-harx-alt-400 mt-0.5 mr-3 flex-shrink-0" />
                   <span>You set the price per successful transaction</span>
