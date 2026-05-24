@@ -35,6 +35,9 @@ export default {
           950: '#020617',
           default: '#090d16',
         },
+        slate: {
+          350: '#b6c0cf',
+        },
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
