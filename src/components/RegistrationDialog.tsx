@@ -10,9 +10,10 @@ type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' |
 interface RegistrationDialogProps {
   onSignIn: () => void;
   onGetStarted?: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function RegistrationDialog({ onSignIn, onGetStarted }: RegistrationDialogProps) {
+export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateToSection }: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<Step>('name');
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
@@ -234,7 +235,11 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-space-dark-950 text-white animate-fade-in relative overflow-auto">
-      <Header onSignIn={onSignIn} onGetStarted={onGetStarted || (() => {})} />
+      <Header
+        onSignIn={onSignIn}
+        onGetStarted={onGetStarted || (() => {})}
+        onNavigateToSection={onNavigateToSection}
+      />
 
       {/* Immersive background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">

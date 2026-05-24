@@ -6,9 +6,16 @@ import { Logo } from './Logo';
 interface HeaderProps {
   onSignIn: () => void;
   onGetStarted: () => void;
+  /**
+   * Called when the user clicks a navbar entry whose target section
+   * does NOT exist in the current DOM (e.g. user is on the ChoicePage
+   * or a dialog). The parent is then expected to switch back to the
+   * landing page and scroll to that section.
+   */
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export function Header({ onSignIn, onGetStarted }: HeaderProps) {
+export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
@@ -16,6 +23,9 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
     if (element) {
       e.preventDefault();
       element.scrollIntoView({ behavior: 'smooth' });
+    } else if (onNavigateToSection) {
+      e.preventDefault();
+      onNavigateToSection(sectionId);
     }
     setIsMenuOpen(false);
   };

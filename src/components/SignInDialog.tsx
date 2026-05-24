@@ -15,9 +15,10 @@ interface SignInDialogProps {
   onForgotPassword: () => void;
   onSuccess?: () => void;
   onGetStarted?: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted }: SignInDialogProps) {
+export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted, onNavigateToSection }: SignInDialogProps) {
   const { setToken } = useAuth();
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState({
@@ -182,7 +183,11 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
 
   return (
     <div className="min-h-screen w-full flex flex-col bg-space-dark-950 text-white animate-fade-in relative overflow-auto">
-      <Header onSignIn={() => {}} onGetStarted={onGetStarted || (() => {})} />
+      <Header
+        onSignIn={() => {}}
+        onGetStarted={onGetStarted || (() => {})}
+        onNavigateToSection={onNavigateToSection}
+      />
       
       {/* Immersive background decoration */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
