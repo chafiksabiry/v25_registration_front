@@ -37,28 +37,77 @@ export function LandingPage({
   onNavigateToSection,
 }: LandingPageProps) {
   const appliedRef = useRef<string | null>(null);
+  // Keep the latest callback in a ref so it doesn't have to be a
+  // dependency of the scroll effect (which would re-run on every
+  // parent render and could cancel the in-flight scroll).
+  const onSectionAppliedRef = useRef(onSectionApplied);
+  useEffect(() => {
+    onSectionAppliedRef.current = onSectionApplied;
+  }, [onSectionApplied]);
 
   useEffect(() => {
     if (!initialSection || appliedRef.current === initialSection) return;
 
     const id = initialSection;
-    const scroll = () => {
+    let cancelled = false;
+    const timers: number[] = [];
+    const rafs: number[] = [];
+
+    const performScroll = () => {
+      if (cancelled || appliedRef.current === id) return;
+
       const el = document.getElementById(id);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else if (id === 'top') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (!el) {
+        if (id === 'top') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          appliedRef.current = id;
+          onSectionAppliedRef.current?.();
+        }
+        return;
       }
+
+      // Two-step scroll: snap close to the target instantly so the
+      // smooth animation starts from a stable position, then animate.
+      // 112px == scroll-mt-28 (Tailwind) -- keeps the section under
+      // the fixed navbar (~64px) with a bit of breathing room.
+      const target = el.getBoundingClientRect().top + window.scrollY - 112;
+      window.scrollTo({ top: Math.max(0, target), behavior: 'auto' });
+
+      const smooth = window.setTimeout(() => {
+        if (cancelled) return;
+        const stillThere = document.getElementById(id);
+        if (stillThere) {
+          stillThere.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 40);
+      timers.push(smooth);
+
+      appliedRef.current = id;
+      onSectionAppliedRef.current?.();
     };
 
-    const raf = requestAnimationFrame(() => {
-      scroll();
-      appliedRef.current = id;
-      onSectionApplied?.();
+    // Double RAF + a small timeout: ensures the new view has been
+    // painted at least once (sections + their images contributed to
+    // layout) before we try to compute target offsets.
+    const raf1 = requestAnimationFrame(() => {
+      const raf2 = requestAnimationFrame(() => {
+        performScroll();
+      });
+      rafs.push(raf2);
     });
+    rafs.push(raf1);
 
-    return () => cancelAnimationFrame(raf);
-  }, [initialSection, onSectionApplied]);
+    // Safety net in case requestAnimationFrame didn't fire (tab in
+    // background, etc.) or layout was still shifting on first paint.
+    const fallback = window.setTimeout(performScroll, 200);
+    timers.push(fallback);
+
+    return () => {
+      cancelled = true;
+      rafs.forEach(cancelAnimationFrame);
+      timers.forEach(clearTimeout);
+    };
+  }, [initialSection]);
 
   return (
     <div id="top" className="min-h-screen bg-space-dark-default text-white">
