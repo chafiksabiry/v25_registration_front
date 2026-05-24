@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Header } from './LandingPage/Header';
 import { Hero } from './LandingPage/Hero';
 import { Footer } from './LandingPage/Footer';
@@ -17,12 +17,46 @@ const LiveChat = lazy(() => import('./LandingPage/LiveChat').then(module => ({ d
 interface LandingPageProps {
   onSignIn: () => void;
   onGetStarted: () => void;
+  /** Section ID to scroll to after mounting (passed from App when coming back from another view) */
+  initialSection?: string | null;
+  /** Called after the scroll is applied so App can reset the pending section */
+  onSectionApplied?: () => void;
+  /** Passed through to Header so it can request a section navigation from the parent */
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export function LandingPage({ onSignIn, onGetStarted }: LandingPageProps) {
+export function LandingPage({
+  onSignIn,
+  onGetStarted,
+  initialSection,
+  onSectionApplied,
+  onNavigateToSection,
+}: LandingPageProps) {
+
+  // Scroll to the requested section after the page mounts.
+  // We wait 350 ms to give lazy-loaded sections time to appear in the DOM.
+  useEffect(() => {
+    if (!initialSection) return;
+
+    const scrollToSection = () => {
+      const el = document.getElementById(initialSection);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        onSectionApplied?.();
+      }
+    };
+
+    const timer = setTimeout(scrollToSection, 350);
+    return () => clearTimeout(timer);
+  }, [initialSection, onSectionApplied]);
+
   return (
     <div className="min-h-screen bg-white">
-      <Header onSignIn={onSignIn} onGetStarted={onGetStarted} />
+      <Header
+        onSignIn={onSignIn}
+        onGetStarted={onGetStarted}
+        onNavigateToSection={onNavigateToSection}
+      />
       <main>
         <Hero onGetStarted={onGetStarted} />
         <Suspense fallback={<div className="h-screen flex items-center justify-center">Loading...</div>}>
