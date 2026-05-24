@@ -21,127 +21,124 @@ export function Header({ onSignIn, onGetStarted }: HeaderProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-harx-100 shadow-sm transition-all duration-300">
-      <nav className="container mx-auto px-4 h-20 flex items-center justify-between">
-        <div className="flex items-center space-x-12">
+    <header className="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto rounded-2xl bg-white/70 dark:bg-slate-950/60 backdrop-blur-xl border border-slate-200/40 dark:border-slate-800/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] transition-all duration-300">
+      <nav className="px-6 h-16 flex items-center justify-between">
+        <div className="flex items-center space-x-10">
           <a
             href="/"
-            className="flex items-center transition-transform hover:scale-105"
+            className="flex items-center transition-transform hover:scale-102"
             onClick={(e) => handleNavClick(e, 'top')}
           >
-            <Logo className="h-10 md:h-12" />
+            <Logo className="h-8 md:h-9" />
           </a>
 
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden md:flex items-center space-x-2">
             <a
               href="/#how-it-works"
-              className="relative font-medium text-lg group"
+              className="relative font-medium text-sm px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-xl hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-all duration-200"
               onClick={(e) => handleNavClick(e, 'how-it-works')}
             >
-              <span className="bg-gradient-harx bg-clip-text text-transparent group-hover:text-harx-500 transition-colors">
-                How It Works
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              How It Works
             </a>
             <a
               href="/#pricing"
-              className="relative font-medium text-lg group"
+              className="relative font-medium text-sm px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-xl hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-all duration-200"
               onClick={(e) => handleNavClick(e, 'pricing')}
             >
-              <span className="bg-gradient-harx bg-clip-text text-transparent group-hover:text-harx-500 transition-colors">
-                Pricing
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              Pricing
             </a>
             <a
               href="/#about"
-              className="relative font-medium text-lg group"
+              className="relative font-medium text-sm px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-xl hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-all duration-200"
               onClick={(e) => handleNavClick(e, 'about')}
             >
-              <span className="bg-gradient-harx bg-clip-text text-transparent group-hover:text-harx-500 transition-colors">
-                About
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              About
             </a>
             <a
               href="/#clients"
-              className="relative font-medium text-lg group"
+              className="relative font-medium text-sm px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-xl hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-all duration-200"
               onClick={(e) => handleNavClick(e, 'clients')}
             >
-              <span className="bg-gradient-harx bg-clip-text text-transparent group-hover:text-harx-500 transition-colors">
-                For Clients
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              For Clients
             </a>
             <a
               href="/#reps"
-              className="relative font-medium text-lg group"
+              className="relative font-medium text-sm px-4 py-2 text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white rounded-xl hover:bg-gray-50/50 dark:hover:bg-slate-800/30 transition-all duration-200"
               onClick={(e) => handleNavClick(e, 'reps')}
             >
-              <span className="bg-gradient-harx bg-clip-text text-transparent group-hover:text-harx-500 transition-colors">
-                For Reps
-              </span>
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-gradient-harx transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></span>
+              For Reps
             </a>
           </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-4">
-          <Button variant="outline" onClick={onSignIn}>Sign In</Button>
-          <Button onClick={onGetStarted}>Get Started</Button>
+        <div className="hidden md:flex items-center space-x-3">
+          <Button
+            variant="outline"
+            className="h-9 px-4 text-sm font-semibold border border-slate-200 hover:border-harx-300 hover:text-harx-600 dark:border-slate-800 dark:hover:border-harx-700 bg-white/60 dark:bg-slate-900/60 transition-all"
+            onClick={onSignIn}
+          >
+            Sign In
+          </Button>
+          <Button
+            variant="gradient"
+            className="h-9 px-4 text-sm font-semibold shadow-md shadow-harx-500/10 hover:shadow-harx-500/25 active:scale-[0.98] transition-all"
+            onClick={onGetStarted}
+          >
+            Get Started
+          </Button>
         </div>
 
         <button
-          className="md:hidden text-harx-500 p-2 hover:bg-harx-50 rounded-lg transition-colors"
+          className="md:hidden text-harx-500 p-2 hover:bg-harx-50 dark:hover:bg-slate-900 rounded-xl transition-colors"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
         >
-          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </nav>
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-harx-100 p-6 shadow-lg animate-in slide-in-from-top-4">
-          <div className="flex flex-col space-y-6">
+        <div className="md:hidden absolute top-[calc(100%+8px)] left-0 right-0 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl border border-slate-200/50 dark:border-slate-800/50 p-6 rounded-2xl shadow-xl animate-fade-in">
+          <div className="flex flex-col space-y-4">
             <a
               href="#how-it-works"
-              className="text-lg font-medium bg-gradient-harx bg-clip-text text-transparent hover:text-harx-500 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-harx-500 dark:text-gray-300 transition-colors py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900"
               onClick={(e) => handleNavClick(e, 'how-it-works')}
             >
               How It Works
             </a>
             <a
               href="#pricing"
-              className="text-lg font-medium bg-gradient-harx bg-clip-text text-transparent hover:text-harx-500 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-harx-500 dark:text-gray-300 transition-colors py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900"
               onClick={(e) => handleNavClick(e, 'pricing')}
             >
               Pricing
             </a>
             <a
               href="#about"
-              className="text-lg font-medium bg-gradient-harx bg-clip-text text-transparent hover:text-harx-500 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-harx-500 dark:text-gray-300 transition-colors py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900"
               onClick={(e) => handleNavClick(e, 'about')}
             >
               About
             </a>
             <a
               href="#clients"
-              className="text-lg font-medium bg-gradient-harx bg-clip-text text-transparent hover:text-harx-500 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-harx-500 dark:text-gray-300 transition-colors py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900"
               onClick={(e) => handleNavClick(e, 'clients')}
             >
               For Clients
             </a>
             <a
               href="#reps"
-              className="text-lg font-medium bg-gradient-harx bg-clip-text text-transparent hover:text-harx-500 transition-colors"
+              className="text-base font-semibold text-gray-700 hover:text-harx-500 dark:text-gray-300 transition-colors py-2 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-900"
               onClick={(e) => handleNavClick(e, 'reps')}
             >
               For Reps
             </a>
-            <div className="pt-4 border-t border-gray-100 space-y-4">
-              <Button variant="outline" className="w-full" onClick={onSignIn}>Sign In</Button>
-              <Button className="w-full" onClick={onGetStarted}>Get Started</Button>
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3">
+              <Button variant="outline" className="w-full h-10 text-sm font-semibold" onClick={onSignIn}>Sign In</Button>
+              <Button variant="gradient" className="w-full h-10 text-sm font-semibold" onClick={onGetStarted}>Get Started</Button>
             </div>
           </div>
         </div>

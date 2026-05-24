@@ -9,11 +9,15 @@
   }
 
   .bg-premium-gradient-dark {
-    @apply bg-gradient-to-br from-gray-900 via-harx-950/30 to-gray-900;
+    @apply bg-gradient-to-br from-space-dark-950 via-harx-950/20 to-space-dark-900;
   }
 
   .glass-card {
     @apply bg-white/95 backdrop-blur-xl border border-harx-100 shadow-2xl;
+  }
+
+  .glass-card-premium {
+    @apply bg-white/70 dark:bg-slate-950/40 backdrop-blur-3xl border border-white/40 dark:border-white/10 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.15)] dark:shadow-[0_24px_50px_-12px_rgba(0,0,0,0.6)] transition-all duration-300;
   }
 
   /* Form elements - HARX focus/accents */
@@ -25,12 +29,20 @@
     @apply bg-white border-gray-300;
   }
 
+  .input-premium-glow {
+    @apply w-full pl-10 pr-12 py-3.5 bg-slate-50/50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/80 rounded-xl focus:ring-2 focus:ring-harx-500/20 focus:border-harx-500 focus:outline-none transition-all duration-300 placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100;
+  }
+
+  .input-premium-glow:hover {
+    @apply border-slate-300 dark:border-slate-700 bg-white/80 dark:bg-slate-900/60;
+  }
+
   .btn-primary {
-    @apply w-full py-3 px-6 bg-gradient-harx text-white font-semibold rounded-xl shadow-lg shadow-harx-500/30 hover:shadow-harx-500/40 hover:opacity-90 transform hover:-translate-y-0.5 transition-all duration-300 active:scale-[0.98];
+    @apply w-full py-3.5 px-6 bg-gradient-harx text-white font-semibold rounded-xl shadow-lg shadow-harx-500/25 hover:shadow-harx-500/40 hover:opacity-95 transform hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2;
   }
 
   .btn-secondary {
-    @apply w-full py-3 px-6 bg-white text-gray-700 font-medium border-2 border-harx-500 rounded-xl hover:bg-harx-50 hover:border-harx-600 transition-all duration-200;
+    @apply w-full py-3.5 px-6 bg-white/80 dark:bg-slate-900/85 text-slate-700 dark:text-slate-300 font-semibold border border-slate-200 dark:border-slate-800 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800/50 hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 active:scale-[0.98];
   }
 
   /* HARX gradient text */
