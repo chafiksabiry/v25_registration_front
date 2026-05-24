@@ -29,10 +29,19 @@ function PrivateRoute({ children }: { children: React.ReactNode }) {
 
 function AuthRoutes() {
   const [view, setView] = useState<'landing' | 'choice' | 'signin' | 'register' | 'recovery'>('landing');
+  const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   const handleSelectRole = (role: 'company' | 'rep') => {
     localStorage.setItem('pendingUserType', role);
     setView('register');
+  };
+
+  // Triggered by the navbar when the requested section isn't on the
+  // current view. Switches back to the landing page and remembers the
+  // target so LandingPage can scroll to it after it mounts.
+  const handleNavigateToSection = (sectionId: string) => {
+    setPendingSection(sectionId);
+    setView('landing');
   };
 
   return (
@@ -41,12 +50,16 @@ function AuthRoutes() {
         <LandingPage
           onSignIn={() => setView('signin')}
           onGetStarted={() => setView('choice')}
+          initialSection={pendingSection}
+          onSectionApplied={() => setPendingSection(null)}
+          onNavigateToSection={handleNavigateToSection}
         />
       )}
       {view === 'choice' && (
         <ChoicePage
           onSelectRole={handleSelectRole}
           onSignIn={() => setView('signin')}
+          onNavigateToSection={handleNavigateToSection}
         />
       )}
       {view === 'signin' && (
@@ -54,12 +67,14 @@ function AuthRoutes() {
           onRegister={() => setView('choice')}
           onForgotPassword={() => setView('recovery')}
           onGetStarted={() => setView('choice')}
+          onNavigateToSection={handleNavigateToSection}
         />
       )}
       {view === 'register' && (
         <RegistrationDialog
           onSignIn={() => setView('signin')}
           onGetStarted={() => setView('choice')}
+          onNavigateToSection={handleNavigateToSection}
         />
       )}
       {view === 'recovery' && (

@@ -5,13 +5,18 @@ import { Header } from './LandingPage/Header';
 interface ChoicePageProps {
   onSelectRole: (role: 'company' | 'rep') => void;
   onSignIn: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function ChoicePage({ onSelectRole, onSignIn }: ChoicePageProps) {
+export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
   return (
     <div className="h-screen overflow-hidden bg-gradient-to-br from-harx-50 to-white flex flex-col animate-fade-in relative">
       {/* Navbar */}
-      <Header onSignIn={onSignIn} onGetStarted={() => {}} />
+      <Header
+        onSignIn={onSignIn}
+        onGetStarted={() => {}}
+        onNavigateToSection={onNavigateToSection}
+      />
 
       <div
         className="h-[42vh] bg-cover bg-center relative flex-shrink-0"
