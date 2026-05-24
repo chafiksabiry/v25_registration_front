@@ -28,10 +28,67 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
+  const [smsNotice, setSmsNotice] = useState<string | null>(null);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
   const validatePhone = (phone: string) => /^\+?[\d\s-]{10,}$/.test(phone);
+
+  const completeRegistration = async (
+    storedUserId: string,
+    token: string,
+    newErrors: Record<string, string>
+  ): Promise<boolean> => {
+    try {
+      const accountVerificationResult = await auth.verifyAccount(storedUserId);
+      if (!accountVerificationResult.success) {
+        newErrors.general = accountVerificationResult.message || 'Account verification failed';
+        return false;
+      }
+
+      setToken(token);
+      localStorage.setItem('token', token);
+      Cookies.set('userId', storedUserId);
+
+      const pendingUserType = localStorage.getItem('pendingUserType');
+      if (pendingUserType) {
+        try {
+          await auth.changeUserType(storedUserId, pendingUserType as 'company' | 'rep');
+          localStorage.removeItem('pendingUserType');
+        } catch (err) {
+          console.error('Failed to change user type:', err);
+        }
+      }
+
+      setStep('success');
+      setShowProfilePrompt(true);
+      setTimeout(() => onSignIn(), 1500);
+      return true;
+    } catch (err) {
+      newErrors.general = err instanceof Error ? err.message : 'Account verification failed';
+      return false;
+    }
+  };
+
+  const handleSendSmsOtp = async () => {
+    const storedUserId = localStorage.getItem('userId');
+    if (!storedUserId || !formData.phone) return;
+
+    setIsLoading(true);
+    setErrors({});
+    setSmsNotice(null);
+    try {
+      await auth.sendOTP(storedUserId, formData.phone);
+      setSmsOtpAvailable(true);
+      setSmsNotice('SMS code sent. Check your phone.');
+    } catch {
+      setSmsOtpAvailable(false);
+      setSmsNotice('SMS unavailable. Continue with email verification only.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleNext = async () => {
     const newErrors: Record<string, string> = {};
@@ -101,64 +158,59 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
               }
             }
 
-            // Send verification email
             await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
 
-            // Send OTP
-            await auth.sendOTP(RegisterResult.data._id, formData.phone);
+            setSmsOtpAvailable(false);
+            setSmsNotice(null);
+            try {
+              await auth.sendOTP(RegisterResult.data._id, formData.phone);
+              setSmsOtpAvailable(true);
+            } catch {
+              setSmsNotice('SMS verification is temporarily unavailable. Use the email code to complete registration.');
+            }
 
             setStep('verification');
           }
           break;
 
-        case 'verification':
-          if (!formData.emailOTP || !formData.phoneOTP) {
-            newErrors.verification = 'Please enter both the email verification code and the OTP code';
-          } else {
-            setIsLoading(true);
+        case 'verification': {
+          if (!formData.emailOTP || formData.emailOTP.length !== 6) {
+            newErrors.verification = 'Please enter the 6-digit email verification code';
+            break;
+          }
+          if (smsOtpAvailable && (!formData.phoneOTP || formData.phoneOTP.length !== 6)) {
+            newErrors.verification = 'Please enter both the email code and the SMS code';
+            break;
+          }
 
-            const emailVerificationResult = await auth.verifyEmail({
-              email: formData.email,
-              code: formData.emailOTP
-            });
-            if (emailVerificationResult.result.error) {
-              newErrors.general = 'Invalid email verification code';
-            } else {
-              const storedUserId = localStorage.getItem('userId');
-              if (!storedUserId) { newErrors.general = 'User ID not found in localStorage. Please try again.'; }
-              else {
-                const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
-                if (otpVerificationResult.error) {
-                  newErrors.general = 'Invalid OTP. Please try again.';
-                } else {
-                  const accountVerificationResult = await auth.verifyAccount(storedUserId);
-                  if (accountVerificationResult.success) {
-                    setToken(emailVerificationResult.token);
+          setIsLoading(true);
 
-                    // Apply pending user type if exists
-                    const pendingUserType = localStorage.getItem('pendingUserType');
-                    if (pendingUserType) {
-                      try {
-                        await auth.changeUserType(storedUserId, pendingUserType as 'company' | 'rep');
-                        localStorage.removeItem('pendingUserType');
-                      } catch (err) {
-                        console.error('Failed to change user type:', err);
-                      }
-                    }
+          const emailVerificationResult = await auth.verifyEmail({
+            email: formData.email,
+            code: formData.emailOTP
+          });
+          if (emailVerificationResult.result?.error) {
+            newErrors.general = 'Invalid email verification code';
+            break;
+          }
 
-                    setStep('success');
-                    setShowProfilePrompt(true);
-                    setTimeout(() => {
-                      onSignIn();
-                    }, 1500);
-                  } else {
-                    newErrors.general = accountVerificationResult.message;
-                  }
-                }
-              }
+          const storedUserId = localStorage.getItem('userId');
+          if (!storedUserId) {
+            newErrors.general = 'User ID not found. Please try again.';
+            break;
+          }
+
+          if (smsOtpAvailable) {
+            const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
+            if (otpVerificationResult.error) {
+              newErrors.general = 'Invalid SMS code. Please try again.';
+              break;
             }
           }
+
+          await completeRegistration(storedUserId, emailVerificationResult.token, newErrors);
           break;
+        }
         default: break;
       }
     } catch (err) {
@@ -242,7 +294,9 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
                     step === 'password' ? 'Protect your account.' :
                       step === 'phone' ? 'For account security.' :
                         step === 'terms' ? 'Review our policies.' :
-                          step === 'verification' ? 'Check your devices for codes.' :
+                          step === 'verification'
+                            ? (smsOtpAvailable ? 'Check your email and phone for codes.' : 'Check your email for the verification code.')
+                            :
                             'Account created successfully!'}
               </p>
             </div>
@@ -363,6 +417,11 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
 
               {step === 'verification' && (
                 <div className="space-y-6">
+                  {smsNotice && (
+                    <div className="p-4 rounded-xl bg-amber-50 border border-amber-100 text-sm text-amber-800">
+                      {smsNotice}
+                    </div>
+                  )}
                   <div className="space-y-4">
                     <label className="block text-sm font-medium text-gray-700">Email Code (sent to {formData.email})</label>
                     <input
@@ -371,20 +430,31 @@ export default function RegistrationDialog({ onSignIn, onGetStarted }: Registrat
                       value={formData.emailOTP}
                       onChange={(e) => setFormData({ ...formData, emailOTP: e.target.value.replace(/\D/g, '') })}
                       className="input-premium text-center tracking-widest text-lg font-bold"
-                      placeholder="000 000"
+                      placeholder="000000"
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="block text-sm font-medium text-gray-700">SMS Code (sent to {formData.phone})</label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={formData.phoneOTP}
-                      onChange={(e) => setFormData({ ...formData, phoneOTP: e.target.value })}
-                      className="input-premium text-center tracking-widest text-lg font-bold"
-                      placeholder="000 000"
-                    />
-                  </div>
+                  {smsOtpAvailable ? (
+                    <div className="space-y-4">
+                      <label className="block text-sm font-medium text-gray-700">SMS Code (sent to {formData.phone})</label>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={formData.phoneOTP}
+                        onChange={(e) => setFormData({ ...formData, phoneOTP: e.target.value.replace(/\D/g, '') })}
+                        className="input-premium text-center tracking-widest text-lg font-bold"
+                        placeholder="000000"
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={handleSendSmsOtp}
+                      disabled={isLoading}
+                      className="w-full text-sm text-harx-600 font-medium hover:underline disabled:opacity-50"
+                    >
+                      Try SMS verification (optional)
+                    </button>
+                  )}
                   {errors.verification && <p className="text-red-500 text-sm pl-2">{errors.verification}</p>}
                 </div>
               )}
