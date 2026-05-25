@@ -83,10 +83,21 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     await handleSendSMS();
   };
 
-  const getRedirectUrl = async (userId: string, token: string): Promise<string> => {
+  /**
+   * Compute the post-sign-in destination.
+   *
+   * We intentionally NEVER redirect to `/app2` anymore: that route used to
+   * point at a deprecated rep dashboard and now renders a blank page on
+   * Netlify. When we can't determine a meaningful destination (missing user
+   * type, missing env URLs, failed onboarding/profile lookups, …) we return
+   * `null` and the caller keeps the user on the success screen instead of
+   * navigating away into the void.
+   */
+  const getRedirectUrl = async (userId: string, token: string): Promise<string | null> => {
     try {
       const checkUserType = await auth.checkUserType(userId);
-      if (checkUserType.userType == null) return '/app2';
+      if (checkUserType.userType == null) return null;
+
       if (checkUserType.userType === 'company') {
         try {
           const { data: onboardingProgress } = await axios.get(
@@ -102,21 +113,26 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           throw e;
         }
       }
+
       try {
         const { data: profileData } = await axios.get(
           `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        if (!profileData.isBasicProfileCompleted) return import.meta.env.VITE_REP_CREATION_PROFILE_URL || '/app2';
+        if (!profileData.isBasicProfileCompleted) {
+          return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
+        }
         const p = profileData.onboardingProgress?.phases;
         const allDone = p?.phase1?.status === 'completed' && p?.phase2?.status === 'completed' &&
           p?.phase3?.status === 'completed' && p?.phase4?.status === 'completed';
-        return allDone ? (import.meta.env.VITE_REP_DASHBOARD_URL || '/repdashboard') : (import.meta.env.VITE_REP_ORCHESTRATOR_URL || '/app2');
+        return allDone
+          ? (import.meta.env.VITE_REP_DASHBOARD_URL || '/repdashboard')
+          : (import.meta.env.VITE_REP_ORCHESTRATOR_URL || null);
       } catch {
-        return import.meta.env.VITE_REP_CREATION_PROFILE_URL || '/app2';
+        return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
       }
     } catch {
-      return '/app2';
+      return null;
     }
   };
 
@@ -166,8 +182,16 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         setStep('success');
         const redirectTo = await getRedirectUrl(userId, resultData.token);
         setTimeout(() => {
-          if (onSuccess) onSuccess();
-          else window.location.href = redirectTo;
+          if (onSuccess) {
+            onSuccess();
+            return;
+          }
+          // Only navigate when we have a real destination. Otherwise we
+          // stay on the success screen instead of dumping the user on the
+          // blank `/app2` placeholder.
+          if (redirectTo) {
+            window.location.href = redirectTo;
+          }
         }, 1500);
       }
     } catch (err: any) {
