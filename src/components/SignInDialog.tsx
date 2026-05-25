@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone } from 'lucide-react';
-import axios from 'axios';
 import { auth } from '../lib/api';
+import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken } from '../lib/authRedirect';
 import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
@@ -34,7 +34,20 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isSessionActive()) return;
+
+    setIsAlreadyLoggedIn(true);
+    const userId = getSessionUserId();
+    if (!userId) {
+      window.location.replace('/company');
+      return;
+    }
+    getPostLoginRedirectUrl(userId, getSessionToken()).then((dest) => {
+      window.location.replace(dest || '/company');
+    });
+  }, []);
 
   useEffect(() => {
     let timer: number;
@@ -83,59 +96,6 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     await handleSendSMS();
   };
 
-  /**
-   * Compute the post-sign-in destination.
-   *
-   * We intentionally NEVER redirect to `/app2` anymore: that route used to
-   * point at a deprecated rep dashboard and now renders a blank page on
-   * Netlify. When we can't determine a meaningful destination (missing user
-   * type, missing env URLs, failed onboarding/profile lookups, …) we return
-   * `null` and the caller keeps the user on the success screen instead of
-   * navigating away into the void.
-   */
-  const getRedirectUrl = async (userId: string, token: string): Promise<string | null> => {
-    try {
-      const checkUserType = await auth.checkUserType(userId);
-      if (checkUserType.userType == null) return null;
-
-      if (checkUserType.userType === 'company') {
-        try {
-          const { data: onboardingProgress } = await axios.get(
-            `${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`
-          );
-          if (onboardingProgress.currentPhase !== 4 ||
-            !onboardingProgress.phases?.find((p: any) => p.id === 4)?.completed) {
-            return '/company';
-          }
-          return '/app7';
-        } catch (e: any) {
-          if (e.response?.status === 404) return '/company';
-          throw e;
-        }
-      }
-
-      try {
-        const { data: profileData } = await axios.get(
-          `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        if (!profileData.isBasicProfileCompleted) {
-          return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
-        }
-        const p = profileData.onboardingProgress?.phases;
-        const allDone = p?.phase1?.status === 'completed' && p?.phase2?.status === 'completed' &&
-          p?.phase3?.status === 'completed' && p?.phase4?.status === 'completed';
-        return allDone
-          ? (import.meta.env.VITE_REP_DASHBOARD_URL || '/repdashboard')
-          : (import.meta.env.VITE_REP_ORCHESTRATOR_URL || null);
-      } catch {
-        return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
-      }
-    } catch {
-      return null;
-    }
-  };
-
   const handleSignIn = async () => {
     setError(null);
     setIsLoading(true);
@@ -180,7 +140,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         localStorage.setItem('token', resultData.token);
         Cookies.set('userId', userId);
         setStep('success');
-        const redirectTo = await getRedirectUrl(userId, resultData.token);
+        const redirectTo = await getPostLoginRedirectUrl(userId, resultData.token);
         setTimeout(() => {
           if (onSuccess) {
             onSuccess();
