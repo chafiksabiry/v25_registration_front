@@ -4,7 +4,6 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import SignInDialog from './components/SignInDialog';
 import RegistrationDialog from './components/RegistrationDialog';
 import PasswordRecoveryDialog from './components/PasswordRecoveryDialog';
-import Dashboard from './components/BackOffice/Dashboard';
 import ChoicePage from './components/ChoicePage';
 import { LandingPage } from './components/LandingPage';
 import LinkedInCallback from './components/LinkedInCallback'; // Import the LinkedIn callback component
@@ -92,14 +91,10 @@ function App() {
           <Route path="/" element={<AuthRoutes />} />
           <Route path="/linkedin/callback" element={<LinkedInCallback />} /> {/* 👈 Add this line */}
           <Route path="/linkedin/signin/callback" element={<LinkedInSignInCallback />} />
-          <Route
-            path="/app2"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
+          {/* `/app2` was the deprecated rep dashboard placeholder that now
+              renders blank in production. Redirect any deep-link / cached
+              bookmark back to the landing page so users never get stranded. */}
+          <Route path="/app2" element={<Navigate to="/" replace />} />
           <Route
             path="/profile-completion"
             element={
