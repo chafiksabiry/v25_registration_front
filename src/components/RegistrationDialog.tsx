@@ -159,6 +159,19 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
               }
             }
 
+            // Persist the role chosen on ChoicePage immediately, BEFORE email/SMS
+            // verification. This guarantees `typeUser` is set even if the user
+            // abandons the flow before verifying — fixing accounts that ended
+            // up with `typeUser: null` in DB.
+            const pendingUserType = localStorage.getItem('pendingUserType');
+            if (pendingUserType === 'company' || pendingUserType === 'rep') {
+              try {
+                await auth.changeUserType(RegisterResult.data._id, pendingUserType);
+              } catch (err) {
+                console.error('Failed to set typeUser right after register:', err);
+              }
+            }
+
             await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
 
             setSmsOtpAvailable(false);
