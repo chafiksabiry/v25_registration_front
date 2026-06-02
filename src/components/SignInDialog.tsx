@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken } from '../lib/authRedirect';
 import { useAuth } from '../contexts/AuthContext';
@@ -29,6 +29,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     userId: '',
     phone: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -235,12 +236,21 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                       <div className="relative group">
                         <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
                         <input
-                          type="password"
+                          type={showPassword ? "text" : "password"}
                           value={formData.password}
                           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                          className="input-premium-glow"
+                          className="input-premium-glow pr-12"
                           placeholder="Enter your password"
                         />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute right-4 top-3.5 text-slate-400 hover:text-harx-400 transition-colors focus:outline-none"
+                          tabIndex={-1}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
                       </div>
                       <div className="flex items-center justify-between">
                         <label className="flex items-center space-x-2 cursor-pointer">
