@@ -90,7 +90,7 @@ export async function getPostLoginRedirectUrl(
         p?.phase3?.status === "completed" &&
         p?.phase4?.status === "completed";
       return allDone
-        ? import.meta.env.VITE_REP_DASHBOARD_URL || "/reporchestrator/profile"
+        ? import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile"
         : import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
     } catch {
       return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
