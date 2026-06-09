@@ -2,8 +2,8 @@ import React from 'react';
 import { Menu, X } from 'lucide-react';
 import harxLogo from './assets/logo-harx.png';
 
-/** Solid HARX magenta — flat professional navbar color (no gradient). */
-const HARX_MAGENTA = '#E6188D';
+/** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
+const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
 
 interface HeaderProps {
   onSignIn: () => void;
@@ -42,7 +42,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
 
   return (
     <header
-      style={{ backgroundColor: HARX_MAGENTA }}
+      style={{ backgroundImage: HARX_NAV_GRADIENT }}
       className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 shadow-[0_1px_0_0_rgba(0,0,0,0.08)]"
     >
       <nav className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
@@ -96,7 +96,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
       {/* Mobile menu */}
       {isMenuOpen && (
         <div
-          style={{ backgroundColor: HARX_MAGENTA }}
+          style={{ backgroundImage: HARX_NAV_GRADIENT }}
           className="md:hidden absolute top-full left-0 right-0 border-t border-white/15 p-6 shadow-xl animate-fade-in"
         >
           <div className="flex flex-col space-y-1">
