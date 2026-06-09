@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { isSessionActive, redirectIfAuthenticated } from '../../lib/authRedirect';
+
+const isPasswordRecoveryRoute = (pathname: string) =>
+  pathname === '/auth/recovery' || pathname.endsWith('/auth/recovery');
 
 export function AuthSpinner() {
   return (
@@ -14,10 +17,16 @@ export function AuthSpinner() {
 /** Blocks landing/sign-in for users who already have a session. */
 export function GuestOnly({ children }: { children: React.ReactNode }) {
   const { loading, token } = useAuth();
+  const location = useLocation();
   const [allowed, setAllowed] = useState<boolean | null>(null);
+  const onRecovery = isPasswordRecoveryRoute(location.pathname);
 
   useEffect(() => {
-    if (loading) return;
+    // Password reset is not a full login — never auto-redirect away from it.
+    if (loading || onRecovery) {
+      setAllowed(true);
+      return;
+    }
 
     let cancelled = false;
     (async () => {
@@ -28,8 +37,9 @@ export function GuestOnly({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [loading, token]);
+  }, [loading, token, onRecovery]);
 
+  if (onRecovery) return <>{children}</>;
   if (loading || allowed === null) return <AuthSpinner />;
   if (!allowed) return <AuthSpinner />;
   return <>{children}</>;
