@@ -9,7 +9,7 @@ interface LogoProps {
 export function Logo({ className = "h-10 w-10 md:h-12 md:w-12", variant = 'default' }: LogoProps) {
   return (
     <div className={`${className} relative flex items-center justify-center shrink-0`}>
-      <div className="relative h-full w-full flex items-center justify-center rounded-xl overflow-hidden shadow-sm border border-harx-100/50 bg-white">
+      <div className="relative h-full w-full flex items-center justify-center rounded-none overflow-hidden shadow-sm border border-white/30 bg-white">
         <img
           src={harxLogo}
           alt="HARX Logo"
