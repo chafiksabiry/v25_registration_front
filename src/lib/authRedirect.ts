@@ -40,6 +40,90 @@ export function getSessionToken(): string {
   return localStorage.getItem("token") ?? "";
 }
 
+const REP_ONBOARDING_STATE_KEY = "rep_onboarding_state";
+const PROFILE_DATA_KEY = "profileData";
+
+function computeRepRedirectFromProfile(profileData: {
+  isBasicProfileCompleted?: boolean;
+  status?: string;
+  onboardingProgress?: { phases?: Record<string, { status?: string }> };
+}): string | null {
+  const creation = import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
+  const dashboard = import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile";
+  const orchestrator = import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
+
+  if (!profileData.isBasicProfileCompleted) return creation;
+  const p = profileData.onboardingProgress?.phases;
+  const allDone =
+    p?.phase1?.status === "completed" &&
+    p?.phase2?.status === "completed" &&
+    p?.phase3?.status === "completed" &&
+    p?.phase4?.status === "completed" &&
+    p?.phase5?.status === "completed";
+  const isPublished = profileData.status === "completed";
+  return allDone && isPublished ? dashboard : orchestrator;
+}
+
+function syncRepOnboardingToLocalStorage(
+  profileData: Record<string, unknown>,
+  userId: string
+): void {
+  try {
+    localStorage.setItem(PROFILE_DATA_KEY, JSON.stringify(profileData));
+    localStorage.setItem("profileDataTimestamp", String(Date.now()));
+
+    const phases = (profileData.onboardingProgress as { phases?: Record<string, { status?: string }> })
+      ?.phases;
+    const snapshot: Record<number, boolean> = {};
+    for (let n = 1; n <= 5; n++) {
+      snapshot[n] = phases?.[`phase${n}`]?.status === "completed";
+    }
+    localStorage.setItem("rep_phase_completion", JSON.stringify(snapshot));
+
+    localStorage.setItem(
+      REP_ONBOARDING_STATE_KEY,
+      JSON.stringify({
+        userId,
+        isBasicProfileCompleted: profileData.isBasicProfileCompleted === true,
+        allPhasesDone: [1, 2, 3, 4, 5].every((n) => snapshot[n]),
+        isPublished: profileData.status === "completed",
+        updatedAt: Date.now(),
+      })
+    );
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
+function getRepRedirectFromLocalStorage(userId: string): string | null {
+  try {
+    const stateRaw = localStorage.getItem(REP_ONBOARDING_STATE_KEY);
+    if (stateRaw) {
+      const state = JSON.parse(stateRaw) as {
+        userId?: string;
+        isBasicProfileCompleted?: boolean;
+        allPhasesDone?: boolean;
+        isPublished?: boolean;
+      };
+      if (state.userId === userId) {
+        const creation = import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
+        const dashboard = import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile";
+        const orchestrator = import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
+        if (!state.isBasicProfileCompleted) return creation;
+        return state.allPhasesDone && state.isPublished ? dashboard : orchestrator;
+      }
+    }
+
+    const profileRaw = localStorage.getItem(PROFILE_DATA_KEY);
+    if (profileRaw) {
+      return computeRepRedirectFromProfile(JSON.parse(profileRaw));
+    }
+  } catch {
+    /* fall through to API */
+  }
+  return null;
+}
+
 /**
  * Post-sign-in destination (company → /company, rep → env URLs).
  * Never returns `/app2` (deprecated blank page).
@@ -75,28 +159,17 @@ export async function getPostLoginRedirectUrl(
       }
     }
 
+    // Fast path: use localStorage snapshot (no API round-trip on every login).
+    const cachedRedirect = getRepRedirectFromLocalStorage(userId);
+    if (cachedRedirect) return cachedRedirect;
+
     try {
       const { data: profileData } = await axios.get(
         `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      // 1) CV not imported yet → profile creation / import CV flow.
-      if (!profileData.isBasicProfileCompleted) {
-        return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
-      }
-      const p = profileData.onboardingProgress?.phases;
-      const allDone =
-        p?.phase1?.status === "completed" &&
-        p?.phase2?.status === "completed" &&
-        p?.phase3?.status === "completed" &&
-        p?.phase4?.status === "completed" &&
-        p?.phase5?.status === "completed";
-      const isPublished = profileData.status === "completed";
-      // 2) All phases completed AND profile published → main dashboard.
-      // 3) Otherwise → orchestrator to finish onboarding / publish.
-      return allDone && isPublished
-        ? import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile"
-        : import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
+      syncRepOnboardingToLocalStorage(profileData, userId);
+      return computeRepRedirectFromProfile(profileData);
     } catch {
       return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
     }
