@@ -17,7 +17,7 @@ function render(props: { container?: HTMLElement }) {
     : document.getElementById('root');
 
   if (rootElement) {
-    console.log('[App1] Rendering in container:', rootElement);
+    console.log('[Auth] Rendering in container:', rootElement);
     // Create the root instance if it doesn't exist
     if (!root) {
       root = createRoot(rootElement);
@@ -28,51 +28,51 @@ function render(props: { container?: HTMLElement }) {
       //</StrictMode>
     );
   } else {
-    console.warn('[App1] Root element not found!');
+    console.warn('[Auth] Root element not found!');
   }
 }
 
 export async function bootstrap() {
-  console.time('[App1] bootstrap');
-  console.log('[App1] Bootstrapping...');
+  console.time('[Auth] bootstrap');
+  console.log('[Auth] Bootstrapping...');
   return Promise.resolve();
 }
 
 export async function mount(props: any) {
-  console.log('[App1] Mounting...', props);
+  console.log('[Auth] Mounting...', props);
   const { container } = props;
   if (container) {
-    console.log('[App1] Found container for mounting:', container);
+    console.log('[Auth] Found container for mounting:', container);
   } else {
-    console.warn('[App1] No container found for mounting');
+    console.warn('[Auth] No container found for mounting');
   }
   render(props);
   return Promise.resolve();
 }
 
 export async function unmount(props: any) {
-  console.log('[App1] Unmounting...', props);
+  console.log('[Auth] Unmounting...', props);
   const { container } = props;
   const rootElement = container
     ? container.querySelector('#root')
     : document.getElementById('root');
 
   if (rootElement && root) {
-    console.log('[App1] Unmounting from container:', rootElement);
+    console.log('[Auth] Unmounting from container:', rootElement);
     root.unmount();
     root = null;  // Reset the root instance
   } else {
-    console.warn('[App1] Root element not found for unmounting!');
+    console.warn('[Auth] Root element not found for unmounting!');
   }
   return Promise.resolve();
 }
 
 // Standalone mode: If the app is running outside Qiankun, it will use this code
 if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
-  console.log('[App1] Running in standalone mode');
+  console.log('[Auth] Running in standalone mode');
   render({});
 } else {
-  console.log('[App1] Running inside Qiankun');
+  console.log('[Auth] Running inside Qiankun');
   // Qiankun will control the lifecycle
   render({});
 }
