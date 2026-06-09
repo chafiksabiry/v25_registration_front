@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { Check, Lock, Mail, Phone, User, CheckCircle, Linkedin, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { Header } from './LandingPage/Header';
 
 type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
+
+const REG_STEPS: Step[] = ['name', 'email', 'password', 'phone', 'terms', 'verification', 'success'];
+
+function stepFromSearch(param: string | null): Step {
+  if (param && REG_STEPS.includes(param as Step)) return param as Step;
+  return 'name';
+}
 
 interface RegistrationDialogProps {
   onSignIn: () => void;
@@ -15,7 +23,9 @@ interface RegistrationDialogProps {
 
 export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateToSection }: RegistrationDialogProps) {
   const { setToken } = useAuth();
-  const [step, setStep] = useState<Step>('name');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const step = stepFromSearch(searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -32,40 +42,10 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
 
-  // Keep the browser Back button in sync with the wizard steps.
-  // Each forward transition pushes a history entry tagged with the step,
-  // so pressing Back (browser or in-app) returns to the previous step
-  // instead of doing nothing — mirroring real route-based navigation.
+  /** Push a new history entry via React Router (not raw pushState). */
   const pushStep = (next: Step) => {
-    setStep(next);
-    try {
-      window.history.pushState({ regStep: next }, '');
-    } catch {
-      /* history not available — fall back to plain state */
-    }
+    navigate({ pathname: '/auth/register', search: `?step=${next}` });
   };
-
-  useEffect(() => {
-    // Tag the initial register entry so popstate can identify the first step.
-    try {
-      window.history.replaceState({ ...window.history.state, regStep: 'name' }, '');
-    } catch {
-      /* ignore */
-    }
-
-    const handlePopState = (event: PopStateEvent) => {
-      const popped = event.state && (event.state.regStep as Step | undefined);
-      if (popped) {
-        // Moving between wizard steps within /auth/register.
-        setStep(popped);
-      }
-      // No regStep → the user navigated out of the registration flow;
-      // the router renders the previous page on its own.
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
@@ -97,7 +77,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
         }
       }
 
-      setStep('success');
+      navigate({ pathname: '/auth/register', search: '?step=success' });
       setShowProfilePrompt(true);
       setTimeout(() => onSignIn(), 1500);
       return true;
@@ -271,9 +251,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   };
 
   const goBack = () => {
-    // Defer to the browser history so the in-app Back button and the
-    // browser Back button behave identically (popstate updates the step).
-    window.history.back();
+    navigate(-1);
   };
 
   return (
