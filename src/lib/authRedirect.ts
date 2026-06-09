@@ -80,6 +80,7 @@ export async function getPostLoginRedirectUrl(
         `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
+      // 1) CV not imported yet → profile creation / import CV flow.
       if (!profileData.isBasicProfileCompleted) {
         return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
       }
@@ -88,8 +89,12 @@ export async function getPostLoginRedirectUrl(
         p?.phase1?.status === "completed" &&
         p?.phase2?.status === "completed" &&
         p?.phase3?.status === "completed" &&
-        p?.phase4?.status === "completed";
-      return allDone
+        p?.phase4?.status === "completed" &&
+        p?.phase5?.status === "completed";
+      const isPublished = profileData.status === "completed";
+      // 2) All phases completed AND profile published → main dashboard.
+      // 3) Otherwise → orchestrator to finish onboarding / publish.
+      return allDone && isPublished
         ? import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile"
         : import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
     } catch {
