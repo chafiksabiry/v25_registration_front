@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Check, Lock, Mail, Phone, User, CheckCircle, Linkedin, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -31,6 +31,41 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
+
+  // Keep the browser Back button in sync with the wizard steps.
+  // Each forward transition pushes a history entry tagged with the step,
+  // so pressing Back (browser or in-app) returns to the previous step
+  // instead of doing nothing — mirroring real route-based navigation.
+  const pushStep = (next: Step) => {
+    setStep(next);
+    try {
+      window.history.pushState({ regStep: next }, '');
+    } catch {
+      /* history not available — fall back to plain state */
+    }
+  };
+
+  useEffect(() => {
+    // Tag the initial register entry so popstate can identify the first step.
+    try {
+      window.history.replaceState({ ...window.history.state, regStep: 'name' }, '');
+    } catch {
+      /* ignore */
+    }
+
+    const handlePopState = (event: PopStateEvent) => {
+      const popped = event.state && (event.state.regStep as Step | undefined);
+      if (popped) {
+        // Moving between wizard steps within /auth/register.
+        setStep(popped);
+      }
+      // No regStep → the user navigated out of the registration flow;
+      // the router renders the previous page on its own.
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
@@ -100,7 +135,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           if (formData.fullName.trim().length < 3) {
             newErrors.name = 'Please enter your full name';
           } else {
-            setStep('email');
+            pushStep('email');
           }
           break;
 
@@ -108,7 +143,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           if (!validateEmail(formData.email)) {
             newErrors.email = 'Please enter a valid email address';
           } else {
-            setStep('password');
+            pushStep('password');
           }
           break;
 
@@ -116,7 +151,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           if (!validatePassword(formData.password)) {
             newErrors.password = 'Password must be at least 8 characters with letters and numbers';
           } else {
-            setStep('phone');
+            pushStep('phone');
           }
           break;
 
@@ -124,7 +159,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           if (!validatePhone(formData.phone)) {
             newErrors.phone = 'Please enter a valid phone number';
           } else {
-            setStep('terms');
+            pushStep('terms');
           }
           break;
 
@@ -149,7 +184,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
             } catch (error) {
               if ((error as any).response?.data?.message === 'Email already registered') {
                 newErrors.email = 'This email is already registered';
-                setStep('email');
+                pushStep('email');
                 setErrors(newErrors);
                 return;
               } else {
@@ -183,7 +218,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
               setSmsNotice('SMS verification is temporarily unavailable. Use the email code to complete registration.');
             }
 
-            setStep('verification');
+            pushStep('verification');
           }
           break;
 
@@ -236,14 +271,9 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   };
 
   const goBack = () => {
-    switch (step) {
-      case 'email': setStep('name'); break;
-      case 'password': setStep('email'); break;
-      case 'phone': setStep('password'); break;
-      case 'terms': setStep('phone'); break;
-      case 'verification': setStep('terms'); break;
-      default: break;
-    }
+    // Defer to the browser history so the in-app Back button and the
+    // browser Back button behave identically (popstate updates the step).
+    window.history.back();
   };
 
   return (
