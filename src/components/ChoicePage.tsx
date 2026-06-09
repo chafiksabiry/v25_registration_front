@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Building2,
   Users,
@@ -9,12 +9,12 @@ import {
   Phone,
   HeadphonesIcon,
   Target,
-  Briefcase,
-  Search,
   Sparkles,
   CheckCircle2,
 } from 'lucide-react';
 import { Header } from './LandingPage/Header';
+import companyBanner from './assets/choice-company.jpg';
+import repBanner from './assets/choice-rep.jpg';
 
 interface ChoicePageProps {
   onSelectRole: (role: 'company' | 'rep') => void;
@@ -37,13 +37,16 @@ const repFeatures = [
 ];
 
 export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
+  const [companyLoaded, setCompanyLoaded] = useState(false);
+  const [repLoaded, setRepLoaded] = useState(false);
+
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-slate-50 via-white to-indigo-50/60 flex flex-col animate-fade-in relative">
+    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-harx-50 via-white to-harx-alt-50/60 flex flex-col animate-fade-in relative">
       {/* Decorative background blobs — pure CSS, render instantly */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-indigo-300/30 blur-3xl animate-pulse-slow" />
-        <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-emerald-300/30 blur-3xl animate-pulse-slow" />
-        <div className="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full bg-violet-300/20 blur-3xl animate-pulse-slow" />
+        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-harx-300/30 blur-3xl animate-pulse-slow" />
+        <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-harx-alt-300/30 blur-3xl animate-pulse-slow" />
+        <div className="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full bg-harx-400/20 blur-3xl animate-pulse-slow" />
       </div>
 
       {/* Navbar */}
@@ -51,13 +54,13 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
 
       {/* Hero */}
       <div className="relative z-10 pt-24 pb-6 px-4 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur border border-slate-200 shadow-sm mb-4">
-          <Sparkles className="w-4 h-4 text-indigo-500" />
-          <span className="text-xs font-bold tracking-wide text-slate-600 uppercase">HARX Marketplace</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur border border-harx-100 shadow-sm mb-4">
+          <Sparkles className="w-4 h-4 text-harx-500" />
+          <span className="text-xs font-bold tracking-wide text-harx-600 uppercase">HARX Marketplace</span>
         </div>
         <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight">
           Transform Your{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 via-violet-600 to-emerald-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-harx-500 via-harx-alt-500 to-harx-600">
             Contact Center
           </span>
         </h1>
@@ -70,20 +73,26 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-10 flex items-start md:items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-6 max-w-5xl w-full mx-auto">
           {/* Company Card */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-indigo-500/5 hover:shadow-2xl hover:shadow-indigo-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-slate-100 overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-indigo-500 via-violet-500 to-purple-500" />
-            {/* Banner (gradient, no image) */}
-            <div className="relative h-36 bg-gradient-to-br from-indigo-600 via-violet-600 to-purple-700 overflow-hidden">
-              <div className="absolute -right-6 -top-6 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-              <div className="absolute right-4 top-4 opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500">
-                <Briefcase className="w-24 h-24 text-white" strokeWidth={1.2} />
-              </div>
-              <div className="absolute bottom-4 left-5 right-5">
-                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2">
+          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 hover:shadow-2xl hover:shadow-harx-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-harx-100/70 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-500 via-harx-alt-500 to-harx-600" />
+            {/* Banner: brand gradient always visible instantly, photo fades in on top */}
+            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-600 via-harx-500 to-harx-alt-500">
+              <img
+                src={companyBanner}
+                alt="Team collaborating in an office"
+                loading="eager"
+                decoding="async"
+                onLoad={() => setCompanyLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:scale-105 ${companyLoaded ? 'opacity-100' : 'opacity-0'}`}
+              />
+              {/* Brand color tint for readability + identity */}
+              <div className="absolute inset-0 bg-gradient-to-t from-harx-700/90 via-harx-600/45 to-harx-500/20" />
+              <div className="absolute bottom-4 left-5 right-5 z-10">
+                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
                   <Building2 className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">Post a Gig</h2>
-                <p className="text-white/80 text-sm font-medium">For companies seeking customer service talent</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">Post a Gig</h2>
+                <p className="text-white/90 text-sm font-medium">For companies seeking customer service talent</p>
               </div>
             </div>
 
@@ -91,8 +100,8 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               <div className="space-y-3">
                 {companyFeatures.map(({ icon: Icon, label }) => (
                   <div key={label} className="flex items-center text-slate-700">
-                    <div className="p-1.5 bg-indigo-50 rounded-lg mr-3">
-                      <Icon className="w-4 h-4 text-indigo-600" />
+                    <div className="p-1.5 bg-harx-50 rounded-lg mr-3">
+                      <Icon className="w-4 h-4 text-harx-600" />
                     </div>
                     <span className="font-semibold text-sm">{label}</span>
                   </div>
@@ -100,7 +109,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               </div>
               <button
                 onClick={() => onSelectRole('company')}
-                className="mt-6 w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/40 active:scale-[0.98]"
+                className="mt-6 w-full bg-gradient-to-r from-harx-500 to-harx-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-harx-500/40 active:scale-[0.98]"
               >
                 Post a Gig
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -109,20 +118,26 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
           </div>
 
           {/* Professional Card */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-slate-100 overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500" />
-            {/* Banner (gradient, no image) */}
-            <div className="relative h-36 bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 overflow-hidden">
-              <div className="absolute -right-6 -top-6 w-40 h-40 rounded-full bg-white/10 blur-2xl" />
-              <div className="absolute right-4 top-4 opacity-20 group-hover:opacity-30 group-hover:scale-110 transition-all duration-500">
-                <Search className="w-24 h-24 text-white" strokeWidth={1.2} />
-              </div>
-              <div className="absolute bottom-4 left-5 right-5">
-                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2">
+          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-alt-500/5 hover:shadow-2xl hover:shadow-harx-alt-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-harx-alt-100/70 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-alt-400 via-harx-alt-500 to-harx-alt-600" />
+            {/* Banner: brand gradient always visible instantly, photo fades in on top */}
+            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-alt-500 via-harx-alt-600 to-harx-600">
+              <img
+                src={repBanner}
+                alt="Contact center professionals at work"
+                loading="eager"
+                decoding="async"
+                onLoad={() => setRepLoaded(true)}
+                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:scale-105 ${repLoaded ? 'opacity-100' : 'opacity-0'}`}
+              />
+              {/* Brand color tint for readability + identity */}
+              <div className="absolute inset-0 bg-gradient-to-t from-harx-alt-700/90 via-harx-alt-600/45 to-harx-alt-500/20" />
+              <div className="absolute bottom-4 left-5 right-5 z-10">
+                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
                   <Headphones className="w-5 h-5 text-white" />
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight">Find Gigs</h2>
-                <p className="text-white/80 text-sm font-medium">For contact center professionals</p>
+                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">Find Gigs</h2>
+                <p className="text-white/90 text-sm font-medium">For contact center professionals</p>
               </div>
             </div>
 
@@ -130,8 +145,8 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               <div className="space-y-3">
                 {repFeatures.map(({ icon: Icon, label }) => (
                   <div key={label} className="flex items-center text-slate-700">
-                    <div className="p-1.5 bg-emerald-50 rounded-lg mr-3">
-                      <Icon className="w-4 h-4 text-emerald-600" />
+                    <div className="p-1.5 bg-harx-alt-50 rounded-lg mr-3">
+                      <Icon className="w-4 h-4 text-harx-alt-600" />
                     </div>
                     <span className="font-semibold text-sm">{label}</span>
                   </div>
@@ -139,7 +154,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               </div>
               <button
                 onClick={() => onSelectRole('rep')}
-                className="mt-6 w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/40 active:scale-[0.98]"
+                className="mt-6 w-full bg-gradient-to-r from-harx-alt-500 to-harx-alt-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-harx-alt-500/40 active:scale-[0.98]"
               >
                 Find Gigs
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -153,13 +168,13 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       <div className="relative z-10 pb-6 px-4">
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" /> No setup fees
+            <CheckCircle2 className="w-4 h-4 text-harx-500" /> No setup fees
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Verified professionals
+            <CheckCircle2 className="w-4 h-4 text-harx-500" /> Verified professionals
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" /> AI-powered matching
+            <CheckCircle2 className="w-4 h-4 text-harx-500" /> AI-powered matching
           </span>
         </div>
       </div>
