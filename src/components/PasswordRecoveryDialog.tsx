@@ -1,18 +1,63 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
-//import { sendVerificationEmail } from '../utils/aws';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
+
+const RECOVERY_STEPS: RecoveryStep[] = ['email', 'verification', 'new-password', 'success'];
+const RECOVERY_SESSION_KEY = 'passwordRecoveryFlow';
+
+interface RecoverySession {
+  email: string;
+  step: RecoveryStep;
+  recoveryToken?: string;
+}
+
+function readRecoverySession(): RecoverySession | null {
+  try {
+    const raw = sessionStorage.getItem(RECOVERY_SESSION_KEY);
+    return raw ? (JSON.parse(raw) as RecoverySession) : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeRecoverySession(data: RecoverySession | null) {
+  try {
+    if (data) {
+      sessionStorage.setItem(RECOVERY_SESSION_KEY, JSON.stringify(data));
+    } else {
+      sessionStorage.removeItem(RECOVERY_SESSION_KEY);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function stepFromSearch(param: string | null, session: RecoverySession | null): RecoveryStep {
+  if (param && RECOVERY_STEPS.includes(param as RecoveryStep)) return param as RecoveryStep;
+  if (session?.step) return session.step;
+  return 'email';
+}
 
 interface PasswordRecoveryDialogProps {
   onBack: () => void;
 }
 
 export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialogProps) {
-  const [step, setStep] = useState<RecoveryStep>('email');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const saved = readRecoverySession();
+
+  const [step, setStep] = useState<RecoveryStep>(() =>
+    stepFromSearch(searchParams.get('step'), saved)
+  );
+  const [recoveryToken, setRecoveryToken] = useState<string | null>(
+    () => saved?.recoveryToken ?? null
+  );
   const [formData, setFormData] = useState({
-    email: '',
+    email: saved?.email ?? '',
     verificationCode: '',
     newPassword: '',
     confirmPassword: '',
@@ -20,6 +65,39 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const pushStep = (next: RecoveryStep, patch?: Partial<RecoverySession>) => {
+    setStep(next);
+    navigate({ pathname: '/auth/recovery', search: `?step=${next}` });
+    writeRecoverySession({
+      email: patch?.email ?? formData.email,
+      step: next,
+      recoveryToken: patch?.recoveryToken ?? recoveryToken ?? undefined,
+    });
+  };
+
+  useEffect(() => {
+    // Sync URL step on first load (e.g. refresh mid-flow).
+    const urlStep = searchParams.get('step') as RecoveryStep | null;
+    if (!urlStep && step !== 'email') {
+      navigate({ pathname: '/auth/recovery', search: `?step=${step}` }, { replace: true });
+    }
+
+    // Old recovery flow wrote JWT to localStorage.token — clear it to stop /auth ↔ /company loops.
+    if (saved || step !== 'email') {
+      localStorage.removeItem('token');
+    }
+  }, []);
+
+  const clearRecoveryFlow = () => {
+    writeRecoverySession(null);
+    setRecoveryToken(null);
+  };
+
+  const handleBackToSignIn = () => {
+    clearRecoveryFlow();
+    onBack();
+  };
 
   const handleContinue = async () => {
     setError(null);
@@ -32,10 +110,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
         }
         try {
           const verificationCode = await auth.generateVerificationCode(formData.email);
-          console.log("verificationCode", verificationCode);
-          const verification = await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
-          console.log("verificationRECOVERY", verification);
-          setStep('verification');
+          await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
+          pushStep('verification', { email: formData.email });
         } catch (err: any) {
           setError(err.message || 'Failed to send verification code');
         }
@@ -49,15 +125,15 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
         try {
           const resultverificationEmail = await auth.verifyEmail({
             email: formData.email,
-            code: formData.verificationCode
+            code: formData.verificationCode,
           });
-          console.log("resultverificationEmail", resultverificationEmail);
           if (resultverificationEmail.result && resultverificationEmail.result.error) {
             setError('Invalid email verification code');
           } else if (resultverificationEmail.token) {
-            // Store token to authorize changePassword
-            localStorage.setItem('token', resultverificationEmail.token);
-            setStep('new-password');
+            // Keep recovery token in session only — NOT localStorage.token.
+            // Writing to localStorage triggers GuestOnly → /company redirect loop.
+            setRecoveryToken(resultverificationEmail.token);
+            pushStep('new-password', { recoveryToken: resultverificationEmail.token });
           } else {
             setError('Verification failed: No token received');
           }
@@ -75,17 +151,22 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           setError('Passwords do not match');
           return;
         }
+        if (!recoveryToken) {
+          setError('Session expired. Please start the recovery process again.');
+          pushStep('email');
+          return;
+        }
         try {
-          const changepassword = await auth.changePassword(formData.email, formData.confirmPassword);
-          console.log("changepassword", changepassword);
-          setStep('success');
+          await auth.changePassword(formData.email, formData.confirmPassword, recoveryToken);
+          clearRecoveryFlow();
+          pushStep('success');
         } catch (err: any) {
           setError(err.message || 'Failed to reset password');
         }
         break;
 
       case 'success':
-        onBack();
+        handleBackToSignIn();
         break;
     }
   };
@@ -160,7 +241,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                     <input
-                      type={showNewPassword ? "text" : "password"}
+                      type={showNewPassword ? 'text' : 'password'}
                       value={formData.newPassword}
                       onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                       className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
@@ -172,11 +253,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                         onClick={() => setShowNewPassword(!showNewPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
                       >
-                        {showNewPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
+                        {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     )}
                   </div>
@@ -184,7 +261,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
                     <input
-                      type={showConfirmPassword ? "text" : "password"}
+                      type={showConfirmPassword ? 'text' : 'password'}
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                       className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
@@ -196,11 +273,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
                       >
-                        {showConfirmPassword ? (
-                          <EyeOff className="h-5 w-5" />
-                        ) : (
-                          <Eye className="h-5 w-5" />
-                        )}
+                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     )}
                   </div>
@@ -241,7 +314,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
 
             {step === 'email' && (
               <button
-                onClick={onBack}
+                onClick={handleBackToSignIn}
                 className="w-full text-gray-500 py-2 font-medium hover:text-gray-700 transition-colors"
               >
                 Back to Sign In

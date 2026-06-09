@@ -182,10 +182,16 @@ export async function getPostLoginRedirectUrl(
 export async function redirectIfAuthenticated(token?: string | null): Promise<boolean> {
   if (!isSessionActive(token)) return false;
 
-  const userId = getSessionUserId(token);
+  const userId = getSessionUserId(token) ?? Cookies.get("userId");
+
+  // A JWT alone (e.g. password-recovery verify step) is not a full login session.
+  // Without the userId cookie the company/rep apps reject the user → redirect loop.
   if (!userId) {
-    window.location.replace("/company");
-    return true;
+    const recoveryInProgress = sessionStorage.getItem("passwordRecoveryFlow");
+    if (recoveryInProgress || localStorage.getItem("token")) {
+      localStorage.removeItem("token");
+    }
+    return false;
   }
 
   const dest = await getPostLoginRedirectUrl(userId, getSessionToken());

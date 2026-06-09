@@ -60,9 +60,15 @@ export const auth = {
     console.log("responseRecovery",response);
     return response.data;
   },
-  changePassword: async (email: string, newPassword: string ) => {
-    const response= await api.post('/auth/change-password',{ email,newPassword});
-    console.log("responsechangePassword",response);
+  changePassword: async (email: string, newPassword: string, recoveryToken?: string) => {
+    const response = await api.post(
+      '/auth/change-password',
+      { email, newPassword },
+      recoveryToken
+        ? { headers: { Authorization: `Bearer ${recoveryToken}` } }
+        : undefined
+    );
+    console.log("responsechangePassword", response);
     return response.data;
   },
   linkedinSignIn: async (code: string) => {
