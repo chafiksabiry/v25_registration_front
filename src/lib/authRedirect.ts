@@ -8,6 +8,18 @@ interface TokenPayload {
   exp?: number;
 }
 
+const SESSION_COOKIE_OPTS = { path: '/', sameSite: 'Lax' as const };
+
+/** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
+export function syncSessionUserIdCookie(token?: string | null): string | null {
+  const userId = getSessionUserId(token);
+  if (userId) {
+    Cookies.set('userId', userId, SESSION_COOKIE_OPTS);
+    localStorage.setItem('userId', userId);
+  }
+  return userId;
+}
+
 /** Valid JWT in localStorage or userId cookie (orchestrator / qiankun session). */
 export function isSessionActive(token?: string | null): boolean {
   const stored = token ?? localStorage.getItem("token");
@@ -20,7 +32,7 @@ export function isSessionActive(token?: string | null): boolean {
       /* fall through to cookie */
     }
   }
-  return Boolean(Cookies.get("userId"));
+  return Boolean(Cookies.get("userId") || localStorage.getItem("userId"));
 }
 
 export function getSessionUserId(token?: string | null): string | null {
@@ -33,7 +45,7 @@ export function getSessionUserId(token?: string | null): string | null {
       /* ignore */
     }
   }
-  return Cookies.get("userId") ?? null;
+  return Cookies.get("userId") ?? localStorage.getItem("userId") ?? null;
 }
 
 export function getSessionToken(): string {
@@ -147,7 +159,7 @@ export async function getPostLoginRedirectUrl(
         ) {
           return "/company";
         }
-        return "/app7";
+        return "/company";
       } catch (e: unknown) {
         const status =
           e &&
@@ -182,7 +194,7 @@ export async function getPostLoginRedirectUrl(
 export async function redirectIfAuthenticated(token?: string | null): Promise<boolean> {
   if (!isSessionActive(token)) return false;
 
-  const userId = getSessionUserId(token) ?? Cookies.get("userId");
+  const userId = syncSessionUserIdCookie(token) ?? getSessionUserId(token);
 
   // A JWT alone (e.g. password-recovery verify step) is not a full login session.
   // Without the userId cookie the company/rep apps reject the user → redirect loop.

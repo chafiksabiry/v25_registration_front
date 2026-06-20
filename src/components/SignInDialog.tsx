@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
-import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken } from '../lib/authRedirect';
+import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
@@ -40,9 +40,10 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     if (!isSessionActive()) return;
 
     setIsAlreadyLoggedIn(true);
-    const userId = getSessionUserId();
+    const userId = syncSessionUserIdCookie() ?? getSessionUserId();
     if (!userId) {
-      window.location.replace('/company');
+      localStorage.removeItem('token');
+      setIsAlreadyLoggedIn(false);
       return;
     }
     getPostLoginRedirectUrl(userId, getSessionToken()).then((dest) => {
@@ -139,7 +140,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         const userId = decoded.userId;
         setToken(resultData.token);
         localStorage.setItem('token', resultData.token);
-        Cookies.set('userId', userId);
+        localStorage.setItem('userId', userId);
+        Cookies.set('userId', userId, { path: '/', sameSite: 'Lax' });
         setStep('success');
         const redirectTo = await getPostLoginRedirectUrl(userId, resultData.token);
         setTimeout(() => {
