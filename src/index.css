@@ -74,7 +74,9 @@
   }
 
   .stripe-pricing-table-wrap {
-    max-width: 56rem;
+    width: 100%;
+    max-width: 72rem;
+    min-width: 0;
     margin-inline: auto;
   }
 
@@ -84,22 +86,10 @@
     min-height: 0;
   }
 
-  /* Compact landing embed — narrower and shorter */
-  .stripe-pricing-table-wrap--compact {
-    max-width: 42rem;
-  }
-
-  @supports (zoom: 1) {
-    .stripe-pricing-table-wrap--compact {
-      zoom: 0.9;
-    }
-  }
-
-  @supports not (zoom: 1) {
-    .stripe-pricing-table-wrap--compact {
-      transform: scale(0.9);
-      transform-origin: top center;
-      margin-bottom: -6%;
+  /* Stripe switches to 1 column below ~720px — keep enough width on desktop for 3–4 plans/row */
+  @media (min-width: 1024px) {
+    .stripe-pricing-table-wrap {
+      min-width: 56rem;
     }
   }
 
