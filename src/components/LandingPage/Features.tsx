@@ -93,7 +93,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
         {/* Secondary Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {/* Predictive Analytics */}
-          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
+          {/* <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <LineChart className="h-8 w-8 text-white" />
             </div>
@@ -116,10 +116,10 @@ export function Features({ onGetStarted }: FeaturesProps) {
                 <span>Trend identification</span>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Real-Time Optimization */}
-          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
+          {/* <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <Gauge className="h-8 w-8 text-white" />
             </div>
@@ -142,10 +142,10 @@ export function Features({ onGetStarted }: FeaturesProps) {
                 <span>Real-time adjustments</span>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Intelligent Automation */}
-          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
+          {/* <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <MessageSquare className="h-8 w-8 text-white" />
             </div>
@@ -167,7 +167,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
                 <span>Workflow automation</span>
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
 
         {/* Technology Showcase */}
