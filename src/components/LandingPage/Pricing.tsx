@@ -104,14 +104,19 @@ export function Pricing({ onGetStarted }: PricingProps) {
             </p>
           </div>
 
-          <div className="mx-auto mb-12 w-full max-w-6xl px-2 sm:px-0">
+          <div className="mx-auto mb-12 w-full max-w-[90rem] px-2 sm:px-0">
             {audience === 'company' ? (
               <div key="company-pricing-table" className="space-y-3">
                 <div className="rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-2 text-center text-xs text-harx-800 md:text-sm">
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For companies</strong> — subscribe to post gigs on HARX.
                 </div>
-                <StripePricingTableEmbed pricingTableId={COMPANY_PRICING_TABLE_ID} />
+                <div className="stripe-pricing-table-scroll">
+                  <StripePricingTableEmbed
+                    pricingTableId={COMPANY_PRICING_TABLE_ID}
+                    columns={3}
+                  />
+                </div>
               </div>
             ) : (
               <div key="rep-pricing-table" className="space-y-3">
@@ -119,7 +124,12 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <Headphones className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For REPs</strong> — subscribe to access gigs and start earning.
                 </div>
-                <StripePricingTableEmbed pricingTableId={REP_PRICING_TABLE_ID} />
+                <div className="stripe-pricing-table-scroll">
+                  <StripePricingTableEmbed
+                    pricingTableId={REP_PRICING_TABLE_ID}
+                    columns={4}
+                  />
+                </div>
               </div>
             )}
           </div>

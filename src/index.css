@@ -73,10 +73,16 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
+  .stripe-pricing-table-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem;
+  }
+
   .stripe-pricing-table-wrap {
     width: 100%;
-    max-width: 72rem;
-    min-width: 0;
+    max-width: 90rem;
     margin-inline: auto;
   }
 
@@ -86,10 +92,26 @@
     min-height: 0;
   }
 
-  /* Stripe switches to 1 column below ~720px — keep enough width on desktop for 3–4 plans/row */
+  /* Stripe Pricing Table: ~3 plans/row from ~56rem, ~4 plans/row from ~72rem+ */
   @media (min-width: 1024px) {
-    .stripe-pricing-table-wrap {
+    .stripe-pricing-table-wrap--cols-3 {
       min-width: 56rem;
+    }
+
+    .stripe-pricing-table-wrap--cols-4 {
+      min-width: 72rem;
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .stripe-pricing-table-wrap--cols-4 {
+      min-width: 80rem;
+    }
+  }
+
+  @media (min-width: 1536px) {
+    .stripe-pricing-table-wrap--cols-4 {
+      min-width: 88rem;
     }
   }
 
