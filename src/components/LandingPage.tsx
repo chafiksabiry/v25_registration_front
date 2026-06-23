@@ -7,7 +7,6 @@ import { Footer } from './LandingPage/Footer';
 const Features = lazy(() => import('./LandingPage/Features').then(module => ({ default: module.Features })));
 const Testimonials = lazy(() => import('./LandingPage/Testimonials').then(module => ({ default: module.Testimonials })));
 const HowItWorks = lazy(() => import('./LandingPage/HowItWorks').then(module => ({ default: module.HowItWorks })));
-const About = lazy(() => import('./LandingPage/About').then(module => ({ default: module.About })));
 const Pricing = lazy(() => import('./LandingPage/Pricing').then(module => ({ default: module.Pricing })));
 const ForClients = lazy(() => import('./LandingPage/ForClients').then(module => ({ default: module.ForClients })));
 const ForReps = lazy(() => import('./LandingPage/ForReps').then(module => ({ default: module.ForReps })));
@@ -71,9 +70,6 @@ export function LandingPage({
           </section>
           <section id="pricing" aria-label="Pricing">
             <Pricing onGetStarted={onGetStarted} />
-          </section>
-          <section id="about" aria-label="About Us">
-            <About onGetStarted={onGetStarted} />
           </section>
           <section id="clients" aria-label="For Clients">
             <ForClients onGetStarted={onGetStarted} />
