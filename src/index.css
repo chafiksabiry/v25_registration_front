@@ -73,9 +73,34 @@
     animation: fadeIn 0.5s ease-out forwards;
   }
 
+  .stripe-pricing-table-wrap {
+    max-width: 56rem;
+    margin-inline: auto;
+  }
+
   .stripe-pricing-table-wrap stripe-pricing-table {
     display: block;
     width: 100%;
+    min-height: 0;
+  }
+
+  /* Compact landing embed — narrower and shorter */
+  .stripe-pricing-table-wrap--compact {
+    max-width: 42rem;
+  }
+
+  @supports (zoom: 1) {
+    .stripe-pricing-table-wrap--compact {
+      zoom: 0.9;
+    }
+  }
+
+  @supports not (zoom: 1) {
+    .stripe-pricing-table-wrap--compact {
+      transform: scale(0.9);
+      transform-origin: top center;
+      margin-bottom: -6%;
+    }
   }
 
   @keyframes slideInLeft {
