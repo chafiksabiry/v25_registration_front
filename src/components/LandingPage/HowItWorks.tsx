@@ -19,7 +19,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             How HARX Works
           </h1>
           <p className="text-xl text-gray-600">
-            Three simple steps to transform your contact centre operations with our human-centered AI approach
+          No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.
           </p>
         </div>
 
