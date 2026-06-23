@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie } from '../lib/authRedirect';
+import { hardNavigate } from '../lib/appNavigation';
 import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
@@ -48,9 +49,22 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       setIsAlreadyLoggedIn(false);
       return;
     }
-    getPostLoginRedirectUrl(userId, getSessionToken()).then((dest) => {
-      window.location.replace(dest || '/company');
-    });
+
+    const fallbackTimer = window.setTimeout(() => {
+      hardNavigate('/company');
+    }, 3000);
+
+    getPostLoginRedirectUrl(userId, getSessionToken())
+      .then((dest) => {
+        clearTimeout(fallbackTimer);
+        hardNavigate(dest || '/company');
+      })
+      .catch(() => {
+        clearTimeout(fallbackTimer);
+        hardNavigate('/company');
+      });
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   useEffect(() => {
@@ -155,7 +169,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           // stay on the success screen instead of dumping the user on the
           // blank `/app2` placeholder.
           if (redirectTo) {
-            window.location.href = redirectTo;
+            hardNavigate(redirectTo);
           }
         }, 1500);
       }

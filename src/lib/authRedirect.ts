@@ -2,6 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
+import { hardNavigate } from "./appNavigation";
 
 interface TokenPayload {
   userId?: string;
@@ -20,19 +21,18 @@ export function syncSessionUserIdCookie(token?: string | null): string | null {
   return userId;
 }
 
-/** Valid JWT in localStorage or userId cookie (orchestrator / qiankun session). */
+/** Valid JWT in localStorage (full login session). */
 export function isSessionActive(token?: string | null): boolean {
   const stored = token ?? localStorage.getItem("token");
-  if (stored) {
-    try {
-      const decoded = jwtDecode<TokenPayload>(stored);
-      if (decoded.exp && decoded.exp * 1000 < Date.now()) return false;
-      return Boolean(decoded.userId);
-    } catch {
-      /* fall through to cookie */
-    }
+  if (!stored) return false;
+
+  try {
+    const decoded = jwtDecode<TokenPayload>(stored);
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) return false;
+    return Boolean(decoded.userId);
+  } catch {
+    return false;
   }
-  return Boolean(Cookies.get("userId") || localStorage.getItem("userId"));
 }
 
 export function getSessionUserId(token?: string | null): string | null {
@@ -207,6 +207,6 @@ export async function redirectIfAuthenticated(token?: string | null): Promise<bo
   }
 
   const dest = await getPostLoginRedirectUrl(userId, getSessionToken());
-  window.location.replace(dest || "/company");
+  hardNavigate(dest || "/company");
   return true;
 }

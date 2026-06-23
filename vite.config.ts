@@ -11,6 +11,9 @@ const removeReactRefreshScript = () => {
     transformIndexHtml(html: any) {
       const $ = cheerio.load(html);
       $('script[src="/@react-refresh"]').remove();
+      // Prevent qiankun from re-executing third-party widgets embedded in the MFE HTML.
+      $('#zsiqscript').remove();
+      $('script[src*="salesiq.zohopublic.com"]').remove();
       return $.html();
     },
   };
