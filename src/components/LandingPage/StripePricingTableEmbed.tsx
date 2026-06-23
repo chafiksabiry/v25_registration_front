@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { STRIPE_PUBLISHABLE_KEY } from './stripePricingConfig';
 
 declare global {
@@ -63,18 +63,84 @@ type StripePricingTableEmbedProps = {
   className?: string;
   /** Expected plan count — used to reserve enough width for one row (3 company / 4 rep). */
   columns?: 3 | 4;
+  /** Hide Stripe subscribe / trial CTAs inside the embedded pricing table. */
+  hideSubscribeButton?: boolean;
 };
+
+function hidePricingTableButtons(shadowRoot: ShadowRoot) {
+  shadowRoot.querySelectorAll('button, a').forEach((element) => {
+    const label = element.textContent?.trim().toLowerCase() ?? '';
+    const isSubscribeCta =
+      element.tagName === 'BUTTON' ||
+      label.includes('trial') ||
+      label.includes('subscribe') ||
+      label.includes('start');
+
+    if (isSubscribeCta) {
+      const el = element as HTMLElement;
+      el.style.display = 'none';
+      el.style.visibility = 'hidden';
+      el.setAttribute('aria-hidden', 'true');
+      el.tabIndex = -1;
+    }
+  });
+}
 
 export function StripePricingTableEmbed({
   pricingTableId,
   publishableKey = STRIPE_PUBLISHABLE_KEY,
   className = '',
   columns = 3,
+  hideSubscribeButton = false,
 }: StripePricingTableEmbedProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(
     typeof window !== 'undefined' && Boolean(window.customElements?.get('stripe-pricing-table'))
   );
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!hideSubscribeButton || !ready) return;
+
+    let shadowObserver: MutationObserver | undefined;
+    let hostObserver: MutationObserver | undefined;
+    let intervalId = 0;
+    let timeoutId = 0;
+
+    const attachToHost = () => {
+      const host = containerRef.current?.querySelector('stripe-pricing-table');
+      const shadowRoot = host?.shadowRoot;
+      if (!shadowRoot) return false;
+
+      hidePricingTableButtons(shadowRoot);
+      shadowObserver?.disconnect();
+      shadowObserver = new MutationObserver(() => hidePricingTableButtons(shadowRoot));
+      shadowObserver.observe(shadowRoot, { childList: true, subtree: true });
+      return true;
+    };
+
+    if (!attachToHost()) {
+      intervalId = window.setInterval(() => {
+        if (attachToHost()) {
+          window.clearInterval(intervalId);
+        }
+      }, 200);
+      timeoutId = window.setTimeout(() => window.clearInterval(intervalId), 10000);
+    }
+
+    const container = containerRef.current;
+    if (container) {
+      hostObserver = new MutationObserver(() => attachToHost());
+      hostObserver.observe(container, { childList: true, subtree: true });
+    }
+
+    return () => {
+      window.clearInterval(intervalId);
+      window.clearTimeout(timeoutId);
+      shadowObserver?.disconnect();
+      hostObserver?.disconnect();
+    };
+  }, [hideSubscribeButton, ready, pricingTableId]);
 
   useEffect(() => {
     if (ready) return;
@@ -114,7 +180,10 @@ export function StripePricingTableEmbed({
 
   return (
     <div
-      className={`stripe-pricing-table-wrap w-full stripe-pricing-table-wrap--cols-${columns} ${className}`}
+      ref={containerRef}
+      className={`stripe-pricing-table-wrap w-full stripe-pricing-table-wrap--cols-${columns} ${
+        hideSubscribeButton ? 'stripe-pricing-table-wrap--hide-cta' : ''
+      } ${className}`}
     >
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
