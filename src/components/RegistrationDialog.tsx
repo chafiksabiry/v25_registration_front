@@ -64,6 +64,14 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
   const validatePhone = (phone: string) => /^\+?[\d\s-]{10,}$/.test(phone);
 
+  const getFirstIncompleteStep = (): RegisterFormStep | null => {
+    if (formData.fullName.trim().length < 3) return 'name';
+    if (!validateEmail(formData.email)) return 'email';
+    if (!validatePassword(formData.password)) return 'password';
+    if (!validatePhone(formData.phone)) return 'phone';
+    return null;
+  };
+
   const completeRegistration = async (
     storedUserId: string,
     token: string,
@@ -160,6 +168,13 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           if (!formData.termsAccepted) {
             newErrors.terms = 'Please accept the terms and conditions';
           } else {
+            const incompleteStep = getFirstIncompleteStep();
+            if (incompleteStep) {
+              newErrors.general = 'Some registration details are missing. Please complete all steps.';
+              pushStep(incompleteStep);
+              break;
+            }
+
             setIsLoading(true);
 
             let RegisterResult: any;
@@ -181,7 +196,9 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
                 setErrors(newErrors);
                 return;
               } else {
-                newErrors.general = 'Registration failed, please try again';
+                newErrors.general =
+                  (error as { response?: { data?: { message?: string } } }).response?.data?.message
+                  || 'Registration failed, please try again';
                 setErrors(newErrors);
                 return;
               }
