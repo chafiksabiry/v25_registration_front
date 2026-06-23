@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { StripePricingTableEmbed } from './StripePricingTableEmbed';
@@ -11,7 +12,13 @@ interface PricingProps {
 type PricingAudience = 'company' | 'rep';
 
 export function Pricing({ onGetStarted }: PricingProps) {
+  const navigate = useNavigate();
   const [audience, setAudience] = useState<PricingAudience>('company');
+
+  const handleRepRegister = useCallback(() => {
+    localStorage.setItem('pendingUserType', 'rep');
+    navigate('/auth/register');
+  }, [navigate]);
 
   const bookDemo = () => {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
@@ -129,6 +136,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <StripePricingTableEmbed
                     pricingTableId={REP_PRICING_TABLE_ID}
                     columns={4}
+                    onSubscribeClick={handleRepRegister}
                   />
                 </div>
               </div>
