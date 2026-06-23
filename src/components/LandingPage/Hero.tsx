@@ -61,7 +61,7 @@ export function Hero({ onGetStarted }: HeroProps) {
           <div className="mb-6 animate-fade-in">
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md text-slate-200 text-sm font-semibold mb-4 hover:border-harx-400/50 transition-all duration-300">
               <Sparkles className="h-4 w-4 text-harx-400" />
-              AI-Powered Contact Center • 60,000+ Expert Agents • Transaction-as-a-Service
+              AI-Powered • 60,000+ Expert Agents • Transaction-as-a-Service
             </span>
           </div>
 
@@ -94,14 +94,15 @@ export function Hero({ onGetStarted }: HeroProps) {
             </span>
           </h1>
 
-          <p className="text-lg md:text-xl text-slate-350 mb-10 max-w-3xl mx-auto leading-relaxed">
-          Stop paying for seats. Start paying for results. <br /> 
-          Harx connects your business to a global network of certified agents — human or AI — who handle your customer engagement end to end. Every interaction is scored in real time. You only pay when the result you defined is delivered. <br />
-          Revolutionize your customer service with our AI-powered platform. Experience seamless
-            operations where you define success, set your pricing, and only pay for resolved
-            transactions. Our intelligent system combines human expertise with AI precision for
-            unmatched service quality.
-          </p>
+          <div className="text-lg md:text-xl text-slate-350 mb-10 max-w-3xl mx-auto leading-relaxed space-y-6">
+            <p>Stop paying for seats. Start paying for results.</p>
+            <p>Uber connects you to drivers.</p>
+            <p>Airbnb connects you to homes.</p>
+            <p>Harx connects you to agents — and charges you only when they deliver.</p>
+            <p>
+              Harx connects your business to a global network of certified agents — human or AI — who handle your customer engagement end to end. Every interaction is scored in real time. You only pay when the result you defined is delivered.
+            </p>
+          </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
             <Button
@@ -109,7 +110,7 @@ export function Hero({ onGetStarted }: HeroProps) {
               className="h-12 px-6 bg-gradient-harx hover:opacity-95 text-white font-semibold shadow-lg shadow-harx-500/20 hover:shadow-harx-500/35 transition-all duration-300"
               onClick={onGetStarted}
             >
-              Experience AI-Powered Service
+              Get Started
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button
