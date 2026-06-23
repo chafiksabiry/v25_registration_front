@@ -152,7 +152,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div className="md:order-2">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
-                  <h3 className="text-2xl font-bold mb-4">Pay for Resolutions Only</h3>
+                  <h3 className="text-2xl font-bold mb-4">Pay when it works</h3>
                   <p className="text-gray-600 mb-6">
                     Only pay when customer inquiries are successfully resolved. No overhead, no risk—just predictable costs tied directly to outcomes.
                   </p>
