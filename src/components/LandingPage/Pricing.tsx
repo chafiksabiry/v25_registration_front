@@ -118,7 +118,9 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For companies</strong> — subscribe to post gigs on HARX.
                 </div>
-                <PricingPlansGrid plans={COMPANY_PRICING_PLANS} columns={3} />
+                <div className="overflow-hidden rounded-2xl bg-white px-1 py-2 sm:px-2">
+                  <PricingPlansGrid plans={COMPANY_PRICING_PLANS} columns={3} />
+                </div>
               </div>
             ) : (
               <div key="rep-pricing" className="space-y-3">
@@ -126,12 +128,14 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <Headphones className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For REPs</strong> — subscribe to access gigs and start earning.
                 </div>
-                <PricingPlansGrid
-                  plans={REP_PRICING_PLANS}
-                  columns={4}
-                  showCta
-                  onCtaClick={handleRepRegister}
-                />
+                <div className="overflow-hidden rounded-2xl bg-white px-1 py-2 sm:px-2">
+                  <PricingPlansGrid
+                    plans={REP_PRICING_PLANS}
+                    columns={4}
+                    showCta
+                    onCtaClick={handleRepRegister}
+                  />
+                </div>
               </div>
             )}
           </div>
