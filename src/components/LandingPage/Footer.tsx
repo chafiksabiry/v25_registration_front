@@ -6,7 +6,7 @@ const navigation = {
   company: [
     { name: 'About', href: '#about' },
     { name: 'How It Works', href: '#how-it-works' },
-    { name: 'For Clients', href: '#clients' },
+    { name: 'For Companies', href: '#clients' },
     { name: 'For Reps', href: '#reps' },
   ],
   legal: [
