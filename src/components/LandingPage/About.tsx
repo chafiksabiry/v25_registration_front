@@ -49,7 +49,7 @@ export function About({ onGetStarted }: AboutProps) {
                 onClick={onGetStarted}
                 className="group"
               >
-                Experience AI-Powered Service
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
