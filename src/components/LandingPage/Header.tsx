@@ -35,7 +35,6 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
   const navLinks = [
     { id: 'how-it-works', label: 'How It Works' },
     { id: 'pricing', label: 'Pricing' },
-    { id: 'about', label: 'About' },
     { id: 'clients', label: 'For Clients' },
     { id: 'reps', label: 'For Reps' },
   ];
