@@ -139,11 +139,11 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                     </li>
                     <li className="flex items-start">
                       <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Result paid</span>
+                      <span>CommissionResult paid</span>
                     </li>
                     <li className="flex items-start">
                       <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Excellence unlocked</span>
+                      <span>Bonus : Excellence unlocked</span>
                     </li>
                   </ul>
                 </div>
