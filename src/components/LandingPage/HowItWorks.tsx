@@ -201,22 +201,24 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div className="md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
-                  <div className="md:ml-auto md:max-w-md">
-                    <h3 className="text-2xl font-bold mb-4">No upfront investment — choose your plan, adjust anytime</h3>
-                    <h3 className="text-2xl font-bold mb-4 mt-10">Live monitoring</h3>
-                    <p className="text-gray-600 mb-6">
-                      Every interaction scored in real time by AI.
-                    </p>
-                  </div>
+                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">No upfront investment — choose your plan, adjust anytime</h3>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg">
                   <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <Brain className="h-8 w-8 text-harx-600" />
+                    <CheckCircle2 className="h-8 w-8 text-harx-600" />
                   </div>
                   <ul className="space-y-4 text-gray-600">
                     <li className="flex items-start">
                       <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Every call transcribed, scored, and validated by AI in real time</span>
+                      <span>Choose your plan</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Adjust anytime</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>No upfront investment</span>
                     </li>
                   </ul>
                 </div>
@@ -225,12 +227,36 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div className="md:order-2">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">6</div>
-                  <h3 className="text-2xl font-bold mb-4">Live AI scoring every interaction</h3>
+                  <h3 className="text-2xl font-bold mb-4">Live monitoring</h3>
                   <p className="text-gray-600 mb-6">
-                    Scale globally — 60,000+ certified agents across 70+ countries
+                    Every interaction scored in real time by AI.
                   </p>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg md:order-1">
+                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
+                    <Brain className="h-8 w-8 text-harx-600" />
+                  </div>
+                  <ul className="space-y-4 text-gray-600">
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Every call transcribed, scored, and validated by AI in real time</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Live AI scoring every interaction</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div className="relative grid md:grid-cols-2 gap-8 items-center">
+                <div className="md:text-right">
+                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">7</div>
+                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
+                    Scale globally — 60,000+ certified agents across 70+ countries
+                  </h3>
+                </div>
+                <div className="bg-white p-8 rounded-xl shadow-lg">
                   <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
                     <Globe2 className="h-8 w-8 text-harx-600" />
                   </div>
