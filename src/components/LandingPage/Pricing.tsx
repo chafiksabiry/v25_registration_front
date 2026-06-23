@@ -76,28 +76,28 @@ export function Pricing({ onGetStarted }: PricingProps) {
             <p className="mt-3 text-xs text-slate-500 md:text-sm">
               {audience === 'company' ? (
                 <>
-                  <span className="font-semibold text-slate-700">Vous êtes une entreprise ?</span>{' '}
-                  Publiez des gigs, recrutez des REPs et développez votre centre de contact.
+                  <span className="font-semibold text-slate-700">Are you a company?</span>{' '}
+                  Post gigs, recruit REPs, and scale your contact centre.
                   {' · '}
                   <button
                     type="button"
                     onClick={() => setAudience('rep')}
                     className="font-semibold text-harx-alt-600 underline-offset-2 hover:underline"
                   >
-                    Vous voulez devenir REP ?
+                    Want to become a Rep?
                   </button>
                 </>
               ) : (
                 <>
-                  <span className="font-semibold text-slate-700">Vous voulez devenir REP ?</span>{' '}
-                  Trouvez des gigs, travaillez à distance et augmentez vos revenus.
+                  <span className="font-semibold text-slate-700">Want to become a Rep?</span>{' '}
+                  Find gigs, work remotely, and grow your earnings.
                   {' · '}
                   <button
                     type="button"
                     onClick={() => setAudience('company')}
                     className="font-semibold text-harx-600 underline-offset-2 hover:underline"
                   >
-                    Vous êtes une entreprise ?
+                    Are you a company?
                   </button>
                 </>
               )}
@@ -109,7 +109,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
               <div key="company-pricing-table" className="space-y-3">
                 <div className="rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-2 text-center text-xs text-harx-800 md:text-sm">
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
-                  <strong>Pour les entreprises</strong> — abonnez-vous pour publier des gigs sur HARX.
+                  <strong>For companies</strong> — subscribe to post gigs on HARX.
                 </div>
                 <StripePricingTableEmbed pricingTableId={COMPANY_PRICING_TABLE_ID} />
               </div>
@@ -117,7 +117,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
               <div key="rep-pricing-table" className="space-y-3">
                 <div className="rounded-lg border border-harx-alt-100 bg-harx-alt-50/80 px-3 py-2 text-center text-xs text-harx-alt-800 md:text-sm">
                   <Headphones className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
-                  <strong>Pour les REPs</strong> — abonnez-vous pour accéder aux gigs et commencer à gagner.
+                  <strong>For REPs</strong> — subscribe to access gigs and start earning.
                 </div>
                 <StripePricingTableEmbed pricingTableId={REP_PRICING_TABLE_ID} />
               </div>
