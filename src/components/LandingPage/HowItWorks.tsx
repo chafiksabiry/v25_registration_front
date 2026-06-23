@@ -231,6 +231,12 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <p className="text-gray-600 mb-6">
                     Every interaction scored in real time by AI.
                   </p>
+                  <p className="text-gray-600 mb-6">
+                  Every call transcribed, scored, and validated by AI in real time
+                  </p>
+                  <p className="text-gray-600 mb-6">
+                    Live AI scoring every interaction
+                  </p>
                 </div>
               </div>
 
