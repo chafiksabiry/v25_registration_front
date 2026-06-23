@@ -3,6 +3,7 @@ import { Header } from './Header';
 import { Hero } from './Hero';
 import { HowItWorks } from './HowItWorks';
 import { Pricing } from './Pricing';
+import { About } from './About';
 import { ForClients } from './ForClients';
 import { ForReps } from './ForReps';
 import { Footer } from './Footer';
@@ -126,6 +127,9 @@ export function LandingPage({
         <Pricing onGetStarted={onGetStarted} />
       </section>
 
+      <section id="about" className="scroll-mt-28 bg-white text-slate-900">
+        <About onGetStarted={onGetStarted} />
+      </section>
 
       <section id="clients" className="scroll-mt-28 bg-gradient-to-b from-harx-50/60 to-white text-slate-900">
         <ForClients onGetStarted={onGetStarted} />
