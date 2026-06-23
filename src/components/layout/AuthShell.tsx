@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, useNavigate, useOutletContext } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 
 /**
  * Shared shell for the auth screens (landing + choice + signin + register +
@@ -21,6 +21,7 @@ export function useAuthContext() {
 
 export default function AuthShell() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   const handleNavigateToSection = (sectionId: string) => {
@@ -43,7 +44,10 @@ export default function AuthShell() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-harx-50 to-white">
-      <Outlet context={context} />
+      <Outlet
+        key={`${location.pathname}${location.search}`}
+        context={context}
+      />
     </div>
   );
 }

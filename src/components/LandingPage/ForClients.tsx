@@ -246,7 +246,7 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
                 onClick={bookDemo}
                 className="group"
               >
-                Schedule a Demo
+                Book a Demo
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>

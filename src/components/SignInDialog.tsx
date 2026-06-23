@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useAuth } from '../contexts/AuthContext';
@@ -20,6 +21,7 @@ interface SignInDialogProps {
 
 export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted, onNavigateToSection }: SignInDialogProps) {
   const { setToken } = useAuth();
+  const navigate = useNavigate();
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState({
     email: '',
@@ -218,6 +220,17 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                 </div>
               ) : (
                 <>
+                  {step === 'credentials' && (
+                    <button
+                      type="button"
+                      onClick={() => navigate('/')}
+                      className="mb-6 flex items-center text-sm text-slate-450 transition-colors hover:text-white"
+                    >
+                      <ArrowLeft className="mr-1.5 h-4 w-4" />
+                      Back
+                    </button>
+                  )}
+
                   <div className="text-center mb-8 lg:text-left">
                     <h2 className="text-3xl font-extrabold text-white mb-2">Welcome Back</h2>
                     <p className="text-slate-400 text-sm">Sign in to your account to continue.</p>

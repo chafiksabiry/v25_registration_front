@@ -92,7 +92,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
               {audience === 'company' ? (
                 <>
                   <span className="font-semibold text-slate-700">Are you a company?</span>{' '}
-                  Post gigs, recruit REPs, and scale your contact centre.
+                  Post gigs, recruit REPs, and scale.
                   {' · '}
                   <button
                     type="button"
@@ -160,7 +160,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 className="group min-w-[220px] shadow-lg md:min-w-[240px]"
               >
                 <span className="flex items-center justify-center">
-                  Start Free Trial
+                  Get Started
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
               </Button>
@@ -171,7 +171,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 className="group min-w-[220px] md:min-w-[240px]"
               >
                 <span className="flex items-center justify-center">
-                  Schedule a Demo
+                  Book a Demo
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </span>
               </Button>

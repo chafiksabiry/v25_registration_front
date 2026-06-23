@@ -6,8 +6,24 @@ import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 import { getRouterBasename } from './utils/routerBasename';
 import { PrivateRoute } from './components/layout/guards';
 import HistorySync from './components/layout/HistorySync';
+import AuthShell from './components/layout/AuthShell';
+import { GuestOnly } from './components/layout/guards';
 
-import AuthRoutes from './routes/AuthRoutes';
+import {
+  LandingScreen,
+  ChoiceScreen,
+  SignInScreen,
+  RegisterScreen,
+  RecoveryScreen,
+} from './routes/AuthRoutes';
+
+function GuestAuthLayout() {
+  return (
+    <GuestOnly>
+      <AuthShell />
+    </GuestOnly>
+  );
+}
 
 function App() {
   return (
@@ -41,10 +57,14 @@ function App() {
             }
           />
 
-          {/* Auth module: landing + choice + signin + register + recovery.
-              Catch-all (last) so unknown paths fall through to the auth shell.
-              GuestOnly inside handles redirecting already-authenticated users. */}
-          <Route path="/*" element={<AuthRoutes />} />
+          {/* Auth screens — explicit routes (no catch-all) so Back/Forward remounts correctly */}
+          <Route element={<GuestAuthLayout />}>
+            <Route path="/" element={<LandingScreen />} />
+            <Route path="/auth/choice" element={<ChoiceScreen />} />
+            <Route path="/auth/signin" element={<SignInScreen />} />
+            <Route path="/auth/register" element={<RegisterScreen />} />
+            <Route path="/auth/recovery" element={<RecoveryScreen />} />
+          </Route>
         </Routes>
       </Router>
     </AuthProvider>
