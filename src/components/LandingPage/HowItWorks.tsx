@@ -154,8 +154,28 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
                   <h3 className="text-2xl font-bold mb-4">Only pay when it works</h3>
                   <p className="text-gray-600 mb-6">
-                    Only pay when customer inquiries are successfully resolved. No overhead, no risk—just predictable costs tied directly to outcomes.
+                    Only pay when customer inquiries are successfully resolved.
                   </p>
+                  <ul className="space-y-4 text-gray-600">
+                    <li className="flex items-start gap-3">
+                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+                        Floor
+                      </span>
+                      <span className="pt-0.5">Pay for a serious, argued interaction</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+                        Commission
+                      </span>
+                      <span className="pt-0.5">Pay when a transaction is confirmed</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+                        Bonus
+                      </span>
+                      <span className="pt-0.5">Pay when your target is reached</span>
+                    </li>
+                  </ul>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg md:order-1">
                   <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
