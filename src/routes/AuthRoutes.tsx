@@ -1,24 +1,17 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import { LandingPage } from '../components/LandingPage';
+import { LandingPage } from '../components/LandingPage/index';
 import ChoicePage from '../components/ChoicePage';
 import SignInDialog from '../components/SignInDialog';
 import RegistrationDialog from '../components/RegistrationDialog';
 import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
-import AuthShell, { useAuthContext } from '../components/layout/AuthShell';
-import { GuestOnly } from '../components/layout/guards';
+import { useAuthContext } from '../components/layout/AuthShell';
 
 /**
- * Auth module routes.
- *
- * Mirrors the rep orchestrator's route modules (e.g. DashboardRoutes):
- *  - a layout route (<AuthShell />) provides the shared wrapper + navigation
- *    helpers via the outlet context;
- *  - each screen is a real route, so the browser Back button mounts/unmounts
- *    the correct page instead of relying on local component state.
+ * Auth module screens — rendered as child routes of AuthShell (see App.tsx).
+ * Each screen is a real route so Back/Forward mounts the correct page.
  */
 
-function LandingScreen() {
+export function LandingScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
   return (
     <LandingPage
@@ -31,7 +24,7 @@ function LandingScreen() {
   );
 }
 
-function ChoiceScreen() {
+export function ChoiceScreen() {
   const { navigate, handleSelectRole, handleNavigateToSection } = useAuthContext();
   return (
     <ChoicePage
@@ -42,7 +35,7 @@ function ChoiceScreen() {
   );
 }
 
-function SignInScreen() {
+export function SignInScreen() {
   const { navigate, handleNavigateToSection } = useAuthContext();
   return (
     <SignInDialog
@@ -54,7 +47,7 @@ function SignInScreen() {
   );
 }
 
-function RegisterScreen() {
+export function RegisterScreen() {
   const { navigate, handleNavigateToSection } = useAuthContext();
   return (
     <RegistrationDialog
@@ -65,23 +58,12 @@ function RegisterScreen() {
   );
 }
 
-function RecoveryScreen() {
+export function RecoveryScreen() {
   const { navigate } = useAuthContext();
   return <PasswordRecoveryDialog onBack={() => navigate('/auth/signin')} />;
 }
 
+/** @deprecated Use explicit routes in App.tsx */
 export default function AuthRoutes() {
-  return (
-    <GuestOnly>
-      <Routes>
-        <Route element={<AuthShell />}>
-          <Route path="/" element={<LandingScreen />} />
-          <Route path="/auth/choice" element={<ChoiceScreen />} />
-          <Route path="/auth/signin" element={<SignInScreen />} />
-          <Route path="/auth/register" element={<RegisterScreen />} />
-          <Route path="/auth/recovery" element={<RecoveryScreen />} />
-        </Route>
-      </Routes>
-    </GuestOnly>
-  );
+  return null;
 }
