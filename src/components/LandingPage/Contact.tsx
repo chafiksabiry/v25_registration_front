@@ -71,11 +71,11 @@ export function Contact() {
                 }}
                 className="space-y-6"
               >
-                <input type="text" style={{ display: 'none' }} name="xnQsjsdp" value="8a66890a320144fa10583039479a805dc89c7ee4e9bfd02dcd1da33786f3c6f0" />
-                <input type="hidden" name="zc_gad" id="zc_gad" value="" />
-                <input type="text" style={{ display: 'none' }} name="xmIwtLD" value="183a9faf2fae53a446e3e2b6f2b9f3ea20e3258a0a59f12422fd3a54511944fe702f38b793f031b7b182f3cb8633330a" />
-                <input type="text" style={{ display: 'none' }} name="actionType" value="TGVhZHM=" />
-                <input type="text" style={{ display: 'none' }} name="returnURL" value="null" />
+                <input type="hidden" name="xnQsjsdp" defaultValue="8a66890a320144fa10583039479a805dc89c7ee4e9bfd02dcd1da33786f3c6f0" />
+                <input type="hidden" name="zc_gad" id="zc_gad" defaultValue="" />
+                <input type="hidden" name="xmIwtLD" defaultValue="183a9faf2fae53a446e3e2b6f2b9f3ea20e3258a0a59f12422fd3a54511944fe702f38b793f031b7b182f3cb8633330a" />
+                <input type="hidden" name="actionType" defaultValue="TGVhZHM=" />
+                <input type="hidden" name="returnURL" defaultValue="null" />
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
