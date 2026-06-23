@@ -152,9 +152,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div className="md:order-2">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
-                  <h3 className="text-2xl font-bold mb-4">Only pay when it works</h3>
+                  <h3 className="text-2xl font-bold mb-4">You only pay what it's worth.                  </h3>
                   <p className="text-gray-600 mb-6">
-                    Only pay when customer inquiries are successfully resolved.
+                  Floor for effort. Commission for results. Bonus for excellence.
                   </p>
                   <ul className="space-y-4 text-gray-600">
                     <li className="flex items-start gap-3">
