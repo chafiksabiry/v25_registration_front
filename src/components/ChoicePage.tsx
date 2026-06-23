@@ -3,7 +3,6 @@ import {
   Building2,
   Users,
   ArrowRight,
-  ArrowLeft,
   Headphones,
   PhoneCall,
   MessagesSquare,
@@ -14,7 +13,6 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { Header } from './LandingPage/Header';
-import { useHistoryBack } from '../hooks/useHistoryBack';
 import companyBanner from './assets/choice-company.jpg';
 import repBanner from './assets/choice-rep.jpg';
 
@@ -41,7 +39,6 @@ const repFeatures = [
 export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
   const [companyLoaded, setCompanyLoaded] = useState(false);
   const [repLoaded, setRepLoaded] = useState(false);
-  const goBack = useHistoryBack('/');
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-harx-50 via-white to-harx-alt-50/60 flex flex-col animate-fade-in relative">
@@ -57,14 +54,6 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
 
       {/* Hero */}
       <div className="relative z-10 pt-24 pb-6 px-4 text-center">
-        <button
-          type="button"
-          onClick={goBack}
-          className="mx-auto mb-4 flex items-center text-sm font-semibold text-slate-500 transition-colors hover:text-harx-600"
-        >
-          <ArrowLeft className="mr-1.5 h-4 w-4" />
-          Back
-        </button>
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur border border-harx-100 shadow-sm mb-4">
           <Sparkles className="w-4 h-4 text-harx-500" />
           <span className="text-xs font-bold tracking-wide text-harx-600 uppercase">HARX Marketplace</span>
