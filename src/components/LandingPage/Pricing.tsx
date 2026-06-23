@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { StripePricingTableEmbed } from './StripePricingTableEmbed';
