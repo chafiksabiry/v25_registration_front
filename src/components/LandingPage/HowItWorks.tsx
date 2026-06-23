@@ -125,7 +125,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">3</div>
                   <h3 className="text-2xl font-bold mb-4">Name your price</h3>
                   <p className="text-gray-600 mb-6">
-                    You set the amounts. harx ensures fairness. AI confirms every result.
+                  Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
                   </p>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg">
