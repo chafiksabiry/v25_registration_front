@@ -45,7 +45,7 @@ export default function AuthShell() {
   return (
     <div className="min-h-0 bg-white">
       <Outlet
-        key={`${location.pathname}${location.search}`}
+        key={location.pathname}
         context={context}
       />
     </div>
