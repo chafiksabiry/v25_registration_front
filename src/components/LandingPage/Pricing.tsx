@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowRight,
@@ -6,7 +6,6 @@ import {
   Check,
   Headphones,
   Brain,
-  Users2,
   Globe2,
   Rocket,
   Shield,
@@ -18,38 +17,38 @@ interface PricingProps {
   onGetStarted: () => void;
 }
 
-type PricingTab = 'company' | 'reps';
+type PlanAudience = 'company' | 'rep';
 
 interface PlanCard {
   name: string;
   description: string;
-  price: number | 'custom' | 'free';
+  price: number | 'free';
   currency?: string;
   originalPrice?: string;
   discountedPrice?: string;
   features: string[];
   popular?: boolean;
+  audience: PlanAudience;
   icon: React.ComponentType<{ className?: string }>;
   highlight: string;
   iconColor: string;
 }
 
-/** Company plans — synced with Stripe pricing table (live). */
 const companyPlans: PlanCard[] = [
   {
     name: 'Free',
     description: 'Test, validate, and pay only for what you consume',
     price: 'free',
+    audience: 'company',
     features: [
       'Manual matching and planning',
       'Pay-as-you-go AI automation',
       'On-demand AI quality audit',
       '7-day call storage',
       'Email support',
-      'No customization options',
     ],
     icon: Shield,
-    highlight: 'bg-green-50',
+    highlight: 'from-green-50 to-white',
     iconColor: 'text-green-600',
   },
   {
@@ -57,19 +56,18 @@ const companyPlans: PlanCard[] = [
     description: 'Start your campaigns with simplicity and efficiency',
     price: 99,
     currency: 'USD',
+    audience: 'company',
     originalPrice: '199',
     discountedPrice: '99',
     features: [
       'Manual scheduler for shifts',
       'Basic matching system',
-      'Single geography operations',
       '5 AI quality audits/month',
       'Standard HARX platform',
-      'Basic analytics',
-      'Email support with assisted onboarding',
+      'Email support with onboarding',
     ],
     icon: Brain,
-    highlight: 'bg-blue-50',
+    highlight: 'from-blue-50 to-white',
     iconColor: 'text-blue-600',
   },
   {
@@ -77,21 +75,19 @@ const companyPlans: PlanCard[] = [
     description: 'Drive multichannel efforts with AI automation',
     price: 249,
     currency: 'USD',
+    audience: 'company',
     originalPrice: '499',
     discountedPrice: '249',
     popular: true,
     features: [
-      'Optional AI scheduler',
-      'Optional AI matching',
+      'Optional AI scheduler & matching',
       '25 AI quality audits/month',
-      'Optional AI Knowledge Base',
       '90-day call storage',
-      'Standard analytics',
       'Priority support + chat',
       'Partial branding options',
     ],
     icon: Rocket,
-    highlight: 'bg-harx-50',
+    highlight: 'from-harx-50 to-white',
     iconColor: 'text-harx-600',
   },
   {
@@ -99,62 +95,37 @@ const companyPlans: PlanCard[] = [
     description: 'Activate intelligence at scale',
     price: 499,
     currency: 'USD',
+    audience: 'company',
     originalPrice: '999',
     discountedPrice: '499',
     features: [
       'Intelligent AI matching',
-      'AI scheduler with scoring',
       '100 AI quality audits/month',
-      'GIG-specific AI learning',
-      'Automated call journaling',
       'Advanced analytics',
       'Native CRM integrations',
       '48h SLA support',
-      'Full platform customization',
     ],
     icon: Globe2,
-    highlight: 'bg-orange-50',
+    highlight: 'from-orange-50 to-white',
     iconColor: 'text-orange-600',
-  },
-  {
-    name: 'Enterprise',
-    description: 'Your complete AI-powered productivity platform',
-    price: 'custom',
-    features: [
-      'Predictive AI matching',
-      'Advanced AI scheduler',
-      '500 AI quality audits/month',
-      'Live AI-Augmented Agent',
-      'Dedicated LLM per GIG',
-      'Custom workflows',
-      'Advanced analytics + AI alerts',
-      'Complete API access',
-      '24/7 dedicated support',
-      'White-label solution',
-    ],
-    icon: Users2,
-    highlight: 'bg-purple-50',
-    iconColor: 'text-purple-600',
   },
 ];
 
-/** Rep plans — synced with Stripe pricing table (live). */
 const repPlans: PlanCard[] = [
   {
     name: 'Take a chance',
-    description:
-      'Completely free. Prove you can earn. No commitment. If you like it and hit €30, upgrade to unlock more.',
+    description: 'Completely free. Prove you can earn. No commitment.',
     price: 'free',
+    audience: 'rep',
     features: [
       'Earn up to €30/month',
-      'Dashboard: Real-time wallet balance; Basic analytics',
+      'Real-time wallet & basic analytics',
       '3 gigs only',
-      'Slot Booking: First-Come, First-Served',
-      'Call History: Cannot listen to recordings, see AI scores, or read transcripts',
-      'Support by email — 24 hours',
+      'First-Come, First-Served booking',
+      'Email support — 24h',
     ],
     icon: Shield,
-    highlight: 'bg-green-50',
+    highlight: 'from-green-50 to-white',
     iconColor: 'text-green-600',
   },
   {
@@ -162,17 +133,16 @@ const repPlans: PlanCard[] = [
     description: "Now I'm making real money.",
     price: 9.99,
     currency: 'EUR',
+    audience: 'rep',
     features: [
       'Earn up to €200/month',
-      'Dashboard: Advanced analytics',
+      'Advanced analytics',
       '10 gigs',
-      'Slot Booking: Priority on waiting list',
-      'Call History: Listen to recordings, see AI scores, and read transcripts',
-      'Support by email or chat',
+      'Priority slot waiting list',
       '7 days free trial',
     ],
     icon: Brain,
-    highlight: 'bg-blue-50',
+    highlight: 'from-blue-50 to-white',
     iconColor: 'text-blue-600',
   },
   {
@@ -180,18 +150,17 @@ const repPlans: PlanCard[] = [
     description: 'Bills paid. Fun money time.',
     price: 19.99,
     currency: 'EUR',
+    audience: 'rep',
     popular: true,
     features: [
       'Earn up to €500/month',
-      'Dashboard: Advanced analytics',
       '100 gigs',
-      'Slot Booking: Priority',
-      'Call History: Listen to recordings, see AI scores, read transcripts',
-      'Support by Phone, email or chat',
+      'Priority slot booking',
+      'Full call history access',
       '7 days free trial',
     ],
     icon: Rocket,
-    highlight: 'bg-harx-50',
+    highlight: 'from-harx-50 to-white',
     iconColor: 'text-harx-600',
   },
   {
@@ -199,20 +168,21 @@ const repPlans: PlanCard[] = [
     description: "I'm elite. No limits.",
     price: 59.99,
     currency: 'EUR',
+    audience: 'rep',
     features: [
-      'Unlimited Monthly Earning',
-      'Priority Access to Premium Gigs',
-      'Priority to book slots',
-      'All AI-powered features for free',
-      'No extra fees for wallet management',
-      'Support by Phone, email or chat',
+      'Unlimited monthly earning',
+      'Priority premium gigs',
+      'All AI features included',
+      'No extra wallet fees',
       '7 days free trial',
     ],
     icon: Globe2,
-    highlight: 'bg-orange-50',
+    highlight: 'from-orange-50 to-white',
     iconColor: 'text-orange-600',
   },
 ];
+
+const allPlans: PlanCard[] = [...companyPlans, ...repPlans];
 
 function formatMoney(amount: number, currency = 'EUR'): string {
   try {
@@ -226,199 +196,205 @@ function formatMoney(amount: number, currency = 'EUR'): string {
   }
 }
 
+function audienceLabel(audience: PlanAudience) {
+  return audience === 'company' ? 'Company' : 'Rep';
+}
+
+function ctaLabel(plan: PlanCard) {
+  if (plan.audience === 'company') return 'Post a Gig';
+  if (plan.price === 'free') return 'Find Gigs';
+  return 'Start Trial';
+}
+
+function PlanPrice({ plan }: { plan: PlanCard }) {
+  if (plan.price === 'free') {
+    return <span className="text-2xl font-black text-slate-900 xl:text-3xl">Free</span>;
+  }
+
+  if (plan.audience === 'company' && plan.discountedPrice) {
+    return (
+      <div className="space-y-1">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <span className="text-lg font-bold text-slate-400 line-through xl:text-xl">
+            ${plan.originalPrice}
+          </span>
+          <span className="rounded-full bg-harx-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-harx-700">
+            -50%
+          </span>
+        </div>
+        <div className="flex items-baseline gap-1">
+          <span className="text-2xl font-black text-harx-600 xl:text-3xl">
+            ${plan.discountedPrice}
+          </span>
+          <span className="text-xs font-semibold text-slate-500">/mo</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex items-baseline gap-1">
+      <span className="text-2xl font-black text-harx-600 xl:text-3xl">
+        {formatMoney(plan.price, plan.currency)}
+      </span>
+      <span className="text-xs font-semibold text-slate-500">/mo</span>
+    </div>
+  );
+}
+
 export function Pricing({ onGetStarted }: PricingProps) {
   const navigate = useNavigate();
-  const [tab, setTab] = useState<PricingTab>('reps');
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const contactSales = () => {
-    const contactForm = document.getElementById('contact-form');
-    if (contactForm) {
-      scrollToSection('contact-form');
-    } else {
-      window.location.href = 'mailto:sales@harx.ai';
-    }
-  };
 
   const bookDemo = () => {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
   };
 
-  const goToRegister = (role: 'company' | 'rep') => {
+  const goToRegister = (role: PlanAudience) => {
     localStorage.setItem('pendingUserType', role);
     navigate('/auth/register');
   };
 
-  const handlePlanAction = (plan: PlanCard, role: 'company' | 'rep') => {
-    if (plan.price === 'custom') {
-      contactSales();
-      return;
-    }
-    goToRegister(role);
-  };
-
-  const activePlans = tab === 'company' ? companyPlans : repPlans;
-  const gridClass =
-    tab === 'reps'
-      ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'
-      : 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
-
-  const ctaLabel = (plan: PlanCard) => {
-    if (plan.price === 'custom') return 'Contact Sales';
-    if (tab === 'company') return plan.price === 'free' ? 'Post a Gig' : 'Post a Gig';
-    if (plan.price === 'free') return 'Find Gigs';
-    return 'Start Trial';
-  };
-
   return (
     <div className="min-h-screen pt-16">
-      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-24">
-        <div className="container mx-auto px-4">
+      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-16 md:py-24">
+        <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-harx-300/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-harx-alt-300/20 blur-3xl" />
+
+        <div className="container relative mx-auto px-4">
           <div className="mx-auto mb-8 max-w-4xl text-center">
-            <div className="rounded-2xl bg-gradient-to-r from-harx-600 to-harx-500 p-6 text-white shadow-xl">
-              <div className="mb-2 flex items-center justify-center gap-2">
-                <Sparkles className="h-6 w-6" />
-                <h2 className="text-2xl font-bold">Limited Time Offer</h2>
-                <Sparkles className="h-6 w-6" />
+            <div className="rounded-2xl bg-gradient-to-r from-harx-600 to-harx-alt-500 p-5 shadow-xl md:p-6">
+              <div className="mb-2 flex items-center justify-center gap-2 text-white">
+                <Sparkles className="h-5 w-5 md:h-6 md:w-6" />
+                <h2 className="text-xl font-bold md:text-2xl">Limited Time Offer</h2>
+                <Sparkles className="h-5 w-5 md:h-6 md:w-6" />
               </div>
-              <p className="text-xl">Get 50% off on all plans when you subscribe today!</p>
+              <p className="text-lg text-white md:text-xl">
+                Get 50% off company plans when you subscribe today!
+              </p>
               <p className="mt-2 text-sm text-harx-100">*Offer valid for the first 3 months</p>
             </div>
           </div>
 
-          <div className="mx-auto mb-10 max-w-3xl text-center">
-            <h1 className="mb-6 text-4xl font-bold md:text-5xl">Subscription Plans</h1>
-            <p className="text-xl text-gray-600">
-              {tab === 'company'
-                ? 'Choose your company plan and post gigs on HARX.'
-                : 'Choose your rep plan and find gigs on HARX.'}
+          <div className="mx-auto mb-10 max-w-4xl text-center">
+            <h1 className="mb-4 text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
+              Subscription Plans
+            </h1>
+            <p className="text-base text-slate-600 md:text-xl">
+              Company plans to post gigs and rep plans to find gigs — all in one place.
             </p>
-          </div>
-
-          <div className="mb-12 flex justify-center">
-            <div className="inline-flex rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
-              <button
-                type="button"
-                onClick={() => setTab('company')}
-                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition ${
-                  tab === 'company'
-                    ? 'bg-harx-500 text-white shadow'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Building2 className="h-4 w-4" />
-                Company
-              </button>
-              <button
-                type="button"
-                onClick={() => setTab('reps')}
-                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition ${
-                  tab === 'reps'
-                    ? 'bg-harx-alt-500 text-white shadow'
-                    : 'text-slate-600 hover:text-slate-900'
-                }`}
-              >
-                <Headphones className="h-4 w-4" />
-                Reps
-              </button>
+            <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-harx-200 bg-white px-3 py-1 text-xs font-bold text-harx-700 shadow-sm">
+                <Building2 className="h-3.5 w-3.5" />
+                Company · Post a Gig
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-harx-alt-200 bg-white px-3 py-1 text-xs font-bold text-harx-alt-700 shadow-sm">
+                <Headphones className="h-3.5 w-3.5" />
+                Rep · Find Gigs
+              </span>
             </div>
           </div>
 
-          <div className={`${gridClass} mb-24`}>
-            {activePlans.map((plan) => (
-              <div
-                key={`${tab}-${plan.name}`}
-                className={`relative flex h-full flex-col rounded-2xl bg-white shadow-lg transition-transform duration-300 hover:scale-[1.02] ${
-                  plan.popular ? 'scale-[1.02] ring-2 ring-harx-500' : 'border border-gray-100'
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-harx-500 to-harx-600 px-6 py-1 text-sm font-medium text-white shadow-lg">
-                    Most Popular
-                  </div>
-                )}
+          {/* All 8 plans — 1 row on 2xl, 4 cols on lg, 2 on sm, 1 on mobile */}
+          <div className="mb-20 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-8">
+            {allPlans.map((plan) => {
+              const isCompany = plan.audience === 'company';
+              return (
+                <div
+                  key={`${plan.audience}-${plan.name}`}
+                  className={`group relative flex min-w-0 flex-col overflow-hidden rounded-2xl bg-white shadow-md ring-1 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${
+                    plan.popular
+                      ? 'ring-harx-500 shadow-harx-500/15'
+                      : isCompany
+                        ? 'ring-harx-100 hover:ring-harx-300'
+                        : 'ring-harx-alt-100 hover:ring-harx-alt-300'
+                  }`}
+                >
+                  <div
+                    className={`h-1.5 w-full ${
+                      isCompany
+                        ? 'bg-gradient-to-r from-harx-500 to-harx-600'
+                        : 'bg-gradient-to-r from-harx-alt-500 to-harx-alt-600'
+                    }`}
+                  />
 
-                <div className={`rounded-t-2xl px-6 pb-4 pt-8 ${plan.highlight}`}>
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-md">
-                    <plan.icon className={`h-6 w-6 ${plan.iconColor}`} />
-                  </div>
-                  <h3 className="mb-2 text-xl font-black uppercase tracking-tight">{plan.name}</h3>
-                  <p className="min-h-[48px] text-sm text-gray-600">{plan.description}</p>
+                  {plan.popular && (
+                    <div className="absolute -top-0 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-harx-500 to-harx-alt-500 px-3 py-0.5 text-[10px] font-black uppercase tracking-wider text-white shadow-md">
+                      Popular
+                    </div>
+                  )}
 
-                  <div className="mt-4 mb-2">
-                    {plan.price === 'free' ? (
-                      <span className="text-4xl font-bold">Free</span>
-                    ) : plan.price === 'custom' ? (
-                      <span className="text-4xl font-bold">Custom</span>
-                    ) : tab === 'company' && plan.discountedPrice ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-start gap-2">
-                          <span className="text-3xl font-bold text-gray-400 line-through">
-                            ${plan.originalPrice}
-                          </span>
-                          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
-                            -50%
-                          </span>
-                        </div>
-                        <div className="flex items-baseline">
-                          <span className="text-4xl font-bold text-harx-600">
-                            ${plan.discountedPrice}
-                          </span>
-                          <span className="ml-2 text-gray-600">/month</span>
-                        </div>
+                  <div className={`bg-gradient-to-b px-4 pb-3 pt-5 ${plan.highlight}`}>
+                    <div className="mb-3 flex items-start justify-between gap-2">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
+                        <plan.icon className={`h-5 w-5 ${plan.iconColor}`} />
                       </div>
-                    ) : (
-                      <div className="flex items-baseline">
-                        <span className="text-3xl font-black text-harx-600">
-                          {formatMoney(plan.price, plan.currency)}
-                        </span>
-                        <span className="ml-2 text-sm text-gray-600">/ month</span>
-                      </div>
-                    )}
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${
+                          isCompany
+                            ? 'bg-harx-100 text-harx-700'
+                            : 'bg-harx-alt-100 text-harx-alt-700'
+                        }`}
+                      >
+                        {isCompany ? (
+                          <Building2 className="h-3 w-3" />
+                        ) : (
+                          <Headphones className="h-3 w-3" />
+                        )}
+                        {audienceLabel(plan.audience)}
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-black uppercase leading-tight tracking-tight text-slate-900 xl:text-base">
+                      {plan.name}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-xs leading-snug text-slate-600">
+                      {plan.description}
+                    </p>
+                    <div className="mt-3">
+                      <PlanPrice plan={plan} />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-1 flex-col gap-3 p-4 pt-3">
+                    <ul className="flex-1 space-y-1.5">
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-1.5">
+                          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-harx-500" />
+                          <span className="text-[11px] leading-snug text-slate-600 xl:text-xs">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    <Button
+                      variant={plan.popular ? 'gradient' : 'primary'}
+                      size="lg"
+                      fullWidth
+                      onClick={() => goToRegister(plan.audience)}
+                      className="group/btn mt-auto !py-2.5 text-sm shadow-sm"
+                    >
+                      <span className="flex items-center justify-center gap-1">
+                        {ctaLabel(plan)}
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-0.5" />
+                      </span>
+                    </Button>
                   </div>
                 </div>
-
-                <div className="flex flex-grow flex-col gap-4 p-6">
-                  <ul className="flex-grow space-y-2">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start">
-                        <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
-                        <span className="ml-2 text-sm text-gray-600">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <Button
-                    variant={plan.popular ? 'gradient' : 'primary'}
-                    size="lg"
-                    fullWidth
-                    onClick={() => handlePlanAction(plan, tab === 'company' ? 'company' : 'rep')}
-                    className="group mt-auto shadow-sm"
-                  >
-                    <span className="flex items-center justify-center">
-                      {ctaLabel(plan)}
-                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                    </span>
-                  </Button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          <div className="mt-24 text-center">
-            <h2 className="mb-8 text-3xl font-bold">Ready to Transform Your Operations?</h2>
-            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
+          <div className="text-center">
+            <h2 className="mb-8 text-2xl font-bold text-slate-900 md:text-3xl">
+              Ready to Transform Your Operations?
+            </h2>
+            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
               <Button
                 variant="gradient"
                 size="xl"
                 onClick={onGetStarted}
-                className="group min-w-[240px] shadow-lg"
+                className="group min-w-[220px] shadow-lg md:min-w-[240px]"
               >
                 <span className="flex items-center justify-center">
                   Start Free Trial
@@ -429,7 +405,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 variant="outline"
                 size="xl"
                 onClick={bookDemo}
-                className="group min-w-[240px]"
+                className="group min-w-[220px] md:min-w-[240px]"
               >
                 <span className="flex items-center justify-center">
                   Schedule a Demo
