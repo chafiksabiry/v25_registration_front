@@ -67,7 +67,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">1</div>
                   <h3 className="text-2xl font-bold mb-4">Immediate start — list your campaign in minutes                  </h3>
                   <p className="text-gray-600 mb-6">
-                    Tell us your contact centre requirements - channels, languages, volumes, and success metrics.
+                    Tell us your customer engagement requirements - channels, languages, volumes, and success metrics.
                   </p>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg">
