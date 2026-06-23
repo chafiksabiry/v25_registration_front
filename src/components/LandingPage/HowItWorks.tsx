@@ -203,11 +203,6 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
                   <h3 className="text-2xl font-bold mb-4">No upfront investment — choose your plan, adjust anytime</h3>
                 </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center">
-                    <CheckCircle2 className="h-8 w-8 text-harx-600" />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
