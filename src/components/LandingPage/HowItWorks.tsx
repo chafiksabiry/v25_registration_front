@@ -249,7 +249,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
           </div>
 
           <div className="mt-24 text-center">
-            <h2 className="text-3xl font-bold mb-6">You have leads. We have agents. You pay per result. HARX the Transaction as a Service™ Platform powered by AI</h2>
+            <h2 className="text-3xl font-bold mb-6">You have leads. We have agents. You pay per result.
+              <br />
+            HARX the Transaction as a Service™ Platform powered by AI</h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 size="lg"
