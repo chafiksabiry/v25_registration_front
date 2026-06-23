@@ -43,7 +43,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
               Subscription Plans
             </h1>
             <p className="text-sm text-slate-600 md:text-base">
-              Prices synced with Stripe — choose the profile that matches you.
+              Choose the profile that matches you.
             </p>
 
             <div className="mt-4 inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
@@ -115,6 +115,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <StripePricingTableEmbed
                     pricingTableId={COMPANY_PRICING_TABLE_ID}
                     columns={3}
+                    hideSubscribeButton
                   />
                 </div>
               </div>
