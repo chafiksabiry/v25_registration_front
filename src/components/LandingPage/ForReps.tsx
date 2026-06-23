@@ -69,10 +69,6 @@ const repStories = [
 ];
 
 export function ForReps({ onGetStarted }: ForRepsProps) {
-  const bookDemo = () => {
-    window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
-  };
-
   return (
     <div className="pt-8 pb-12">
       {/* Hero Section with Inspiring Image */}
@@ -93,14 +89,13 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
                 to deliver exceptional experiences. Work flexibly, earn competitively, and grow your career.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-
                 <Button
-                  variant="outline"
                   size="lg"
-                  className="text-white border-white hover:bg-white/10 group"
-                  onClick={bookDemo}
+                  variant="gradient"
+                  onClick={onGetStarted}
+                  className="group"
                 >
-                  Book a Demo
+                  Get Started
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
