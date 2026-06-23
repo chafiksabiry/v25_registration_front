@@ -5,6 +5,7 @@ import LinkedInCallback from './components/LinkedInCallback';
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 import { getRouterBasename } from './utils/routerBasename';
 import { PrivateRoute } from './components/layout/guards';
+import HistorySync from './components/layout/HistorySync';
 
 import AuthRoutes from './routes/AuthRoutes';
 
@@ -12,6 +13,7 @@ function App() {
   return (
     <AuthProvider>
       <Router basename={getRouterBasename()}>
+        <HistorySync />
         <Routes>
           {/* LinkedIn OAuth callbacks */}
           <Route path="/linkedin/callback" element={<LinkedInCallback />} />
