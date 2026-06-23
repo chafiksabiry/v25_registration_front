@@ -11,6 +11,7 @@ import {
   type RegisterNavState,
   registerStepSearch,
 } from '../lib/registerNavigation';
+import { useHistoryBack } from '../hooks/useHistoryBack';
 
 type Step = RegisterFormStep | 'success';
 
@@ -32,6 +33,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const navigate = useNavigate();
   const location = useLocation();
   const navState = (location.state as RegisterNavState | null) ?? null;
+  const historyBack = useHistoryBack(navState?.returnTo ?? '/auth/choice');
   const [searchParams] = useSearchParams();
   const step = stepFromSearch(searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
@@ -56,14 +58,6 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
       { pathname: '/auth/register', search: registerStepSearch(next) },
       { state: navState }
     );
-  };
-
-  const leaveRegistration = () => {
-    if (navState?.scrollTo && onNavigateToSection) {
-      onNavigateToSection(navState.scrollTo);
-      return;
-    }
-    navigate(navState?.returnTo ?? '/auth/choice');
   };
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -270,18 +264,11 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   };
 
   const goBack = () => {
-    const stepIndex = REGISTER_FORM_STEPS.indexOf(step as RegisterFormStep);
-
-    if (stepIndex <= 0) {
-      leaveRegistration();
+    if (step === 'name' && navState?.scrollTo && onNavigateToSection) {
+      onNavigateToSection(navState.scrollTo);
       return;
     }
-
-    const previousStep = REGISTER_FORM_STEPS[stepIndex - 1];
-    navigate(
-      { pathname: '/auth/register', search: registerStepSearch(previousStep) },
-      { replace: true, state: navState }
-    );
+    historyBack();
   };
 
   return (

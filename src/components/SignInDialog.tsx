@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie } from '../lib/authRedirect';
@@ -8,6 +7,7 @@ import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
+import { useHistoryBack } from '../hooks/useHistoryBack';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -21,7 +21,7 @@ interface SignInDialogProps {
 
 export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted, onNavigateToSection }: SignInDialogProps) {
   const { setToken } = useAuth();
-  const navigate = useNavigate();
+  const goBack = useHistoryBack('/');
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState({
     email: '',
@@ -223,7 +223,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                   {step === 'credentials' && (
                     <button
                       type="button"
-                      onClick={() => navigate('/')}
+                      onClick={goBack}
                       className="mb-6 flex items-center text-sm text-slate-450 transition-colors hover:text-white"
                     >
                       <ArrowLeft className="mr-1.5 h-4 w-4" />

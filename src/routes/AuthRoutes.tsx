@@ -1,5 +1,5 @@
 import React from 'react';
-import { LandingPage } from '../components/LandingPage/index';
+import { LandingPage } from '../components/LandingPage';
 import ChoicePage from '../components/ChoicePage';
 import SignInDialog from '../components/SignInDialog';
 import RegistrationDialog from '../components/RegistrationDialog';
@@ -61,9 +61,4 @@ export function RegisterScreen() {
 export function RecoveryScreen() {
   const { navigate } = useAuthContext();
   return <PasswordRecoveryDialog onBack={() => navigate('/auth/signin')} />;
-}
-
-/** @deprecated Use explicit routes in App.tsx */
-export default function AuthRoutes() {
-  return null;
 }
