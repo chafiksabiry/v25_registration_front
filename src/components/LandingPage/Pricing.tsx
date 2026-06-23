@@ -148,7 +148,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
             )}
           </div>
 
-          <div className="text-center">
+          <div className="text-center pb-2">
             <h2 className="mb-5 text-xl font-bold text-slate-900 md:text-2xl">
               Ready to Transform Your Operations?
             </h2>

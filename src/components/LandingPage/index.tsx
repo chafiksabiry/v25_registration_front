@@ -109,7 +109,7 @@ export function LandingPage({
   }, [initialSection]);
 
   return (
-    <div id="top" className="min-h-screen bg-space-dark-default text-white">
+    <div id="top" className="bg-space-dark-default text-white">
       <Header
         onSignIn={onSignIn}
         onGetStarted={onGetStarted}
