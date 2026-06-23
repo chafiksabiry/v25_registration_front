@@ -6,6 +6,9 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { initZohoSalesIQ } from './lib/zohoSalesIQ';
+
+initZohoSalesIQ();
 
 // Store the root instance for proper unmounting
 let root: ReturnType<typeof createRoot> | null = null;
