@@ -9,15 +9,15 @@ interface ForRepsProps {
 const payHighlights = [
   {
     icon: PhoneCall,
-    text: 'Paid (floor) for every serious call, even without a transaction',
+    text: 'Paid (floor) for every serious call, even without a transaction.',
   },
   {
     icon: Bot,
-    text: 'Paid commission on every transaction confirmed by our AI',
+    text: 'Paid commission on every transaction confirmed by our AI.',
   },
   {
     icon: Target,
-    text: 'Paid when you hit your monthly target',
+    text: 'Paid when you hit your monthly target.',
   },
 ];
 
