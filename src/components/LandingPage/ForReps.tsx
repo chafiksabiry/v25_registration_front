@@ -102,19 +102,21 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
               <h3 className="mb-5 text-xl font-bold leading-snug text-white md:text-2xl">
                 No boss. No office. No fixed schedule. Just you, your laptop — and your skills.
               </h3>
-              <p className="mb-3 text-base font-medium leading-relaxed text-white/90 md:text-lg">
-                HARX connects you to companies that need you. And pays you for every effort:
-              </p>
-              <ul className="mb-8 space-y-3">
-                {payHighlights.map(({ icon: Icon, text }) => (
-                  <li key={text} className="flex items-start gap-3 text-base font-medium leading-relaxed text-white/90 md:text-lg">
-                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-harx-300 ring-1 ring-white/20">
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                    </span>
-                    <span className="pt-1">{text}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="mb-8 space-y-3">
+                <p className="text-base font-medium leading-relaxed text-white/90 md:text-lg">
+                  HARX connects you to companies that need you. And pays you for every effort:
+                </p>
+                <ul className="space-y-3">
+                  {payHighlights.map(({ icon: Icon, text }) => (
+                    <li key={text} className="flex items-center gap-3 text-base leading-relaxed text-white/90 md:text-lg">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-harx-300 ring-1 ring-white/20">
+                        <Icon className="h-4 w-4" aria-hidden="true" />
+                      </span>
+                      <span>{text}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
