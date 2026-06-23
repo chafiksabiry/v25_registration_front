@@ -70,8 +70,8 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
       style={{ backgroundImage: HARX_NAV_GRADIENT }}
       className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 shadow-[0_1px_0_0_rgba(0,0,0,0.08)]"
     >
-      <nav className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center space-x-10">
+      <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-16 flex items-center justify-between">
+        <div className="flex items-center space-x-6 lg:space-x-8">
           <a
             href="/"
             className="flex items-center transition-transform hover:scale-[1.02]"
