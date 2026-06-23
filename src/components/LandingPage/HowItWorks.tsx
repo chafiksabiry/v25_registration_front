@@ -18,7 +18,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
             How HARX Works
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-gray-600 text-justify">
             No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.
           </p>
         </div>
@@ -63,8 +63,8 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             {/* Steps — odd: left, even: right */}
             <div className="space-y-24">
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 md:text-right">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">1</div>
+                <div className="md:pr-10 text-justify">
+                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">1</div>
                   <h3 className="text-2xl font-bold mb-4">Post your gig</h3>
                   <p className="text-gray-600 mb-6">
                     Define your campaign, your leads, your script, and what a transaction means for you. Our AI generates everything else.
@@ -73,7 +73,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10">
+                <div className="md:col-start-2 md:pl-10 text-justify">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">2</div>
                   <h3 className="text-2xl font-bold mb-4">Get matched instantly</h3>
                   <p className="text-gray-600 mb-6">
@@ -83,8 +83,8 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 md:text-right">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">3</div>
+                <div className="md:pr-10 text-justify">
+                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">3</div>
                   <h3 className="text-2xl font-bold mb-4">Name your price</h3>
                   <p className="text-gray-600 mb-6">
                     Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
@@ -93,7 +93,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10">
+                <div className="md:col-start-2 md:pl-10 text-justify">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
                   <h3 className="text-2xl font-bold mb-4">You only pay what it&apos;s worth.</h3>
                   <p className="text-gray-600 mb-6">
@@ -123,9 +123,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 md:text-right">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
-                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
+                <div className="md:pr-10 text-justify">
+                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">5</div>
+                  <h3 className="text-2xl font-bold mb-4 md:max-w-md">
                     Your budget is a contract, not an estimate
                   </h3>
                   <p className="text-gray-600 mb-6">
@@ -143,7 +143,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10">
+                <div className="md:col-start-2 md:pl-10 text-justify">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">6</div>
                   <h3 className="text-2xl font-bold mb-4">AI scoring on every call</h3>
                   <p className="text-gray-600 mb-6">
@@ -153,9 +153,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 md:text-right">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">7</div>
-                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
+                <div className="md:pr-10 text-justify">
+                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">7</div>
+                  <h3 className="text-2xl font-bold mb-4 md:max-w-md">
                     Scale globally — 60,000+ certified agents across 70+ countries
                   </h3>
                   <p className="text-gray-600 mb-6">
