@@ -1,46 +1,64 @@
-import React from 'react';
-import { ArrowRight, Check, Brain, Users2, Globe2, Rocket, Shield, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  ArrowRight,
+  Building2,
+  Check,
+  Headphones,
+  Brain,
+  Users2,
+  Globe2,
+  Rocket,
+  Shield,
+  Sparkles,
+} from 'lucide-react';
 import { Button } from './Button';
 
 interface PricingProps {
   onGetStarted: () => void;
 }
 
-const platformTiers = [
+type PricingTab = 'company' | 'reps';
+
+interface PlanCard {
+  name: string;
+  description: string;
+  price: number | 'custom' | 'free';
+  currency?: string;
+  originalPrice?: string;
+  discountedPrice?: string;
+  features: string[];
+  popular?: boolean;
+  icon: React.ComponentType<{ className?: string }>;
+  highlight: string;
+  iconColor: string;
+}
+
+/** Company plans — synced with Stripe pricing table (live). */
+const companyPlans: PlanCard[] = [
   {
     name: 'Free',
     description: 'Test, validate, and pay only for what you consume',
-    monthlyPrice: '0',
-    specs: {
-      'Active GIGs': '1',
-      'Active REPs': '1',
-      'Phone Numbers': '1 test zone',
-      'Channels': 'Calls only'
-    },
+    price: 'free',
     features: [
       'Manual matching and planning',
       'Pay-as-you-go AI automation',
       'On-demand AI quality audit',
       '7-day call storage',
       'Email support',
-      'No customization options'
+      'No customization options',
     ],
     icon: Shield,
-    color: 'green',
     highlight: 'bg-green-50',
-    popular: false
+    iconColor: 'text-green-600',
   },
   {
     name: 'Starter',
     description: 'Start your campaigns with simplicity and efficiency',
-    monthlyPrice: '199',
+    price: 99,
+    currency: 'USD',
+    originalPrice: '199',
     discountedPrice: '99',
-    specs: {
-      'Active GIGs': '3',
-      'Active REPs': '5',
-      'Phone Numbers': '1 included',
-      'Channels': 'Calls only'
-    },
     features: [
       'Manual scheduler for shifts',
       'Basic matching system',
@@ -48,24 +66,20 @@ const platformTiers = [
       '5 AI quality audits/month',
       'Standard HARX platform',
       'Basic analytics',
-      'Email support with assisted onboarding'
+      'Email support with assisted onboarding',
     ],
     icon: Brain,
-    color: 'blue',
     highlight: 'bg-blue-50',
-    popular: false
+    iconColor: 'text-blue-600',
   },
   {
     name: 'Growth',
     description: 'Drive multichannel efforts with AI automation',
-    monthlyPrice: '499',
+    price: 249,
+    currency: 'USD',
+    originalPrice: '499',
     discountedPrice: '249',
-    specs: {
-      'Active GIGs': '10',
-      'Active REPs': '15',
-      'Phone Numbers': '3 included',
-      'Channels': 'Calls + Email'
-    },
+    popular: true,
     features: [
       'Optional AI scheduler',
       'Optional AI matching',
@@ -74,24 +88,19 @@ const platformTiers = [
       '90-day call storage',
       'Standard analytics',
       'Priority support + chat',
-      'Partial branding options'
+      'Partial branding options',
     ],
     icon: Rocket,
-    color: 'harx',
     highlight: 'bg-harx-50',
-    popular: true
+    iconColor: 'text-harx-600',
   },
   {
     name: 'Scale',
     description: 'Activate intelligence at scale',
-    monthlyPrice: '999',
+    price: 499,
+    currency: 'USD',
+    originalPrice: '999',
     discountedPrice: '499',
-    specs: {
-      'Active GIGs': '25',
-      'Active REPs': '50',
-      'Phone Numbers': '10 included',
-      'Channels': 'All channels'
-    },
     features: [
       'Intelligent AI matching',
       'AI scheduler with scoring',
@@ -101,23 +110,16 @@ const platformTiers = [
       'Advanced analytics',
       'Native CRM integrations',
       '48h SLA support',
-      'Full platform customization'
+      'Full platform customization',
     ],
     icon: Globe2,
-    color: 'orange',
     highlight: 'bg-orange-50',
-    popular: false
+    iconColor: 'text-orange-600',
   },
   {
     name: 'Enterprise',
     description: 'Your complete AI-powered productivity platform',
-    monthlyPrice: 'Custom',
-    specs: {
-      'Active GIGs': 'Unlimited',
-      'Active REPs': 'Unlimited',
-      'Phone Numbers': 'Multi-region',
-      'Channels': 'All channels'
-    },
+    price: 'custom',
     features: [
       'Predictive AI matching',
       'Advanced AI scheduler',
@@ -128,16 +130,106 @@ const platformTiers = [
       'Advanced analytics + AI alerts',
       'Complete API access',
       '24/7 dedicated support',
-      'White-label solution'
+      'White-label solution',
     ],
     icon: Users2,
-    color: 'purple',
     highlight: 'bg-purple-50',
-    popular: false
-  }
+    iconColor: 'text-purple-600',
+  },
 ];
 
+/** Rep plans — synced with Stripe pricing table (live). */
+const repPlans: PlanCard[] = [
+  {
+    name: 'Take a chance',
+    description:
+      'Completely free. Prove you can earn. No commitment. If you like it and hit €30, upgrade to unlock more.',
+    price: 'free',
+    features: [
+      'Earn up to €30/month',
+      'Dashboard: Real-time wallet balance; Basic analytics',
+      '3 gigs only',
+      'Slot Booking: First-Come, First-Served',
+      'Call History: Cannot listen to recordings, see AI scores, or read transcripts',
+      'Support by email — 24 hours',
+    ],
+    icon: Shield,
+    highlight: 'bg-green-50',
+    iconColor: 'text-green-600',
+  },
+  {
+    name: 'Pay the bills',
+    description: "Now I'm making real money.",
+    price: 9.99,
+    currency: 'EUR',
+    features: [
+      'Earn up to €200/month',
+      'Dashboard: Advanced analytics',
+      '10 gigs',
+      'Slot Booking: Priority on waiting list',
+      'Call History: Listen to recordings, see AI scores, and read transcripts',
+      'Support by email or chat',
+      '7 days free trial',
+    ],
+    icon: Brain,
+    highlight: 'bg-blue-50',
+    iconColor: 'text-blue-600',
+  },
+  {
+    name: 'Money must be funny',
+    description: 'Bills paid. Fun money time.',
+    price: 19.99,
+    currency: 'EUR',
+    popular: true,
+    features: [
+      'Earn up to €500/month',
+      'Dashboard: Advanced analytics',
+      '100 gigs',
+      'Slot Booking: Priority',
+      'Call History: Listen to recordings, see AI scores, read transcripts',
+      'Support by Phone, email or chat',
+      '7 days free trial',
+    ],
+    icon: Rocket,
+    highlight: 'bg-harx-50',
+    iconColor: 'text-harx-600',
+  },
+  {
+    name: "In the rich man's world",
+    description: "I'm elite. No limits.",
+    price: 59.99,
+    currency: 'EUR',
+    features: [
+      'Unlimited Monthly Earning',
+      'Priority Access to Premium Gigs',
+      'Priority to book slots',
+      'All AI-powered features for free',
+      'No extra fees for wallet management',
+      'Support by Phone, email or chat',
+      '7 days free trial',
+    ],
+    icon: Globe2,
+    highlight: 'bg-orange-50',
+    iconColor: 'text-orange-600',
+  },
+];
+
+function formatMoney(amount: number, currency = 'EUR'): string {
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 2,
+    }).format(amount);
+  } catch {
+    return `${amount} ${currency}`;
+  }
+}
+
 export function Pricing({ onGetStarted }: PricingProps) {
+  const navigate = useNavigate();
+  const [tab, setTab] = useState<PricingTab>('reps');
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -158,146 +250,170 @@ export function Pricing({ onGetStarted }: PricingProps) {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
   };
 
-  const handlePlanAction = (tier: typeof platformTiers[0]) => {
-    if (tier.monthlyPrice === 'Custom') {
+  const goToRegister = (role: 'company' | 'rep') => {
+    localStorage.setItem('pendingUserType', role);
+    navigate('/auth/register');
+  };
+
+  const handlePlanAction = (plan: PlanCard, role: 'company' | 'rep') => {
+    if (plan.price === 'custom') {
       contactSales();
-    } else {
-      onGetStarted();
+      return;
     }
+    goToRegister(role);
+  };
+
+  const activePlans = tab === 'company' ? companyPlans : repPlans;
+  const gridClass =
+    tab === 'reps'
+      ? 'grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4'
+      : 'grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5';
+
+  const ctaLabel = (plan: PlanCard) => {
+    if (plan.price === 'custom') return 'Contact Sales';
+    if (tab === 'company') return plan.price === 'free' ? 'Post a Gig' : 'Post a Gig';
+    if (plan.price === 'free') return 'Find Gigs';
+    return 'Start Trial';
   };
 
   return (
     <div className="min-h-screen pt-16">
       <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-24">
         <div className="container mx-auto px-4">
-          {/* Promotional Banner */}
-          <div className="max-w-4xl mx-auto text-center mb-8">
-            <div className="bg-gradient-to-r from-harx-600 to-harx-500 text-white rounded-2xl p-6 shadow-xl">
-              <div className="flex items-center justify-center gap-2 mb-2">
+          <div className="mx-auto mb-8 max-w-4xl text-center">
+            <div className="rounded-2xl bg-gradient-to-r from-harx-600 to-harx-500 p-6 text-white shadow-xl">
+              <div className="mb-2 flex items-center justify-center gap-2">
                 <Sparkles className="h-6 w-6" />
                 <h2 className="text-2xl font-bold">Limited Time Offer</h2>
                 <Sparkles className="h-6 w-6" />
               </div>
               <p className="text-xl">Get 50% off on all plans when you subscribe today!</p>
-              <p className="text-sm mt-2 text-harx-100">*Offer valid for the first 3 months</p>
+              <p className="mt-2 text-sm text-harx-100">*Offer valid for the first 3 months</p>
             </div>
           </div>
 
-          {/* Platform Plans Header */}
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Platform Subscription Plans
-            </h1>
+          <div className="mx-auto mb-10 max-w-3xl text-center">
+            <h1 className="mb-6 text-4xl font-bold md:text-5xl">Subscription Plans</h1>
             <p className="text-xl text-gray-600">
-              Choose your plan and scale as you grow. All plans include platform access and core features.
+              {tab === 'company'
+                ? 'Choose your company plan and post gigs on HARX.'
+                : 'Choose your rep plan and find gigs on HARX.'}
             </p>
           </div>
 
-          {/* Platform Pricing Tiers */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-24">
-            {platformTiers.map((tier) => (
-              <div
-                key={tier.name}
-                className={`relative bg-white rounded-2xl shadow-lg transition-transform duration-300 hover:scale-105 ${tier.popular ? 'ring-2 ring-harx-500 scale-105' : 'border border-gray-100'
-                  } flex flex-col h-full`}
+          <div className="mb-12 flex justify-center">
+            <div className="inline-flex rounded-2xl border border-slate-200 bg-white p-1 shadow-sm">
+              <button
+                type="button"
+                onClick={() => setTab('company')}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition ${
+                  tab === 'company'
+                    ? 'bg-harx-500 text-white shadow'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
               >
-                {tier.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-harx-500 to-harx-600 text-white px-6 py-1 rounded-full text-sm font-medium shadow-lg whitespace-nowrap">
+                <Building2 className="h-4 w-4" />
+                Company
+              </button>
+              <button
+                type="button"
+                onClick={() => setTab('reps')}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-bold transition ${
+                  tab === 'reps'
+                    ? 'bg-harx-alt-500 text-white shadow'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Headphones className="h-4 w-4" />
+                Reps
+              </button>
+            </div>
+          </div>
+
+          <div className={`${gridClass} mb-24`}>
+            {activePlans.map((plan) => (
+              <div
+                key={`${tab}-${plan.name}`}
+                className={`relative flex h-full flex-col rounded-2xl bg-white shadow-lg transition-transform duration-300 hover:scale-[1.02] ${
+                  plan.popular ? 'scale-[1.02] ring-2 ring-harx-500' : 'border border-gray-100'
+                }`}
+              >
+                {plan.popular && (
+                  <div className="absolute -top-4 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-harx-500 to-harx-600 px-6 py-1 text-sm font-medium text-white shadow-lg">
                     Most Popular
                   </div>
                 )}
 
-                {/* Header section */}
-                <div className={`px-6 pt-8 pb-4 rounded-t-2xl ${tier.highlight}`}>
-                  <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-4 shadow-md">
-                    <tier.icon className={`h-6 w-6 text-${tier.color}-600`} />
+                <div className={`rounded-t-2xl px-6 pb-4 pt-8 ${plan.highlight}`}>
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-white shadow-md">
+                    <plan.icon className={`h-6 w-6 ${plan.iconColor}`} />
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
-                  <p className="text-gray-600 min-h-[48px] text-sm">{tier.description}</p>
+                  <h3 className="mb-2 text-xl font-black uppercase tracking-tight">{plan.name}</h3>
+                  <p className="min-h-[48px] text-sm text-gray-600">{plan.description}</p>
 
-                  {/* Pricing */}
                   <div className="mt-4 mb-2">
-                    {tier.monthlyPrice === '0' ? (
-                      <div className="flex items-baseline">
-                        <span className="text-4xl font-bold">Free</span>
-                      </div>
-                    ) : tier.monthlyPrice === 'Custom' ? (
-                      <div className="flex items-baseline">
-                        <span className="text-4xl font-bold">Custom</span>
-                      </div>
-                    ) : (
+                    {plan.price === 'free' ? (
+                      <span className="text-4xl font-bold">Free</span>
+                    ) : plan.price === 'custom' ? (
+                      <span className="text-4xl font-bold">Custom</span>
+                    ) : tab === 'company' && plan.discountedPrice ? (
                       <div className="space-y-2">
                         <div className="flex items-center justify-start gap-2">
-                          <span className="text-4xl font-bold text-gray-400 line-through">${tier.monthlyPrice}</span>
-                          <span className="bg-green-100 text-green-800 text-sm font-medium px-2.5 py-0.5 rounded-full">
+                          <span className="text-3xl font-bold text-gray-400 line-through">
+                            ${plan.originalPrice}
+                          </span>
+                          <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
                             -50%
                           </span>
                         </div>
                         <div className="flex items-baseline">
-                          <span className="text-4xl font-bold text-harx-600">${tier.discountedPrice}</span>
-                          <span className="text-gray-600 ml-2">/month</span>
+                          <span className="text-4xl font-bold text-harx-600">
+                            ${plan.discountedPrice}
+                          </span>
+                          <span className="ml-2 text-gray-600">/month</span>
                         </div>
                       </div>
+                    ) : (
+                      <div className="flex items-baseline">
+                        <span className="text-3xl font-black text-harx-600">
+                          {formatMoney(plan.price, plan.currency)}
+                        </span>
+                        <span className="ml-2 text-sm text-gray-600">/ month</span>
+                      </div>
                     )}
-                    <p className="text-sm text-gray-500 mt-1">Platform access & resources</p>
                   </div>
                 </div>
 
-                <div className="p-6 flex-grow flex flex-col gap-6">
-                  {/* Resource Specifications */}
-                  <div className="bg-gray-50 rounded-xl p-4">
-                    <h4 className="font-semibold mb-3 text-sm text-gray-900">Resource Allocation</h4>
-                    <div className="space-y-2">
-                      {Object.entries(tier.specs).map(([key, value]) => (
-                        <div key={key} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600">{key}:</span>
-                          <span className="font-medium text-gray-900">{value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                <div className="flex flex-grow flex-col gap-4 p-6">
+                  <ul className="flex-grow space-y-2">
+                    {plan.features.map((feature) => (
+                      <li key={feature} className="flex items-start">
+                        <Check className="mt-0.5 h-4 w-4 flex-shrink-0 text-green-500" />
+                        <span className="ml-2 text-sm text-gray-600">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-                  {/* Features list */}
-                  <div className="flex-grow">
-                    <h4 className="font-semibold mb-3 text-sm text-gray-900">Features Included</h4>
-                    <ul className="space-y-3">
-                      {tier.features.map((feature) => (
-                        <li key={feature} className="flex items-start">
-                          <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="ml-3 text-sm text-gray-600">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Action button */}
-                  <div className="pt-4 mt-auto">
-                    <Button
-                      variant={tier.popular ? 'gradient' : 'primary'}
-                      size="lg"
-                      fullWidth
-                      onClick={() => handlePlanAction(tier)}
-                      className="group shadow-sm"
-                    >
-                      <span className="flex items-center justify-center">
-                        {tier.monthlyPrice === 'Custom'
-                          ? 'Contact Sales'
-                          : tier.monthlyPrice === '0'
-                            ? 'Start Free'
-                            : 'Choose Plan'}
-                        <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                      </span>
-                    </Button>
-                  </div>
+                  <Button
+                    variant={plan.popular ? 'gradient' : 'primary'}
+                    size="lg"
+                    fullWidth
+                    onClick={() => handlePlanAction(plan, tab === 'company' ? 'company' : 'rep')}
+                    className="group mt-auto shadow-sm"
+                  >
+                    <span className="flex items-center justify-center">
+                      {ctaLabel(plan)}
+                      <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                    </span>
+                  </Button>
                 </div>
               </div>
             ))}
           </div>
 
-          {/* CTA Section */}
           <div className="mt-24 text-center">
-            <h2 className="text-3xl font-bold mb-8">Ready to Transform Your Operations?</h2>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <h2 className="mb-8 text-3xl font-bold">Ready to Transform Your Operations?</h2>
+            <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
               <Button
                 variant="gradient"
                 size="xl"
