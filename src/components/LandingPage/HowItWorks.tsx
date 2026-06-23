@@ -60,101 +60,44 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             {/* Connection line */}
             <div className="absolute left-[50%] top-0 bottom-0 w-0.5 bg-harx-200 hidden md:block" />
 
-            {/* Steps */}
+            {/* Steps — odd: left, even: right */}
             <div className="space-y-24">
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:text-right">
+                <div className="md:pr-10 md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">1</div>
                   <h3 className="text-2xl font-bold mb-4">Post your gig</h3>
                   <p className="text-gray-600 mb-6">
-                  Define your campaign, your leads, your script, and what a transaction means for you. Our AI generates everything else.
+                    Define your campaign, your leads, your script, and what a transaction means for you. Our AI generates everything else.
                   </p>
-                </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <Headphones className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Choose support channels</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Set quality standards</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Define success metrics</span>
-                    </li>
-                  </ul>
                 </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:order-2">
+                <div className="md:col-start-2 md:pl-10">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">2</div>
                   <h3 className="text-2xl font-bold mb-4">Get matched instantly</h3>
                   <p className="text-gray-600 mb-6">
                     Harx AI matches your gig to the right certified agents from our global network. Language, industry, activity — every dimension scored and verified.
                   </p>
                 </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg md:order-1">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <Brain className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>AI-powered agent matching</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Flexible team scaling</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Real-time performance monitoring</span>
-                    </li>
-                  </ul>
-                </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:text-right">
+                <div className="md:pr-10 md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">3</div>
                   <h3 className="text-2xl font-bold mb-4">Name your price</h3>
                   <p className="text-gray-600 mb-6">
-                  Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
+                    Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
                   </p>
-                </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <CreditCard className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Floor : Effort rewarded</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Commission : Result paid</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Bonus : Excellence unlocked</span>
-                    </li>
-                  </ul>
                 </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:order-2">
+                <div className="md:col-start-2 md:pl-10">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
-                  <h3 className="text-2xl font-bold mb-4">You only pay what it's worth.                  </h3>
+                  <h3 className="text-2xl font-bold mb-4">You only pay what it&apos;s worth.</h3>
                   <p className="text-gray-600 mb-6">
-                  Floor for effort. Commission for results. Bonus for excellence.
+                    Floor for effort. Commission for results. Bonus for excellence.
                   </p>
                   <ul className="space-y-4 text-gray-600">
                     <li className="flex items-start gap-3">
@@ -177,94 +120,35 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                     </li>
                   </ul>
                 </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg md:order-1">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <Globe2 className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Resolution-based billing</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Transparent pricing</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>No hidden fees</span>
-                    </li>
-                  </ul>
-                </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:text-right">
+                <div className="md:pr-10 md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
-                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">No upfront investment — choose your plan, adjust anytime</h3>
-                </div>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <CheckCircle2 className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Choose your plan</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Adjust anytime</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>No upfront investment</span>
-                    </li>
-                  </ul>
+                  <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
+                    No upfront investment — choose your plan, adjust anytime
+                  </h3>
                 </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="bg-white p-8 rounded-xl shadow-lg">
-                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
-                    <Bot className="h-8 w-8 text-harx-600" />
-                  </div>
-                  <ul className="space-y-4 text-gray-600">
-                  <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Transcribed and analyzed and Scored in seconds.</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Fraud detected.</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Sentiment measured.</span>
-                    </li>
-                    <li className="flex items-start">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
-                      <span>Transaction confirmed.</span>
-                    </li>
-                  </ul>
-                </div>
-                <div>
+                <div className="md:col-start-2 md:pl-10">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">6</div>
                   <h3 className="text-2xl font-bold mb-4">AI scoring on every call</h3>
                   <p className="text-gray-600 mb-6">
-                  Transcribed, analyzed and scored in seconds by AI : Fraud detected, Sentiment measured, Transaction confirmed.
+                    Transcribed, analyzed and scored in seconds by AI : Fraud detected, Sentiment measured, Transaction confirmed.
                   </p>
                 </div>
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:text-right">
+                <div className="md:pr-10 md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">7</div>
                   <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
                     Scale globally — 60,000+ certified agents across 70+ countries
                   </h3>
                   <p className="text-gray-600 mb-6">
-                  Harx works with human agents today, AI agents tomorrow, and any mix in between.
+                    Harx works with human agents today, AI agents tomorrow, and any mix in between.
                   </p>
                 </div>
               </div>
