@@ -1,5 +1,5 @@
 import React from 'react';
-import { Building2, Headphones, Menu, X } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, Menu, X } from 'lucide-react';
 import harxLogo from './assets/logo-harx.png';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
@@ -95,18 +95,13 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
           </div>
         </div>
 
-        <div className="hidden md:flex items-center space-x-3">
-          <button
-            className="h-9 px-5 text-sm font-bold text-white border border-white/40 hover:bg-white/10 transition-all"
-            onClick={onSignIn}
-          >
+        <div className="hidden md:flex items-center gap-2.5">
+          <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
             Sign In
           </button>
-          <button
-            className="h-9 px-5 text-sm font-bold bg-white text-[#C2186F] hover:bg-white/90 active:scale-[0.98] transition-all shadow-sm"
-            onClick={onGetStarted}
-          >
+          <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
             Get Started
+            <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
@@ -142,8 +137,13 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
               </a>
             ))}
             <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
-              <button className="w-full h-10 text-sm font-bold text-white border border-white/40 hover:bg-white/10 transition-all" onClick={onSignIn}>Sign In</button>
-              <button className="w-full h-10 text-sm font-bold bg-white text-[#C2186F] hover:bg-white/90 transition-all" onClick={onGetStarted}>Get Started</button>
+              <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
+                Sign In
+              </button>
+              <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
+                Get Started
+                <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+              </button>
             </div>
           </div>
         </div>
