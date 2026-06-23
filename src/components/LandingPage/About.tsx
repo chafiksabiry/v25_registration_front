@@ -35,7 +35,7 @@ export function About({ onGetStarted }: AboutProps) {
       <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-24">
         <div className="container mx-auto px-4">
           {/* Mission Section */}
-          <div className="max-w-3xl mx-auto text-center mb-24">
+          {/* <div className="max-w-3xl mx-auto text-center mb-24">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
               Our Mission
             </h1>
@@ -53,7 +53,7 @@ export function About({ onGetStarted }: AboutProps) {
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
-          </div>
+          </div> */}
 
           {/* Values Section */}
           {/* <div className="mb-24">
