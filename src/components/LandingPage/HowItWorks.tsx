@@ -19,7 +19,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             How HARX Works
           </h1>
           <p className="text-xl text-gray-600">
-          No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.
+            No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.
           </p>
         </div>
 
@@ -126,8 +126,19 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                 <div className="md:pr-10 md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
                   <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
-                    No upfront investment — choose your plan, adjust anytime
+                    Your budget is a contract, not an estimate
                   </h3>
+                  <p className="text-gray-600 mb-6">
+                    Harx is transparent by design.
+                    <br />
+                    You decide how much a gig costs — down to the cent.
+                    <br />
+                    You define the price of effort; You define the price of performance; You only pay when it happens.
+                    <br />
+                    Reps take the lion's share; Harx takes a portion; AI verifies everything.
+                    <br />
+                    Beyond performance, three simple costs : Your plan. Your numbers. Your minutes.
+                  </p>
                 </div>
               </div>
 
@@ -158,7 +169,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
           <div className="mt-24 text-center">
             <h2 className="text-3xl font-bold mb-6">You have leads. We have agents. You pay per result.
               <br />
-            HARX the Transaction as a Service™ Platform powered by AI</h2>
+              HARX the Transaction as a Service™ Platform powered by AI</h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 size="lg"
