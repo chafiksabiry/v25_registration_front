@@ -1,9 +1,136 @@
 import React from 'react';
-import { ArrowRight, Target, Users, CreditCard, Headphones, Brain, Globe2, Bot, Shield, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Users, Brain } from 'lucide-react';
 import { Button } from './Button';
 
 interface HowItWorksProps {
   onGetStarted: () => void;
+}
+
+type StepSide = 'left' | 'right';
+
+interface StepContent {
+  number: number;
+  side: StepSide;
+  title: string;
+  body: React.ReactNode;
+}
+
+const stepSideClass: Record<StepSide, string> = {
+  left: 'md:pr-10',
+  right: 'md:col-start-2 md:pl-10',
+};
+
+const steps: StepContent[] = [
+  {
+    number: 1,
+    side: 'left',
+    title: 'Post your gig',
+    body: (
+      <p className="text-gray-600 text-justify">
+        Define your campaign, your leads, your script, and what a transaction means for you. Our AI generates everything else.
+      </p>
+    ),
+  },
+  {
+    number: 2,
+    side: 'right',
+    title: 'Get matched instantly',
+    body: (
+      <p className="text-gray-600 text-justify">
+        Harx AI matches your gig to the right certified agents from our global network. Language, industry, activity — every dimension scored and verified.
+      </p>
+    ),
+  },
+  {
+    number: 3,
+    side: 'left',
+    title: 'Name your price',
+    body: (
+      <p className="text-gray-600 text-justify">
+        Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
+      </p>
+    ),
+  },
+  {
+    number: 4,
+    side: 'right',
+    title: "You only pay what it's worth.",
+    body: (
+      <>
+        <p className="text-gray-600 mb-6 text-justify">
+          Floor for effort. Commission for results. Bonus for excellence.
+        </p>
+        <ul className="space-y-4 text-gray-600">
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+              Floor
+            </span>
+            <span className="pt-0.5 text-justify">Pay for a serious, argued interaction</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+              Commission
+            </span>
+            <span className="pt-0.5 text-justify">Pay when a transaction is confirmed</span>
+          </li>
+          <li className="flex items-start gap-3">
+            <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
+              Bonus
+            </span>
+            <span className="pt-0.5 text-justify">Pay when your target is reached</span>
+          </li>
+        </ul>
+      </>
+    ),
+  },
+  {
+    number: 5,
+    side: 'left',
+    title: 'Your budget is a contract, not an estimate',
+    body: (
+      <div className="space-y-3 text-gray-600 text-justify">
+        <p>Harx is transparent by design.</p>
+        <p>You decide how much a gig costs — down to the cent.</p>
+        <p>You define the price of effort; You define the price of performance; You only pay when it happens.</p>
+        <p>Reps take the lion&apos;s share; Harx takes a portion; AI verifies everything.</p>
+        <p>Beyond performance, three simple costs : Your plan. Your numbers. Your minutes.</p>
+      </div>
+    ),
+  },
+  {
+    number: 6,
+    side: 'right',
+    title: 'AI scoring on every call',
+    body: (
+      <p className="text-gray-600 text-justify">
+        Transcribed, analyzed and scored in seconds by AI : Fraud detected, Sentiment measured, Transaction confirmed.
+      </p>
+    ),
+  },
+  {
+    number: 7,
+    side: 'left',
+    title: 'Scale globally — 60,000+ certified agents across 70+ countries',
+    body: (
+      <p className="text-gray-600 text-justify">
+        Harx works with human agents today, AI agents tomorrow, and any mix in between.
+      </p>
+    ),
+  },
+];
+
+function TimelineStep({ number, side, title, body }: StepContent) {
+  return (
+    <div className="relative grid md:grid-cols-2 gap-8 items-center">
+      <div className={`w-full ${stepSideClass[side]}`}>
+        <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">
+          {number}
+        </div>
+        <h3 className="text-2xl font-bold mb-4">{title}</h3>
+        {body}
+      </div>
+    </div>
+  );
 }
 
 export function HowItWorks({ onGetStarted }: HowItWorksProps) {
@@ -62,107 +189,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
 
             {/* Steps — odd: left, even: right */}
             <div className="space-y-24">
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">1</div>
-                  <h3 className="text-2xl font-bold mb-4">Post your gig</h3>
-                  <p className="text-gray-600 mb-6">
-                    Define your campaign, your leads, your script, and what a transaction means for you. Our AI generates everything else.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">2</div>
-                  <h3 className="text-2xl font-bold mb-4">Get matched instantly</h3>
-                  <p className="text-gray-600 mb-6">
-                    Harx AI matches your gig to the right certified agents from our global network. Language, industry, activity — every dimension scored and verified.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">3</div>
-                  <h3 className="text-2xl font-bold mb-4">Name your price</h3>
-                  <p className="text-gray-600 mb-6">
-                    Set your own compensation levels. You set the amounts, guided by AI benchmarks. harx takes a portion (%) only when your rep earns a transaction.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">4</div>
-                  <h3 className="text-2xl font-bold mb-4">You only pay what it&apos;s worth.</h3>
-                  <p className="text-gray-600 mb-6">
-                    Floor for effort. Commission for results. Bonus for excellence.
-                  </p>
-                  <ul className="space-y-4 text-gray-600">
-                    <li className="flex items-start gap-3">
-                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
-                        Floor
-                      </span>
-                      <span className="pt-0.5">Pay for a serious, argued interaction</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
-                        Commission
-                      </span>
-                      <span className="pt-0.5">Pay when a transaction is confirmed</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="shrink-0 rounded-full bg-harx-100 px-3 py-1 text-xs font-bold uppercase tracking-wide text-harx-600">
-                        Bonus
-                      </span>
-                      <span className="pt-0.5">Pay when your target is reached</span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">5</div>
-                  <h3 className="text-2xl font-bold mb-4 md:max-w-md">
-                    Your budget is a contract, not an estimate
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Harx is transparent by design.
-                    <br />
-                    You decide how much a gig costs — down to the cent.
-                    <br />
-                    You define the price of effort; You define the price of performance; You only pay when it happens.
-                    <br />
-                    Reps take the lion's share; Harx takes a portion; AI verifies everything.
-                    <br />
-                    Beyond performance, three simple costs : Your plan. Your numbers. Your minutes.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2 md:pl-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">6</div>
-                  <h3 className="text-2xl font-bold mb-4">AI scoring on every call</h3>
-                  <p className="text-gray-600 mb-6">
-                    Transcribed, analyzed and scored in seconds by AI : Fraud detected, Sentiment measured, Transaction confirmed.
-                  </p>
-                </div>
-              </div>
-
-              <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:pr-10 text-justify">
-                  <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">7</div>
-                  <h3 className="text-2xl font-bold mb-4 md:max-w-md">
-                    Scale globally — 60,000+ certified agents across 70+ countries
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Harx works with human agents today, AI agents tomorrow, and any mix in between.
-                  </p>
-                </div>
-              </div>
+              {steps.map((step) => (
+                <TimelineStep key={step.number} {...step} />
+              ))}
             </div>
           </div>
 

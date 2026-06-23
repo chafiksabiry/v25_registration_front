@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, Building2, Headphones, Menu, X } from 'lucide-react';
-import harxLogo from './assets/logo-harx.png';
+import { Logo } from './Logo';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
@@ -77,7 +77,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
             className="flex items-center transition-transform hover:scale-[1.02]"
             onClick={(e) => handleNavClick(e, 'top')}
           >
-            <img src={harxLogo} alt="HARX" className="h-9 w-auto object-contain" />
+            <Logo className="h-14 w-auto md:h-16" />
           </a>
 
           <div className="hidden md:flex items-center gap-1">
