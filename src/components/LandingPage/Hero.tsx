@@ -48,7 +48,7 @@ export function Hero({ onGetStarted }: HeroProps) {
 
           <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 flex flex-col gap-2">
             <span className="bg-clip-text text-transparent bg-gradient-harx">
-              AI-Powered Contact Centre
+              AI-Powered Customer Engagement
             </span>
             <span className="text-2xl sm:text-3xl text-slate-400 font-semibold tracking-wider uppercase my-1">
               Meets
