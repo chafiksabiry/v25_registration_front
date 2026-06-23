@@ -93,22 +93,14 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
                 to deliver exceptional experiences. Work flexibly, earn competitively, and grow your career.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  variant="gradient"
-                  onClick={onGetStarted}
-                  className="group"
-                >
-                  Start Your Journey
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
+
                 <Button
                   variant="outline"
                   size="lg"
                   className="text-white border-white hover:bg-white/10 group"
                   onClick={bookDemo}
                 >
-                  Learn More
+                  Book a Demo
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Button>
               </div>
@@ -221,15 +213,6 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
                 className="group"
               >
                 Apply Now
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={bookDemo}
-                className="group"
-              >
-                Learn More
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </div>
