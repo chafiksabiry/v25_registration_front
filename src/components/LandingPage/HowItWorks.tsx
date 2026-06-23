@@ -263,6 +263,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   <h3 className="text-2xl font-bold mb-4 md:ml-auto md:max-w-md">
                     Scale globally — 60,000+ certified agents across 70+ countries
                   </h3>
+                  <p className="text-gray-600 mb-6">
+                  Harx works with human agents today, AI agents tomorrow, and any mix in between.
+                  </p>
                 </div>
               </div>
             </div>
