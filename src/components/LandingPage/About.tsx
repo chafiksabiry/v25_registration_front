@@ -31,8 +31,8 @@ const values = [
 
 export function About({ onGetStarted }: AboutProps) {
   return (
-    <div className="min-h-screen pt-16">
-      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-24">
+    <div className="pt-8 pb-12">
+      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-12 md:py-16">
         <div className="container mx-auto px-4">
           {/* Mission Section */}
           {/* <div className="max-w-3xl mx-auto text-center mb-24">

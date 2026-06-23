@@ -74,7 +74,7 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
   };
 
   return (
-    <div className="min-h-screen pt-16">
+    <div className="pt-8 pb-12">
       {/* Hero Section with Inspiring Image */}
       <div className="relative h-[600px] overflow-hidden">
         <img

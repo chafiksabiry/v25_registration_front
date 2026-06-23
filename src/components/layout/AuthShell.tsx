@@ -43,7 +43,7 @@ export default function AuthShell() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-0 bg-white">
       <Outlet
         key={`${location.pathname}${location.search}`}
         context={context}
