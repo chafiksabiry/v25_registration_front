@@ -197,6 +197,11 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                   </ul>
                 </div>
               </div>
+
+              <div className="relative text-center max-w-2xl mx-auto">
+                <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 mx-auto">5</div>
+                <h3 className="text-2xl font-bold">No upfront investment — choose your plan, adjust anytime</h3>
+              </div>
             </div>
           </div>
 
