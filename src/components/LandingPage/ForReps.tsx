@@ -1,10 +1,25 @@
 import React from 'react';
-import { ArrowRight, Clock, DollarSign, Globe, Laptop, CheckCircle2, Users2 } from 'lucide-react';
+import { ArrowRight, Bot, Clock, Globe, Laptop, PhoneCall, Target, CheckCircle2, Users2 } from 'lucide-react';
 import { Button } from './Button';
 
 interface ForRepsProps {
   onGetStarted: () => void;
 }
+
+const payHighlights = [
+  {
+    icon: PhoneCall,
+    text: 'Paid (floor) for every serious call, even without a transaction',
+  },
+  {
+    icon: Bot,
+    text: 'Paid commission on every transaction confirmed by our AI',
+  },
+  {
+    icon: Target,
+    text: 'Paid when you hit your monthly target',
+  },
+];
 
 const benefits = [
   {
@@ -80,13 +95,26 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
         />
         <div className="absolute inset-0 bg-gradient-to-r from-harx-950/90 to-harx-900/50">
           <div className="container mx-auto px-4 h-full flex items-center">
-            <div className="max-w-2xl">
-              <h1 className="text-5xl font-bold text-white mb-6">
+            <div className="max-w-3xl">
+              <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl">
                 Earn money. Extra income. Or a full income.
               </h1>
-              <p className="text-xl text-gray-200 mb-8">
-              No boss. No office. No fixed schedule. Just you, your laptop — and your skills. 
+              <h3 className="mb-5 text-xl font-bold leading-snug text-white md:text-2xl">
+                No boss. No office. No fixed schedule. Just you, your laptop — and your skills.
+              </h3>
+              <p className="mb-3 text-base font-medium leading-relaxed text-white/90 md:text-lg">
+                HARX connects you to companies that need you. And pays you for every effort:
               </p>
+              <ul className="mb-8 space-y-3">
+                {payHighlights.map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-start gap-3 text-base font-medium leading-relaxed text-white/90 md:text-lg">
+                    <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-harx-300 ring-1 ring-white/20">
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </span>
+                    <span className="pt-1">{text}</span>
+                  </li>
+                ))}
+              </ul>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
                   size="lg"
