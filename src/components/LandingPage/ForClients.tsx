@@ -129,7 +129,7 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
               onClick={onGetStarted}
               className="group"
             >
-              Start Your Transformation
+              Get Started
               <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </div>
@@ -237,7 +237,7 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
                 onClick={onGetStarted}
                 className="group"
               >
-                Contact Us Now
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button
