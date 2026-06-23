@@ -1,9 +1,15 @@
 import React from 'react';
-import { Menu, X } from 'lucide-react';
+import { Building2, Headphones, Menu, X } from 'lucide-react';
 import harxLogo from './assets/logo-harx.png';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
+
+type NavLink = {
+  id: string;
+  label: string;
+  variant?: 'default' | 'company' | 'rep';
+};
 
 interface HeaderProps {
   onSignIn: () => void;
@@ -32,12 +38,32 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     setIsMenuOpen(false);
   };
 
-  const navLinks = [
+  const navLinks: NavLink[] = [
     { id: 'how-it-works', label: 'How It Works' },
     { id: 'pricing', label: 'Pricing' },
-    { id: 'clients', label: 'For Clients' },
-    { id: 'reps', label: 'For Reps' },
+    { id: 'clients', label: 'For Companies', variant: 'company' },
+    { id: 'reps', label: 'For Reps', variant: 'rep' },
   ];
+
+  const linkClass = (variant: NavLink['variant']) => {
+    if (variant === 'company') {
+      return 'nav-audience-pill nav-audience-pill--company';
+    }
+    if (variant === 'rep') {
+      return 'nav-audience-pill nav-audience-pill--rep';
+    }
+    return 'nav-link-default';
+  };
+
+  const renderLinkIcon = (variant: NavLink['variant']) => {
+    if (variant === 'company') {
+      return <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
+    }
+    if (variant === 'rep') {
+      return <Headphones className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
+    }
+    return null;
+  };
 
   return (
     <header
@@ -54,15 +80,16 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
             <img src={harxLogo} alt="HARX" className="h-9 w-auto object-contain" />
           </a>
 
-          <div className="hidden md:flex items-center">
+          <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <a
                 key={link.id}
                 href={`/#${link.id}`}
-                className="relative font-semibold text-sm px-4 py-2 text-white/85 hover:text-white hover:bg-white/10 transition-all duration-200"
+                className={linkClass(link.variant)}
                 onClick={(e) => handleNavClick(e, link.id)}
               >
-                {link.label}
+                {renderLinkIcon(link.variant)}
+                <span>{link.label}</span>
               </a>
             ))}
           </div>
@@ -103,10 +130,15 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
               <a
                 key={link.id}
                 href={`#${link.id}`}
-                className="text-base font-semibold text-white/90 hover:text-white transition-colors py-2.5 px-3 hover:bg-white/10"
+                className={
+                  link.variant
+                    ? `${linkClass(link.variant)} my-1 w-full justify-center`
+                    : 'px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white'
+                }
                 onClick={(e) => handleNavClick(e, link.id)}
               >
-                {link.label}
+                {renderLinkIcon(link.variant)}
+                <span>{link.label}</span>
               </a>
             ))}
             <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
