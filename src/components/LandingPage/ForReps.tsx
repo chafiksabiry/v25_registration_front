@@ -82,11 +82,10 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
           <div className="container mx-auto px-4 h-full flex items-center">
             <div className="max-w-2xl">
               <h1 className="text-5xl font-bold text-white mb-6">
-                Transform Your Career with AI-Powered Customer Service
+                Earn money. Extra income. Or a full income.
               </h1>
               <p className="text-xl text-gray-200 mb-8">
-                Join our global network of customer service professionals and leverage cutting-edge AI technology
-                to deliver exceptional experiences. Work flexibly, earn competitively, and grow your career.
+              No boss. No office. No fixed schedule. Just you, your laptop — and your skills. 
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
