@@ -202,6 +202,21 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                 <div className="md:text-right">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4 md:ml-auto">5</div>
                   <h3 className="text-2xl font-bold mb-4">No upfront investment — choose your plan, adjust anytime</h3>
+                  <p className="text-gray-600 mb-6">Live monitoring</p>
+                  <p className="text-gray-600">
+                    Every interaction scored in real time by AI.
+                  </p>
+                </div>
+                <div className="bg-white p-8 rounded-xl shadow-lg">
+                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
+                    <Brain className="h-8 w-8 text-harx-600" />
+                  </div>
+                  <ul className="space-y-4 text-gray-600">
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Every call transcribed, scored, and validated by AI in real time</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
