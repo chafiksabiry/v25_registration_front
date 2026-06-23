@@ -32,7 +32,7 @@ const values = [
 export function About({ onGetStarted }: AboutProps) {
   return (
     <div className="min-h-screen pt-16">
-      <div className="relative overflow-hidden bg-gradient-to-b from-blue-50 to-white py-24">
+      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-24">
         <div className="container mx-auto px-4">
           {/* Mission Section */}
           <div className="max-w-3xl mx-auto text-center mb-24">
@@ -60,9 +60,9 @@ export function About({ onGetStarted }: AboutProps) {
             <h2 className="text-3xl font-bold text-center mb-16">Our Values</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {values.map((value, index) => (
-                <div key={index} className="bg-white p-6 rounded-xl shadow-md">
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <value.icon className="h-6 w-6 text-blue-600" />
+                <div key={index} className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/60 p-6 shadow-md">
+                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-lg bg-harx-100">
+                    <value.icon className="h-6 w-6 text-harx-600" />
                   </div>
                   <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
                   <p className="text-gray-600">{value.description}</p>
@@ -73,8 +73,8 @@ export function About({ onGetStarted }: AboutProps) {
         </div>
 
         {/* Background decoration */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-blue-400/10 rounded-full blur-3xl -z-10" />
-        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-green-400/10 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-harx-400/10 rounded-full blur-3xl -z-10" />
+        <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-harx-alt-400/10 rounded-full blur-3xl -z-10" />
       </div>
     </div>
   );

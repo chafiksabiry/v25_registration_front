@@ -114,8 +114,8 @@ export function Hero({ onGetStarted }: HeroProps) {
                   <span>AI Engine for Knowledge Base management</span>
                 </li>
               </ul>
-              <div className="mt-8 pt-6 border-t border-white/[0.06]">
-                <Button className="w-full h-11 bg-white/[0.04] border border-white/10 hover:border-harx-500 text-white font-semibold shadow-none transition-all duration-300" onClick={() => scrollToSection('features')}>
+              <div className="mt-8 pt-6 border-t border-harx-500/20">
+                <Button className="w-full h-11 bg-gradient-to-r from-harx-500/30 to-harx-alt-500/25 border border-harx-400/40 hover:border-harx-300 hover:from-harx-500/45 hover:to-harx-alt-500/35 text-white font-semibold shadow-lg shadow-harx-500/20 transition-all duration-300" onClick={() => scrollToSection('features')}>
                   Explore AI Features
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -166,8 +166,8 @@ export function Hero({ onGetStarted }: HeroProps) {
                   </div>
                 </li>
               </ul>
-              <div className="mt-8 pt-6 border-t border-white/[0.06]">
-                <Button className="w-full h-11 bg-white/[0.04] border border-white/10 hover:border-harx-alt-500 text-white font-semibold shadow-none transition-all duration-300" onClick={() => scrollToSection('how-it-works')}>
+              <div className="mt-8 pt-6 border-t border-harx-alt-500/20">
+                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => scrollToSection('how-it-works')}>
                   See How It Works
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -176,8 +176,8 @@ export function Hero({ onGetStarted }: HeroProps) {
           </div>
 
           {/* Trust Indicators */}
-          <div className="flex items-center justify-center gap-8 text-sm text-slate-400 mb-16">
-            <div className="flex items-center gap-2 px-4 py-2 bg-white/[0.02] border border-white/[0.06] rounded-full">
+          <div className="flex items-center justify-center gap-8 text-sm text-harx-200 mb-16">
+            <div className="flex items-center gap-2 px-4 py-2 bg-harx-500/10 border border-harx-500/30 rounded-full">
               <CheckCircle2 className="h-4 w-4 text-harx-400" />
               <span>GDPR Compliant & Encrypted Data</span>
             </div>
@@ -185,26 +185,26 @@ export function Hero({ onGetStarted }: HeroProps) {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-white/[0.15] transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/10">
+            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-500/50 transition-colors">
+              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
                 <Brain className="h-5 w-5 text-white" />
               </div>
               <h3 className="text-lg font-bold mb-1">AI-First Platform</h3>
-              <p className="text-sm text-slate-400">Cutting-edge artificial intelligence</p>
+              <p className="text-sm text-harx-200">Cutting-edge artificial intelligence</p>
             </div>
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-white/[0.15] transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/10">
+            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-alt-500/50 transition-colors">
+              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
                 <Users2 className="h-5 w-5 text-white" />
               </div>
               <h3 className="text-lg font-bold mb-1">60,000+ AI-Enhanced Agents</h3>
-              <p className="text-sm text-slate-400">Powered by intelligent technology</p>
+              <p className="text-sm text-harx-200">Powered by intelligent technology</p>
             </div>
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-white/[0.15] transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/10">
+            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-500/50 transition-colors">
+              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
                 <Globe className="h-5 w-5 text-white" />
               </div>
               <h3 className="text-lg font-bold mb-1">Global AI Network</h3>
-              <p className="text-sm text-slate-400">Intelligent service worldwide</p>
+              <p className="text-sm text-harx-200">Intelligent service worldwide</p>
             </div>
           </div>
         </div>
