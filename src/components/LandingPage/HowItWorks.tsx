@@ -94,9 +94,9 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
                 <div className="md:order-2">
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">2</div>
-                  <h3 className="text-2xl font-bold mb-4">Engage AI-matched team</h3>
+                  <h3 className="text-2xl font-bold mb-4">Get matched instantly</h3>
                   <p className="text-gray-600 mb-6">
-                    Our AI matches your needs with the perfect agents from our global network, ensuring optimal performance and cultural alignment. right profile, right language, right industry.
+                    Harx AI matches your gig to the right certified agents from our global network. Language, industry, activity — every dimension scored and verified.
                   </p>
                 </div>
                 <div className="bg-white p-8 rounded-xl shadow-lg md:order-1">
