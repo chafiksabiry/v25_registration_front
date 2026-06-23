@@ -26,7 +26,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
   return (
     <div className="pt-4 md:pt-6">
-      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-6 md:py-8">
+      <div className="relative overflow-hidden bg-white py-6 md:py-8">
         <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-harx-300/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-harx-alt-300/20 blur-3xl" />
 

@@ -15,8 +15,9 @@ function getWindowRouterPath(): string {
 }
 
 /**
- * Keeps React Router aligned with the browser URL on Back/Forward.
- * Qiankun hosts sometimes update window.location without updating the router.
+ * Keeps React Router aligned with the browser URL on Back/Forward (popstate).
+ * Only reacts to popstate — never calls navigate() on normal renders, otherwise
+ * forward history is wiped after going back.
  */
 export default function HistorySync() {
   const location = useLocation();
@@ -26,37 +27,25 @@ export default function HistorySync() {
   locationRef.current = location;
 
   useLayoutEffect(() => {
-    const syncFromWindow = () => {
-      const windowPath = getWindowRouterPath();
-      const routerPath = `${locationRef.current.pathname}${locationRef.current.search}${locationRef.current.hash}`;
-
-      if (windowPath === routerPath) {
-        return;
-      }
-
-      flushSync(() => {
-        navigate(windowPath);
-      });
-    };
-
     const onPopState = () => {
-      syncFromWindow();
+      // Let React Router handle popstate first; only fix if still out of sync.
+      requestAnimationFrame(() => {
+        const windowPath = getWindowRouterPath();
+        const routerPath = `${locationRef.current.pathname}${locationRef.current.search}${locationRef.current.hash}`;
+
+        if (windowPath === routerPath) {
+          return;
+        }
+
+        flushSync(() => {
+          navigate(windowPath, { replace: false });
+        });
+      });
     };
 
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, [navigate]);
-
-  useLayoutEffect(() => {
-    const windowPath = getWindowRouterPath();
-    const routerPath = `${location.pathname}${location.search}${location.hash}`;
-
-    if (windowPath !== routerPath) {
-      flushSync(() => {
-        navigate(windowPath);
-      });
-    }
-  }, [location.pathname, location.search, location.hash, navigate]);
 
   return null;
 }

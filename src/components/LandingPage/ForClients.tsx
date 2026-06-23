@@ -113,7 +113,7 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
 
   return (
     <div className="min-h-screen pt-16">
-      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 to-white">
+      <div className="relative overflow-hidden bg-white">
         {/* Hero Section */}
         <div className="container mx-auto px-4 py-24">
           <div className="max-w-3xl mx-auto text-center mb-16">
