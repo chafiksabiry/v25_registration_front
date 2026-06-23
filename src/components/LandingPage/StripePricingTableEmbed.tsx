@@ -61,12 +61,15 @@ type StripePricingTableEmbedProps = {
   pricingTableId: string;
   publishableKey?: string;
   className?: string;
+  /** Shrink the embedded Stripe table (width + height). */
+  compact?: boolean;
 };
 
 export function StripePricingTableEmbed({
   pricingTableId,
   publishableKey = STRIPE_PUBLISHABLE_KEY,
   className = '',
+  compact = false,
 }: StripePricingTableEmbedProps) {
   const [ready, setReady] = useState(
     typeof window !== 'undefined' && Boolean(window.customElements?.get('stripe-pricing-table'))
@@ -100,9 +103,9 @@ export function StripePricingTableEmbed({
 
   if (!ready) {
     return (
-      <div className={`flex h-72 flex-col items-center justify-center gap-3 ${className}`}>
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-harx-500/20 border-t-harx-500" />
-        <p className="text-xs font-bold uppercase tracking-widest text-slate-500">
+      <div className={`flex h-40 flex-col items-center justify-center gap-2 ${className}`}>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-harx-500/20 border-t-harx-500" />
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
           Loading plans…
         </p>
       </div>
@@ -110,7 +113,9 @@ export function StripePricingTableEmbed({
   }
 
   return (
-    <div className={`stripe-pricing-table-wrap w-full ${className}`}>
+    <div
+      className={`stripe-pricing-table-wrap w-full ${compact ? 'stripe-pricing-table-wrap--compact' : ''} ${className}`}
+    >
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
         publishable-key={publishableKey}
