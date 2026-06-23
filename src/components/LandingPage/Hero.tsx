@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Button } from './Button';
 import { ArrowRight, Globe, Headphones, Users2, Clock, DollarSign, Shield, Heart, Brain, Sparkles, Target, BarChart, Bot, Zap, Phone, Mail, MessageSquare, Video, BookOpen, CheckCircle2, Coins, Eye } from 'lucide-react';
 import harxMascotte from './assets/harx-mascotte.webp';
@@ -8,6 +8,34 @@ interface HeroProps {
 }
 
 export function Hero({ onGetStarted }: HeroProps) {
+  const titleContainerRef = useRef<HTMLDivElement>(null);
+  const titleTextRef = useRef<HTMLSpanElement>(null);
+
+  useLayoutEffect(() => {
+    const container = titleContainerRef.current;
+    const text = titleTextRef.current;
+    if (!container || !text) return;
+
+    const fitTitle = () => {
+      const maxPx = 72;
+      const minPx = 12;
+      let size = maxPx;
+      text.style.fontSize = `${size}px`;
+
+      const limit = container.clientWidth;
+      while (text.scrollWidth > limit && size > minPx) {
+        size -= 1;
+        text.style.fontSize = `${size}px`;
+      }
+    };
+
+    fitTitle();
+    const observer = new ResizeObserver(fitTitle);
+    observer.observe(container);
+    document.fonts?.ready.then(fitTitle).catch(() => undefined);
+    return () => observer.disconnect();
+  }, []);
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -20,14 +48,16 @@ export function Hero({ onGetStarted }: HeroProps) {
   };
 
   return (
-    <div className="relative min-h-screen pt-24 overflow-hidden bg-space-dark-default text-white">
+    <div className="relative min-h-screen pt-24 bg-space-dark-default text-white">
       {/* Background glowing decorations */}
-      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-harx-500/10 blur-[120px] rounded-full pointer-events-none animate-pulse-slow" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-harx-alt-500/10 blur-[150px] rounded-full pointer-events-none animate-pulse-slow" style={{ animationDelay: '3s' }} />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-harx-500/5 via-transparent to-transparent rounded-full blur-3xl -z-10 pointer-events-none" />
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-harx-500/10 blur-[120px] rounded-full animate-pulse-slow" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-harx-alt-500/10 blur-[150px] rounded-full animate-pulse-slow" style={{ animationDelay: '3s' }} />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-harx-500/5 via-transparent to-transparent rounded-full blur-3xl" />
+      </div>
 
       <div className="container mx-auto px-4 pt-16 pb-32 relative z-10">
-        <div className="max-w-4xl mx-auto text-center">
+        <div className="max-w-6xl mx-auto text-center">
           <div className="mb-6 animate-fade-in">
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md text-slate-200 text-sm font-semibold mb-4 hover:border-harx-400/50 transition-all duration-300">
               <Sparkles className="h-4 w-4 text-harx-400" />
@@ -46,14 +76,20 @@ export function Hero({ onGetStarted }: HeroProps) {
             />
           </div>
 
-          <h1 className="text-4xl sm:text-4xl md:text-7xl font-extrabold tracking-tight mb-4 flex flex-col gap-2">
-            <span className="bg-clip-text text-transparent bg-gradient-harx whitespace-nowrap">
-              AI-Powered Customer Engagement
-            </span>
-            <span className="text-2xl sm:text-3xl text-slate-400 font-semibold tracking-wider uppercase my-1">
+          <h1 className="font-extrabold tracking-tight mb-4 flex flex-col items-center gap-2 w-full">
+            <div ref={titleContainerRef} className="w-full flex justify-center">
+              <span
+                ref={titleTextRef}
+                className="bg-clip-text text-transparent bg-gradient-harx"
+                style={{ whiteSpace: 'nowrap', lineHeight: 1.1 }}
+              >
+                AI-Powered Customer Engagement
+              </span>
+            </div>
+            <span className="text-2xl sm:text-3xl md:text-4xl text-slate-400 font-semibold tracking-wider uppercase my-1">
               Meets
             </span>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-harx-alt-400 to-harx-400">
+            <span className="text-3xl sm:text-4xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-harx-alt-400 to-harx-400">
               Transaction-as-a-Service
             </span>
           </h1>
