@@ -171,7 +171,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
         </div>
 
         {/* Technology Showcase */}
-        <div className="relative mt-24 overflow-hidden rounded-2xl border border-harx-200 bg-gradient-to-br from-harx-50 via-white to-harx-alt-50 p-8">
+        {/* <div className="relative mt-24 overflow-hidden rounded-2xl border border-harx-200 bg-gradient-to-br from-harx-50 via-white to-harx-alt-50 p-8">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Cutting-Edge AI Technology</h3>
             <p className="text-gray-600">
@@ -179,7 +179,6 @@ export function Features({ onGetStarted }: FeaturesProps) {
             </p>
           </div>
 
-          {/* Technology Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
             <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/80 p-6 shadow-lg backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-harx rounded-lg flex items-center justify-center mb-4">
@@ -204,7 +203,6 @@ export function Features({ onGetStarted }: FeaturesProps) {
             </div>
           </div>
 
-          {/* Background Image */}
           <div className="absolute inset-0 opacity-10">
             <img
               src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1920&q=80"
@@ -212,9 +210,8 @@ export function Features({ onGetStarted }: FeaturesProps) {
               className="w-full h-full object-cover"
             />
           </div>
-        </div>
+        </div> */}
 
-        {/* Call to Action */}
         <div className="flex gap-4 mt-8">
           <Button
             className="w-full group"
