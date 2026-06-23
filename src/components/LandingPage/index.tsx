@@ -123,7 +123,7 @@ export function LandingPage({
         <HowItWorks onGetStarted={onGetStarted} />
       </section>
 
-      <section id="pricing" className="scroll-mt-28 bg-slate-50 text-slate-900">
+      <section id="pricing" className="scroll-mt-28 bg-gradient-to-b from-harx-50/80 to-white text-slate-900">
         <Pricing onGetStarted={onGetStarted} />
       </section>
 
@@ -131,7 +131,7 @@ export function LandingPage({
         <About onGetStarted={onGetStarted} />
       </section>
 
-      <section id="clients" className="scroll-mt-28 bg-slate-50 text-slate-900">
+      <section id="clients" className="scroll-mt-28 bg-gradient-to-b from-harx-50/60 to-white text-slate-900">
         <ForClients onGetStarted={onGetStarted} />
       </section>
 

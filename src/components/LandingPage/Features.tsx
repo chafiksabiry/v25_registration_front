@@ -15,7 +15,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
   };
 
   return (
-    <section className="py-24 bg-white">
+    <section className="bg-gradient-to-b from-white via-harx-50/30 to-white py-24">
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
@@ -30,7 +30,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
         {/* Main Features Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
           {/* AI Everywhere Section */}
-          <div className="bg-white p-8 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-xl flex items-center justify-center mb-6">
               <Bot className="h-8 w-8 text-white" />
             </div>
@@ -60,7 +60,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
           </div>
 
           {/* AI Augmented Agents Section */}
-          <div className="bg-white p-8 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-xl flex items-center justify-center mb-6">
               <Brain className="h-8 w-8 text-white" />
             </div>
@@ -93,7 +93,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
         {/* Secondary Features */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {/* Predictive Analytics */}
-          <div className="p-8 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <LineChart className="h-8 w-8 text-white" />
             </div>
@@ -119,7 +119,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
           </div>
 
           {/* Real-Time Optimization */}
-          <div className="p-8 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <Gauge className="h-8 w-8 text-white" />
             </div>
@@ -145,7 +145,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
           </div>
 
           {/* Intelligent Automation */}
-          <div className="p-8 bg-white rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
+          <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/50 p-8 shadow-lg transition-transform duration-300 hover:scale-105">
             <div className="w-16 h-16 bg-gradient-harx rounded-lg flex items-center justify-center mb-6">
               <MessageSquare className="h-8 w-8 text-white" />
             </div>
@@ -171,7 +171,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
         </div>
 
         {/* Technology Showcase */}
-        <div className="relative mt-24 bg-gradient-to-r from-harx-50 to-harx-alt-50 rounded-2xl p-8 overflow-hidden">
+        <div className="relative mt-24 overflow-hidden rounded-2xl border border-harx-200 bg-gradient-to-br from-harx-50 via-white to-harx-alt-50 p-8">
           <div className="text-center mb-12">
             <h3 className="text-3xl font-bold mb-4">Cutting-Edge AI Technology</h3>
             <p className="text-gray-600">
@@ -181,21 +181,21 @@ export function Features({ onGetStarted }: FeaturesProps) {
 
           {/* Technology Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+            <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/80 p-6 shadow-lg backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-harx rounded-lg flex items-center justify-center mb-4">
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <h4 className="text-xl font-semibold mb-2">Natural Language Processing</h4>
               <p className="text-gray-600">Understanding customer intent and sentiment in real-time</p>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+            <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/80 p-6 shadow-lg backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-harx rounded-lg flex items-center justify-center mb-4">
                 <Brain className="h-6 w-6 text-white" />
               </div>
               <h4 className="text-xl font-semibold mb-2">Machine Learning</h4>
               <p className="text-gray-600">Continuously improving service through pattern recognition</p>
             </div>
-            <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg">
+            <div className="rounded-xl border border-harx-100 bg-gradient-to-br from-white to-harx-50/80 p-6 shadow-lg backdrop-blur-sm">
               <div className="w-12 h-12 bg-gradient-harx rounded-lg flex items-center justify-center mb-4">
                 <Users2 className="h-6 w-6 text-white" />
               </div>

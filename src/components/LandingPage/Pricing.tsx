@@ -278,7 +278,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
   return (
     <div className="min-h-screen pt-16">
-      <div className="relative overflow-hidden bg-gradient-to-b from-gray-50 to-white py-24">
+      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 via-white to-harx-alt-50 py-24">
         <div className="container mx-auto px-4">
           <div className="mx-auto mb-8 max-w-4xl text-center">
             <div className="rounded-2xl bg-gradient-to-r from-harx-600 to-harx-500 p-6 text-white shadow-xl">
