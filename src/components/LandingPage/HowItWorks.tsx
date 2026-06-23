@@ -225,14 +225,34 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
               </div>
 
               <div className="relative grid md:grid-cols-2 gap-8 items-center">
-                <div className="md:col-start-2">
+                <div className="bg-white p-8 rounded-xl shadow-lg">
+                  <div className="w-16 h-16 bg-harx-100 rounded-lg flex items-center justify-center mb-6">
+                    <Bot className="h-8 w-8 text-harx-600" />
+                  </div>
+                  <ul className="space-y-4 text-gray-600">
+                  <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Transcribed and analyzed and Scored in seconds.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Fraud detected.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Sentiment measured.</span>
+                    </li>
+                    <li className="flex items-start">
+                      <ArrowRight className="h-5 w-5 text-harx-600 mt-1 mr-2 flex-shrink-0" />
+                      <span>Transaction confirmed.</span>
+                    </li>
+                  </ul>
+                </div>
+                <div>
                   <div className="bg-harx-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">6</div>
-                  <h3 className="text-2xl font-bold mb-4">Live monitoring</h3>
+                  <h3 className="text-2xl font-bold mb-4">AI scoring on every call</h3>
                   <p className="text-gray-600 mb-6">
-                    Every interaction scored in real time by AI.
-                  </p>
-                  <p className="text-gray-600 mb-6">
-                  Every call transcribed, scored, and validated by AI in real time
+                    Every call is verified. No disputes. No grey zones.
                   </p>
                 </div>
               </div>
