@@ -60,6 +60,7 @@ export function Hero({ onGetStarted }: HeroProps) {
 
           <p className="text-lg md:text-xl text-slate-350 mb-10 max-w-3xl mx-auto leading-relaxed">
           Stop paying for seats. Start paying for results. <br /> 
+          Harx connects your business to a global network of certified agents — human or AI — who handle your customer engagement end to end. Every interaction is scored in real time. You only pay when the result you defined is delivered. <br />
           Revolutionize your customer service with our AI-powered platform. Experience seamless
             operations where you define success, set your pricing, and only pay for resolved
             transactions. Our intelligent system combines human expertise with AI precision for
