@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import Cookies from 'js-cookie';
 import { Header } from './LandingPage/Header';
+import {
+  REGISTER_FORM_STEPS,
+  type RegisterFormStep,
+  type RegisterNavState,
+  registerStepSearch,
+} from '../lib/registerNavigation';
 
-type Step = 'name' | 'email' | 'password' | 'phone' | 'terms' | 'verification' | 'success';
+type Step = RegisterFormStep | 'success';
 
-const REG_STEPS: Step[] = ['name', 'email', 'password', 'phone', 'terms', 'verification', 'success'];
+const REG_STEPS: Step[] = [...REGISTER_FORM_STEPS, 'success'];
 
 function stepFromSearch(param: string | null): Step {
   if (param && REG_STEPS.includes(param as Step)) return param as Step;
@@ -24,6 +30,8 @@ interface RegistrationDialogProps {
 export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateToSection }: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const navState = (location.state as RegisterNavState | null) ?? null;
   const [searchParams] = useSearchParams();
   const step = stepFromSearch(searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
@@ -43,8 +51,19 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
 
   /** Push a new history entry via React Router (not raw pushState). */
-  const pushStep = (next: Step) => {
-    navigate({ pathname: '/auth/register', search: `?step=${next}` });
+  const pushStep = (next: RegisterFormStep) => {
+    navigate(
+      { pathname: '/auth/register', search: registerStepSearch(next) },
+      { state: navState }
+    );
+  };
+
+  const leaveRegistration = () => {
+    if (navState?.scrollTo && onNavigateToSection) {
+      onNavigateToSection(navState.scrollTo);
+      return;
+    }
+    navigate(navState?.returnTo ?? '/auth/choice');
   };
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -251,7 +270,18 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   };
 
   const goBack = () => {
-    navigate(-1);
+    const stepIndex = REGISTER_FORM_STEPS.indexOf(step as RegisterFormStep);
+
+    if (stepIndex <= 0) {
+      leaveRegistration();
+      return;
+    }
+
+    const previousStep = REGISTER_FORM_STEPS[stepIndex - 1];
+    navigate(
+      { pathname: '/auth/register', search: registerStepSearch(previousStep) },
+      { replace: true, state: navState }
+    );
   };
 
   return (
@@ -297,7 +327,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
           {/* Right Side - Form Section */}
           <div className="lg:col-span-3 bg-slate-900/40 p-8 lg:p-14 flex flex-col justify-center relative">
             <div className="max-w-md mx-auto w-full">
-              {step !== 'success' && step !== 'name' && (
+              {step !== 'success' && (
                 <button onClick={goBack} className="flex items-center text-sm text-slate-450 hover:text-white mb-6 transition-colors">
                   <ArrowLeft className="h-4 w-4 mr-1.5" />
                   Back
