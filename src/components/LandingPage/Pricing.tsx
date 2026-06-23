@@ -1,9 +1,9 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { Button } from './Button';
-import { StripePricingTableEmbed } from './StripePricingTableEmbed';
-import { COMPANY_PRICING_TABLE_ID, REP_PRICING_TABLE_ID } from './stripePricingConfig';
+import { PricingPlansGrid } from './PricingPlansGrid';
+import { COMPANY_PRICING_PLANS, REP_PRICING_PLANS } from './pricingPlansConfig';
 
 interface PricingProps {
   onGetStarted: () => void;
@@ -113,32 +113,25 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
           <div className="mx-auto mb-12 w-full max-w-[90rem] px-2 sm:px-0">
             {audience === 'company' ? (
-              <div key="company-pricing-table" className="space-y-3">
+              <div key="company-pricing" className="space-y-3">
                 <div className="rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-2 text-center text-xs text-harx-800 md:text-sm">
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For companies</strong> — subscribe to post gigs on HARX.
                 </div>
-                <div className="stripe-pricing-table-scroll">
-                  <StripePricingTableEmbed
-                    pricingTableId={COMPANY_PRICING_TABLE_ID}
-                    columns={3}
-                    hideSubscribeButton
-                  />
-                </div>
+                <PricingPlansGrid plans={COMPANY_PRICING_PLANS} columns={3} />
               </div>
             ) : (
-              <div key="rep-pricing-table" className="space-y-3">
+              <div key="rep-pricing" className="space-y-3">
                 <div className="rounded-lg border border-harx-alt-100 bg-harx-alt-50/80 px-3 py-2 text-center text-xs text-harx-alt-800 md:text-sm">
                   <Headphones className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <strong>For REPs</strong> — subscribe to access gigs and start earning.
                 </div>
-                <div className="stripe-pricing-table-scroll">
-                  <StripePricingTableEmbed
-                    pricingTableId={REP_PRICING_TABLE_ID}
-                    columns={4}
-                    onSubscribeClick={handleRepRegister}
-                  />
-                </div>
+                <PricingPlansGrid
+                  plans={REP_PRICING_PLANS}
+                  columns={4}
+                  showCta
+                  onCtaClick={handleRepRegister}
+                />
               </div>
             )}
           </div>

@@ -18,7 +18,6 @@ declare global {
 }
 
 const PRICING_TABLE_SRC = 'https://js.stripe.com/v3/pricing-table.js';
-const STYLE_ID = 'harx-pricing-table-style';
 
 let scriptPromise: Promise<void> | null = null;
 
@@ -64,86 +63,54 @@ type StripePricingTableEmbedProps = {
   className?: string;
   /** Expected plan count — used to reserve enough width for one row (3 company / 4 rep). */
   columns?: 3 | 4;
-  /** Hide Stripe subscribe / trial CTAs (landing page company plans). */
+  /** Hide Stripe subscribe / trial CTAs inside the embedded pricing table. */
   hideSubscribeButton?: boolean;
-  /** Landing-page mode: overlay CTAs redirect here instead of Stripe Checkout. */
+  /** Landing-page mode: intercept subscribe CTAs and run this instead of Stripe Checkout. */
   onSubscribeClick?: () => void;
 };
 
-function collectShadowRoots(node: ParentNode): ShadowRoot[] {
-  const roots: ShadowRoot[] = [];
-
-  const visit = (parent: ParentNode) => {
-    parent.querySelectorAll('*').forEach((element) => {
-      if (element instanceof HTMLElement && element.shadowRoot) {
-        roots.push(element.shadowRoot);
-        visit(element.shadowRoot);
-      }
-    });
-  };
-
-  if (node instanceof HTMLElement && node.shadowRoot) {
-    roots.push(node.shadowRoot);
-    visit(node.shadowRoot);
-  }
-
-  visit(node);
-  return roots;
-}
-
-function injectShadowStyles(host: HTMLElement, css: string) {
-  collectShadowRoots(host).forEach((root) => {
-    if (root.getElementById(STYLE_ID)) return;
-    const style = document.createElement('style');
-    style.id = STYLE_ID;
-    style.textContent = css;
-    root.appendChild(style);
-  });
-}
-
-function blockStripeCheckout(host: HTMLElement) {
-  injectShadowStyles(
-    host,
-    `
-      button,
-      a[role="button"] {
-        display: none !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
-      }
-      iframe {
-        pointer-events: none !important;
-      }
-    `
-  );
-}
-
-function PricingCtaOverlay({
-  columns,
-  mode,
-  onSubscribeClick,
-}: {
-  columns: 3 | 4;
-  mode: 'hide' | 'redirect';
-  onSubscribeClick?: () => void;
-}) {
+function isSubscribeCta(element: Element): boolean {
+  const label = element.textContent?.trim().toLowerCase() ?? '';
   return (
-    <div
-      className={`harx-pricing-cta-overlay harx-pricing-cta-overlay--cols-${columns} harx-pricing-cta-overlay--${mode}`}
-      aria-hidden={mode === 'hide'}
-    >
-      {Array.from({ length: columns }, (_, index) => (
-        <button
-          key={index}
-          type="button"
-          tabIndex={mode === 'hide' ? -1 : 0}
-          className="harx-pricing-cta-overlay__slot"
-          aria-hidden={mode === 'hide'}
-          onClick={mode === 'redirect' ? onSubscribeClick : undefined}
-        />
-      ))}
-    </div>
+    element.tagName === 'BUTTON' ||
+    label.includes('trial') ||
+    label.includes('subscribe') ||
+    label.includes('start')
   );
+}
+
+function configurePricingTableButtons(
+  shadowRoot: ShadowRoot,
+  options: { hide?: boolean; onSubscribeClick?: () => void }
+) {
+  shadowRoot.querySelectorAll('button, a').forEach((element) => {
+    if (!isSubscribeCta(element)) return;
+
+    const el = element as HTMLElement;
+
+    if (options.hide) {
+      el.style.display = 'none';
+      el.style.visibility = 'hidden';
+      el.setAttribute('aria-hidden', 'true');
+      el.tabIndex = -1;
+      return;
+    }
+
+    if (!options.onSubscribeClick) return;
+    if (el.dataset.harxSubscribeRedirect === 'true') return;
+
+    el.dataset.harxSubscribeRedirect = 'true';
+    el.addEventListener(
+      'click',
+      (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        options.onSubscribeClick?.();
+      },
+      true
+    );
+  });
 }
 
 export function StripePricingTableEmbed({
@@ -159,43 +126,47 @@ export function StripePricingTableEmbed({
     typeof window !== 'undefined' && Boolean(window.customElements?.get('stripe-pricing-table'))
   );
   const [error, setError] = useState<string | null>(null);
-  const useCtaOverlay = hideSubscribeButton || Boolean(onSubscribeClick);
-  const overlayMode = hideSubscribeButton ? 'hide' : 'redirect';
 
   useEffect(() => {
-    if (!ready || !useCtaOverlay) return;
+    if (!ready || (!hideSubscribeButton && !onSubscribeClick)) return;
 
     let shadowObserver: MutationObserver | undefined;
     let hostObserver: MutationObserver | undefined;
     let intervalId = 0;
     let timeoutId = 0;
 
-    const applyCheckoutBlock = () => {
+    const applyButtonConfig = (shadowRoot: ShadowRoot) => {
+      configurePricingTableButtons(shadowRoot, {
+        hide: hideSubscribeButton,
+        onSubscribeClick,
+      });
+    };
+
+    const attachToHost = () => {
       const host = containerRef.current?.querySelector('stripe-pricing-table');
-      if (!(host instanceof HTMLElement)) return false;
-      blockStripeCheckout(host);
+      const shadowRoot = host?.shadowRoot;
+      if (!shadowRoot) return false;
+
+      applyButtonConfig(shadowRoot);
+      shadowObserver?.disconnect();
+      shadowObserver = new MutationObserver(() => applyButtonConfig(shadowRoot));
+      shadowObserver.observe(shadowRoot, { childList: true, subtree: true });
       return true;
     };
 
-    if (!applyCheckoutBlock()) {
+    if (!attachToHost()) {
       intervalId = window.setInterval(() => {
-        if (applyCheckoutBlock()) {
+        if (attachToHost()) {
           window.clearInterval(intervalId);
         }
       }, 200);
-      timeoutId = window.setTimeout(() => window.clearInterval(intervalId), 15000);
+      timeoutId = window.setTimeout(() => window.clearInterval(intervalId), 10000);
     }
 
     const container = containerRef.current;
     if (container) {
-      hostObserver = new MutationObserver(() => applyCheckoutBlock());
+      hostObserver = new MutationObserver(() => attachToHost());
       hostObserver.observe(container, { childList: true, subtree: true });
-    }
-
-    const host = container?.querySelector('stripe-pricing-table');
-    if (host instanceof HTMLElement && host.shadowRoot) {
-      shadowObserver = new MutationObserver(() => applyCheckoutBlock());
-      shadowObserver.observe(host.shadowRoot, { childList: true, subtree: true });
     }
 
     return () => {
@@ -204,7 +175,7 @@ export function StripePricingTableEmbed({
       shadowObserver?.disconnect();
       hostObserver?.disconnect();
     };
-  }, [ready, useCtaOverlay, pricingTableId]);
+  }, [hideSubscribeButton, onSubscribeClick, ready, pricingTableId]);
 
   useEffect(() => {
     if (ready) return;
@@ -245,21 +216,14 @@ export function StripePricingTableEmbed({
   return (
     <div
       ref={containerRef}
-      className={`stripe-pricing-table-wrap relative w-full stripe-pricing-table-wrap--cols-${columns} ${
-        useCtaOverlay ? 'stripe-pricing-table-wrap--cta-overlay' : ''
+      className={`stripe-pricing-table-wrap w-full stripe-pricing-table-wrap--cols-${columns} ${
+        hideSubscribeButton ? 'stripe-pricing-table-wrap--hide-cta' : ''
       } ${className}`}
     >
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
         publishable-key={publishableKey}
       />
-      {useCtaOverlay && (
-        <PricingCtaOverlay
-          columns={columns}
-          mode={overlayMode}
-          onSubscribeClick={onSubscribeClick}
-        />
-      )}
     </div>
   );
 }
