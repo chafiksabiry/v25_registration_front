@@ -4,7 +4,7 @@ import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { PricingPlansGrid } from './PricingPlansGrid';
 import { COMPANY_PRICING_PLANS, REP_PRICING_PLANS } from './pricingPlansConfig';
-
+import React from 'react';
 interface PricingProps {
   onGetStarted: () => void;
 }
