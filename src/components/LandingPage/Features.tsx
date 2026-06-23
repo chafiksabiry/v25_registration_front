@@ -211,24 +211,6 @@ export function Features({ onGetStarted }: FeaturesProps) {
             />
           </div>
         </div> */}
-
-        <div className="flex gap-4 mt-8">
-          <Button
-            className="w-full group"
-            onClick={onGetStarted}
-          >
-            Explore AI Features
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Button>
-
-          <Button
-            className="w-full group"
-            onClick={() => scrollToSection('how-it-works')}
-          >
-            See How It Works
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Button>
-        </div>
       </div>
     </section>
   );
