@@ -4,8 +4,8 @@ import { Logo } from './Logo';
 
 const navigation = {
   company: [
-    { name: 'About', href: '#about' },
     { name: 'How It Works', href: '#how-it-works' },
+    { name: 'Pricing', href: '#pricing' },
     { name: 'For Companies', href: '#clients' },
     { name: 'For Reps', href: '#reps' },
   ],
@@ -44,11 +44,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <div className="flex items-center mb-6">
-              <Logo className="h-20 md:h-24" variant="white" />
+            <div className="mb-6">
+              <Logo className="h-14 w-auto md:h-16" />
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-400 mb-1">
               AI-Powered Transaction-as-a-Service Platform
+            </p>
+            <p className="text-gray-400 mb-4">
+              Powered by AI
             </p>
             <div className="space-y-2">
               <div className="flex items-center text-gray-400">
