@@ -61,12 +61,15 @@ type StripePricingTableEmbedProps = {
   pricingTableId: string;
   publishableKey?: string;
   className?: string;
+  /** Expected plan count — used to reserve enough width for one row (3 company / 4 rep). */
+  columns?: 3 | 4;
 };
 
 export function StripePricingTableEmbed({
   pricingTableId,
   publishableKey = STRIPE_PUBLISHABLE_KEY,
   className = '',
+  columns = 3,
 }: StripePricingTableEmbedProps) {
   const [ready, setReady] = useState(
     typeof window !== 'undefined' && Boolean(window.customElements?.get('stripe-pricing-table'))
@@ -110,7 +113,9 @@ export function StripePricingTableEmbed({
   }
 
   return (
-    <div className={`stripe-pricing-table-wrap w-full ${className}`}>
+    <div
+      className={`stripe-pricing-table-wrap w-full stripe-pricing-table-wrap--cols-${columns} ${className}`}
+    >
       <stripe-pricing-table
         pricing-table-id={pricingTableId}
         publishable-key={publishableKey}
