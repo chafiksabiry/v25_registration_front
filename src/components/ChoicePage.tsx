@@ -72,12 +72,9 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       {/* Cards */}
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-10 flex items-start md:items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-6 max-w-5xl w-full mx-auto">
-          {/* Company Card — désactivé temporairement */}
-          <div
-            aria-disabled="true"
-            className="group relative overflow-hidden rounded-3xl border border-slate-200/70 bg-white/90 opacity-55 grayscale backdrop-blur shadow-xl shadow-slate-300/10 pointer-events-none select-none"
-          >
-            <div className="absolute inset-x-0 top-0 z-20 h-1.5 bg-gradient-to-r from-slate-400 via-slate-300 to-slate-400" />
+          {/* Company Card */}
+          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 hover:shadow-2xl hover:shadow-harx-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-harx-100/70 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-400 via-harx-500 to-harx-600" />
             {/* Banner: brand gradient always visible instantly, photo fades in on top */}
             <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-600 via-harx-500 to-harx-alt-500">
               <img
@@ -112,11 +109,11 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               </div>
               <button
                 type="button"
-                disabled
-                className="mt-6 flex w-full cursor-not-allowed items-center justify-center gap-2 rounded-2xl bg-slate-300 px-6 py-3.5 font-bold text-slate-500"
+                onClick={() => onSelectRole('company')}
+                className="mt-6 w-full bg-gradient-to-r from-harx-500 to-harx-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-harx-500/40 active:scale-[0.98]"
               >
                 Post a Gig
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
