@@ -17,6 +17,11 @@ import {
   RegisterRepScreen,
   RecoveryScreen,
 } from './routes/AuthRoutes';
+import AdminLayout from './components/admin/AdminLayout';
+import AdminSignInPage from './components/admin/AdminSignInPage';
+import AdminDashboardPage from './components/admin/AdminDashboardPage';
+import AdminUsersPage from './components/admin/AdminUsersPage';
+import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 
 function RootLayout() {
   return (
@@ -68,6 +73,26 @@ export const appRouter = createBrowserRouter(
               <div>orchestrator Page</div>
             </PrivateRoute>
           ),
+        },
+        {
+          path: 'admin/signin',
+          element: (
+            <AdminGuestOnly>
+              <AdminSignInPage />
+            </AdminGuestOnly>
+          ),
+        },
+        {
+          path: 'admin',
+          element: (
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          ),
+          children: [
+            { index: true, element: <AdminDashboardPage /> },
+            { path: 'users', element: <AdminUsersPage /> },
+          ],
         },
         {
           element: <GuestAuthLayout />,

@@ -6,6 +6,7 @@ import { hardNavigate } from "./appNavigation";
 
 interface TokenPayload {
   userId?: string;
+  typeUser?: string | null;
   exp?: number;
 }
 
@@ -147,6 +148,10 @@ export async function getPostLoginRedirectUrl(
   try {
     const checkUserType = await auth.checkUserType(userId);
     if (checkUserType.userType == null) return null;
+
+    if (checkUserType.userType === "admin") {
+      return "/admin";
+    }
 
     if (checkUserType.userType === "company") {
       try {
