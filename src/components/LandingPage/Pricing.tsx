@@ -17,7 +17,12 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
   const handleRepRegister = useCallback(() => {
     localStorage.setItem('pendingUserType', 'rep');
-    navigate('/auth/register', { state: { returnTo: '/', scrollTo: 'pricing' } });
+    navigate('/auth/register-rep', { state: { returnTo: '/', scrollTo: 'pricing' } });
+  }, [navigate]);
+
+  const handleCompanyRegister = useCallback(() => {
+    localStorage.setItem('pendingUserType', 'company');
+    navigate('/auth/register-company', { state: { returnTo: '/', scrollTo: 'pricing' } });
   }, [navigate]);
 
   const bookDemo = () => {
@@ -127,7 +132,12 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <strong>For companies</strong> — subscribe to post gigs on HARX.
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  <PricingPlansGrid plans={COMPANY_PRICING_PLANS} columns={3} />
+                  <PricingPlansGrid
+                    plans={COMPANY_PRICING_PLANS}
+                    columns={3}
+                    showCta
+                    onCtaClick={handleCompanyRegister}
+                  />
                 </div>
               </div>
             ) : (

@@ -12,6 +12,8 @@ import {
   ChoiceScreen,
   SignInScreen,
   RegisterScreen,
+  RegisterCompanyScreen,
+  RegisterRepScreen,
   RecoveryScreen,
 } from './routes/AuthRoutes';
 
@@ -72,6 +74,8 @@ export const appRouter = createBrowserRouter(
             { path: 'auth/choice', element: <ChoiceScreen /> },
             { path: 'auth/signin', element: <SignInScreen /> },
             { path: 'auth/register', element: <RegisterScreen /> },
+            { path: 'auth/register-company', element: <RegisterCompanyScreen /> },
+            { path: 'auth/register-rep', element: <RegisterRepScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },

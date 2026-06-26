@@ -31,7 +31,9 @@ export default function AuthShell() {
 
   const handleSelectRole = (role: 'company' | 'rep') => {
     localStorage.setItem('pendingUserType', role);
-    navigate('/auth/register', { state: { returnTo: '/auth/choice' } });
+    navigate(role === 'company' ? '/auth/register-company' : '/auth/register-rep', {
+      state: { returnTo: '/auth/choice' },
+    });
   };
 
   const context: AuthOutletContext = {
