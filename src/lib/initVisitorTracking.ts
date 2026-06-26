@@ -1,1 +1,1 @@
-export { initVisitorTrackingScripts } from '@harx/shared/tracking/initVisitorTrackingScripts';
+export { initVisitorTrackingScripts } from '@/lib/tracking/initVisitorTrackingScripts';
