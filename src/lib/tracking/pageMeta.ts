@@ -74,6 +74,14 @@ const ROUTE_META: Array<{ test: (path: string) => boolean; meta: PageMeta }> = [
     },
   },
   {
+    test: (p) => p.startsWith('/admin'),
+    meta: {
+      title: `${BASE_TITLE} — Admin`,
+      description: 'Back office administrateur HARX.',
+      canonical: `${HARX_SITE_URL}/admin`,
+    },
+  },
+  {
     test: (p) => p.startsWith('/company'),
     meta: {
       title: `${BASE_TITLE} — Portail entreprise`,

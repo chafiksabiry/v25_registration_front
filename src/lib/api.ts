@@ -95,6 +95,21 @@ export const auth = {
   }
 };
 
+export const adminApi = {
+  login: async (data: { email: string; password: string }) => {
+    const response = await api.post('/admin/login', data);
+    return response.data;
+  },
+  stats: async () => {
+    const response = await api.get('/admin/stats');
+    return response.data;
+  },
+  users: async (params?: { page?: number; search?: string; limit?: number }) => {
+    const response = await api.get('/admin/users', { params });
+    return response.data;
+  },
+};
+
 export const files = {
   upload: async (file: File, metadata?: any) => {
     const formData = new FormData();
