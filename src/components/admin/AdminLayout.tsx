@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, LogOut, Shield, Users } from 'lucide-react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../contexts/AuthContext';
+import { HARX_NAVBAR_BG } from '../../lib/harxBrand';
+import AdminSidebar from './AdminSidebar';
+import AdminTopBar from './AdminTopBar';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
   const { setToken } = useAuth();
   const [adminName, setAdminName] = useState('Admin');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   useEffect(() => {
     setAdminName(localStorage.getItem('userFullName') || 'Admin');
@@ -24,49 +27,37 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F0F5] flex">
-      <aside className="w-64 bg-[#1A0A1E] text-white flex flex-col shrink-0">
-        <div className="p-6 border-b border-white/10">
-          <div className="flex items-center gap-2 text-[#E91E8C]">
-            <Shield size={22} />
-            <span className="font-black tracking-wide">HARX Admin</span>
+    <div className="flex h-screen bg-[#E6188D] overflow-hidden">
+      <AdminSidebar
+        adminName={adminName}
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        onLogout={logout}
+      />
+
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-20 bg-slate-950/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 cursor-pointer"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <div
+        className="flex flex-1 flex-col overflow-hidden min-w-0"
+        style={{ backgroundImage: HARX_NAVBAR_BG }}
+      >
+        <AdminTopBar
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          onLogout={logout}
+        />
+        <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Outlet />
           </div>
-          <p className="text-xs text-white/50 mt-2">Back office</p>
-        </div>
-
-        <nav className="p-4 space-y-1 flex-1">
-          <Link
-            to="/admin"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-          >
-            <LayoutDashboard size={18} />
-            Tableau de bord
-          </Link>
-          <Link
-            to="/admin/users"
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold text-white/80 hover:bg-white/10 hover:text-white"
-          >
-            <Users size={18} />
-            Utilisateurs
-          </Link>
-        </nav>
-
-        <div className="p-4 border-t border-white/10">
-          <p className="text-xs text-white/40 mb-2 truncate">{adminName}</p>
-          <button
-            type="button"
-            onClick={logout}
-            className="flex items-center gap-2 text-sm text-white/70 hover:text-white"
-          >
-            <LogOut size={16} />
-            Déconnexion
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 overflow-auto">
-        <Outlet />
-      </main>
+        </main>
+      </div>
     </div>
   );
 }
