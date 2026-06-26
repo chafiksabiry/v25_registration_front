@@ -58,6 +58,30 @@ export function RegisterScreen() {
   );
 }
 
+export function RegisterCompanyScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return (
+    <RegistrationDialog
+      defaultUserType="company"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+    />
+  );
+}
+
+export function RegisterRepScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return (
+    <RegistrationDialog
+      defaultUserType="rep"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+    />
+  );
+}
+
 export function RecoveryScreen() {
   const { navigate } = useAuthContext();
   return <PasswordRecoveryDialog onBack={() => navigate('/auth/signin')} />;

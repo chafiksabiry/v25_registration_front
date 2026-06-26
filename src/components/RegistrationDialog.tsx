@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
@@ -10,6 +10,7 @@ import {
   type RegisterFormStep,
   type RegisterNavState,
   registerStepSearch,
+  resolveRegisterPath,
 } from '../lib/registerNavigation';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 
@@ -23,16 +24,23 @@ function stepFromSearch(param: string | null): Step {
 }
 
 interface RegistrationDialogProps {
+  defaultUserType?: 'company' | 'rep';
   onSignIn: () => void;
   onGetStarted?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateToSection }: RegistrationDialogProps) {
+export default function RegistrationDialog({
+  defaultUserType,
+  onSignIn,
+  onGetStarted,
+  onNavigateToSection,
+}: RegistrationDialogProps) {
   const { setToken } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const navState = (location.state as RegisterNavState | null) ?? null;
+  const registerPath = useMemo(() => resolveRegisterPath(location.pathname), [location.pathname]);
   const historyBack = useHistoryBack(navState?.returnTo ?? '/auth/choice');
   const [searchParams] = useSearchParams();
   const step = stepFromSearch(searchParams.get('step'));
@@ -52,10 +60,16 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (defaultUserType) {
+      localStorage.setItem('pendingUserType', defaultUserType);
+    }
+  }, [defaultUserType]);
+
   /** Push a new history entry via React Router (not raw pushState). */
   const pushStep = (next: RegisterFormStep) => {
     navigate(
-      { pathname: '/auth/register', search: registerStepSearch(next) },
+      { pathname: registerPath, search: registerStepSearch(next) },
       { state: navState }
     );
   };
@@ -98,7 +112,7 @@ export default function RegistrationDialog({ onSignIn, onGetStarted, onNavigateT
         }
       }
 
-      navigate({ pathname: '/auth/register', search: '?step=success' });
+      navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       setTimeout(() => onSignIn(), 1500);
       return true;
