@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import qiankun from 'vite-plugin-qiankun';
 import * as cheerio from 'cheerio';
+import { stripHostManagedTrackingScripts } from '../shared/tracking/stripTrackingFromMicrofrontendHtml';
 
 // Plugin to remove React Refresh preamble
 const removeReactRefreshScript = () => {
@@ -11,9 +12,7 @@ const removeReactRefreshScript = () => {
     transformIndexHtml(html: any) {
       const $ = cheerio.load(html);
       $('script[src="/@react-refresh"]').remove();
-      // Prevent qiankun from re-executing third-party widgets embedded in the MFE HTML.
-      $('#zsiqscript').remove();
-      $('script[src*="salesiq.zohopublic.com"]').remove();
+      stripHostManagedTrackingScripts($);
       return $.html();
     },
   };
@@ -43,7 +42,7 @@ export default defineConfig(({ mode }) => {
       cors: true,
       hmr: false,
       fs: {
-        strict: true, // Ensure static assets are correctly resolved
+        allow: [path.resolve(__dirname, '..')],
       },
     },
     build: {
@@ -68,6 +67,7 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         '@': path.resolve(__dirname, 'src'),
+        '@harx/shared': path.resolve(__dirname, '../shared'),
       },
     },
   };

@@ -6,6 +6,7 @@ import LinkedInSignInCallback from './components/LinkedInSignInCallback';
 import { getRouterBasename } from './utils/routerBasename';
 import { PrivateRoute, GuestOnly } from './components/layout/guards';
 import HistorySync from './components/layout/HistorySync';
+import VisitorTracker from './lib/VisitorTracker';
 import AuthShell from './components/layout/AuthShell';
 import {
   LandingScreen,
@@ -21,6 +22,7 @@ function RootLayout() {
   return (
     <>
       <HistorySync />
+      <VisitorTracker />
       <Outlet />
     </>
   );
