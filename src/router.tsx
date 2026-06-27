@@ -22,6 +22,8 @@ import AdminSignInPage from './components/admin/AdminSignInPage';
 import AdminDashboardPage from './components/admin/AdminDashboardPage';
 import AdminUsersPage from './components/admin/AdminUsersPage';
 import AdminUserDetailPage from './components/admin/AdminUserDetailPage';
+import AdminWalletPage from './components/admin/AdminWalletPage';
+import AdminWalletPage from './components/admin/AdminWalletPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 
 function RootLayout() {
@@ -94,6 +96,7 @@ export const appRouter = createBrowserRouter(
             { index: true, element: <AdminDashboardPage /> },
             { path: 'users', element: <AdminUsersPage /> },
             { path: 'users/:userId', element: <AdminUserDetailPage /> },
+            { path: 'wallet', element: <AdminWalletPage /> },
           ],
         },
         {

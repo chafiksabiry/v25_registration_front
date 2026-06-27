@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, type LucideIcon } from 'lucide-react';
+import { LayoutDashboard, Users, Wallet, type LucideIcon } from 'lucide-react';
 
 export type AdminSection = {
   to: string;
@@ -21,5 +21,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     label: 'Utilisateurs',
     shortLabel: 'Users',
     icon: Users,
+  },
+  {
+    to: '/admin/wallet',
+    label: 'Wallet',
+    shortLabel: 'Wallet',
+    icon: Wallet,
   },
 ];

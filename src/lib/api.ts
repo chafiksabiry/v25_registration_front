@@ -124,6 +124,10 @@ export const adminApi = {
     const response = await api.patch(`/admin/users/${userId}/financials`, payload);
     return response.data;
   },
+  walletOverview: async () => {
+    const response = await api.get('/admin/wallet/overview');
+    return response.data;
+  },
 };
 
 export const files = {
