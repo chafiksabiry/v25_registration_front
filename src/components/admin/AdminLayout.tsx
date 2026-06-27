@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../contexts/AuthContext';
-import { HARX_NAVBAR_BG } from '../../lib/harxBrand';
+import { ADMIN_THEME } from '../../lib/adminTheme';
 import AdminSidebar from './AdminSidebar';
 import AdminTopBar from './AdminTopBar';
 
@@ -27,7 +27,7 @@ export default function AdminLayout() {
   };
 
   return (
-    <div className="flex h-screen bg-[#E6188D] overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{ backgroundColor: ADMIN_THEME.pageBg }}>
       <AdminSidebar
         adminName={adminName}
         isSidebarOpen={isSidebarOpen}
@@ -37,23 +37,20 @@ export default function AdminLayout() {
 
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 z-20 bg-slate-950/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 cursor-pointer"
+          className="fixed inset-0 z-20 bg-slate-950/50 backdrop-blur-sm lg:hidden transition-opacity duration-300 cursor-pointer"
           onClick={() => setIsSidebarOpen(false)}
           aria-hidden="true"
         />
       )}
 
-      <div
-        className="flex flex-1 flex-col overflow-hidden min-w-0"
-        style={{ backgroundImage: HARX_NAVBAR_BG }}
-      >
+      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
         <AdminTopBar
           isSidebarOpen={isSidebarOpen}
           setIsSidebarOpen={setIsSidebarOpen}
           onLogout={logout}
         />
-        <main className="flex-1 overflow-y-auto bg-[#F8FAFC]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-8">
             <Outlet />
           </div>
         </main>

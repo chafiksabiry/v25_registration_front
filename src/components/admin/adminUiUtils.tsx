@@ -1,5 +1,6 @@
 import React from 'react';
 import { adminApi } from '../../lib/api';
+import { ADMIN_GRADIENT, ADMIN_THEME } from '../../lib/adminTheme';
 
 export function formatMoney(value?: number | null, currency = 'EUR') {
   if (value == null || Number.isNaN(value)) return '—';
@@ -16,11 +17,141 @@ export function formatCents(value?: number | null, currency = 'EUR') {
   return new Intl.NumberFormat('fr-FR', { style: 'currency', currency }).format(value / 100);
 }
 
-export function InfoCard({ label, value }: { label: string; value: React.ReactNode }) {
+export function PageHeader({
+  title,
+  description,
+  actions,
+  breadcrumb,
+}: {
+  title: string;
+  description?: string;
+  actions?: React.ReactNode;
+  breadcrumb?: React.ReactNode;
+}) {
   return (
-    <div className="rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-      <p className="text-xs font-bold uppercase tracking-wider text-slate-400">{label}</p>
-      <div className="mt-1 text-sm font-semibold text-slate-900 break-words">{value}</div>
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+      <div className="min-w-0 space-y-2">
+        {breadcrumb}
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{title}</h1>
+          {description && <p className="text-slate-500 mt-1 text-sm sm:text-base">{description}</p>}
+        </div>
+      </div>
+      {actions && <div className="flex flex-wrap gap-2 shrink-0">{actions}</div>}
+    </div>
+  );
+}
+
+export function AdminButton({
+  children,
+  variant = 'primary',
+  className = '',
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: 'primary' | 'secondary' | 'ghost' | 'dark';
+}) {
+  const styles = {
+    primary:
+      'text-white shadow-sm hover:opacity-95 disabled:opacity-50',
+    secondary:
+      'bg-white border text-slate-700 hover:bg-slate-50 disabled:opacity-50',
+    ghost: 'text-slate-600 hover:bg-slate-100 disabled:opacity-50',
+    dark: 'bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50',
+  };
+
+  return (
+    <button
+      type="button"
+      className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${styles[variant]} ${className}`}
+      style={
+        variant === 'primary'
+          ? { backgroundImage: ADMIN_GRADIENT }
+          : variant === 'secondary'
+            ? { borderColor: ADMIN_THEME.border }
+            : undefined
+      }
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function AdminLinkButton({
+  children,
+  variant = 'secondary',
+  className = '',
+  ...props
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+  variant?: 'primary' | 'secondary' | 'dark';
+}) {
+  const styles = {
+    primary: 'text-white shadow-sm hover:opacity-95',
+    secondary: 'bg-white border text-slate-700 hover:bg-slate-50',
+    dark: 'bg-slate-900 text-white hover:bg-slate-800',
+  };
+
+  return (
+    <a
+      className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all ${styles[variant]} ${className}`}
+      style={
+        variant === 'primary'
+          ? { backgroundImage: ADMIN_GRADIENT }
+          : variant === 'secondary'
+            ? { borderColor: ADMIN_THEME.border }
+            : undefined
+      }
+      {...props}
+    >
+      {children}
+    </a>
+  );
+}
+
+export function StatCard({
+  label,
+  value,
+  accent = 'text-slate-900',
+  hint,
+}: {
+  label: string;
+  value: React.ReactNode;
+  accent?: string;
+  hint?: string;
+}) {
+  return (
+    <div
+      className="rounded-2xl bg-white p-5 transition-shadow hover:shadow-md"
+      style={{ border: `1px solid ${ADMIN_THEME.border}`, boxShadow: ADMIN_THEME.shadow }}
+    >
+      <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+      <p className={`mt-2 text-3xl font-bold tracking-tight ${accent}`}>{value}</p>
+      {hint && <p className="text-xs text-slate-400 mt-1">{hint}</p>}
+    </div>
+  );
+}
+
+export function InfoCard({
+  label,
+  value,
+  compact = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  compact?: boolean;
+}) {
+  return (
+    <div
+      className={[
+        'rounded-xl bg-white transition-colors hover:border-slate-200',
+        compact ? 'px-3 py-2.5' : 'px-4 py-3.5',
+      ].join(' ')}
+      style={{ border: `1px solid ${ADMIN_THEME.border}` }}
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">{label}</p>
+      <div className={`${compact ? 'mt-0.5 text-sm' : 'mt-1.5 text-sm'} font-semibold text-slate-900 break-words`}>
+        {value}
+      </div>
     </div>
   );
 }
@@ -30,16 +161,17 @@ export function StatusBadge({
   tone = 'neutral',
 }: {
   label: string;
-  tone?: 'success' | 'warning' | 'danger' | 'neutral';
+  tone?: 'success' | 'warning' | 'danger' | 'neutral' | 'brand';
 }) {
   const tones = {
-    success: 'bg-emerald-50 text-emerald-700',
-    warning: 'bg-amber-50 text-amber-700',
-    danger: 'bg-red-50 text-red-700',
-    neutral: 'bg-slate-100 text-slate-600',
+    success: 'bg-emerald-50 text-emerald-700 ring-emerald-600/15',
+    warning: 'bg-amber-50 text-amber-800 ring-amber-600/15',
+    danger: 'bg-red-50 text-red-700 ring-red-600/15',
+    neutral: 'bg-slate-100 text-slate-600 ring-slate-500/10',
+    brand: 'bg-[#E6188D]/10 text-[#C2186F] ring-[#E6188D]/20',
   };
   return (
-    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${tones[tone]}`}>
+    <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset ${tones[tone]}`}>
       {label}
     </span>
   );
@@ -49,18 +181,28 @@ export function SectionCard({
   title,
   description,
   children,
+  accent = false,
 }: {
   title: string;
   description?: string;
   children: React.ReactNode;
+  accent?: boolean;
 }) {
   return (
-    <section className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm space-y-4">
-      <div>
-        <h2 className="text-lg font-bold text-slate-900">{title}</h2>
-        {description && <p className="text-sm text-slate-500 mt-1">{description}</p>}
+    <section
+      className="rounded-2xl bg-white overflow-hidden"
+      style={{ border: `1px solid ${ADMIN_THEME.border}`, boxShadow: ADMIN_THEME.shadow }}
+    >
+      <div
+        className={[
+          'px-5 py-4 border-b border-slate-100',
+          accent ? 'border-l-4 border-l-[#E6188D]' : '',
+        ].join(' ')}
+      >
+        <h2 className="text-base font-bold text-slate-900">{title}</h2>
+        {description && <p className="text-sm text-slate-500 mt-0.5">{description}</p>}
       </div>
-      {children}
+      <div className="p-5 space-y-4">{children}</div>
     </section>
   );
 }
@@ -79,9 +221,9 @@ export function DataTable({
   }
 
   return (
-    <div className="overflow-x-auto rounded-xl border border-slate-100">
+    <div className="overflow-x-auto rounded-xl border border-slate-200">
       <table className="min-w-full text-sm">
-        <thead className="bg-slate-50 text-left text-slate-500">
+        <thead className="bg-slate-50/80 text-left text-slate-500">
           <tr>
             {headers.map((header) => (
               <th key={header} className="px-4 py-3 font-semibold whitespace-nowrap">

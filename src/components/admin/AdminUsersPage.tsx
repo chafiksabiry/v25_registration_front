@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import { ADMIN_THEME } from '../../lib/adminTheme';
+import { PageHeader, StatusBadge } from './adminUiUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -29,13 +31,6 @@ const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
   { value: 'rep', label: 'REPs' },
   { value: 'company', label: 'Companies' },
 ];
-
-function onboardingBadgeClass(status: string) {
-  if (status === 'completed') return 'bg-emerald-50 text-emerald-700';
-  if (status === 'in_progress') return 'bg-amber-50 text-amber-700';
-  if (status === 'missing') return 'bg-red-50 text-red-700';
-  return 'bg-slate-100 text-slate-600';
-}
 
 export default function AdminUsersPage() {
   const navigate = useNavigate();
@@ -66,59 +61,64 @@ export default function AdminUsersPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-black text-slate-900">Utilisateurs</h1>
-        <p className="text-slate-500 mt-1">Gestion et recherche des comptes plateforme</p>
-      </div>
+      <PageHeader
+        title="Utilisateurs"
+        description="Recherche, filtres et accès aux fiches détaillées."
+      />
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative max-w-md flex-1">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="Rechercher par nom, email, téléphone…"
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#E91E8C]"
-          />
-        </div>
+      <div
+        className="rounded-2xl bg-white p-4 sm:p-5 space-y-4"
+        style={{ border: `1px solid ${ADMIN_THEME.border}`, boxShadow: ADMIN_THEME.shadow }}
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative max-w-md flex-1">
+            <Search className="absolute left-3.5 top-3 h-5 w-5 text-slate-400" />
+            <input
+              type="search"
+              value={search}
+              onChange={(e) => {
+                setPage(1);
+                setSearch(e.target.value);
+              }}
+              placeholder="Rechercher par nom, email, téléphone…"
+              className="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-[#E6188D]/30 focus:border-[#E6188D]/40 focus:bg-white transition-all"
+            />
+          </div>
 
-        <div className="flex flex-wrap gap-2">
-          {TYPE_FILTERS.map((filter) => {
-            const active = typeFilter === filter.value;
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => {
-                  setPage(1);
-                  setTypeFilter(filter.value);
-                }}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold transition-colors ${
-                  active
-                    ? 'bg-[#E91E8C] text-white shadow-sm'
-                    : 'bg-white border border-slate-200 text-slate-600 hover:border-[#E91E8C]/40'
-                }`}
-              >
-                {filter.label}
-              </button>
-            );
-          })}
+          <div className="flex flex-wrap gap-2">
+            {TYPE_FILTERS.map((filter) => {
+              const active = typeFilter === filter.value;
+              return (
+                <button
+                  key={filter.value}
+                  type="button"
+                  onClick={() => {
+                    setPage(1);
+                    setTypeFilter(filter.value);
+                  }}
+                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
+                    active
+                      ? 'text-white shadow-sm'
+                      : 'bg-slate-50 border border-slate-200 text-slate-600 hover:border-slate-300'
+                  }`}
+                  style={active ? { backgroundImage: 'linear-gradient(135deg, #F7941E 0%, #E6188D 100%)' } : undefined}
+                >
+                  {filter.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
 
       {loading ? (
-        <p className="text-slate-500">Chargement…</p>
+        <p className="text-slate-500 py-8 text-center">Chargement…</p>
       ) : error ? (
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-500 py-4">{error}</p>
       ) : (
-        <div className="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-slate-200">
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left text-slate-500">
+              <thead className="bg-slate-50/90 text-left text-slate-500">
                 <tr>
                   <th className="px-6 py-3 font-semibold">Nom</th>
                   <th className="px-6 py-3 font-semibold">Email</th>
@@ -134,7 +134,7 @@ export default function AdminUsersPage() {
                   <tr
                     key={user._id}
                     onClick={() => navigate(`/admin/users/${user._id}`)}
-                    className="border-t border-slate-100 cursor-pointer hover:bg-[#E91E8C]/5 transition-colors"
+                    className="border-t border-slate-100 cursor-pointer hover:bg-[#E6188D]/[0.04] transition-colors"
                   >
                     <td className="px-6 py-3 font-medium text-slate-900">{user.fullName}</td>
                     <td className="px-6 py-3 text-slate-600">{user.email}</td>
@@ -142,15 +142,20 @@ export default function AdminUsersPage() {
                     <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
                     <td className="px-6 py-3">
                       {user.onboarding ? (
-                        <div className="space-y-1">
+                        <div className="space-y-1.5">
                           <p className="font-medium text-slate-800">{user.onboarding.display}</p>
-                          <span
-                            className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${onboardingBadgeClass(
-                              user.onboarding.phaseStatus,
-                            )}`}
-                          >
-                            {user.onboarding.statusLabel}
-                          </span>
+                          <StatusBadge
+                            label={user.onboarding.statusLabel}
+                            tone={
+                              user.onboarding.phaseStatus === 'completed'
+                                ? 'success'
+                                : user.onboarding.phaseStatus === 'in_progress'
+                                  ? 'warning'
+                                  : user.onboarding.phaseStatus === 'missing'
+                                    ? 'danger'
+                                    : 'neutral'
+                            }
+                          />
                         </div>
                       ) : (
                         <span className="text-slate-400">—</span>
@@ -189,6 +194,7 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
