@@ -52,7 +52,7 @@ export function AdminGuestOnly({ children }: { children: React.ReactNode }) {
 
   if (loading) return <AdminSpinner />;
   if (isAdminSession(token)) {
-    hardNavigate('/company');
+    hardNavigate('/admin');
     return <AdminSpinner />;
   }
 

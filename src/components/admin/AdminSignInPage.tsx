@@ -30,7 +30,7 @@ export default function AdminSignInPage() {
       syncSessionUserIdCookie(token);
       Cookies.set('userId', user.userId, { path: '/', sameSite: 'Lax' });
       setToken(token);
-      hardNavigate('/company');
+      hardNavigate('/admin');
     } catch (err: unknown) {
       const message =
         err &&
