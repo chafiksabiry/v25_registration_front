@@ -146,3 +146,16 @@ function formatPrice(price: number): string {
 export function getPlanPriceLabel(plan: PricingPlan): string {
   return formatPrice(plan.price);
 }
+
+export function mapApiPlanToPricingPlan(plan: Record<string, unknown>): PricingPlan {
+  return {
+    id: String(plan.id ?? ''),
+    name: String(plan.name ?? ''),
+    description: String(plan.description ?? ''),
+    price: Number(plan.price ?? 0),
+    currency: 'eur',
+    features: Array.isArray(plan.features) ? plan.features.map(String) : [],
+    popular: Boolean(plan.popular ?? plan.isPopular),
+    ctaLabel: plan.ctaLabel ? String(plan.ctaLabel) : undefined,
+  };
+}

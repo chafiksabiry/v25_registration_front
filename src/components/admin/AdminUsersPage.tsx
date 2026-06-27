@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
-import AdminUserFilters, { type TypeFilter } from './AdminUserFilters';
+import AdminUserFilters, {
+  type OnboardingFilter,
+  type TypeFilter,
+  type VerifiedFilter,
+} from './AdminUserFilters';
 import { rowCreatedAt, rowName } from './adminUserRowUtils';
 
 type OnboardingInfo = {
@@ -65,6 +69,8 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('all');
+  const [onboardingFilter, setOnboardingFilter] = useState<OnboardingFilter>('all');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -78,6 +84,8 @@ export default function AdminUsersPage() {
         page,
         search,
         typeUser: typeFilter === 'all' ? undefined : typeFilter,
+        verified: verifiedFilter === 'all' ? undefined : verifiedFilter,
+        onboardingStatus: onboardingFilter === 'all' ? undefined : onboardingFilter,
       })
       .then((response) => {
         setUsers(response.data.users);
@@ -85,7 +93,7 @@ export default function AdminUsersPage() {
       })
       .catch(() => setError('Impossible de charger la liste des utilisateurs.'))
       .finally(() => setLoading(false));
-  }, [page, search, typeFilter]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter]);
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -97,6 +105,8 @@ export default function AdminUsersPage() {
       <AdminUserFilters
         search={search}
         typeFilter={typeFilter}
+        verifiedFilter={verifiedFilter}
+        onboardingFilter={onboardingFilter}
         onSearchChange={(value) => {
           setPage(1);
           setSearch(value);
@@ -104,6 +114,14 @@ export default function AdminUsersPage() {
         onTypeFilterChange={(value) => {
           setPage(1);
           setTypeFilter(value);
+        }}
+        onVerifiedFilterChange={(value) => {
+          setPage(1);
+          setVerifiedFilter(value);
+        }}
+        onOnboardingFilterChange={(value) => {
+          setPage(1);
+          setOnboardingFilter(value);
         }}
       />
 
@@ -140,6 +158,11 @@ export default function AdminUsersPage() {
                         <p className="text-xs text-violet-600 mt-0.5">{user.industry}</p>
                       )}
                       {user.typeUser === 'company' &&
+                        user.displayName &&
+                        user.displayName !== user.fullName && (
+                          <p className="text-xs text-slate-400 mt-0.5">Compte: {user.fullName}</p>
+                        )}
+                      {user.typeUser === 'rep' &&
                         user.displayName &&
                         user.displayName !== user.fullName && (
                           <p className="text-xs text-slate-400 mt-0.5">Compte: {user.fullName}</p>

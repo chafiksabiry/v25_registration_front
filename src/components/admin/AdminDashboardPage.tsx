@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
-import AdminUserFilters, { type TypeFilter } from './AdminUserFilters';
+import AdminUserFilters, {
+  type OnboardingFilter,
+  type TypeFilter,
+  type VerifiedFilter,
+} from './AdminUserFilters';
 import { type AdminUserRow, rowCreatedAt, rowEmail, rowName } from './adminUserRowUtils';
 
 type Stats = {
@@ -30,6 +34,8 @@ export default function AdminDashboardPage() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('all');
+  const [onboardingFilter, setOnboardingFilter] = useState<OnboardingFilter>('all');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [statsError, setStatsError] = useState<string | null>(null);
@@ -54,6 +60,8 @@ export default function AdminDashboardPage() {
         limit: 10,
         search,
         typeUser: typeFilter === 'all' ? undefined : typeFilter,
+        verified: verifiedFilter === 'all' ? undefined : verifiedFilter,
+        onboardingStatus: onboardingFilter === 'all' ? undefined : onboardingFilter,
       })
       .then((response) => {
         setUsers(response.data.users);
@@ -61,7 +69,7 @@ export default function AdminDashboardPage() {
       })
       .catch(() => setListError('Impossible de charger les inscriptions récentes.'))
       .finally(() => setListLoading(false));
-  }, [page, search, typeFilter]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter]);
 
   if (statsLoading) {
     return <div className="text-violet-600/70 animate-pulse">Chargement du tableau de bord…</div>;
@@ -93,6 +101,8 @@ export default function AdminDashboardPage() {
           <AdminUserFilters
             search={search}
             typeFilter={typeFilter}
+            verifiedFilter={verifiedFilter}
+            onboardingFilter={onboardingFilter}
             onSearchChange={(value) => {
               setPage(1);
               setSearch(value);
@@ -100,6 +110,14 @@ export default function AdminDashboardPage() {
             onTypeFilterChange={(value) => {
               setPage(1);
               setTypeFilter(value);
+            }}
+            onVerifiedFilterChange={(value) => {
+              setPage(1);
+              setVerifiedFilter(value);
+            }}
+            onOnboardingFilterChange={(value) => {
+              setPage(1);
+              setOnboardingFilter(value);
             }}
           />
         </div>
@@ -135,6 +153,11 @@ export default function AdminDashboardPage() {
                         {user.typeUser === 'company' && user.industry && (
                           <p className="text-xs text-violet-600 mt-0.5">{user.industry}</p>
                         )}
+                        {user.typeUser === 'rep' &&
+                          user.displayName &&
+                          user.displayName !== user.fullName && (
+                            <p className="text-xs text-slate-400 mt-0.5">Compte: {user.fullName}</p>
+                          )}
                       </td>
                       <td className="px-6 py-3 text-slate-600">
                         <div>{rowEmail(user)}</div>
