@@ -1,7 +1,6 @@
 import React from 'react';
 import { Briefcase, Building2, Globe, Heart, Sparkles, Target, User } from 'lucide-react';
 import { InfoCard, SectionCard, StatusBadge, formatDate } from './adminUiUtils';
-import { ADMIN_GRADIENT, ADMIN_THEME } from '../../lib/adminTheme';
 import { displayValue, normalizeListItems } from './walletLedger';
 
 const REP_PHASES = [
@@ -48,8 +47,7 @@ export function RepOnboardingTimeline({
         return (
           <div
             key={phase.id}
-            className="flex items-center justify-between gap-4 rounded-xl px-4 py-3 bg-slate-50/80"
-            style={{ border: `1px solid ${ADMIN_THEME.border}` }}
+            className="admin-row-card flex items-center justify-between gap-4"
           >
             <div>
               <p className="text-sm font-semibold text-slate-900">
@@ -78,8 +76,7 @@ export function CompanyOnboardingTimeline({
         return (
           <div
             key={phase.id}
-            className="flex items-center justify-between gap-4 rounded-xl px-4 py-3 bg-slate-50/80"
-            style={{ border: `1px solid ${ADMIN_THEME.border}` }}
+            className="admin-row-card flex items-center justify-between gap-4"
           >
             <p className="text-sm font-semibold text-slate-900">
               Phase {phase.id} — {phase.label}
@@ -108,7 +105,7 @@ function analysisSkillRows(items: unknown[] | undefined) {
     const item = raw as { skill?: string; score?: number; evidence?: unknown; level?: string };
     const evidence = localizedText(item.evidence);
     return (
-      <div key={`skill-${index}`} className="rounded-lg border border-slate-100 px-3 py-2">
+      <div key={`skill-${index}`} className="admin-row-card">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <span className="text-sm font-medium text-slate-900">{item.skill || '—'}</span>
           <div className="flex flex-wrap gap-2">
@@ -133,7 +130,7 @@ function analysisRefRows(items: unknown[] | undefined, labelKey: 'industry' | 'a
         return (
           <span
             key={`${labelKey}-${index}`}
-            className="rounded-full bg-slate-100 text-slate-700 px-3 py-1 text-xs font-semibold"
+            className="rounded-full bg-gradient-to-r from-violet-100 to-fuchsia-100 text-violet-800 px-3 py-1 text-xs font-semibold border border-violet-200/60"
           >
             {label}
             {score}
@@ -155,7 +152,7 @@ function contactCenterRows(skills: Record<string, unknown> | undefined) {
   return entries.map(([key, value]) => {
     const entry = value as { score?: number; notes?: unknown };
     return (
-      <div key={key} className="rounded-lg border border-slate-100 px-3 py-2">
+      <div key={key} className="admin-row-card">
         <div className="flex items-center justify-between gap-2">
           <span className="text-sm font-medium text-slate-900 capitalize">{key.replace(/([A-Z])/g, ' $1')}</span>
           <StatusBadge label={`Score ${entry.score}`} tone="neutral" />
@@ -182,15 +179,9 @@ function ExperienceVideoAnalysisPanel({ experience }: { experience: Record<strin
     fraud?.fraudRisk === 'low' ? 'success' : fraud?.fraudRisk === 'medium' ? 'warning' : 'danger';
 
   return (
-    <div
-      className="mt-4 rounded-xl p-4 space-y-4"
-      style={{
-        backgroundColor: ADMIN_THEME.accentSoft,
-        border: `1px solid ${ADMIN_THEME.accentBorder}`,
-      }}
-    >
+    <div className="admin-analysis-panel space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-xs font-bold uppercase tracking-wider text-[#C2186F]">
+        <p className="text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
           Analyse IA de la vidéo
         </p>
         {experience.videoAnalyzedAt && (
@@ -233,7 +224,7 @@ function ExperienceVideoAnalysisPanel({ experience }: { experience: Record<strin
       )}
 
       {experience.videoTranscription && (
-        <details className="rounded-lg border border-slate-100 bg-white px-3 py-2">
+        <details className="admin-row-card bg-white/80 px-3 py-2">
           <summary className="cursor-pointer text-sm font-semibold text-slate-800">
             Transcription
           </summary>
@@ -249,7 +240,7 @@ function ExperienceVideoAnalysisPanel({ experience }: { experience: Record<strin
           {analysis.spokenLanguages.map((raw: unknown, index: number) => {
             const lang = raw as { language?: string; level?: string; score?: number; evidence?: unknown };
             return (
-              <div key={`lang-${index}`} className="rounded-lg border border-slate-100 bg-white px-3 py-2">
+              <div key={`lang-${index}`} className="admin-row-card bg-white/80">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-medium text-slate-900">{lang.language || '—'}</span>
                   <div className="flex flex-wrap gap-2">
@@ -328,7 +319,7 @@ function ExperienceVideoAnalysisPanel({ experience }: { experience: Record<strin
               areasForImprovement?: unknown;
             };
             return (
-              <div key={`la-${index}`} className="rounded-lg border border-slate-100 bg-white p-3 space-y-2">
+              <div key={`la-${index}`} className="admin-row-card bg-white/80 p-3 space-y-2">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="text-sm font-semibold text-slate-900">{lang.language || '—'}</span>
                   <div className="flex flex-wrap gap-2">
@@ -393,12 +384,7 @@ function TagList({ items, emptyLabel }: { items?: unknown[]; emptyLabel: string 
       {labels.map((item, index) => (
         <span
           key={`${item}-${index}`}
-          className="rounded-full px-3 py-1 text-xs font-semibold ring-1 ring-inset"
-          style={{
-            backgroundColor: ADMIN_THEME.accentSoft,
-            color: '#C2186F',
-            borderColor: ADMIN_THEME.accentBorder,
-          }}
+          className="admin-tag-chip"
         >
           {item}
         </span>
@@ -425,7 +411,7 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
       {entries.map(({ key, group, item }) => {
         if (typeof item === 'string') {
           return (
-            <div key={key} className="flex items-center justify-between rounded-xl px-4 py-3 bg-white" style={{ border: `1px solid ${ADMIN_THEME.border}` }}>
+            <div key={key} className="admin-row-card flex items-center justify-between">
               <span className="text-sm font-medium text-slate-900">{item}</span>
               <span className="text-xs text-slate-400">{group}</span>
             </div>
@@ -444,7 +430,7 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
         const showVideoStatus = skill.fromVideoAnalysis || skill.needsReanalysis;
 
         return (
-          <div key={key} className="rounded-xl px-4 py-3 bg-white" style={{ border: `1px solid ${ADMIN_THEME.border}` }}>
+          <div key={key} className="admin-row-card">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <p className="text-sm font-semibold text-slate-900">{skill.skill || '—'}</p>
@@ -487,7 +473,7 @@ export function CompanyProfileView({
   const subscription = company.subscription || {};
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 admin-stagger">
       <SectionCard title="Identité entreprise" description="Informations principales du profil company.">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <InfoCard label="Nom" value={company.name || company.companyName || '—'} />
@@ -516,13 +502,13 @@ export function CompanyProfileView({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div>
             <p className="text-sm font-semibold text-slate-800 mb-2 flex items-center gap-2">
-              <Heart size={16} className="text-[#E91E8C]" /> Valeurs
+              <Heart size={16} className="text-fuchsia-600" /> Valeurs
             </p>
             <TagList items={culture.values} emptyLabel="Aucune valeur renseignée." />
           </div>
           <div>
             <p className="text-sm font-semibold text-slate-800 mb-2 flex items-center gap-2">
-              <Sparkles size={16} className="text-[#E91E8C]" /> Avantages
+              <Sparkles size={16} className="text-violet-600" /> Avantages
             </p>
             <TagList items={culture.benefits} emptyLabel="Aucun avantage renseigné." />
           </div>
@@ -551,13 +537,7 @@ export function CompanyProfileView({
   );
 }
 
-export function RepProfileView({
-  agent,
-  embedded = false,
-}: {
-  agent: Record<string, any>;
-  embedded?: boolean;
-}) {
+export function RepProfileView({ agent }: { agent: Record<string, any> }) {
   const personal = agent.personalInfo || {};
   const summary = agent.professionalSummary || {};
   const skills = agent.skills || {};
@@ -579,71 +559,58 @@ export function RepProfileView({
     | undefined;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 admin-stagger">
       {mediaSummary?.experiencesNeedingReanalysis ? (
-        <div
-          className="rounded-2xl px-4 py-3 flex items-center gap-3"
-          style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA' }}
-        >
+        <SectionCard title="Médias vidéo">
           <StatusBadge
-            label={`${mediaSummary.experiencesNeedingReanalysis} expérience(s) sans vidéo valide`}
+            label={`${mediaSummary.experiencesNeedingReanalysis} expérience(s) sans vidéo valide — ré-analyse requise`}
             tone="danger"
           />
-          <span className="text-sm text-red-700">Ré-analyse requise</span>
-        </div>
+        </SectionCard>
       ) : null}
-
-      {!embedded && photoUrl && (
-        <SectionCard title="Photo de profil" accent>
+      {photoUrl && (
+        <SectionCard title="Photo de profil">
           <img
             src={photoUrl}
             alt={personal.name || 'Photo de profil'}
-            className="h-36 w-36 rounded-2xl object-cover ring-2 ring-white shadow-md"
-            style={{ boxShadow: ADMIN_THEME.shadow }}
+            className="h-40 w-40 rounded-2xl object-cover border-2 border-violet-200/60 shadow-lg shadow-violet-200/40 transition-transform duration-300 hover:scale-[1.02]"
           />
         </SectionCard>
       )}
 
-      {!embedded && (
-        <SectionCard title="Identité REP" accent>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            <InfoCard label="Nom" value={personal.name || '—'} compact />
-            <InfoCard label="Email" value={personal.email || '—'} compact />
-            <InfoCard label="Téléphone" value={personal.phone || '—'} compact />
-            <InfoCard label="Statut profil" value={agent.status || '—'} compact />
-            <InfoCard
-              label="Profil de base"
-              value={agent.isBasicProfileCompleted ? 'Complet' : 'Incomplet'}
-              compact
-            />
-            <InfoCard label="Plan" value={agent.planName || agent.plan || '—'} compact />
-            <InfoCard label="Statut abonnement" value={agent.subscriptionStatus || '—'} compact />
-          </div>
-        </SectionCard>
-      )}
-
-      <SectionCard title="Résumé professionnel" accent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <InfoCard label="Industries" value={industries.join(', ') || '—'} compact />
-          <InfoCard label="Activités" value={activities.join(', ') || '—'} compact />
-          <InfoCard label="Expertises clés" value={expertise.join(', ') || '—'} compact />
-          <InfoCard label="Gigs liés" value={String(agent.gigsCount ?? 0)} compact />
+      <SectionCard title="Identité REP">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          <InfoCard label="Nom" value={personal.name || '—'} />
+          <InfoCard label="Email" value={personal.email || '—'} />
+          <InfoCard label="Téléphone" value={personal.phone || '—'} />
+          <InfoCard label="Statut profil" value={agent.status || '—'} />
+          <InfoCard
+            label="Profil de base"
+            value={agent.isBasicProfileCompleted ? 'Complet' : 'Incomplet'}
+          />
+          <InfoCard label="Plan" value={agent.planName || agent.plan || '—'} />
+          <InfoCard label="Statut abonnement" value={agent.subscriptionStatus || '—'} />
         </div>
       </SectionCard>
 
-      <SectionCard title="Compétences" description="Compétences déclarées et issues des analyses vidéo.">
+      <SectionCard title="Résumé professionnel">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoCard label="Industries" value={industries.join(', ') || '—'} />
+          <InfoCard label="Activités" value={activities.join(', ') || '—'} />
+          <InfoCard label="Expertises clés" value={expertise.join(', ') || '—'} />
+          <InfoCard label="Gigs liés" value={String(agent.gigsCount ?? 0)} />
+        </div>
+      </SectionCard>
+
+      <SectionCard title="Compétences">
         <SkillList groups={skillGroups} />
       </SectionCard>
 
-      <SectionCard
-        title="Expériences"
-        description={`${experience.length} expérience(s) — vidéos et analyses IA.`}
-        accent
-      >
+      <SectionCard title="Expériences" description="Vidéos et analyses IA par expérience professionnelle.">
         {experience.length === 0 ? (
           <p className="text-sm text-slate-500">Aucune expérience renseignée.</p>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {experience.slice(0, 8).map((item: any, index: number) => {
               const mediaStatus = item.mediaStatus as
                 | { hasVideo?: boolean; videoOk?: boolean; needsReanalysis?: boolean }
@@ -656,48 +623,35 @@ export function RepProfileView({
               );
 
               return (
-              <div
-                key={index}
-                className="rounded-xl bg-slate-50/80 p-4 sm:p-5"
-                style={{ border: `1px solid ${ADMIN_THEME.border}` }}
-              >
+              <div key={index} className="admin-experience-card">
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div>
-                    <p className="font-semibold text-slate-900 flex items-center gap-2">
-                      <span
-                        className="flex h-8 w-8 items-center justify-center rounded-lg text-white shrink-0"
-                        style={{ backgroundImage: ADMIN_GRADIENT }}
-                      >
-                        <Briefcase size={14} />
-                      </span>
-                      {displayValue(item.title || item.role || item.company || 'Expérience')}
-                    </p>
-                    {item.company && (
-                      <p className="text-sm text-slate-600 mt-1 ml-10">{displayValue(item.company)}</p>
-                    )}
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    {needsReanalysis && (
-                      <StatusBadge label="Ré-analyser requis" tone="danger" />
-                    )}
-                    {showVideo && !needsReanalysis && (
-                      <StatusBadge label="Analyse vidéo OK" tone="success" />
-                    )}
-                  </div>
+                  <p className="font-semibold text-indigo-950 flex items-center gap-2">
+                    <Briefcase size={16} className="text-fuchsia-600" />
+                    {displayValue(item.title || item.role || item.company || 'Expérience')}
+                  </p>
+                  {needsReanalysis && (
+                    <StatusBadge label="Vidéo manquante — ré-analyser requis" tone="danger" />
+                  )}
+                  {showVideo && !needsReanalysis && (
+                    <StatusBadge label="Analyse vidéo OK" tone="success" />
+                  )}
                 </div>
+                {item.company && (
+                  <p className="text-sm text-slate-600 mt-1">{displayValue(item.company)}</p>
+                )}
                 {item.description && (
-                  <p className="text-sm text-slate-500 mt-3 leading-relaxed">{item.description}</p>
+                  <p className="text-sm text-slate-500 mt-2 leading-relaxed">{item.description}</p>
                 )}
                 {showVideo && (
                   <div className="mt-4">
-                    <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">
+                    <p className="text-xs font-bold uppercase tracking-wider text-violet-500 mb-2">
                       Vidéo expérience
                     </p>
                     <video
                       src={item.videoUrl}
                       controls
                       preload="metadata"
-                      className="w-full max-w-2xl rounded-xl bg-black/5 ring-1 ring-slate-200"
+                      className="w-full max-w-xl rounded-xl border border-violet-200/50 bg-black/5 shadow-md transition-shadow duration-300 hover:shadow-lg"
                     >
                       Votre navigateur ne supporte pas la lecture vidéo.
                     </video>
@@ -712,7 +666,7 @@ export function RepProfileView({
       </SectionCard>
 
       {agent.onboardingProgress && (
-        <SectionCard title="Progression onboarding" accent>
+        <SectionCard title="Progression onboarding">
           <RepOnboardingTimeline onboardingProgress={agent.onboardingProgress} />
         </SectionCard>
       )}
@@ -727,7 +681,6 @@ export function ProfileHero({
   onboardingDisplay,
   onboardingStatus,
   photoUrl,
-  repMeta,
 }: {
   fullName: string;
   email: string;
@@ -735,66 +688,39 @@ export function ProfileHero({
   onboardingDisplay?: string;
   onboardingStatus?: string;
   photoUrl?: string;
-  repMeta?: {
-    plan?: string;
-    profileStatus?: string;
-    basicComplete?: boolean;
-    phone?: string;
-  };
 }) {
   const Icon = typeUser === 'company' ? Building2 : typeUser === 'rep' ? User : Globe;
 
   return (
-    <div
-      className="rounded-2xl bg-white overflow-hidden"
-      style={{ border: `1px solid ${ADMIN_THEME.border}`, boxShadow: ADMIN_THEME.shadowLg }}
-    >
-      <div className="h-1.5 w-full" style={{ backgroundImage: ADMIN_GRADIENT }} />
-      <div className="p-5 sm:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-          {photoUrl ? (
-            <img
-              src={photoUrl}
-              alt={fullName}
-              className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl object-cover ring-4 ring-slate-50 shrink-0"
-            />
-          ) : (
-            <div
-              className="h-20 w-20 sm:h-24 sm:w-24 rounded-2xl flex items-center justify-center shrink-0 text-white"
-              style={{ backgroundImage: ADMIN_GRADIENT }}
-            >
-              <Icon size={32} />
-            </div>
-          )}
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2 mb-1">
-              <StatusBadge label={typeUser || 'compte'} tone="brand" />
-              {onboardingDisplay && <StatusBadge label={onboardingDisplay} tone="neutral" />}
-              {onboardingStatus && <StatusBadge label={onboardingStatus} tone="success" />}
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 truncate">{fullName}</h2>
-            <p className="text-slate-500 mt-1 truncate">{email}</p>
-            {repMeta && (
-              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-sm text-slate-600">
-                {repMeta.plan && (
-                  <span>
-                    <span className="text-slate-400">Plan · </span>
-                    <span className="font-semibold text-slate-800">{repMeta.plan}</span>
-                  </span>
-                )}
-                {repMeta.profileStatus && (
-                  <span>
-                    <span className="text-slate-400">Statut · </span>
-                    <span className="font-semibold capitalize">{repMeta.profileStatus}</span>
-                  </span>
-                )}
-                {repMeta.phone && (
-                  <span>
-                    <span className="text-slate-400">Tel · </span>
-                    {repMeta.phone}
-                  </span>
-                )}
-              </div>
+    <div className="admin-hero">
+      <div className="admin-hero-content flex items-start gap-4">
+        {photoUrl ? (
+          <img
+            src={photoUrl}
+            alt={fullName}
+            className="h-16 w-16 rounded-2xl object-cover border-2 border-white/40 shrink-0 shadow-lg ring-2 ring-white/20"
+          />
+        ) : (
+          <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-sm border border-white/30">
+            <Icon size={28} />
+          </div>
+        )}
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-black truncate drop-shadow-sm">{fullName}</h1>
+          <p className="text-white/90 mt-1 truncate">{email}</p>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <span className="admin-tag">
+              {typeUser || 'compte'}
+            </span>
+            {onboardingDisplay && (
+              <span className="admin-tag">
+                {onboardingDisplay}
+              </span>
+            )}
+            {onboardingStatus && (
+              <span className="admin-tag bg-black/20">
+                {onboardingStatus}
+              </span>
             )}
           </div>
         </div>

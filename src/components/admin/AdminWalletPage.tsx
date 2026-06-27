@@ -114,25 +114,21 @@ export default function AdminWalletPage() {
   }, [financials]);
 
   if (loadingOverview && !overview) {
-    return <p className="text-slate-500">Chargement du wallet…</p>;
+    return <p className="text-violet-600/70 animate-pulse">Chargement du wallet…</p>;
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 admin-stagger">
       <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-            <Wallet className="text-[#E91E8C]" /> Wallet & finances
+          <h1 className="admin-page-title flex items-center gap-3">
+            <Wallet className="text-fuchsia-600" /> Wallet & finances
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="admin-page-subtitle">
             Vue consolidée : wallet, minutes, téléphonie, commissions et activité REP
           </p>
         </div>
-        <button
-          type="button"
-          onClick={refreshAll}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-200 bg-white text-sm font-semibold"
-        >
+        <button type="button" onClick={refreshAll} className="admin-btn-secondary">
           <RefreshCw size={16} /> Actualiser
         </button>
       </div>
@@ -182,7 +178,7 @@ export default function AdminWalletPage() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Rechercher…"
-              className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 text-sm"
+              className="admin-input !pl-9 text-sm"
             />
           </div>
           <div className="flex flex-wrap gap-2 mb-3">
@@ -191,11 +187,7 @@ export default function AdminWalletPage() {
                 key={filter}
                 type="button"
                 onClick={() => setTypeFilter(filter)}
-                className={`px-3 py-1 rounded-lg text-xs font-semibold ${
-                  typeFilter === filter
-                    ? 'bg-[#E91E8C] text-white'
-                    : 'bg-slate-100 text-slate-600'
-                }`}
+                className={`admin-filter-pill text-xs ${typeFilter === filter ? 'admin-filter-pill--active' : 'admin-filter-pill--idle'}`}
               >
                 {filter === 'all' ? 'Tous' : filter === 'company' ? 'Companies' : 'REPs'}
               </button>
@@ -205,10 +197,8 @@ export default function AdminWalletPage() {
             <button
               type="button"
               onClick={() => setSearchParams({})}
-              className={`w-full text-left rounded-xl border px-3 py-3 transition-colors ${
-                !selectedUserId
-                  ? 'border-[#E91E8C] bg-[#E91E8C]/5'
-                  : 'border-slate-100 hover:border-[#E91E8C]/30 hover:bg-slate-50'
+              className={`w-full text-left admin-row-card transition-all ${
+                !selectedUserId ? 'ring-2 ring-fuchsia-400/50 bg-fuchsia-50/50' : ''
               }`}
             >
               <p className="font-semibold text-slate-900">Vue plateforme HARX</p>
@@ -221,15 +211,13 @@ export default function AdminWalletPage() {
                   key={account.userId}
                   type="button"
                   onClick={() => setSearchParams({ userId: account.userId })}
-                  className={`w-full text-left rounded-xl border px-3 py-3 transition-colors ${
-                    active
-                      ? 'border-[#E91E8C] bg-[#E91E8C]/5'
-                      : 'border-slate-100 hover:border-[#E91E8C]/30 hover:bg-slate-50'
+                  className={`w-full text-left admin-row-card transition-all ${
+                    active ? 'ring-2 ring-fuchsia-400/50 bg-fuchsia-50/50' : ''
                   }`}
                 >
                   <p className="font-semibold text-slate-900 truncate">{account.fullName}</p>
                   <p className="text-xs text-slate-500 truncate">{account.email}</p>
-                  <p className="text-xs font-medium text-[#E91E8C] mt-1 uppercase">{account.typeUser}</p>
+                  <p className="text-xs font-medium text-violet-600 mt-1 uppercase">{account.typeUser}</p>
                 </button>
               );
             })}
@@ -238,7 +226,7 @@ export default function AdminWalletPage() {
 
         <div className="space-y-4">
           {selectedUserId && (
-            <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+            <div className="admin-card p-5 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-lg font-bold text-slate-900">
                   {selectedAccount?.fullName || detail?.user?.fullName}
@@ -247,7 +235,7 @@ export default function AdminWalletPage() {
               </div>
               <Link
                 to={`/admin/users/${selectedUserId}`}
-                className="inline-flex items-center gap-1 text-sm text-[#E91E8C] font-semibold"
+                className="admin-link text-sm"
               >
                 <ArrowLeft size={14} /> Voir le profil
               </Link>
@@ -299,11 +287,7 @@ export default function AdminWalletPage() {
                       key={category}
                       type="button"
                       onClick={() => setLedgerFilter(category)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                        ledgerFilter === category
-                          ? 'bg-[#E91E8C] text-white'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
+                      className={`admin-filter-pill text-xs ${ledgerFilter === category ? 'admin-filter-pill--active' : 'admin-filter-pill--idle'}`}
                     >
                       {category === 'all' ? 'Tout' : category}
                     </button>
