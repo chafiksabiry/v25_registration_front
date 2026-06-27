@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, Plus, Trash2 } from 'lucide-react';
 import { adminApi } from '../../lib/api';
-import { AdminField, AdminPageHeader, AdminSaveBar } from './adminPageShell';
+import { AdminField, AdminPageHeader, AdminSaveBar, AdminToggle } from './adminPageShell';
 
 type MinutePackRow = {
   label: string;
@@ -29,29 +29,6 @@ function perMinuteEuros(priceEuros: string, minutes: number) {
   const price = Number(priceEuros.replace(',', '.'));
   if (!Number.isFinite(price) || !minutes) return '—';
   return `${(price / minutes).toFixed(4)} €/min`;
-}
-
-function ActiveToggle({
-  checked,
-  onChange,
-  label,
-}: {
-  checked: boolean;
-  onChange: (value: boolean) => void;
-  label: string;
-}) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      aria-label={label}
-      onClick={() => onChange(!checked)}
-      className={`admin-toggle ${checked ? 'admin-toggle--on' : ''}`}
-    >
-      <span className="admin-toggle-knob" />
-    </button>
-  );
 }
 
 export default function AdminPricingMinutesPage() {
@@ -154,7 +131,7 @@ export default function AdminPricingMinutesPage() {
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
-                      <ActiveToggle
+                      <AdminToggle
                         checked={pack.active}
                         onChange={(value) => updatePack(index, { active: value })}
                         label={`Activer le pack ${pack.label || index + 1}`}
