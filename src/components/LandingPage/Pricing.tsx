@@ -1,9 +1,15 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
+import { publicPlansApi } from '../../lib/api';
 import { Button } from './Button';
 import { PricingPlansGrid } from './PricingPlansGrid';
-import { COMPANY_PRICING_PLANS, REP_PRICING_PLANS } from './pricingPlansConfig';
+import {
+  COMPANY_PRICING_PLANS,
+  REP_PRICING_PLANS,
+  mapApiPlanToPricingPlan,
+  type PricingPlan,
+} from './pricingPlansConfig';
 
 interface PricingProps {
   onGetStarted: () => void;
@@ -14,6 +20,25 @@ type PricingAudience = 'company' | 'rep';
 export function Pricing({ onGetStarted }: PricingProps) {
   const navigate = useNavigate();
   const [audience, setAudience] = useState<PricingAudience>('company');
+  const [companyPlans, setCompanyPlans] = useState<PricingPlan[]>(COMPANY_PRICING_PLANS);
+  const [repPlans, setRepPlans] = useState<PricingPlan[]>(REP_PRICING_PLANS);
+
+  useEffect(() => {
+    Promise.all([publicPlansApi.companyPlans(), publicPlansApi.repPlans()])
+      .then(([companyResponse, repResponse]) => {
+        const company = companyResponse.data?.plans;
+        const rep = repResponse.data?.plans;
+        if (Array.isArray(company) && company.length) {
+          setCompanyPlans(company.map(mapApiPlanToPricingPlan));
+        }
+        if (Array.isArray(rep) && rep.length) {
+          setRepPlans(rep.map(mapApiPlanToPricingPlan));
+        }
+      })
+      .catch(() => {
+        /* fallback statique */
+      });
+  }, []);
 
   const handleRepRegister = useCallback(() => {
     localStorage.setItem('pendingUserType', 'rep');
@@ -133,7 +158,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
                   <PricingPlansGrid
-                    plans={COMPANY_PRICING_PLANS}
+                    plans={companyPlans}
                     columns={3}
                     showCta
                     onCtaClick={handleCompanyRegister}
@@ -148,7 +173,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
                   <PricingPlansGrid
-                    plans={REP_PRICING_PLANS}
+                    plans={repPlans}
                     columns={4}
                     showCta
                     onCtaClick={handleRepRegister}

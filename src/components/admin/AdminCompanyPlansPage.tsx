@@ -55,7 +55,12 @@ export default function AdminCompanyPlansPage() {
   };
 
   const togglePopular = async (plan: CompanyPlanForm, value: boolean) => {
-    updatePlan(plan.id, { isPopular: value });
+    setPlans((current) =>
+      current.map((item) => ({
+        ...item,
+        isPopular: item.id === plan.id ? value : value ? false : item.isPopular,
+      })),
+    );
     setTogglingPopularId(plan.id);
     setMessages((current) => {
       const next = { ...current };
@@ -65,10 +70,19 @@ export default function AdminCompanyPlansPage() {
     try {
       const response = await adminApi.updateCompanyPlan(plan.id, { isPopular: value });
       setPlans((current) =>
-        current.map((item) => (item.id === plan.id ? { ...item, ...toForm(response.data) } : item)),
+        current.map((item) => {
+          if (item.id === plan.id) return { ...item, ...toForm(response.data) };
+          if (value) return { ...item, isPopular: false };
+          return item;
+        }),
       );
     } catch (err: any) {
-      updatePlan(plan.id, { isPopular: !value });
+      setPlans((current) =>
+        current.map((item) => ({
+          ...item,
+          isPopular: item.id === plan.id ? !value : item.isPopular,
+        })),
+      );
       setMessages((current) => ({
         ...current,
         [plan.id]: {
@@ -101,7 +115,13 @@ export default function AdminCompanyPlansPage() {
         maxReps: Number(plan.maxReps),
       });
       const saved = toForm(response.data);
-      setPlans((current) => current.map((item) => (item.id === plan.id ? saved : item)));
+      setPlans((current) =>
+        current.map((item) => {
+          if (item.id === plan.id) return saved;
+          if (saved.isPopular) return { ...item, isPopular: false };
+          return item;
+        }),
+      );
       setMessages((current) => ({ ...current, [plan.id]: { type: 'success', text: 'Plan enregistré.' } }));
     } catch (err: any) {
       setMessages((current) => ({
@@ -132,7 +152,7 @@ export default function AdminCompanyPlansPage() {
             <div>
               <h2 className="admin-section-title">Plans abonnement</h2>
               <p className="admin-section-desc">
-                {plans.length} plan{plans.length > 1 ? 's' : ''} company · plusieurs plans peuvent être « Populaire »
+                {plans.length} plan{plans.length > 1 ? 's' : ''} company · un seul plan peut être « Populaire »
               </p>
             </div>
           </div>

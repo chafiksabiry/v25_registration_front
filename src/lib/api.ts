@@ -104,7 +104,15 @@ export const adminApi = {
     const response = await api.get('/admin/stats');
     return response.data;
   },
-  users: async (params?: { page?: number; search?: string; limit?: number; typeUser?: string }) => {
+  users: async (params?: {
+    page?: number;
+    search?: string;
+    limit?: number;
+    typeUser?: string;
+    verified?: string;
+    onboardingStatus?: string;
+    planName?: string;
+  }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
   },
@@ -196,6 +204,17 @@ export const adminApi = {
     },
   ) => {
     const response = await api.patch(`/admin/plans/rep/${planId}`, payload);
+    return response.data;
+  },
+};
+
+export const publicPlansApi = {
+  companyPlans: async () => {
+    const response = await api.get('/plans/company');
+    return response.data;
+  },
+  repPlans: async () => {
+    const response = await api.get('/plans/rep');
     return response.data;
   },
 };
