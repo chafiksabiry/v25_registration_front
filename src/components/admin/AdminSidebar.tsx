@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { LogOut, X } from 'lucide-react';
 import logoHarx from '../../assets/logo-harx.png';
 import { HARX_SIDEBAR_BG, HARX_BAR_SHADOW } from '../../lib/harxBrand';
-import { ADMIN_SECTIONS } from './adminSections';
+import { ADMIN_NAV_GROUPS } from './adminSections';
 
 type AdminSidebarProps = {
   adminName: string;
@@ -40,25 +40,34 @@ export default function AdminSidebar({
         </button>
       </div>
 
-      <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
-        {ADMIN_SECTIONS.map(({ to, label, icon: Icon, end }) => (
-          <NavLink
-            key={to}
-            to={to}
-            end={end}
-            onClick={() => setIsSidebarOpen(false)}
-            className={({ isActive }) =>
-              [
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300',
-                isActive
-                  ? 'bg-white/25 text-white shadow-lg shadow-black/10 scale-[1.02]'
-                  : 'text-white/80 hover:bg-white/12 hover:text-white hover:translate-x-0.5',
-              ].join(' ')
-            }
-          >
-            <Icon size={18} />
-            {label}
-          </NavLink>
+      <nav className="p-4 flex-1 overflow-y-auto space-y-6">
+        {ADMIN_NAV_GROUPS.map((group) => (
+          <div key={group.label}>
+            <p className="px-3 mb-2 text-[10px] font-black uppercase tracking-[0.14em] text-white/45">
+              {group.label}
+            </p>
+            <div className="space-y-1">
+              {group.items.map(({ to, label, icon: Icon, end }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={end}
+                  onClick={() => setIsSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    [
+                      'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-300',
+                      isActive
+                        ? 'bg-white/25 text-white shadow-lg shadow-black/10'
+                        : 'text-white/80 hover:bg-white/12 hover:text-white',
+                    ].join(' ')
+                  }
+                >
+                  <Icon size={18} className="shrink-0" />
+                  <span className="truncate">{label}</span>
+                </NavLink>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
 
@@ -67,7 +76,7 @@ export default function AdminSidebar({
         <button
           type="button"
           onClick={onLogout}
-          className="flex items-center gap-2 text-sm text-white/80 hover:text-white"
+          className="flex items-center gap-2 text-sm text-white/80 hover:text-white transition-colors"
         >
           <LogOut size={16} />
           Déconnexion

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, Plus, Save, Trash2 } from 'lucide-react';
+import { Clock, Plus, Trash2 } from 'lucide-react';
 import { adminApi } from '../../lib/api';
+import { AdminField, AdminPageHeader, AdminSaveBar } from './adminPageShell';
 
 type MinutePackRow = {
   label: string;
@@ -22,6 +23,35 @@ function toRows(
     priceEuros: (pack.priceCents / 100).toFixed(2),
     active: pack.active !== false,
   }));
+}
+
+function perMinuteEuros(priceEuros: string, minutes: number) {
+  const price = Number(priceEuros.replace(',', '.'));
+  if (!Number.isFinite(price) || !minutes) return '—';
+  return `${(price / minutes).toFixed(4)} €/min`;
+}
+
+function ActiveToggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
+      className={`admin-toggle ${checked ? 'admin-toggle--on' : ''}`}
+    >
+      <span className="admin-toggle-knob" />
+    </button>
+  );
 }
 
 export default function AdminPricingMinutesPage() {
@@ -77,138 +107,135 @@ export default function AdminPricingMinutesPage() {
     }
   };
 
+  const activeCount = packs.filter((pack) => pack.active).length;
+
   return (
-    <div className="space-y-6 admin-stagger">
-      <div>
-        <h1 className="admin-page-title flex items-center gap-3">
-          <Clock className="text-violet-500" size={28} />
-          Offres minutes
-        </h1>
-        <p className="admin-page-subtitle">
-          Packs affichés aux companies et tarif appliqué aux achats Stripe / PayPal.
-        </p>
-      </div>
+    <div className="space-y-6 admin-stagger pb-4">
+      <AdminPageHeader
+        icon={Clock}
+        title="Offres minutes"
+        subtitle="Packs affichés aux companies et tarif appliqué aux achats Stripe / PayPal."
+        badge="Tarification"
+      />
 
       {loading ? (
         <p className="text-violet-600/70 animate-pulse">Chargement…</p>
       ) : (
         <>
-          <section className="admin-table-wrap">
-            <div className="px-6 py-4 border-b border-violet-100/80 flex items-center justify-between gap-4">
-              <h2 className="admin-section-title">Packs minutes</h2>
+          <section className="admin-pricing-panel">
+            <div className="admin-pricing-panel-head">
+              <div>
+                <h2 className="admin-section-title">Packs minutes</h2>
+                <p className="admin-section-desc">
+                  {activeCount} pack{activeCount > 1 ? 's' : ''} actif{activeCount > 1 ? 's' : ''} sur {packs.length}
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setPacks((current) => [...current, emptyPack()])}
-                className="admin-btn-secondary inline-flex items-center gap-2"
+                className="admin-btn-secondary"
               >
                 <Plus size={16} />
-                Ajouter
+                Ajouter un pack
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="admin-table min-w-full text-sm">
-                <thead className="text-left text-slate-500">
-                  <tr>
-                    <th className="px-6 py-3 font-semibold">Libellé</th>
-                    <th className="px-6 py-3 font-semibold">Minutes</th>
-                    <th className="px-6 py-3 font-semibold">Prix (€)</th>
-                    <th className="px-6 py-3 font-semibold">Actif</th>
-                    <th className="px-6 py-3 font-semibold" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {packs.map((pack, index) => (
-                    <tr key={`${pack.label}-${index}`} className="border-t border-violet-50/80">
-                      <td className="px-6 py-3">
-                        <input
-                          type="text"
-                          value={pack.label}
-                          onChange={(e) => updatePack(index, { label: e.target.value })}
-                          className="admin-input"
-                          placeholder="Standard"
-                        />
-                      </td>
-                      <td className="px-6 py-3 w-32">
-                        <input
-                          type="number"
-                          min={1}
-                          value={pack.minutes}
-                          onChange={(e) => updatePack(index, { minutes: Number(e.target.value) })}
-                          className="admin-input"
-                        />
-                      </td>
-                      <td className="px-6 py-3 w-36">
-                        <input
-                          type="text"
-                          inputMode="decimal"
-                          value={pack.priceEuros}
-                          onChange={(e) => updatePack(index, { priceEuros: e.target.value })}
-                          className="admin-input"
-                        />
-                      </td>
-                      <td className="px-6 py-3">
-                        <input
-                          type="checkbox"
-                          checked={pack.active}
-                          onChange={(e) => updatePack(index, { active: e.target.checked })}
-                          className="h-4 w-4 rounded border-violet-300 text-violet-600"
-                        />
-                      </td>
-                      <td className="px-6 py-3 text-right">
-                        <button
-                          type="button"
-                          disabled={packs.length <= 1}
-                          onClick={() => setPacks((current) => current.filter((_, i) => i !== index))}
-                          className="admin-btn-secondary inline-flex items-center gap-1 disabled:opacity-40"
-                        >
-                          <Trash2 size={14} />
-                          Retirer
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="admin-pack-grid">
+              {packs.map((pack, index) => (
+                <article
+                  key={`${pack.label}-${index}`}
+                  className={`admin-pack-card ${pack.active ? '' : 'admin-pack-card--inactive'}`}
+                >
+                  <div className="admin-pack-card-top">
+                    <div>
+                      <p className="admin-pack-price-preview">{pack.priceEuros || '0.00'} €</p>
+                      <p className="admin-pack-meta">
+                        {pack.minutes || 0} min · {perMinuteEuros(pack.priceEuros, pack.minutes)}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <ActiveToggle
+                        checked={pack.active}
+                        onChange={(value) => updatePack(index, { active: value })}
+                        label={`Activer le pack ${pack.label || index + 1}`}
+                      />
+                      <button
+                        type="button"
+                        disabled={packs.length <= 1}
+                        onClick={() => setPacks((current) => current.filter((_, i) => i !== index))}
+                        className="admin-btn-icon"
+                        aria-label="Retirer le pack"
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <AdminField id={`pack-label-${index}`} label="Libellé">
+                    <input
+                      id={`pack-label-${index}`}
+                      type="text"
+                      value={pack.label}
+                      onChange={(e) => updatePack(index, { label: e.target.value })}
+                      className="admin-input admin-input--plain admin-input--compact"
+                      placeholder="Standard"
+                    />
+                  </AdminField>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <AdminField id={`pack-minutes-${index}`} label="Minutes">
+                      <input
+                        id={`pack-minutes-${index}`}
+                        type="number"
+                        min={1}
+                        value={pack.minutes}
+                        onChange={(e) => updatePack(index, { minutes: Number(e.target.value) })}
+                        className="admin-input admin-input--plain admin-input--compact"
+                      />
+                    </AdminField>
+                    <AdminField id={`pack-price-${index}`} label="Prix (€)">
+                      <input
+                        id={`pack-price-${index}`}
+                        type="text"
+                        inputMode="decimal"
+                        value={pack.priceEuros}
+                        onChange={(e) => updatePack(index, { priceEuros: e.target.value })}
+                        className="admin-input admin-input--plain admin-input--compact"
+                      />
+                    </AdminField>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="admin-custom-rate-box">
+              <AdminField
+                id="custom-rate"
+                label="Tarif minute personnalisée"
+                hint="Appliqué quand la quantité ne correspond à aucun pack (ex. 200 minutes)."
+              >
+                <div className="flex flex-wrap items-center gap-3">
+                  <input
+                    id="custom-rate"
+                    type="text"
+                    inputMode="decimal"
+                    value={customRateEuros}
+                    onChange={(e) => setCustomRateEuros(e.target.value)}
+                    className="admin-input admin-input--plain admin-input--compact max-w-[160px]"
+                  />
+                  <span className="text-sm font-semibold text-slate-500">€ / min</span>
+                </div>
+              </AdminField>
             </div>
           </section>
 
-          <section className="admin-stat-card max-w-xl">
-            <label className="admin-info-label" htmlFor="custom-rate">
-              Tarif minute personnalisée (€ / min)
-            </label>
-            <p className="text-sm text-slate-500 mt-1 mb-3">
-              Utilisé quand la quantité ne correspond à aucun pack (ex. 200 minutes).
-            </p>
-            <input
-              id="custom-rate"
-              type="text"
-              inputMode="decimal"
-              value={customRateEuros}
-              onChange={(e) => setCustomRateEuros(e.target.value)}
-              className="admin-input max-w-xs"
-            />
-          </section>
-
-          <div className="flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              disabled={saving}
-              onClick={handleSave}
-              className="admin-btn-primary inline-flex items-center gap-2 disabled:opacity-60"
-            >
-              <Save size={16} />
-              {saving ? 'Enregistrement…' : 'Enregistrer'}
-            </button>
-            {updatedAt && (
-              <p className="text-sm text-slate-500">
-                Dernière mise à jour : {new Date(updatedAt).toLocaleString('fr-FR')}
-              </p>
-            )}
-          </div>
-
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-emerald-600">{success}</p>}
+          <AdminSaveBar
+            saving={saving}
+            onSave={handleSave}
+            updatedAt={updatedAt}
+            error={error}
+            success={success}
+          />
         </>
       )}
     </div>

@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { ChevronDown, ExternalLink, LogOut, Menu, Shield, UserCircle } from 'lucide-react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { HARX_BAR_SHADOW, HARX_NAVBAR_BG, HARX_TEXT_SHADOW } from '../../lib/harxBrand';
-import { ADMIN_SECTIONS } from './adminSections';
+import { ADMIN_SECTIONS, findAdminSection } from './adminSections';
 
 type AdminTopBarProps = {
   isSidebarOpen: boolean;
@@ -19,10 +19,13 @@ function getInitials(name: string) {
 
 export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout }: AdminTopBarProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [displayName, setDisplayName] = useState('Admin');
   const [adminEmail, setAdminEmail] = useState('');
+  const currentSection = findAdminSection(location.pathname);
+  const CurrentIcon = currentSection.icon;
 
   useEffect(() => {
     setDisplayName(localStorage.getItem('userFullName') || 'Admin');
@@ -62,7 +65,7 @@ export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout 
         </button>
       </div>
 
-      <nav className="hidden sm:flex items-center justify-center gap-2 min-w-0 overflow-x-auto">
+      <nav className="flex lg:hidden items-center justify-center gap-1.5 min-w-0 overflow-x-auto px-1">
         {ADMIN_SECTIONS.map(({ to, label, shortLabel, icon: Icon, end }) => (
           <NavLink
             key={to}
@@ -103,6 +106,18 @@ export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout 
           </NavLink>
         ))}
       </nav>
+
+      <div className="hidden lg:flex items-center justify-center min-w-0 px-4">
+        <div className="flex items-center gap-3 min-w-0 rounded-2xl bg-white/10 border border-white/15 px-4 py-2">
+          <div className="p-1.5 rounded-xl bg-white/15 text-white">
+            <CurrentIcon className="w-4 h-4" />
+          </div>
+          <div className="min-w-0 text-left">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-white/60">Administration</p>
+            <p className="text-sm font-black text-white truncate">{currentSection.label}</p>
+          </div>
+        </div>
+      </div>
 
       <div className="flex items-center justify-end gap-2 sm:gap-4">
         <div className="relative" ref={dropdownRef}>
