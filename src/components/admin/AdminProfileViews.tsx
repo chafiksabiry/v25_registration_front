@@ -133,7 +133,17 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
           );
         }
 
-        const skill = item as { skill?: string; skillId?: string; level?: number; details?: string };
+        const skill = item as {
+          skill?: string;
+          skillId?: string;
+          level?: number;
+          details?: string;
+          fromVideoAnalysis?: boolean;
+          needsReanalysis?: boolean;
+        };
+
+        const showVideoStatus = skill.fromVideoAnalysis || skill.needsReanalysis;
+
         return (
           <div key={key} className="rounded-xl border border-slate-100 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
@@ -141,9 +151,23 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
                 <p className="text-sm font-semibold text-slate-900">{skill.skill || '—'}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{group}</p>
               </div>
-              {skill.level != null && <StatusBadge label={`Niv. ${skill.level}`} tone="neutral" />}
+              <div className="flex flex-wrap items-center gap-2">
+                {skill.level != null && <StatusBadge label={`Niv. ${skill.level}`} tone="neutral" />}
+                {showVideoStatus && (
+                  <StatusBadge
+                    label={
+                      skill.needsReanalysis
+                        ? 'Vidéo manquante — ré-analyser requis'
+                        : 'Analyse vidéo OK'
+                    }
+                    tone={skill.needsReanalysis ? 'danger' : 'success'}
+                  />
+                )}
+              </div>
             </div>
-            {skill.details && <p className="text-sm text-slate-600 mt-2">{skill.details}</p>}
+            {skill.details && !skill.fromVideoAnalysis && (
+              <p className="text-sm text-slate-600 mt-2">{skill.details}</p>
+            )}
           </div>
         );
       })}
@@ -245,9 +269,20 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
   const activities = normalizeListItems(summary.activities);
   const expertise = normalizeListItems(summary.keyExpertise);
   const photoUrl = personal.photo?.url || agent.photo?.url;
+  const mediaSummary = agent.mediaSummary as
+    | { experiencesNeedingReanalysis?: number; hasValidVideoAnalysis?: boolean }
+    | undefined;
 
   return (
     <div className="space-y-6">
+      {mediaSummary?.experiencesNeedingReanalysis ? (
+        <SectionCard title="Médias vidéo">
+          <StatusBadge
+            label={`${mediaSummary.experiencesNeedingReanalysis} expérience(s) sans vidéo valide — ré-analyse requise`}
+            tone="danger"
+          />
+        </SectionCard>
+      ) : null}
       {photoUrl && (
         <SectionCard title="Photo de profil">
           <img
@@ -291,19 +326,38 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
           <p className="text-sm text-slate-500">Aucune expérience renseignée.</p>
         ) : (
           <div className="space-y-3">
-            {experience.slice(0, 8).map((item: any, index: number) => (
+            {experience.slice(0, 8).map((item: any, index: number) => {
+              const mediaStatus = item.mediaStatus as
+                | { hasVideo?: boolean; videoOk?: boolean; needsReanalysis?: boolean }
+                | undefined;
+              const showVideo = Boolean(item.videoUrl && mediaStatus?.videoOk !== false);
+              const needsReanalysis = Boolean(
+                mediaStatus?.needsReanalysis ||
+                  (item.videoAnalysis && !item.videoUrl) ||
+                  (item.videoUrl && mediaStatus?.videoOk === false),
+              );
+
+              return (
               <div key={index} className="rounded-xl border border-slate-100 p-4">
-                <p className="font-semibold text-slate-900 flex items-center gap-2">
-                  <Briefcase size={16} className="text-[#E91E8C]" />
-                  {displayValue(item.title || item.role || item.company || 'Expérience')}
-                </p>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="font-semibold text-slate-900 flex items-center gap-2">
+                    <Briefcase size={16} className="text-[#E91E8C]" />
+                    {displayValue(item.title || item.role || item.company || 'Expérience')}
+                  </p>
+                  {needsReanalysis && (
+                    <StatusBadge label="Vidéo manquante — ré-analyser requis" tone="danger" />
+                  )}
+                  {showVideo && !needsReanalysis && (
+                    <StatusBadge label="Analyse vidéo OK" tone="success" />
+                  )}
+                </div>
                 {item.company && (
                   <p className="text-sm text-slate-600 mt-1">{displayValue(item.company)}</p>
                 )}
                 {item.description && (
                   <p className="text-sm text-slate-500 mt-2 leading-relaxed">{item.description}</p>
                 )}
-                {item.videoUrl && (
+                {showVideo && (
                   <div className="mt-4">
                     <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
                       Vidéo expérience
@@ -319,7 +373,8 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
                   </div>
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </SectionCard>
