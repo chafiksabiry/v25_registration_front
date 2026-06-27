@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import AdminUserFilters, { type TypeFilter } from './AdminUserFilters';
+import { type AdminUserRow, rowCreatedAt, rowEmail, rowName } from './adminUserRowUtils';
 
 type Stats = {
   totals: {
@@ -10,14 +13,6 @@ type Stats = {
     admin: number;
     unassigned: number;
   };
-  recentUsers: Array<{
-    _id: string;
-    fullName: string;
-    email: string;
-    typeUser?: string | null;
-    isVerified?: boolean;
-    createdAt?: string;
-  }>;
 };
 
 function StatCard({ label, value, accent }: { label: string; value: number; accent: string }) {
@@ -30,24 +25,50 @@ function StatCard({ label, value, accent }: { label: string; value: number; acce
 }
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<AdminUserRow[]>([]);
+  const [search, setSearch] = useState('');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
+  const [page, setPage] = useState(1);
+  const [pages, setPages] = useState(1);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [listError, setListError] = useState<string | null>(null);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [listLoading, setListLoading] = useState(true);
 
   useEffect(() => {
     adminApi
       .stats()
-      .then((response) => setStats(response.data))
-      .catch(() => setError('Impossible de charger les statistiques admin.'))
-      .finally(() => setLoading(false));
+      .then((response) => setStats({ totals: response.data.totals }))
+      .catch(() => setStatsError('Impossible de charger les statistiques admin.'))
+      .finally(() => setStatsLoading(false));
   }, []);
 
-  if (loading) {
+  useEffect(() => {
+    setListLoading(true);
+    setListError(null);
+    adminApi
+      .users({
+        page,
+        limit: 10,
+        search,
+        typeUser: typeFilter === 'all' ? undefined : typeFilter,
+      })
+      .then((response) => {
+        setUsers(response.data.users);
+        setPages(response.data.pagination.pages);
+      })
+      .catch(() => setListError('Impossible de charger les inscriptions récentes.'))
+      .finally(() => setListLoading(false));
+  }, [page, search, typeFilter]);
+
+  if (statsLoading) {
     return <div className="text-violet-600/70 animate-pulse">Chargement du tableau de bord…</div>;
   }
 
-  if (error || !stats) {
-    return <div className="p-8 text-red-500">{error}</div>;
+  if (statsError || !stats) {
+    return <div className="p-8 text-red-500">{statsError}</div>;
   }
 
   return (
@@ -66,36 +87,95 @@ export default function AdminDashboardPage() {
         <StatCard label="Sans profil" value={stats.totals.unassigned} accent="text-slate-600" />
       </div>
 
-      <section className="admin-table-wrap">
-        <div className="px-6 py-4 border-b border-violet-100/80">
+      <section className="admin-table-wrap space-y-0">
+        <div className="px-6 py-4 border-b border-violet-100/80 space-y-4">
           <h2 className="admin-section-title">Inscriptions récentes</h2>
+          <AdminUserFilters
+            search={search}
+            typeFilter={typeFilter}
+            onSearchChange={(value) => {
+              setPage(1);
+              setSearch(value);
+            }}
+            onTypeFilterChange={(value) => {
+              setPage(1);
+              setTypeFilter(value);
+            }}
+          />
         </div>
-        <div className="overflow-x-auto">
-          <table className="admin-table min-w-full text-sm">
-            <thead className="text-left text-slate-500">
-              <tr>
-                <th className="px-6 py-3 font-semibold">Nom</th>
-                <th className="px-6 py-3 font-semibold">Email</th>
-                <th className="px-6 py-3 font-semibold">Type</th>
-                <th className="px-6 py-3 font-semibold">Vérifié</th>
-                <th className="px-6 py-3 font-semibold">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentUsers.map((user) => (
-                <tr key={user._id} className="border-t border-violet-50/80">
-                  <td className="px-6 py-3 font-medium text-slate-900">{user.fullName}</td>
-                  <td className="px-6 py-3 text-slate-600">{user.email}</td>
-                  <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
-                  <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
-                  <td className="px-6 py-3 text-slate-500">
-                    {user.createdAt ? new Date(user.createdAt).toLocaleString('fr-FR') : '—'}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+
+        {listLoading ? (
+          <p className="px-6 py-8 text-violet-600/70 animate-pulse">Chargement…</p>
+        ) : listError ? (
+          <p className="px-6 py-8 text-red-500">{listError}</p>
+        ) : users.length === 0 ? (
+          <p className="px-6 py-8 text-slate-500">Aucun résultat pour ces filtres.</p>
+        ) : (
+          <>
+            <div className="overflow-x-auto">
+              <table className="admin-table min-w-full text-sm">
+                <thead className="text-left text-slate-500">
+                  <tr>
+                    <th className="px-6 py-3 font-semibold">Nom / Entreprise</th>
+                    <th className="px-6 py-3 font-semibold">Email</th>
+                    <th className="px-6 py-3 font-semibold">Type</th>
+                    <th className="px-6 py-3 font-semibold">Vérifié</th>
+                    <th className="px-6 py-3 font-semibold">Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map((user) => (
+                    <tr
+                      key={user._id}
+                      onClick={() => navigate(`/admin/users/${user._id}`)}
+                      className="border-t border-violet-50/80 cursor-pointer transition-colors"
+                    >
+                      <td className="px-6 py-3 font-medium text-slate-900">
+                        <div>{rowName(user)}</div>
+                        {user.typeUser === 'company' && user.industry && (
+                          <p className="text-xs text-violet-600 mt-0.5">{user.industry}</p>
+                        )}
+                      </td>
+                      <td className="px-6 py-3 text-slate-600">
+                        <div>{rowEmail(user)}</div>
+                        {user.typeUser === 'company' &&
+                          user.displayEmail &&
+                          user.displayEmail !== user.email && (
+                            <p className="text-xs text-slate-400 mt-0.5">Connexion: {user.email}</p>
+                          )}
+                      </td>
+                      <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
+                      <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
+                      <td className="px-6 py-3 text-slate-500">{rowCreatedAt(user)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex items-center justify-between px-6 py-4 border-t border-violet-100/80">
+              <button
+                type="button"
+                disabled={page <= 1}
+                onClick={() => setPage((current) => Math.max(1, current - 1))}
+                className="admin-btn-secondary disabled:opacity-40"
+              >
+                Précédent
+              </button>
+              <span className="text-sm text-slate-500">
+                Page {page} / {pages}
+              </span>
+              <button
+                type="button"
+                disabled={page >= pages}
+                onClick={() => setPage((current) => current + 1)}
+                className="admin-btn-secondary disabled:opacity-40"
+              >
+                Suivant
+              </button>
+            </div>
+          </>
+        )}
       </section>
     </div>
   );

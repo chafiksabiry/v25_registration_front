@@ -128,6 +128,35 @@ export const adminApi = {
     const response = await api.get('/admin/wallet/overview');
     return response.data;
   },
+  minutesPricing: async () => {
+    const response = await api.get('/admin/pricing/minutes');
+    return response.data;
+  },
+  updateMinutesPricing: async (payload: {
+    minutePacks: Array<{
+      label: string;
+      minutes: number;
+      priceCents: number;
+      active?: boolean;
+    }>;
+    minutesCustomRateCents?: number;
+  }) => {
+    const response = await api.patch('/admin/pricing/minutes', payload);
+    return response.data;
+  },
+  phoneLinePricing: async () => {
+    const response = await api.get('/admin/pricing/phone-line');
+    return response.data;
+  },
+  updatePhoneLinePricing: async (payload: {
+    setupFeeEuros?: number;
+    setupFeeCents?: number;
+    currency?: string;
+    trialDays?: number;
+  }) => {
+    const response = await api.patch('/admin/pricing/phone-line', payload);
+    return response.data;
+  },
 };
 
 export const files = {
