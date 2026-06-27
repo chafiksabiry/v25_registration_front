@@ -133,19 +133,17 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
           );
         }
 
-        const skill = item as { skill?: string; level?: number; details?: string };
+        const skill = item as { skill?: string; skillId?: string; level?: number; details?: string };
         return (
           <div key={key} className="rounded-xl border border-slate-100 px-4 py-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="text-sm font-semibold text-slate-900">{displayValue(skill.skill)}</p>
+                <p className="text-sm font-semibold text-slate-900">{skill.skill || '—'}</p>
                 <p className="text-xs text-slate-400 mt-0.5">{group}</p>
               </div>
               {skill.level != null && <StatusBadge label={`Niv. ${skill.level}`} tone="neutral" />}
             </div>
-            {skill.details && (
-              <p className="text-sm text-slate-600 mt-2">{skill.details}</p>
-            )}
+            {skill.details && <p className="text-sm text-slate-600 mt-2">{skill.details}</p>}
           </div>
         );
       })}
