@@ -108,6 +108,22 @@ export const adminApi = {
     const response = await api.get('/admin/users', { params });
     return response.data;
   },
+  userDetail: async (userId: string) => {
+    const response = await api.get(`/admin/users/${userId}`);
+    return response.data;
+  },
+  updateFinancials: async (
+    userId: string,
+    payload: {
+      target: 'company_minutes' | 'company_wallet' | 'rep_wallet';
+      action: 'add' | 'set';
+      amount: number;
+      reason?: string;
+    },
+  ) => {
+    const response = await api.patch(`/admin/users/${userId}/financials`, payload);
+    return response.data;
+  },
 };
 
 export const files = {

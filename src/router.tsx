@@ -21,6 +21,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import AdminSignInPage from './components/admin/AdminSignInPage';
 import AdminDashboardPage from './components/admin/AdminDashboardPage';
 import AdminUsersPage from './components/admin/AdminUsersPage';
+import AdminUserDetailPage from './components/admin/AdminUserDetailPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 
 function RootLayout() {
@@ -92,6 +93,7 @@ export const appRouter = createBrowserRouter(
           children: [
             { index: true, element: <AdminDashboardPage /> },
             { path: 'users', element: <AdminUsersPage /> },
+            { path: 'users/:userId', element: <AdminUserDetailPage /> },
           ],
         },
         {
