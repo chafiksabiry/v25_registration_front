@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { Clock, LayoutDashboard, Phone, Users, Wallet, type LucideIcon } from 'lucide-react';
 
 export type AdminSection = {
   to: string;
@@ -27,5 +27,17 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     label: 'Wallet',
     shortLabel: 'Wallet',
     icon: Wallet,
+  },
+  {
+    to: '/admin/pricing/minutes',
+    label: 'Offres minutes',
+    shortLabel: 'Minutes',
+    icon: Clock,
+  },
+  {
+    to: '/admin/pricing/phone-line',
+    label: 'Lignes téléphone',
+    shortLabel: 'Phone',
+    icon: Phone,
   },
 ];

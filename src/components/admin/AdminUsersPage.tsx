@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import AdminUserFilters, { type TypeFilter } from './AdminUserFilters';
+import { rowCreatedAt, rowName } from './adminUserRowUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -48,26 +49,9 @@ function subscriptionStatusLabel(status?: string | null) {
   return labels[status] || status;
 }
 
-function rowName(user: UserRow) {
-  return user.displayName || user.fullName;
-}
-
 function rowPhone(user: UserRow) {
   return user.displayPhone || user.phone || '—';
 }
-
-function rowCreatedAt(user: UserRow) {
-  const value = user.typeUser === 'company' ? user.profileCreatedAt || user.createdAt : user.createdAt;
-  return value ? new Date(value).toLocaleString('fr-FR') : '—';
-}
-
-type TypeFilter = 'all' | 'rep' | 'company';
-
-const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
-  { value: 'all', label: 'Tous' },
-  { value: 'rep', label: 'REPs' },
-  { value: 'company', label: 'Companies' },
-];
 
 function onboardingBadgeClass(status: string) {
   if (status === 'completed') return 'admin-badge admin-badge--success';
@@ -110,40 +94,18 @@ export default function AdminUsersPage() {
         <p className="admin-page-subtitle">Gestion et recherche des comptes plateforme</p>
       </div>
 
-      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="relative max-w-md flex-1">
-          <Search className="absolute left-3 top-3 h-5 w-5 text-violet-400" />
-          <input
-            type="search"
-            value={search}
-            onChange={(e) => {
-              setPage(1);
-              setSearch(e.target.value);
-            }}
-            placeholder="Rechercher nom company, email, industrie, téléphone…"
-            className="admin-input"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {TYPE_FILTERS.map((filter) => {
-            const active = typeFilter === filter.value;
-            return (
-              <button
-                key={filter.value}
-                type="button"
-                onClick={() => {
-                  setPage(1);
-                  setTypeFilter(filter.value);
-                }}
-                className={`admin-filter-pill ${active ? 'admin-filter-pill--active' : 'admin-filter-pill--idle'}`}
-              >
-                {filter.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <AdminUserFilters
+        search={search}
+        typeFilter={typeFilter}
+        onSearchChange={(value) => {
+          setPage(1);
+          setSearch(value);
+        }}
+        onTypeFilterChange={(value) => {
+          setPage(1);
+          setTypeFilter(value);
+        }}
+      />
 
       {loading ? (
         <p className="text-violet-600/70 animate-pulse">Chargement…</p>
