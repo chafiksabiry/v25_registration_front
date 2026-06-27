@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
 
 type OnboardingInfo = {
@@ -37,6 +38,7 @@ function onboardingBadgeClass(status: string) {
 }
 
 export default function AdminUsersPage() {
+  const navigate = useNavigate();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
@@ -129,7 +131,11 @@ export default function AdminUsersPage() {
               </thead>
               <tbody>
                 {users.map((user) => (
-                  <tr key={user._id} className="border-t border-slate-100">
+                  <tr
+                    key={user._id}
+                    onClick={() => navigate(`/admin/users/${user._id}`)}
+                    className="border-t border-slate-100 cursor-pointer hover:bg-[#E91E8C]/5 transition-colors"
+                  >
                     <td className="px-6 py-3 font-medium text-slate-900">{user.fullName}</td>
                     <td className="px-6 py-3 text-slate-600">{user.email}</td>
                     <td className="px-6 py-3 text-slate-600">{user.phone || '—'}</td>
