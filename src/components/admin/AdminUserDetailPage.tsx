@@ -68,6 +68,9 @@ export default function AdminUserDetailPage() {
   const profile = detail.profile;
   const isCompany = profile?.type === 'company';
   const isRep = profile?.type === 'rep';
+  const repAgent = isRep ? (profile?.agent as Record<string, any> | undefined) : undefined;
+  const photoUrl =
+    repAgent?.personalInfo?.photo?.url || repAgent?.photo?.url || undefined;
 
   return (
     <div className="space-y-6">
@@ -100,6 +103,7 @@ export default function AdminUserDetailPage() {
         typeUser={detail.user.typeUser}
         onboardingDisplay={detail.onboarding?.display}
         onboardingStatus={detail.onboarding?.statusLabel}
+        photoUrl={photoUrl}
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
