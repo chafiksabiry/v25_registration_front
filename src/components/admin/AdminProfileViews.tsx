@@ -244,9 +244,20 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
   const industries = normalizeListItems(summary.industries);
   const activities = normalizeListItems(summary.activities);
   const expertise = normalizeListItems(summary.keyExpertise);
+  const photoUrl = personal.photo?.url || agent.photo?.url;
 
   return (
     <div className="space-y-6">
+      {photoUrl && (
+        <SectionCard title="Photo de profil">
+          <img
+            src={photoUrl}
+            alt={personal.name || 'Photo de profil'}
+            className="h-40 w-40 rounded-2xl object-cover border border-slate-100 shadow-sm"
+          />
+        </SectionCard>
+      )}
+
       <SectionCard title="Identité REP">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
           <InfoCard label="Nom" value={personal.name || '—'} />
@@ -257,7 +268,8 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
             label="Profil de base"
             value={agent.isBasicProfileCompleted ? 'Complet' : 'Incomplet'}
           />
-          <InfoCard label="Abonnement" value={agent.subscriptionStatus || '—'} />
+          <InfoCard label="Plan" value={agent.planName || agent.plan || '—'} />
+          <InfoCard label="Statut abonnement" value={agent.subscriptionStatus || '—'} />
         </div>
       </SectionCard>
 
@@ -291,6 +303,21 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
                 {item.description && (
                   <p className="text-sm text-slate-500 mt-2 leading-relaxed">{item.description}</p>
                 )}
+                {item.videoUrl && (
+                  <div className="mt-4">
+                    <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
+                      Vidéo expérience
+                    </p>
+                    <video
+                      src={item.videoUrl}
+                      controls
+                      preload="metadata"
+                      className="w-full max-w-xl rounded-xl border border-slate-100 bg-black/5"
+                    >
+                      Votre navigateur ne supporte pas la lecture vidéo.
+                    </video>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -312,21 +339,31 @@ export function ProfileHero({
   typeUser,
   onboardingDisplay,
   onboardingStatus,
+  photoUrl,
 }: {
   fullName: string;
   email: string;
   typeUser?: string | null;
   onboardingDisplay?: string;
   onboardingStatus?: string;
+  photoUrl?: string;
 }) {
   const Icon = typeUser === 'company' ? Building2 : typeUser === 'rep' ? User : Globe;
 
   return (
     <div className="rounded-2xl bg-gradient-to-r from-[#F7631B] to-[#E91E8C] p-6 text-white shadow-lg">
       <div className="flex items-start gap-4">
-        <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
-          <Icon size={28} />
-        </div>
+        {photoUrl ? (
+          <img
+            src={photoUrl}
+            alt={fullName}
+            className="h-14 w-14 rounded-2xl object-cover border-2 border-white/30 shrink-0"
+          />
+        ) : (
+          <div className="h-14 w-14 rounded-2xl bg-white/20 flex items-center justify-center shrink-0">
+            <Icon size={28} />
+          </div>
+        )}
         <div className="min-w-0">
           <h1 className="text-2xl sm:text-3xl font-black truncate">{fullName}</h1>
           <p className="text-white/90 mt-1 truncate">{email}</p>
