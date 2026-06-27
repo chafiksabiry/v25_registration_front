@@ -68,9 +68,19 @@ export default function AdminUserDetailPage() {
   const profile = detail.profile;
   const isCompany = profile?.type === 'company';
   const isRep = profile?.type === 'rep';
+  const company = isCompany ? (profile?.company as Record<string, any> | undefined) : undefined;
   const repAgent = isRep ? (profile?.agent as Record<string, any> | undefined) : undefined;
-  const photoUrl =
-    repAgent?.personalInfo?.photo?.url || repAgent?.photo?.url || undefined;
+  const companyContact = company?.contact || {};
+  const photoUrl = isCompany
+    ? (company?.logo as string | undefined)
+    : repAgent?.personalInfo?.photo?.url || repAgent?.photo?.url || undefined;
+
+  const heroName = isCompany
+    ? String(company?.name || company?.companyName || detail.user.fullName)
+    : detail.user.fullName;
+  const heroEmail = isCompany
+    ? String(companyContact.email || company?.displayEmail || detail.user.email)
+    : detail.user.email;
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -98,29 +108,53 @@ export default function AdminUserDetailPage() {
       </div>
 
       <ProfileHero
-        fullName={detail.user.fullName}
-        email={detail.user.email}
-        typeUser={detail.user.typeUser}
+        fullName={heroName}
+        email={heroEmail}
+        typeUser={isCompany ? 'company' : detail.user.typeUser}
         onboardingDisplay={detail.onboarding?.display}
         onboardingStatus={detail.onboarding?.statusLabel}
         photoUrl={photoUrl}
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <InfoCard label="Téléphone" value={detail.user.phone || '—'} />
-        <InfoCard label="Vérifié" value={detail.user.isVerified ? 'Oui' : 'Non'} />
-        <InfoCard label="Créé le" value={formatDate(detail.user.createdAt)} />
-        <InfoCard label="ID utilisateur" value={detail.user._id} />
-      </div>
+      {isCompany && company ? (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <InfoCard label="Téléphone" value={companyContact.phone || company.displayPhone || '—'} />
+            <InfoCard label="Industrie" value={company.industry || '—'} />
+            <InfoCard label="Créée le" value={formatDate(company.createdAt as string)} />
+            <InfoCard label="Company ID" value={String(company._id || '—')} />
+          </div>
 
-      <SectionCard title="Compte plateforme">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoCard label="Email" value={detail.user.email} />
-          <InfoCard label="Type de compte" value={detail.user.typeUser || '—'} />
-          <InfoCard label="Phase onboarding" value={detail.onboarding?.display || '—'} />
-          <InfoCard label="Statut onboarding" value={detail.onboarding?.statusLabel || '—'} />
-        </div>
-      </SectionCard>
+          <SectionCard title="Compte utilisateur lié" description="Identifiants de connexion plateforme (collection users).">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InfoCard label="Email connexion" value={detail.user.email} />
+              <InfoCard label="Téléphone compte" value={detail.user.phone || '—'} />
+              <InfoCard label="Vérifié" value={detail.user.isVerified ? 'Oui' : 'Non'} />
+              <InfoCard label="User ID" value={detail.user._id} />
+              <InfoCard label="Phase onboarding" value={detail.onboarding?.display || '—'} />
+              <InfoCard label="Statut onboarding" value={detail.onboarding?.statusLabel || '—'} />
+            </div>
+          </SectionCard>
+        </>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+            <InfoCard label="Téléphone" value={detail.user.phone || '—'} />
+            <InfoCard label="Vérifié" value={detail.user.isVerified ? 'Oui' : 'Non'} />
+            <InfoCard label="Créé le" value={formatDate(detail.user.createdAt)} />
+            <InfoCard label="ID utilisateur" value={detail.user._id} />
+          </div>
+
+          <SectionCard title="Compte plateforme">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <InfoCard label="Email" value={detail.user.email} />
+              <InfoCard label="Type de compte" value={detail.user.typeUser || '—'} />
+              <InfoCard label="Phase onboarding" value={detail.onboarding?.display || '—'} />
+              <InfoCard label="Statut onboarding" value={detail.onboarding?.statusLabel || '—'} />
+            </div>
+          </SectionCard>
+        </>
+      )}
 
       {isRep && profile?.agent && (
         <RepProfileView agent={profile.agent as Record<string, any>} />
@@ -130,7 +164,7 @@ export default function AdminUserDetailPage() {
         <CompanyProfileView
           company={profile.company as Record<string, any>}
           onboardingProgress={profile.onboardingProgress}
-          gigsCount={detail.financials?.gigsCount as number | undefined}
+          gigsCount={(profile.company as Record<string, any>).gigsCount as number | undefined}
         />
       )}
 
