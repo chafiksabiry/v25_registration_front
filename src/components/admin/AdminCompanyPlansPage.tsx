@@ -38,6 +38,7 @@ export default function AdminCompanyPlansPage() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [togglingPopularId, setTogglingPopularId] = useState<string | null>(null);
   const [messages, setMessages] = useState<Record<string, { type: 'success' | 'error'; text: string }>>({});
 
   useEffect(() => {
@@ -51,6 +52,33 @@ export default function AdminCompanyPlansPage() {
 
   const updatePlan = (id: string, patch: Partial<CompanyPlanForm>) => {
     setPlans((current) => current.map((plan) => (plan.id === id ? { ...plan, ...patch } : plan)));
+  };
+
+  const togglePopular = async (plan: CompanyPlanForm, value: boolean) => {
+    updatePlan(plan.id, { isPopular: value });
+    setTogglingPopularId(plan.id);
+    setMessages((current) => {
+      const next = { ...current };
+      delete next[plan.id];
+      return next;
+    });
+    try {
+      const response = await adminApi.updateCompanyPlan(plan.id, { isPopular: value });
+      setPlans((current) =>
+        current.map((item) => (item.id === plan.id ? { ...item, ...toForm(response.data) } : item)),
+      );
+    } catch (err: any) {
+      updatePlan(plan.id, { isPopular: !value });
+      setMessages((current) => ({
+        ...current,
+        [plan.id]: {
+          type: 'error',
+          text: err?.response?.data?.message || 'Impossible de mettre à jour « Populaire ».',
+        },
+      }));
+    } finally {
+      setTogglingPopularId(null);
+    }
   };
 
   const savePlan = async (plan: CompanyPlanForm) => {
@@ -103,7 +131,9 @@ export default function AdminCompanyPlansPage() {
           <div className="admin-pricing-panel-head">
             <div>
               <h2 className="admin-section-title">Plans abonnement</h2>
-              <p className="admin-section-desc">{plans.length} plan{plans.length > 1 ? 's' : ''} company</p>
+              <p className="admin-section-desc">
+                {plans.length} plan{plans.length > 1 ? 's' : ''} company · plusieurs plans peuvent être « Populaire »
+              </p>
             </div>
           </div>
 
@@ -130,9 +160,12 @@ export default function AdminCompanyPlansPage() {
                   </div>
                   <AdminToggle
                     checked={plan.isPopular}
-                    onChange={(value) => updatePlan(plan.id, { isPopular: value })}
+                    onChange={(value) => togglePopular(plan, value)}
                     label={`Marquer ${plan.name} comme populaire`}
                   />
+                  {togglingPopularId === plan.id && (
+                    <span className="text-xs text-violet-500 animate-pulse">…</span>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
