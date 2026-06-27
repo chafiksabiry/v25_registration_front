@@ -1,6 +1,7 @@
 import React from 'react';
 import { Briefcase, Building2, Globe, Heart, Sparkles, Target, User } from 'lucide-react';
 import { InfoCard, SectionCard, StatusBadge } from './adminUiUtils';
+import { displayValue, normalizeListItems } from './walletLedger';
 
 const REP_PHASES = [
   { id: 1, label: 'Inscription & vérification' },
@@ -88,20 +89,66 @@ export function CompanyOnboardingTimeline({
   );
 }
 
-function TagList({ items, emptyLabel }: { items?: string[]; emptyLabel: string }) {
-  if (!items?.length) {
+function TagList({ items, emptyLabel }: { items?: unknown[]; emptyLabel: string }) {
+  const labels = normalizeListItems(items);
+  if (!labels.length) {
     return <p className="text-sm text-slate-500">{emptyLabel}</p>;
   }
   return (
     <div className="flex flex-wrap gap-2">
-      {items.map((item) => (
+      {labels.map((item, index) => (
         <span
-          key={item}
+          key={`${item}-${index}`}
           className="rounded-full bg-[#E91E8C]/10 text-[#E91E8C] px-3 py-1 text-xs font-semibold"
         >
           {item}
         </span>
       ))}
+    </div>
+  );
+}
+
+function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[] }> }) {
+  const entries = groups.flatMap((group) =>
+    (group.items || []).map((item, index) => ({
+      key: `${group.title}-${index}`,
+      group: group.title,
+      item,
+    })),
+  );
+
+  if (!entries.length) {
+    return <p className="text-sm text-slate-500">Aucune compétence renseignée.</p>;
+  }
+
+  return (
+    <div className="space-y-2">
+      {entries.map(({ key, group, item }) => {
+        if (typeof item === 'string') {
+          return (
+            <div key={key} className="flex items-center justify-between rounded-xl border border-slate-100 px-4 py-3">
+              <span className="text-sm font-medium text-slate-900">{item}</span>
+              <span className="text-xs text-slate-400">{group}</span>
+            </div>
+          );
+        }
+
+        const skill = item as { skill?: string; level?: number; details?: string };
+        return (
+          <div key={key} className="rounded-xl border border-slate-100 px-4 py-3">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <p className="text-sm font-semibold text-slate-900">{displayValue(skill.skill)}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{group}</p>
+              </div>
+              {skill.level != null && <StatusBadge label={`Niv. ${skill.level}`} tone="neutral" />}
+            </div>
+            {skill.details && (
+              <p className="text-sm text-slate-600 mt-2">{skill.details}</p>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -167,7 +214,7 @@ export function CompanyProfileView({
 
       <SectionCard title="Abonnement & opportunités">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <InfoCard label="Plan" value={subscription.planName || subscription.plan || '—'} />
+          <InfoCard label="Plan" value={displayValue(subscription.planName || subscription.plan)} />
           <InfoCard label="Statut abonnement" value={subscription.status || '—'} />
         </div>
         <p className="text-sm font-semibold text-slate-800 mb-2">Opportunités</p>
@@ -189,12 +236,16 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
   const skills = agent.skills || {};
   const experience = Array.isArray(agent.experience) ? agent.experience : [];
 
-  const allSkills = [
-    ...(skills.technical || []),
-    ...(skills.professional || []),
-    ...(skills.soft || []),
-    ...(skills.contactCenter || []),
+  const skillGroups = [
+    { title: 'Technique', items: skills.technical || [] },
+    { title: 'Professionnel', items: skills.professional || [] },
+    { title: 'Soft skills', items: skills.soft || [] },
+    { title: 'Contact center', items: skills.contactCenter || [] },
   ];
+
+  const industries = normalizeListItems(summary.industries);
+  const activities = normalizeListItems(summary.activities);
+  const expertise = normalizeListItems(summary.keyExpertise);
 
   return (
     <div className="space-y-6">
@@ -214,18 +265,15 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
 
       <SectionCard title="Résumé professionnel">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoCard label="Industries" value={(summary.industries || []).join(', ') || '—'} />
-          <InfoCard label="Activités" value={(summary.activities || []).join(', ') || '—'} />
-          <InfoCard
-            label="Expertises clés"
-            value={(summary.keyExpertise || []).join(', ') || '—'}
-          />
+          <InfoCard label="Industries" value={industries.join(', ') || '—'} />
+          <InfoCard label="Activités" value={activities.join(', ') || '—'} />
+          <InfoCard label="Expertises clés" value={expertise.join(', ') || '—'} />
           <InfoCard label="Gigs liés" value={String(agent.gigsCount ?? 0)} />
         </div>
       </SectionCard>
 
       <SectionCard title="Compétences">
-        <TagList items={allSkills} emptyLabel="Aucune compétence renseignée." />
+        <SkillList groups={skillGroups} />
       </SectionCard>
 
       <SectionCard title="Expériences">
@@ -237,9 +285,11 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
               <div key={index} className="rounded-xl border border-slate-100 p-4">
                 <p className="font-semibold text-slate-900 flex items-center gap-2">
                   <Briefcase size={16} className="text-[#E91E8C]" />
-                  {item.title || item.role || item.company || 'Expérience'}
+                  {displayValue(item.title || item.role || item.company || 'Expérience')}
                 </p>
-                {item.company && <p className="text-sm text-slate-600 mt-1">{item.company}</p>}
+                {item.company && (
+                  <p className="text-sm text-slate-600 mt-1">{displayValue(item.company)}</p>
+                )}
                 {item.description && (
                   <p className="text-sm text-slate-500 mt-2 leading-relaxed">{item.description}</p>
                 )}
