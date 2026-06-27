@@ -8,6 +8,11 @@ export type AdminSection = {
   end?: boolean;
 };
 
+export type AdminNavGroup = {
+  label: string;
+  items: AdminSection[];
+};
+
 export const ADMIN_SECTIONS: AdminSection[] = [
   {
     to: '/admin',
@@ -41,3 +46,21 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Phone,
   },
 ];
+
+export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
+  {
+    label: 'Plateforme',
+    items: ADMIN_SECTIONS.slice(0, 3),
+  },
+  {
+    label: 'Tarification',
+    items: ADMIN_SECTIONS.slice(3),
+  },
+];
+
+export function findAdminSection(pathname: string) {
+  const exact = ADMIN_SECTIONS.find((section) =>
+    section.end ? pathname === section.to || pathname === `${section.to}/` : pathname.startsWith(section.to),
+  );
+  return exact || ADMIN_SECTIONS[0];
+}

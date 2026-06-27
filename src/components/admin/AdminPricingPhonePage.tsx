@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Phone, Save } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Calendar, Coins, Phone } from 'lucide-react';
 import { adminApi } from '../../lib/api';
+import { AdminField, AdminPageHeader, AdminSaveBar } from './adminPageShell';
 
 export default function AdminPricingPhonePage() {
   const [setupFeeEuros, setSetupFeeEuros] = useState('9.99');
@@ -27,6 +28,15 @@ export default function AdminPricingPhonePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const preview = useMemo(() => {
+    const fee = Number(setupFeeEuros.replace(',', '.'));
+    const days = Number(trialDays);
+    return {
+      feeLabel: Number.isFinite(fee) ? `${fee.toFixed(2)} ${currency}` : '—',
+      trialLabel: Number.isFinite(days) ? `${days} jour${days > 1 ? 's' : ''}` : '—',
+    };
+  }, [setupFeeEuros, currency, trialDays]);
+
   const handleSave = async () => {
     setSaving(true);
     setError(null);
@@ -50,91 +60,115 @@ export default function AdminPricingPhonePage() {
   };
 
   return (
-    <div className="space-y-6 admin-stagger">
-      <div>
-        <h1 className="admin-page-title flex items-center gap-3">
-          <Phone className="text-violet-500" size={28} />
-          Lignes téléphoniques
-        </h1>
-        <p className="admin-page-subtitle">
-          Prix de mise en service et durée d&apos;essai gratuit pour la première ligne company.
-        </p>
-      </div>
+    <div className="space-y-6 admin-stagger pb-4">
+      <AdminPageHeader
+        icon={Phone}
+        title="Lignes téléphoniques"
+        subtitle="Prix de mise en service et durée d'essai gratuit pour la première ligne company."
+        badge="Tarification"
+      />
 
       {loading ? (
         <p className="text-violet-600/70 animate-pulse">Chargement…</p>
       ) : (
         <>
-          <section className="admin-stat-card max-w-xl space-y-5">
-            <div>
-              <label className="admin-info-label" htmlFor="setup-fee">
-                Prix activation ligne (€)
-              </label>
-              <p className="text-sm text-slate-500 mt-1 mb-3">
-                Montant facturé via Stripe / PayPal à partir de la 2e ligne.
-              </p>
-              <input
-                id="setup-fee"
-                type="text"
-                inputMode="decimal"
-                value={setupFeeEuros}
-                onChange={(e) => setSetupFeeEuros(e.target.value)}
-                className="admin-input max-w-xs"
-              />
+          <section className="admin-pricing-panel">
+            <div className="admin-pricing-panel-head">
+              <div>
+                <h2 className="admin-section-title">Paramètres ligne</h2>
+                <p className="admin-section-desc">
+                  Ces valeurs alimentent le checkout Stripe / PayPal côté orchestrator.
+                </p>
+              </div>
             </div>
 
-            <div>
-              <label className="admin-info-label" htmlFor="currency">
-                Devise
-              </label>
-              <input
-                id="currency"
-                type="text"
-                maxLength={3}
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-                className="admin-input max-w-xs mt-3"
-              />
+            <div className="admin-settings-grid">
+              <div className="admin-setting-card">
+                <div className="admin-setting-card-icon">
+                  <Coins size={18} />
+                </div>
+                <AdminField
+                  id="setup-fee"
+                  label="Prix activation"
+                  hint="Facturé à partir de la 2e ligne."
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="setup-fee"
+                      type="text"
+                      inputMode="decimal"
+                      value={setupFeeEuros}
+                      onChange={(e) => setSetupFeeEuros(e.target.value)}
+                      className="admin-input admin-input--plain admin-input--compact"
+                    />
+                    <span className="text-sm font-bold text-slate-500">€</span>
+                  </div>
+                </AdminField>
+              </div>
+
+              <div className="admin-setting-card">
+                <div className="admin-setting-card-icon">
+                  <Phone size={18} />
+                </div>
+                <AdminField id="currency" label="Devise" hint="Code ISO à 3 lettres.">
+                  <input
+                    id="currency"
+                    type="text"
+                    maxLength={3}
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value.toUpperCase())}
+                    className="admin-input admin-input--plain admin-input--compact uppercase"
+                  />
+                </AdminField>
+              </div>
+
+              <div className="admin-setting-card">
+                <div className="admin-setting-card-icon">
+                  <Calendar size={18} />
+                </div>
+                <AdminField
+                  id="trial-days"
+                  label="Essai gratuit"
+                  hint="Durée offerte sur la 1re ligne."
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      id="trial-days"
+                      type="number"
+                      min={0}
+                      max={365}
+                      value={trialDays}
+                      onChange={(e) => setTrialDays(e.target.value)}
+                      className="admin-input admin-input--plain admin-input--compact"
+                    />
+                    <span className="text-sm font-bold text-slate-500">jours</span>
+                  </div>
+                </AdminField>
+              </div>
             </div>
 
-            <div>
-              <label className="admin-info-label" htmlFor="trial-days">
-                Essai gratuit (jours)
-              </label>
-              <p className="text-sm text-slate-500 mt-1 mb-3">
-                Durée offerte pour la première ligne téléphonique d&apos;une company.
-              </p>
-              <input
-                id="trial-days"
-                type="number"
-                min={0}
-                max={365}
-                value={trialDays}
-                onChange={(e) => setTrialDays(e.target.value)}
-                className="admin-input max-w-xs"
-              />
+            <div className="admin-preview-card">
+              <p className="admin-field-label mb-3">Aperçu company</p>
+              <div className="admin-preview-row">
+                <div>
+                  <p className="admin-preview-item-label">2e ligne et suivantes</p>
+                  <p className="admin-preview-item-value">{preview.feeLabel}</p>
+                </div>
+                <div>
+                  <p className="admin-preview-item-label">1re ligne</p>
+                  <p className="admin-preview-item-value">Gratuit · {preview.trialLabel}</p>
+                </div>
+              </div>
             </div>
           </section>
 
-          <div className="flex flex-wrap items-center gap-4">
-            <button
-              type="button"
-              disabled={saving}
-              onClick={handleSave}
-              className="admin-btn-primary inline-flex items-center gap-2 disabled:opacity-60"
-            >
-              <Save size={16} />
-              {saving ? 'Enregistrement…' : 'Enregistrer'}
-            </button>
-            {updatedAt && (
-              <p className="text-sm text-slate-500">
-                Dernière mise à jour : {new Date(updatedAt).toLocaleString('fr-FR')}
-              </p>
-            )}
-          </div>
-
-          {error && <p className="text-red-500">{error}</p>}
-          {success && <p className="text-emerald-600">{success}</p>}
+          <AdminSaveBar
+            saving={saving}
+            onSave={handleSave}
+            updatedAt={updatedAt}
+            error={error}
+            success={success}
+          />
         </>
       )}
     </div>
