@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Lock, Mail, Shield } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { adminApi } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { syncSessionUserIdCookie } from '../../lib/authRedirect';
+import { hardNavigate } from '../../lib/appNavigation';
 
 export default function AdminSignInPage() {
-  const navigate = useNavigate();
   const { setToken } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,7 +30,7 @@ export default function AdminSignInPage() {
       syncSessionUserIdCookie(token);
       Cookies.set('userId', user.userId, { path: '/', sameSite: 'Lax' });
       setToken(token);
-      navigate('/admin', { replace: true });
+      hardNavigate('/company');
     } catch (err: unknown) {
       const message =
         err &&

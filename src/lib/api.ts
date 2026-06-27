@@ -104,7 +104,7 @@ export const adminApi = {
     const response = await api.get('/admin/stats');
     return response.data;
   },
-  users: async (params?: { page?: number; search?: string; limit?: number }) => {
+  users: async (params?: { page?: number; search?: string; limit?: number; typeUser?: string }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
   },

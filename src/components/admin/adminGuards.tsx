@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useAuth } from '../../contexts/AuthContext';
 import { isSessionActive } from '../../lib/authRedirect';
+import { hardNavigate } from '../../lib/appNavigation';
 
 type TokenPayload = {
   userId?: string;
@@ -50,7 +51,10 @@ export function AdminGuestOnly({ children }: { children: React.ReactNode }) {
   const { loading, token } = useAuth();
 
   if (loading) return <AdminSpinner />;
-  if (isAdminSession(token)) return <Navigate to="/admin" replace />;
+  if (isAdminSession(token)) {
+    hardNavigate('/company');
+    return <AdminSpinner />;
+  }
 
   return <>{children}</>;
 }
