@@ -20,7 +20,46 @@ type UserRow = {
   isVerified?: boolean;
   createdAt?: string;
   onboarding?: OnboardingInfo | null;
+  displayName?: string;
+  displayEmail?: string;
+  displayPhone?: string;
+  industry?: string | null;
+  planName?: string | null;
+  subscriptionStatus?: string | null;
+  profileCreatedAt?: string;
+  companyProfile?: {
+    companyId?: string;
+    name?: string;
+    industry?: string;
+    email?: string;
+    phone?: string;
+    planName?: string;
+  } | null;
 };
+
+function subscriptionStatusLabel(status?: string | null) {
+  if (!status) return null;
+  const labels: Record<string, string> = {
+    active: 'Actif',
+    trialing: 'Essai',
+    past_due: 'Retard',
+    canceled: 'Annulé',
+  };
+  return labels[status] || status;
+}
+
+function rowName(user: UserRow) {
+  return user.displayName || user.fullName;
+}
+
+function rowPhone(user: UserRow) {
+  return user.displayPhone || user.phone || '—';
+}
+
+function rowCreatedAt(user: UserRow) {
+  const value = user.typeUser === 'company' ? user.profileCreatedAt || user.createdAt : user.createdAt;
+  return value ? new Date(value).toLocaleString('fr-FR') : '—';
+}
 
 type TypeFilter = 'all' | 'rep' | 'company';
 
@@ -81,7 +120,7 @@ export default function AdminUsersPage() {
               setPage(1);
               setSearch(e.target.value);
             }}
-            placeholder="Rechercher par nom, email, téléphone…"
+            placeholder="Rechercher nom company, email, industrie, téléphone…"
             className="admin-input"
           />
         </div>
@@ -116,10 +155,11 @@ export default function AdminUsersPage() {
             <table className="admin-table min-w-full text-sm">
               <thead className="text-left text-slate-500">
                 <tr>
-                  <th className="px-6 py-3 font-semibold">Nom</th>
+                  <th className="px-6 py-3 font-semibold">Nom / Entreprise</th>
                   <th className="px-6 py-3 font-semibold">Email</th>
                   <th className="px-6 py-3 font-semibold">Téléphone</th>
                   <th className="px-6 py-3 font-semibold">Type</th>
+                  <th className="px-6 py-3 font-semibold">Plan</th>
                   <th className="px-6 py-3 font-semibold">Onboarding</th>
                   <th className="px-6 py-3 font-semibold">Vérifié</th>
                   <th className="px-6 py-3 font-semibold">Créé le</th>
@@ -132,10 +172,41 @@ export default function AdminUsersPage() {
                     onClick={() => navigate(`/admin/users/${user._id}`)}
                     className="border-t border-violet-50/80 cursor-pointer transition-colors"
                   >
-                    <td className="px-6 py-3 font-medium text-slate-900">{user.fullName}</td>
-                    <td className="px-6 py-3 text-slate-600">{user.email}</td>
-                    <td className="px-6 py-3 text-slate-600">{user.phone || '—'}</td>
+                    <td className="px-6 py-3 font-medium text-slate-900">
+                      <div>{rowName(user)}</div>
+                      {user.typeUser === 'company' && user.industry && (
+                        <p className="text-xs text-violet-600 mt-0.5">{user.industry}</p>
+                      )}
+                      {user.typeUser === 'company' &&
+                        user.displayName &&
+                        user.displayName !== user.fullName && (
+                          <p className="text-xs text-slate-400 mt-0.5">Compte: {user.fullName}</p>
+                        )}
+                    </td>
+                    <td className="px-6 py-3 text-slate-600">
+                      <div>{user.displayEmail || user.email}</div>
+                      {user.typeUser === 'company' &&
+                        user.displayEmail &&
+                        user.displayEmail !== user.email && (
+                          <p className="text-xs text-slate-400 mt-0.5">Connexion: {user.email}</p>
+                        )}
+                    </td>
+                    <td className="px-6 py-3 text-slate-600">{rowPhone(user)}</td>
                     <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
+                    <td className="px-6 py-3">
+                      {user.planName ? (
+                        <div className="space-y-1">
+                          <span className="admin-tag-chip">{user.planName}</span>
+                          {user.subscriptionStatus && (
+                            <p className="text-xs text-slate-500">
+                              {subscriptionStatusLabel(user.subscriptionStatus)}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-slate-400">—</span>
+                      )}
+                    </td>
                     <td className="px-6 py-3">
                       {user.onboarding ? (
                         <div className="space-y-1">
@@ -149,9 +220,7 @@ export default function AdminUsersPage() {
                       )}
                     </td>
                     <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
-                    <td className="px-6 py-3 text-slate-500">
-                      {user.createdAt ? new Date(user.createdAt).toLocaleString('fr-FR') : '—'}
-                    </td>
+                    <td className="px-6 py-3 text-slate-500">{rowCreatedAt(user)}</td>
                   </tr>
                 ))}
               </tbody>
