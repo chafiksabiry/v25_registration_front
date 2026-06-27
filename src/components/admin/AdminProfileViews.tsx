@@ -566,6 +566,10 @@ export function CompanyProfileView({
   gigsCount?: number;
 }) {
   const culture = company.culture || {};
+  const contact = company.contact || {};
+  const technology = company.technology || {};
+  const opportunities = company.opportunities || {};
+  const social = company.socialMedia || {};
   const planDetails = company.planDetails as
     | { price?: number; currency?: string; description?: string; maxGigs?: number; maxReps?: number }
     | undefined;
@@ -585,12 +589,50 @@ export function CompanyProfileView({
 
   return (
     <div className="space-y-6 admin-stagger">
-      <SectionCard title="Identité entreprise" description="Informations principales du profil company.">
+      <SectionCard title="Identité entreprise" description="Données collection companies.">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+          {company.logo && (
+            <div className="md:col-span-2 xl:col-span-3">
+              <img
+                src={company.logo}
+                alt={company.name || 'Logo'}
+                className="h-16 max-w-xs object-contain rounded-xl border border-violet-100 bg-white p-2"
+              />
+            </div>
+          )}
           <InfoCard label="Nom" value={company.name || company.companyName || '—'} />
           <InfoCard label="Industrie" value={company.industry || '—'} />
-          <InfoCard label="Gigs actifs" value={String(gigsCount ?? 0)} />
+          <InfoCard label="Siège" value={company.headquarters || '—'} />
+          <InfoCard label="Fondée" value={company.founded || '—'} />
+          <InfoCard label="Tier abonnement" value={company.subscriptionTier || company.subscription || '—'} />
+          <InfoCard label="Gigs actifs" value={String(gigsCount ?? company.gigsCount ?? 0)} />
           <InfoCard label="Company ID" value={String(company._id || '—')} />
+          <InfoCard label="User ID lié" value={String(company.userId || '—')} />
+        </div>
+      </SectionCard>
+
+      <SectionCard title="Contact entreprise">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <InfoCard label="Email contact" value={contact.email || company.displayEmail || '—'} />
+          <InfoCard label="Téléphone contact" value={contact.phone || company.displayPhone || '—'} />
+          <InfoCard label="Adresse" value={contact.address || '—'} />
+          <InfoCard
+            label="Site web"
+            value={
+              contact.website ? (
+                <a
+                  href={contact.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-violet-600 hover:text-fuchsia-600 break-all"
+                >
+                  {contact.website}
+                </a>
+              ) : (
+                '—'
+              )
+            }
+          />
         </div>
       </SectionCard>
 
@@ -630,7 +672,55 @@ export function CompanyProfileView({
         </div>
       </SectionCard>
 
-      <SectionCard title="Abonnement & opportunités" description="Plan Stripe et statut de l’abonnement company.">
+      {(technology.stack?.length || technology.innovation) && (
+        <SectionCard title="Technologie">
+          {technology.stack?.length ? (
+            <div className="mb-4">
+              <p className="text-sm font-semibold text-slate-800 mb-2">Stack</p>
+              <TagList items={technology.stack} emptyLabel="—" />
+            </div>
+          ) : null}
+          {technology.innovation && (
+            <p className="text-sm text-slate-700 leading-relaxed">{technology.innovation}</p>
+          )}
+        </SectionCard>
+      )}
+
+      {(opportunities.roles?.length || opportunities.growthPotential || opportunities.training) && (
+        <SectionCard title="Opportunités & carrières">
+          {opportunities.roles?.length ? (
+            <div className="mb-4">
+              <p className="text-sm font-semibold text-slate-800 mb-2">Rôles</p>
+              <TagList items={opportunities.roles} emptyLabel="—" />
+            </div>
+          ) : null}
+          {opportunities.growthPotential && (
+            <div className="mb-3">
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Potentiel de croissance</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{opportunities.growthPotential}</p>
+            </div>
+          )}
+          {opportunities.training && (
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Formation</p>
+              <p className="text-sm text-slate-700 leading-relaxed">{opportunities.training}</p>
+            </div>
+          )}
+        </SectionCard>
+      )}
+
+      {(social.linkedin || social.twitter || social.facebook || social.instagram) && (
+        <SectionCard title="Réseaux sociaux">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {social.linkedin && <InfoCard label="LinkedIn" value={social.linkedin} />}
+            {social.twitter && <InfoCard label="Twitter / X" value={social.twitter} />}
+            {social.facebook && <InfoCard label="Facebook" value={social.facebook} />}
+            {social.instagram && <InfoCard label="Instagram" value={social.instagram} />}
+          </div>
+        </SectionCard>
+      )}
+
+      <SectionCard title="Abonnement & plan" description="Plan Stripe et statut de l’abonnement company.">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
           <InfoCard label="Plan" value={displayValue(planName) || '—'} />
           <InfoCard
@@ -645,8 +735,12 @@ export function CompanyProfileView({
           />
           {planDetails?.price != null && (
             <InfoCard
-              label="Tarif"
-              value={`${planDetails.price} ${(planDetails.currency || 'eur').toUpperCase()}/mois`}
+              label="Tarif catalogue"
+              value={
+                subscriptionStatus === 'trialing'
+                  ? `${planDetails.price} ${(planDetails.currency || 'eur').toUpperCase()}/mois (après essai)`
+                  : `${planDetails.price} ${(planDetails.currency || 'eur').toUpperCase()}/mois`
+              }
             />
           )}
           {planDetails?.maxGigs != null && (
@@ -665,10 +759,6 @@ export function CompanyProfileView({
         {planDetails?.description && (
           <p className="text-sm text-slate-600 mb-4 leading-relaxed pl-3">{planDetails.description}</p>
         )}
-        <p className="text-sm font-semibold text-slate-800 mb-2 pl-3">Opportunités</p>
-        <div className="pl-3">
-          <TagList items={company.opportunities} emptyLabel="Aucune opportunité renseignée." />
-        </div>
       </SectionCard>
 
       {onboardingProgress && (
@@ -841,7 +931,11 @@ export function ProfileHero({
           <img
             src={photoUrl}
             alt={fullName}
-            className="h-16 w-16 rounded-2xl object-cover border-2 border-white/40 shrink-0 shadow-lg ring-2 ring-white/20"
+            className={
+              typeUser === 'company'
+                ? 'h-14 max-w-[140px] rounded-xl object-contain bg-white/95 p-2 border border-white/40 shrink-0 shadow-lg'
+                : 'h-16 w-16 rounded-2xl object-cover border-2 border-white/40 shrink-0 shadow-lg ring-2 ring-white/20'
+            }
           />
         ) : (
           <div className="h-16 w-16 rounded-2xl bg-white/20 flex items-center justify-center shrink-0 backdrop-blur-sm border border-white/30">
