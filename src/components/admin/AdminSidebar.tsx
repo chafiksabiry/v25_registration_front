@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { LogOut, Shield, X } from 'lucide-react';
+import { LogOut, X } from 'lucide-react';
 import logoHarx from '../../assets/logo-harx.png';
 import { HARX_SIDEBAR_BG, HARX_BAR_SHADOW } from '../../lib/harxBrand';
 import { ADMIN_SECTIONS } from './adminSections';
@@ -27,15 +27,8 @@ export default function AdminSidebar({
       ].join(' ')}
     >
       <div className="p-5 border-b border-white/15 flex items-center justify-between gap-3">
-        <Link to="/admin" className="flex items-center gap-3 min-w-0" onClick={() => setIsSidebarOpen(false)}>
-          <img src={logoHarx} alt="HARX" className="h-9 w-auto shrink-0" />
-          <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              <Shield size={16} className="text-white/90 shrink-0" />
-              <span className="font-black tracking-wide truncate">HARX Admin</span>
-            </div>
-            <p className="text-[11px] text-white/60 mt-0.5">Back office</p>
-          </div>
+        <Link to="/admin" className="flex items-center min-w-0" onClick={() => setIsSidebarOpen(false)}>
+          <img src={logoHarx} alt="HARX" className="h-10 w-auto shrink-0" />
         </Link>
         <button
           type="button"
