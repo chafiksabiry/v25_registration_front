@@ -542,6 +542,20 @@ function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[]
   );
 }
 
+function subscriptionStatusLabel(status?: string | null) {
+  if (!status) return '—';
+  const labels: Record<string, string> = {
+    active: 'Actif',
+    trialing: 'Période d’essai',
+    past_due: 'Paiement en retard',
+    unpaid: 'Impayé',
+    canceled: 'Annulé',
+    incomplete: 'Incomplet',
+    incomplete_expired: 'Expiré',
+  };
+  return labels[status] || status;
+}
+
 export function CompanyProfileView({
   company,
   onboardingProgress,
@@ -552,7 +566,22 @@ export function CompanyProfileView({
   gigsCount?: number;
 }) {
   const culture = company.culture || {};
-  const subscription = company.subscription || {};
+  const planDetails = company.planDetails as
+    | { price?: number; currency?: string; description?: string; maxGigs?: number; maxReps?: number }
+    | undefined;
+  const planName =
+    company.planName ||
+    (typeof company.subscription === 'string' ? company.subscription : null);
+  const subscriptionStatus = company.subscriptionStatus || '—';
+
+  const statusTone =
+    subscriptionStatus === 'active' || subscriptionStatus === 'trialing'
+      ? 'success'
+      : subscriptionStatus === 'past_due' || subscriptionStatus === 'unpaid'
+        ? 'danger'
+        : subscriptionStatus === 'canceled'
+          ? 'neutral'
+          : 'warning';
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -601,13 +630,45 @@ export function CompanyProfileView({
         </div>
       </SectionCard>
 
-      <SectionCard title="Abonnement & opportunités">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <InfoCard label="Plan" value={displayValue(subscription.planName || subscription.plan)} />
-          <InfoCard label="Statut abonnement" value={subscription.status || '—'} />
+      <SectionCard title="Abonnement & opportunités" description="Plan Stripe et statut de l’abonnement company.">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
+          <InfoCard label="Plan" value={displayValue(planName) || '—'} />
+          <InfoCard
+            label="Statut abonnement"
+            value={
+              subscriptionStatus !== '—' ? (
+                <StatusBadge label={subscriptionStatusLabel(subscriptionStatus)} tone={statusTone} />
+              ) : (
+                '—'
+              )
+            }
+          />
+          {planDetails?.price != null && (
+            <InfoCard
+              label="Tarif"
+              value={`${planDetails.price} ${(planDetails.currency || 'eur').toUpperCase()}/mois`}
+            />
+          )}
+          {planDetails?.maxGigs != null && (
+            <InfoCard label="Gigs max (plan)" value={String(planDetails.maxGigs)} />
+          )}
+          {planDetails?.maxReps != null && (
+            <InfoCard label="REPs max (plan)" value={String(planDetails.maxReps)} />
+          )}
+          {company.subscriptionPeriodEnd && (
+            <InfoCard
+              label="Fin de période"
+              value={formatDate(company.subscriptionPeriodEnd as string)}
+            />
+          )}
         </div>
-        <p className="text-sm font-semibold text-slate-800 mb-2">Opportunités</p>
-        <TagList items={company.opportunities} emptyLabel="Aucune opportunité renseignée." />
+        {planDetails?.description && (
+          <p className="text-sm text-slate-600 mb-4 leading-relaxed pl-3">{planDetails.description}</p>
+        )}
+        <p className="text-sm font-semibold text-slate-800 mb-2 pl-3">Opportunités</p>
+        <div className="pl-3">
+          <TagList items={company.opportunities} emptyLabel="Aucune opportunité renseignée." />
+        </div>
       </SectionCard>
 
       {onboardingProgress && (
