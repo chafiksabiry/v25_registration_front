@@ -150,7 +150,7 @@ export async function getPostLoginRedirectUrl(
     if (checkUserType.userType == null) return null;
 
     if (checkUserType.userType === "admin") {
-      return "/company";
+      return "/admin";
     }
 
     if (checkUserType.userType === "company") {
