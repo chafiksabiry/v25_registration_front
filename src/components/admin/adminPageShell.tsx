@@ -43,6 +43,29 @@ export function AdminField({ id, label, hint, children }: AdminFieldProps) {
   );
 }
 
+export function AdminToggle({
+  checked,
+  onChange,
+  label,
+}: {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-label={label}
+      onClick={() => onChange(!checked)}
+      className={`admin-toggle ${checked ? 'admin-toggle--on' : ''}`}
+    >
+      <span className="admin-toggle-knob" />
+    </button>
+  );
+}
+
 type AdminSaveBarProps = {
   saving: boolean;
   onSave: () => void;

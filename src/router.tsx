@@ -25,6 +25,8 @@ import AdminUserDetailPage from './components/admin/AdminUserDetailPage';
 import AdminWalletPage from './components/admin/AdminWalletPage';
 import AdminPricingMinutesPage from './components/admin/AdminPricingMinutesPage';
 import AdminPricingPhonePage from './components/admin/AdminPricingPhonePage';
+import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
+import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 
@@ -102,6 +104,8 @@ export const appRouter = createBrowserRouter(
             { path: 'wallet', element: <AdminWalletPage /> },
             { path: 'pricing/minutes', element: <AdminPricingMinutesPage /> },
             { path: 'pricing/phone-line', element: <AdminPricingPhonePage /> },
+            { path: 'plans/company', element: <AdminCompanyPlansPage /> },
+            { path: 'plans/rep', element: <AdminRepPlansPage /> },
           ],
         },
         {

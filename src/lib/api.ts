@@ -157,6 +157,47 @@ export const adminApi = {
     const response = await api.patch('/admin/pricing/phone-line', payload);
     return response.data;
   },
+  companyPlans: async () => {
+    const response = await api.get('/admin/plans/company');
+    return response.data;
+  },
+  updateCompanyPlan: async (
+    planId: string,
+    payload: {
+      name?: string;
+      price?: number;
+      currency?: string;
+      stripePriceId?: string;
+      description?: string;
+      features?: string[];
+      isPopular?: boolean;
+      maxGigs?: number;
+      maxReps?: number;
+    },
+  ) => {
+    const response = await api.patch(`/admin/plans/company/${planId}`, payload);
+    return response.data;
+  },
+  repPlans: async () => {
+    const response = await api.get('/admin/plans/rep');
+    return response.data;
+  },
+  updateRepPlan: async (
+    planId: string,
+    payload: {
+      name?: string;
+      price?: number;
+      currency?: string;
+      stripePriceId?: string;
+      description?: string;
+      features?: string[];
+      isActive?: boolean;
+      sortOrder?: number;
+    },
+  ) => {
+    const response = await api.patch(`/admin/plans/rep/${planId}`, payload);
+    return response.data;
+  },
 };
 
 export const files = {
