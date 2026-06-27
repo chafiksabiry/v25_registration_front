@@ -1,5 +1,5 @@
 import React from 'react';
-import { Briefcase, Building2, Globe, Heart, Sparkles, Target, User } from 'lucide-react';
+import { Briefcase, Building2, Globe, Heart, Sparkles, Target, User, Zap } from 'lucide-react';
 import { InfoCard, SectionCard, StatusBadge, formatDate } from './adminUiUtils';
 import { displayValue, normalizeListItems } from './walletLedger';
 
@@ -393,6 +393,88 @@ function TagList({ items, emptyLabel }: { items?: unknown[]; emptyLabel: string 
   );
 }
 
+type SummaryVariant = 'violet' | 'fuchsia' | 'indigo';
+
+function SummaryTagBlock({
+  label,
+  items,
+  variant,
+  icon,
+  wideTags = false,
+}: {
+  label: string;
+  items: string[];
+  variant: SummaryVariant;
+  icon: React.ReactNode;
+  wideTags?: boolean;
+}) {
+  return (
+    <div className={`admin-summary-block admin-summary-block--${variant}`}>
+      <div className="admin-summary-header">
+        {icon}
+        <span>{label}</span>
+        {items.length > 0 && <span className="admin-summary-count">{items.length}</span>}
+      </div>
+      {items.length === 0 ? (
+        <p className="text-sm text-slate-400">Aucune donnée renseignée.</p>
+      ) : (
+        <div className="admin-summary-tags">
+          {items.map((item, index) => (
+            <span
+              key={`${label}-${index}`}
+              className={wideTags ? 'admin-summary-tag admin-summary-tag--wide' : 'admin-summary-tag'}
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProfessionalSummaryPanel({
+  industries,
+  activities,
+  expertise,
+  gigsCount,
+}: {
+  industries: string[];
+  activities: string[];
+  expertise: string[];
+  gigsCount: number;
+}) {
+  return (
+    <div className="admin-summary-grid">
+      <SummaryTagBlock
+        label="Industries"
+        items={industries}
+        variant="violet"
+        icon={<Building2 size={14} />}
+      />
+      <SummaryTagBlock
+        label="Activités"
+        items={activities}
+        variant="fuchsia"
+        icon={<Briefcase size={14} />}
+      />
+      <SummaryTagBlock
+        label="Expertises clés"
+        items={expertise}
+        variant="indigo"
+        icon={<Sparkles size={14} />}
+        wideTags
+      />
+      <div className="admin-summary-stat">
+        <span className="admin-summary-stat-value">{gigsCount}</span>
+        <span className="admin-summary-stat-label flex items-center gap-1">
+          <Zap size={12} /> Gigs liés
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function SkillList({ groups }: { groups: Array<{ title: string; items: unknown[] }> }) {
   const entries = groups.flatMap((group) =>
     (group.items || []).map((item, index) => ({
@@ -593,13 +675,13 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
         </div>
       </SectionCard>
 
-      <SectionCard title="Résumé professionnel">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InfoCard label="Industries" value={industries.join(', ') || '—'} />
-          <InfoCard label="Activités" value={activities.join(', ') || '—'} />
-          <InfoCard label="Expertises clés" value={expertise.join(', ') || '—'} />
-          <InfoCard label="Gigs liés" value={String(agent.gigsCount ?? 0)} />
-        </div>
+      <SectionCard title="Résumé professionnel" description="Industries, activités et expertises du profil REP.">
+        <ProfessionalSummaryPanel
+          industries={industries}
+          activities={activities}
+          expertise={expertise}
+          gigsCount={agent.gigsCount ?? 0}
+        />
       </SectionCard>
 
       <SectionCard title="Compétences">
