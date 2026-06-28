@@ -72,8 +72,8 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       {/* Cards */}
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-10 flex items-start md:items-center justify-center">
         <div className="grid lg:grid-cols-2 gap-6 max-w-5xl w-full mx-auto">
-          {/* Company Card */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 hover:shadow-2xl hover:shadow-harx-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-harx-100/70 overflow-hidden">
+          {/* Company Card — disabled */}
+          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 border border-harx-100/70 overflow-hidden opacity-60 grayscale pointer-events-none select-none">
             <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-400 via-harx-500 to-harx-600" />
             {/* Banner: brand gradient always visible instantly, photo fades in on top */}
             <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-600 via-harx-500 to-harx-alt-500">
@@ -93,6 +93,9 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
                 </div>
                 <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">Post a Gig</h2>
                 <p className="text-white/90 text-sm font-medium">For companies seeking customer service talent</p>
+                <span className="inline-block mt-2 px-3 py-0.5 rounded-full bg-white/25 text-white text-xs font-bold uppercase tracking-wide">
+                  Coming soon
+                </span>
               </div>
             </div>
 
@@ -109,11 +112,12 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
               </div>
               <button
                 type="button"
-                onClick={() => onSelectRole('company')}
-                className="mt-6 w-full bg-gradient-to-r from-harx-500 to-harx-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-harx-500/40 active:scale-[0.98]"
+                disabled
+                aria-disabled="true"
+                className="mt-6 w-full bg-gradient-to-r from-slate-400 to-slate-500 text-white/80 py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 cursor-not-allowed"
               >
                 Post a Gig
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5" />
               </button>
             </div>
           </div>
