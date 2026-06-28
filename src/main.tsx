@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import App from './App';
 import './index.css';
 import { initVisitorTrackingScripts } from './lib/initVisitorTracking';
+import { syncPageHead } from './lib/tracking/visitorTracking';
 
 initVisitorTrackingScripts();
 
@@ -20,6 +21,7 @@ function render(props: { container?: HTMLElement }) {
     : document.getElementById('root');
 
   if (rootElement) {
+    syncPageHead();
     console.log('[Auth] Rendering in container:', rootElement);
     // Create the root instance if it doesn't exist
     if (!root) {
