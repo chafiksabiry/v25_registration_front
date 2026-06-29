@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './Header';
 import { Hero } from './Hero';
 import { HowItWorks } from './HowItWorks';
@@ -6,6 +6,8 @@ import { Pricing } from './Pricing';
 import { ForClients } from './ForClients';
 import { ForReps } from './ForReps';
 import { Footer } from './Footer';
+import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
+import { usePageTitle } from '../../lib/tracking/usePageTitle';
 
 interface LandingPageProps {
   onSignIn: () => void;
@@ -35,6 +37,7 @@ export function LandingPage({
   onSectionApplied,
   onNavigateToSection,
 }: LandingPageProps) {
+  const [activeSection, setActiveSection] = useState('top');
   const appliedRef = useRef<string | null>(null);
   // Keep the latest callback in a ref so it doesn't have to be a
   // dependency of the scroll effect (which would re-run on every
@@ -43,6 +46,36 @@ export function LandingPage({
   useEffect(() => {
     onSectionAppliedRef.current = onSectionApplied;
   }, [onSectionApplied]);
+
+  usePageTitle(landingPageTabTitle(activeSection));
+
+  useEffect(() => {
+    if (initialSection) {
+      setActiveSection(initialSection);
+    }
+  }, [initialSection]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        const sectionId = visible[0]?.target.id;
+        if (sectionId) {
+          setActiveSection(sectionId);
+        }
+      },
+      { rootMargin: '-25% 0px -55% 0px', threshold: [0, 0.2, 0.5, 0.8] },
+    );
+
+    LANDING_SECTION_IDS.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) observer.observe(element);
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!initialSection || appliedRef.current === initialSection) return;

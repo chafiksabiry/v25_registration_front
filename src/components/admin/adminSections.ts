@@ -76,3 +76,15 @@ export function findAdminSection(pathname: string) {
   );
   return exact || ADMIN_SECTIONS[0];
 }
+
+export function resolveAdminTabTitle(pathname: string) {
+  const path = pathname.replace(/\/+$/, '') || '/';
+  if (/^\/admin\/users\/[^/]+$/.test(path)) {
+    return 'Fiche utilisateur';
+  }
+  return findAdminSection(path).label;
+}
+
+export function buildAdminPageTitle(sectionLabel: string): string {
+  return `HARX — Admin · ${sectionLabel}`;
+}
