@@ -6,7 +6,7 @@ import AdminUserFilters, {
   type TypeFilter,
   type VerifiedFilter,
 } from './AdminUserFilters';
-import { type AdminUserRow, rowCreatedAt, rowEmail, rowName } from './adminUserRowUtils';
+import { type AdminUserRow, rowEmail, rowName } from './adminUserRowUtils';
 
 type Stats = {
   totals: {
@@ -138,7 +138,6 @@ export default function AdminDashboardPage() {
                     <th className="px-6 py-3 font-semibold">Email</th>
                     <th className="px-6 py-3 font-semibold">Type</th>
                     <th className="px-6 py-3 font-semibold">Vérifié</th>
-                    <th className="px-6 py-3 font-semibold">Date</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -169,7 +168,6 @@ export default function AdminDashboardPage() {
                       </td>
                       <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
                       <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
-                      <td className="px-6 py-3 text-slate-500">{rowCreatedAt(user)}</td>
                     </tr>
                   ))}
                 </tbody>
