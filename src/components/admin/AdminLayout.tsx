@@ -1,17 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 import { useAuth } from '../../contexts/AuthContext';
 import { HARX_NAVBAR_BG } from '../../lib/harxBrand';
+import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import AdminSidebar from './AdminSidebar';
 import AdminTopBar from './AdminTopBar';
+import { buildAdminPageTitle, resolveAdminTabTitle } from './adminSections';
 import './adminTheme.css';
 
 export default function AdminLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setToken } = useAuth();
   const [adminName, setAdminName] = useState('Admin');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  usePageTitle(
+    buildAdminPageTitle(resolveAdminTabTitle(location.pathname)),
+    'Back office administrateur HARX.',
+  );
 
   useEffect(() => {
     setAdminName(localStorage.getItem('userFullName') || 'Admin');

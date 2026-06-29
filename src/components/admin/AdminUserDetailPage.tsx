@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, RefreshCw, Wallet } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
+import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { CompanyProfileView, ProfileHero, RepProfileView } from './AdminProfileViews';
 import { InfoCard, SectionCard, formatDate } from './adminUiUtils';
 
@@ -50,6 +51,21 @@ export default function AdminUserDetailPage() {
     loadDetail();
   }, [loadDetail]);
 
+  const heroName = detail
+    ? detail.profile?.type === 'company'
+      ? String(
+          (detail.profile.company as Record<string, unknown> | undefined)?.name ||
+            (detail.profile.company as Record<string, unknown> | undefined)?.companyName ||
+            detail.user.fullName,
+        )
+      : detail.user.fullName
+    : '';
+
+  usePageTitle(
+    !loading && detail ? `HARX — Admin · ${heroName}` : undefined,
+    !loading && detail ? `Profil ${heroName} — back office HARX.` : undefined,
+  );
+
   if (loading) {
     return <p className="text-violet-600/70 animate-pulse">Chargement du profil…</p>;
   }
@@ -75,9 +91,6 @@ export default function AdminUserDetailPage() {
     ? (company?.logo as string | undefined)
     : repAgent?.personalInfo?.photo?.url || repAgent?.photo?.url || undefined;
 
-  const heroName = isCompany
-    ? String(company?.name || company?.companyName || detail.user.fullName)
-    : detail.user.fullName;
   const heroEmail = isCompany
     ? String(companyContact.email || company?.displayEmail || detail.user.email)
     : detail.user.email;
