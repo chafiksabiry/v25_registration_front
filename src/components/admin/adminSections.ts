@@ -1,4 +1,4 @@
-import { Building2, Clock, LayoutDashboard, Phone, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { Building2, Clock, LayoutDashboard, Phone, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
 
 export type AdminSection = {
   to: string;
@@ -34,6 +34,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Wallet,
   },
   {
+    to: '/admin/objectives',
+    label: 'Objectifs HARX',
+    shortLabel: 'Objectifs',
+    icon: Target,
+  },
+  {
     to: '/admin/pricing/minutes',
     label: 'Offres minutes',
     shortLabel: 'Minutes',
@@ -62,11 +68,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: 'Plateforme',
-    items: ADMIN_SECTIONS.slice(0, 3),
+    items: ADMIN_SECTIONS.slice(0, 4),
   },
   {
     label: 'Tarification',
-    items: ADMIN_SECTIONS.slice(3),
+    items: ADMIN_SECTIONS.slice(4),
   },
 ];
 
