@@ -13,18 +13,30 @@ type ComparisonRow = {
   gap: number | null;
   unit: 'count' | 'money';
   status: 'no_target' | 'reached' | 'on_track' | 'behind';
+  description?: string | null;
 };
 
 type ObjectivesForm = {
   year: string;
-  companiesSigned: string;
-  companiesOnboarded: string;
+  companies: string;
   repsOnboarded: string;
   repsWithActiveSubscription: string;
   annualRevenue: string;
   annualProfit: string;
-  mrr: string;
   notes: string;
+};
+
+const FINANCIAL_HELP = {
+  revenue: {
+    title: 'CA annuel (Chiffre d\'affaires)',
+    body:
+      'Total des revenus qui transitent par HARX sur l\'année : commissions plateforme, abonnements entreprises, achats de numéros téléphoniques et part HARX sur les transactions REPs.',
+  },
+  profit: {
+    title: 'Profit annuel HARX',
+    body:
+      'Marge réellement conservée par HARX : commissions + part HARX sur transactions REPs + abonnements entreprises. N\'inclut pas les reversements téléphonie ni les coûts opérationnels externes.',
+  },
 };
 
 function toForm(targets: Record<string, any>): ObjectivesForm {
@@ -33,13 +45,11 @@ function toForm(targets: Record<string, any>): ObjectivesForm {
 
   return {
     year: String(targets.year ?? new Date().getFullYear()),
-    companiesSigned: fmt(targets.companiesSigned),
-    companiesOnboarded: fmt(targets.companiesOnboarded),
+    companies: fmt(targets.companies ?? targets.companiesOnboarded ?? targets.companiesSigned),
     repsOnboarded: fmt(targets.repsOnboarded),
     repsWithActiveSubscription: fmt(targets.repsWithActiveSubscription),
     annualRevenue: fmt(targets.annualRevenue),
     annualProfit: fmt(targets.annualProfit),
-    mrr: fmt(targets.mrr),
     notes: targets.notes || '',
   };
 }
@@ -152,13 +162,11 @@ export default function AdminObjectivesPage() {
     try {
       const response = await adminApi.updateObjectives({
         year: Number(form.year),
-        companiesSigned: parseField(form.companiesSigned),
-        companiesOnboarded: parseField(form.companiesOnboarded),
+        companies: parseField(form.companies),
         repsOnboarded: parseField(form.repsOnboarded),
         repsWithActiveSubscription: parseField(form.repsWithActiveSubscription),
         annualRevenue: parseField(form.annualRevenue),
         annualProfit: parseField(form.annualProfit),
-        mrr: parseField(form.mrr),
         notes: form.notes,
       });
       setForm(toForm(response.data.targets));
@@ -212,25 +220,18 @@ export default function AdminObjectivesPage() {
               </AdminField>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <AdminField id="objectives-companies-signed" label="Entreprises signées">
+                <AdminField
+                  id="objectives-companies"
+                  label="Entreprises"
+                  hint="Signées et onboardées — une seule cible pour les deux."
+                >
                   <input
-                    id="objectives-companies-signed"
+                    id="objectives-companies"
                     type="number"
                     min={0}
-                    value={form.companiesSigned}
-                    onChange={(e) => updateField('companiesSigned', e.target.value)}
-                    placeholder="Ex. 50"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-                <AdminField id="objectives-companies-onboarded" label="Entreprises onboardées">
-                  <input
-                    id="objectives-companies-onboarded"
-                    type="number"
-                    min={0}
-                    value={form.companiesOnboarded}
-                    onChange={(e) => updateField('companiesOnboarded', e.target.value)}
-                    placeholder="Ex. 40"
+                    value={form.companies}
+                    onChange={(e) => updateField('companies', e.target.value)}
+                    placeholder="Ex. 250"
                     className="admin-input !pl-3"
                   />
                 </AdminField>
@@ -241,7 +242,7 @@ export default function AdminObjectivesPage() {
                     min={0}
                     value={form.repsOnboarded}
                     onChange={(e) => updateField('repsOnboarded', e.target.value)}
-                    placeholder="Ex. 200"
+                    placeholder="Ex. 500"
                     className="admin-input !pl-3"
                   />
                 </AdminField>
@@ -256,7 +257,11 @@ export default function AdminObjectivesPage() {
                     className="admin-input !pl-3"
                   />
                 </AdminField>
-                <AdminField id="objectives-revenue" label="CA annuel (€)">
+                <AdminField
+                  id="objectives-revenue"
+                  label="CA annuel (€)"
+                  hint={FINANCIAL_HELP.revenue.body}
+                >
                   <input
                     id="objectives-revenue"
                     type="number"
@@ -264,11 +269,15 @@ export default function AdminObjectivesPage() {
                     step="0.01"
                     value={form.annualRevenue}
                     onChange={(e) => updateField('annualRevenue', e.target.value)}
-                    placeholder="Ex. 500000"
+                    placeholder="Ex. 1500000"
                     className="admin-input !pl-3"
                   />
                 </AdminField>
-                <AdminField id="objectives-profit" label="Profit annuel HARX (€)">
+                <AdminField
+                  id="objectives-profit"
+                  label="Profit annuel HARX (€)"
+                  hint={FINANCIAL_HELP.profit.body}
+                >
                   <input
                     id="objectives-profit"
                     type="number"
@@ -276,22 +285,25 @@ export default function AdminObjectivesPage() {
                     step="0.01"
                     value={form.annualProfit}
                     onChange={(e) => updateField('annualProfit', e.target.value)}
-                    placeholder="Ex. 120000"
+                    placeholder="Ex. 1000000"
                     className="admin-input !pl-3"
                   />
                 </AdminField>
-                <AdminField id="objectives-mrr" label="MRR cible (€)">
-                  <input
-                    id="objectives-mrr"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={form.mrr}
-                    onChange={(e) => updateField('mrr', e.target.value)}
-                    placeholder="Ex. 25000"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
+              </div>
+
+              <div className="rounded-xl border border-violet-200/80 bg-violet-50/60 px-4 py-3 space-y-2 text-sm text-slate-700">
+                <p className="font-semibold text-slate-900">Comprendre les indicateurs financiers</p>
+                <p>
+                  <span className="font-medium">{FINANCIAL_HELP.revenue.title} — </span>
+                  {FINANCIAL_HELP.revenue.body}
+                </p>
+                <p>
+                  <span className="font-medium">{FINANCIAL_HELP.profit.title} — </span>
+                  {FINANCIAL_HELP.profit.body}
+                </p>
+                <p className="text-xs text-slate-500">
+                  En résumé : le CA inclut tout ce qui passe par la plateforme ; le profit HARX est la part que HARX garde (sans la téléphonie reversée).
+                </p>
               </div>
 
               <AdminField id="objectives-notes" label="Notes internes" hint="Optionnel — contexte ou rappels pour l'équipe.">
@@ -317,6 +329,9 @@ export default function AdminObjectivesPage() {
                 {comparison.map((row) => (
                   <div key={row.key} className="admin-info-tile space-y-2">
                     <p className="font-semibold text-slate-900">{row.label}</p>
+                    {row.description && (
+                      <p className="text-xs text-slate-500 leading-relaxed">{row.description}</p>
+                    )}
                     <ComparisonProgress row={row} />
                   </div>
                 ))}
