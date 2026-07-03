@@ -59,12 +59,18 @@ export default function RegistrationDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
+  const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
 
   useEffect(() => {
     if (defaultUserType) {
       localStorage.setItem('pendingUserType', defaultUserType);
     }
   }, [defaultUserType]);
+
+  useEffect(() => {
+    localStorage.removeItem('userId');
+    Cookies.remove('userId');
+  }, []);
 
   /** Push a new history entry via React Router (not raw pushState). */
   const pushStep = (next: RegisterFormStep) => {
@@ -123,14 +129,13 @@ export default function RegistrationDialog({
   };
 
   const handleSendSmsOtp = async () => {
-    const storedUserId = localStorage.getItem('userId');
-    if (!storedUserId || !formData.phone) return;
+    if (!registeredUserId || !formData.phone) return;
 
     setIsLoading(true);
     setErrors({});
     setSmsNotice(null);
     try {
-      await auth.sendOTP(storedUserId, formData.phone);
+      await auth.sendOTP(registeredUserId, formData.phone);
       setSmsOtpAvailable(true);
       setSmsNotice('SMS code sent. Check your phone.');
     } catch {
@@ -200,8 +205,10 @@ export default function RegistrationDialog({
                 phone: formData.phone
               });
 
-              if (RegisterResult && RegisterResult.data) {
-                localStorage.setItem('userId', RegisterResult.data._id);
+              if (RegisterResult?.data?._id) {
+                const newUserId = RegisterResult.data._id as string;
+                setRegisteredUserId(newUserId);
+                localStorage.setItem('userId', newUserId);
               }
             } catch (error) {
               if ((error as any).response?.data?.message === 'Email already registered') {
@@ -258,6 +265,23 @@ export default function RegistrationDialog({
 
           setIsLoading(true);
 
+          if (!registeredUserId) {
+            newErrors.general = 'Registration session expired. Please start again.';
+            pushStep('terms');
+            break;
+          }
+
+          if (smsOtpAvailable) {
+            const otpVerificationResult = await auth.verifyOTP(registeredUserId, formData.phoneOTP);
+            if (otpVerificationResult.error) {
+              const otpMessage = otpVerificationResult.message || '';
+              newErrors.general = otpMessage.toLowerCase().includes('expired')
+                ? 'SMS code expired. Use "Try SMS verification" to request a new code.'
+                : 'Invalid SMS code. Please try again.';
+              break;
+            }
+          }
+
           const emailVerificationResult = await auth.verifyEmail({
             email: formData.email,
             code: formData.emailOTP
@@ -267,21 +291,7 @@ export default function RegistrationDialog({
             break;
           }
 
-          const storedUserId = localStorage.getItem('userId');
-          if (!storedUserId) {
-            newErrors.general = 'User ID not found. Please try again.';
-            break;
-          }
-
-          if (smsOtpAvailable) {
-            const otpVerificationResult = await auth.verifyOTP(storedUserId, formData.phoneOTP);
-            if (otpVerificationResult.error) {
-              newErrors.general = 'Invalid SMS code. Please try again.';
-              break;
-            }
-          }
-
-          await completeRegistration(storedUserId, emailVerificationResult.token, newErrors);
+          await completeRegistration(registeredUserId, emailVerificationResult.token, newErrors);
           break;
         }
         default: break;

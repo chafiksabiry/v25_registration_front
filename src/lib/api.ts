@@ -48,8 +48,15 @@ export const auth = {
     return response.data;
   },
   verifyOTP: async (userId: string, otp: string) => {
-    const response = await api.post('/auth/verify-otp', {userId,otp});
-    return response.data;
+    try {
+      const response = await api.post('/auth/verify-otp', { userId, otp });
+      return response.data;
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { error?: string } } }).response?.data?.error
+        || 'Failed to verify OTP';
+      return { error: true, message };
+    }
   },
   verifyAccount: async (userId: string)=> {
     const response= await api.post('/auth/verify-account', {userId});
