@@ -3,7 +3,6 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
-import Cookies from 'js-cookie';
 import { Header } from './LandingPage/Header';
 import {
   REGISTER_FORM_STEPS,
@@ -12,6 +11,7 @@ import {
   registerStepSearch,
   resolveRegisterPath,
 } from '../lib/registerNavigation';
+import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 
 type Step = RegisterFormStep | 'success';
@@ -68,8 +68,10 @@ export default function RegistrationDialog({
   }, [defaultUserType]);
 
   useEffect(() => {
-    localStorage.removeItem('userId');
-    Cookies.remove('userId');
+    if (!isSessionActive()) {
+      clearSessionUserId();
+      setRegisteredUserId(null);
+    }
   }, []);
 
   /** Push a new history entry via React Router (not raw pushState). */
@@ -105,8 +107,7 @@ export default function RegistrationDialog({
       }
 
       setToken(token);
-      localStorage.setItem('token', token);
-      Cookies.set('userId', storedUserId);
+      syncSessionUserIdCookie(token);
 
       const pendingUserType = localStorage.getItem('pendingUserType');
       if (pendingUserType) {
@@ -206,9 +207,7 @@ export default function RegistrationDialog({
               });
 
               if (RegisterResult?.data?._id) {
-                const newUserId = RegisterResult.data._id as string;
-                setRegisteredUserId(newUserId);
-                localStorage.setItem('userId', newUserId);
+                setRegisteredUserId(RegisterResult.data._id as string);
               }
             } catch (error) {
               if ((error as any).response?.data?.message === 'Email already registered') {

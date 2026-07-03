@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 import { useAuth } from '../../contexts/AuthContext';
 import { HARX_NAVBAR_BG } from '../../lib/harxBrand';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
@@ -26,11 +25,6 @@ export default function AdminLayout() {
   }, []);
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('userFullName');
-    localStorage.removeItem('userEmail');
-    Cookies.remove('userId', { path: '/' });
     setToken(null);
     navigate('/admin/signin', { replace: true });
   };
