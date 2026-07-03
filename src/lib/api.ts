@@ -206,6 +206,24 @@ export const adminApi = {
     const response = await api.patch(`/admin/plans/rep/${planId}`, payload);
     return response.data;
   },
+  objectives: async () => {
+    const response = await api.get('/admin/objectives');
+    return response.data;
+  },
+  updateObjectives: async (payload: {
+    year?: number;
+    companiesSigned?: number | null;
+    companiesOnboarded?: number | null;
+    repsOnboarded?: number | null;
+    repsWithActiveSubscription?: number | null;
+    annualRevenue?: number | null;
+    annualProfit?: number | null;
+    mrr?: number | null;
+    notes?: string;
+  }) => {
+    const response = await api.patch('/admin/objectives', payload);
+    return response.data;
+  },
 };
 
 export const publicPlansApi = {
