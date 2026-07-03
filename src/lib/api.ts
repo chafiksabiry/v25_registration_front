@@ -219,13 +219,11 @@ export const adminApi = {
   },
   updateObjectives: async (payload: {
     year?: number;
-    companiesSigned?: number | null;
-    companiesOnboarded?: number | null;
+    companies?: number | null;
     repsOnboarded?: number | null;
     repsWithActiveSubscription?: number | null;
     annualRevenue?: number | null;
     annualProfit?: number | null;
-    mrr?: number | null;
     notes?: string;
   }) => {
     const response = await api.patch('/admin/objectives', payload);
