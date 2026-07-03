@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Target } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Building2, Euro, Target, TrendingUp, Users } from 'lucide-react';
 import { adminApi } from '../../lib/api';
 import { formatMoney } from './adminUiUtils';
 import { AdminField, AdminPageHeader, AdminSaveBar } from './adminPageShell';
@@ -13,7 +13,6 @@ type ComparisonRow = {
   gap: number | null;
   unit: 'count' | 'money';
   status: 'no_target' | 'reached' | 'on_track' | 'behind';
-  description?: string | null;
 };
 
 type ObjectivesForm = {
@@ -26,18 +25,14 @@ type ObjectivesForm = {
   notes: string;
 };
 
-const FINANCIAL_HELP = {
-  revenue: {
-    title: 'CA annuel (Chiffre d\'affaires)',
-    body:
-      'Total des revenus qui transitent par HARX sur l\'année : commissions plateforme, abonnements entreprises, achats de numéros téléphoniques et part HARX sur les transactions REPs.',
-  },
-  profit: {
-    title: 'Profit annuel HARX',
-    body:
-      'Marge réellement conservée par HARX : commissions + part HARX sur transactions REPs + abonnements entreprises. N\'inclut pas les reversements téléphonie ni les coûts opérationnels externes.',
-  },
-};
+const FINANCIAL_HELP = (
+  <>
+    <strong>CA annuel</strong> — tout ce qui transite par HARX (commissions, abonnements entreprises,
+    numéros téléphoniques, part HARX sur transactions REPs).{' '}
+    <strong>Profit HARX</strong> — la marge conservée par HARX (commissions + part REPs + abonnements),
+    hors reversements téléphonie et coûts externes.
+  </>
+);
 
 function toForm(targets: Record<string, any>): ObjectivesForm {
   const fmt = (value: number | null | undefined) =>
@@ -74,45 +69,91 @@ function statusLabel(status: ComparisonRow['status']) {
     case 'behind':
       return { text: 'En retard', tone: 'danger' as const };
     default:
-      return { text: 'Objectif non défini', tone: 'neutral' as const };
+      return { text: 'Non défini', tone: 'neutral' as const };
   }
+}
+
+function progressFillClass(status: ComparisonRow['status']) {
+  if (status === 'reached') return 'admin-objectives-progress-fill--reached';
+  if (status === 'on_track') return 'admin-objectives-progress-fill--on_track';
+  return 'admin-objectives-progress-fill--behind';
 }
 
 function ComparisonProgress({ row }: { row: ComparisonRow }) {
   if (row.progress == null) {
     return (
       <div className="space-y-1">
-        <p className="text-sm font-semibold text-slate-900">{formatActual(row.actual, row.unit)}</p>
-        <p className="text-xs text-slate-500">Réel actuel — saisissez un objectif pour comparer</p>
+        <p className="text-lg font-black text-slate-900">{formatActual(row.actual, row.unit)}</p>
+        <p className="text-xs text-slate-500">Réel actuel — définissez un objectif</p>
       </div>
     );
   }
-
-  const toneClass =
-    row.status === 'reached'
-      ? 'bg-emerald-500'
-      : row.status === 'on_track'
-        ? 'bg-amber-500'
-        : 'bg-red-500';
 
   const badge = statusLabel(row.status);
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-sm text-slate-600">
-          <span className="font-semibold text-slate-900">{formatActual(row.actual, row.unit)}</span>
-          {' / '}
-          {formatTarget(row.target, row.unit)}
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div>
+          <p className="text-lg font-black text-slate-900">{formatActual(row.actual, row.unit)}</p>
+          <p className="text-xs text-slate-500">objectif {formatTarget(row.target, row.unit)}</p>
+        </div>
         <span className={`admin-badge admin-badge--${badge.tone}`}>{badge.text}</span>
       </div>
-      <div className="h-2 rounded-full bg-violet-100/80 overflow-hidden">
-        <div className={`h-full rounded-full ${toneClass}`} style={{ width: `${row.progress}%` }} />
+      <div className="admin-objectives-progress-track">
+        <div
+          className={`admin-objectives-progress-fill ${progressFillClass(row.status)}`}
+          style={{ width: `${row.progress}%` }}
+        />
       </div>
-      <p className="text-xs text-slate-500">
-        {row.progress}% · écart {row.unit === 'money' ? formatMoney(row.gap ?? 0) : (row.gap ?? 0).toLocaleString('fr-FR')}
+      <p className="text-xs font-semibold text-slate-500">
+        {row.progress}% · écart{' '}
+        {row.unit === 'money' ? formatMoney(row.gap ?? 0) : (row.gap ?? 0).toLocaleString('fr-FR')}
       </p>
+    </div>
+  );
+}
+
+function TrackSection({
+  title,
+  icon: Icon,
+  variant,
+  rows,
+}: {
+  title: string;
+  icon: React.ElementType;
+  variant: 'track' | 'finance';
+  rows: ComparisonRow[];
+}) {
+  const iconClass =
+    variant === 'finance' ? 'admin-objectives-panel-icon--finance' : 'admin-objectives-panel-icon--track';
+  const headClass =
+    variant === 'finance' ? 'admin-objectives-panel-head--finance' : 'admin-objectives-panel-head--track';
+  const gridClass =
+    variant === 'finance'
+      ? 'admin-objectives-track-grid admin-objectives-track-grid--finance'
+      : 'admin-objectives-track-grid';
+  const cardClass =
+    variant === 'finance' ? 'admin-objectives-track-card admin-objectives-track-card--finance' : 'admin-objectives-track-card';
+
+  return (
+    <div className="admin-objectives-panel">
+      <div className={`admin-objectives-panel-head ${headClass}`}>
+        <span className={`admin-objectives-panel-icon ${iconClass}`}>
+          <Icon size={16} />
+        </span>
+        <p className="admin-objectives-panel-title">{title}</p>
+      </div>
+      <div className="admin-objectives-panel-body">
+        <div className={gridClass}>
+          {rows.map((row) => (
+            <div key={row.key} className={cardClass}>
+              <p className="text-xs font-extrabold uppercase tracking-wider text-slate-400 mb-2">{row.label}</p>
+              <ComparisonProgress row={row} />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -126,6 +167,19 @@ export default function AdminObjectivesPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const growthRows = useMemo(
+    () => comparison.filter((row) => row.unit === 'count'),
+    [comparison],
+  );
+  const financeRows = useMemo(
+    () => comparison.filter((row) => row.unit === 'money'),
+    [comparison],
+  );
+  const reachedCount = useMemo(
+    () => comparison.filter((row) => row.status === 'reached').length,
+    [comparison],
+  );
 
   const load = () => {
     setLoading(true);
@@ -186,7 +240,7 @@ export default function AdminObjectivesPage() {
       <AdminPageHeader
         icon={Target}
         title="Objectifs HARX"
-        subtitle="Définissez vos cibles annuelles et comparez-les aux données réelles de la plateforme."
+        subtitle="Cibles annuelles vs données live de la plateforme."
         badge="Stratégie"
       />
 
@@ -195,148 +249,138 @@ export default function AdminObjectivesPage() {
       ) : (
         <>
           {error && !saving && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              {error}
-            </div>
+            <div className="admin-alert admin-alert--error">{error}</div>
           )}
 
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <section className="admin-card p-6 space-y-5">
+          <div className="admin-objectives-hero">
+            <div className="admin-objectives-hero-inner">
               <div>
-                <h2 className="admin-section-title">Vos objectifs</h2>
-                <p className="admin-section-desc">Saisissez les cibles à atteindre. Laissez vide si non applicable.</p>
-              </div>
-
-              <AdminField id="objectives-year" label="Année de référence">
-                <input
-                  id="objectives-year"
-                  type="number"
-                  min={2020}
-                  max={2100}
-                  value={form.year}
-                  onChange={(e) => updateField('year', e.target.value)}
-                  className="admin-input !pl-3"
-                />
-              </AdminField>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <AdminField
-                  id="objectives-companies"
-                  label="Entreprises"
-                  hint="Signées et onboardées — une seule cible pour les deux."
-                >
-                  <input
-                    id="objectives-companies"
-                    type="number"
-                    min={0}
-                    value={form.companies}
-                    onChange={(e) => updateField('companies', e.target.value)}
-                    placeholder="Ex. 250"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-                <AdminField id="objectives-reps-onboarded" label="REPs onboardés">
-                  <input
-                    id="objectives-reps-onboarded"
-                    type="number"
-                    min={0}
-                    value={form.repsOnboarded}
-                    onChange={(e) => updateField('repsOnboarded', e.target.value)}
-                    placeholder="Ex. 500"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-                <AdminField id="objectives-reps-sub" label="REPs abonnement actif">
-                  <input
-                    id="objectives-reps-sub"
-                    type="number"
-                    min={0}
-                    value={form.repsWithActiveSubscription}
-                    onChange={(e) => updateField('repsWithActiveSubscription', e.target.value)}
-                    placeholder="Ex. 150"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-                <AdminField
-                  id="objectives-revenue"
-                  label="CA annuel (€)"
-                  hint={FINANCIAL_HELP.revenue.body}
-                >
-                  <input
-                    id="objectives-revenue"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={form.annualRevenue}
-                    onChange={(e) => updateField('annualRevenue', e.target.value)}
-                    placeholder="Ex. 1500000"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-                <AdminField
-                  id="objectives-profit"
-                  label="Profit annuel HARX (€)"
-                  hint={FINANCIAL_HELP.profit.body}
-                >
-                  <input
-                    id="objectives-profit"
-                    type="number"
-                    min={0}
-                    step="0.01"
-                    value={form.annualProfit}
-                    onChange={(e) => updateField('annualProfit', e.target.value)}
-                    placeholder="Ex. 1000000"
-                    className="admin-input !pl-3"
-                  />
-                </AdminField>
-              </div>
-
-              <div className="rounded-xl border border-violet-200/80 bg-violet-50/60 px-4 py-3 space-y-2 text-sm text-slate-700">
-                <p className="font-semibold text-slate-900">Comprendre les indicateurs financiers</p>
-                <p>
-                  <span className="font-medium">{FINANCIAL_HELP.revenue.title} — </span>
-                  {FINANCIAL_HELP.revenue.body}
-                </p>
-                <p>
-                  <span className="font-medium">{FINANCIAL_HELP.profit.title} — </span>
-                  {FINANCIAL_HELP.profit.body}
-                </p>
-                <p className="text-xs text-slate-500">
-                  En résumé : le CA inclut tout ce qui passe par la plateforme ; le profit HARX est la part que HARX garde (sans la téléphonie reversée).
+                <p className="admin-objectives-hero-title">Année {form.year || actualYear}</p>
+                <p className="admin-objectives-hero-meta">
+                  Suivi en temps réel · {comparison.length} indicateurs · {reachedCount} atteint{reachedCount > 1 ? 's' : ''}
                 </p>
               </div>
+              <span className="admin-objectives-hero-pill">Données live {actualYear}</span>
+            </div>
+          </div>
 
-              <AdminField id="objectives-notes" label="Notes internes" hint="Optionnel — contexte ou rappels pour l'équipe.">
-                <textarea
-                  id="objectives-notes"
-                  rows={3}
-                  value={form.notes}
-                  onChange={(e) => updateField('notes', e.target.value)}
-                  className="admin-input !pl-3 min-h-[88px] resize-y"
-                />
-              </AdminField>
-            </section>
-
-            <section className="admin-card p-6 space-y-5">
-              <div>
-                <h2 className="admin-section-title">Réel vs objectif</h2>
-                <p className="admin-section-desc">
-                  Données live de la plateforme — année {actualYear}
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {comparison.map((row) => (
-                  <div key={row.key} className="admin-info-tile space-y-2">
-                    <p className="font-semibold text-slate-900">{row.label}</p>
-                    {row.description && (
-                      <p className="text-xs text-slate-500 leading-relaxed">{row.description}</p>
-                    )}
-                    <ComparisonProgress row={row} />
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
+            <div className="space-y-6">
+              <div className="admin-objectives-panel">
+                <div className="admin-objectives-panel-head">
+                  <span className="admin-objectives-panel-icon">
+                    <Building2 size={16} />
+                  </span>
+                  <p className="admin-objectives-panel-title">Croissance — objectifs</p>
+                </div>
+                <div className="admin-objectives-panel-body space-y-4">
+                  <AdminField id="objectives-year" label="Année de référence">
+                    <input
+                      id="objectives-year"
+                      type="number"
+                      min={2020}
+                      max={2100}
+                      value={form.year}
+                      onChange={(e) => updateField('year', e.target.value)}
+                      className="admin-input admin-input--plain"
+                    />
+                  </AdminField>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <AdminField id="objectives-companies" label="Entreprises">
+                      <input
+                        id="objectives-companies"
+                        type="number"
+                        min={0}
+                        value={form.companies}
+                        onChange={(e) => updateField('companies', e.target.value)}
+                        placeholder="Ex. 300"
+                        className="admin-input admin-input--plain"
+                      />
+                    </AdminField>
+                    <AdminField id="objectives-reps-onboarded" label="REPs onboardés">
+                      <input
+                        id="objectives-reps-onboarded"
+                        type="number"
+                        min={0}
+                        value={form.repsOnboarded}
+                        onChange={(e) => updateField('repsOnboarded', e.target.value)}
+                        placeholder="Ex. 500"
+                        className="admin-input admin-input--plain"
+                      />
+                    </AdminField>
+                    <AdminField id="objectives-reps-sub" label="REPs abonnement actif">
+                      <input
+                        id="objectives-reps-sub"
+                        type="number"
+                        min={0}
+                        value={form.repsWithActiveSubscription}
+                        onChange={(e) => updateField('repsWithActiveSubscription', e.target.value)}
+                        placeholder="Ex. 150"
+                        className="admin-input admin-input--plain"
+                      />
+                    </AdminField>
                   </div>
-                ))}
+                </div>
               </div>
-            </section>
+
+              <div className="admin-objectives-panel">
+                <div className="admin-objectives-panel-head admin-objectives-panel-head--finance">
+                  <span className="admin-objectives-panel-icon admin-objectives-panel-icon--finance">
+                    <Euro size={16} />
+                  </span>
+                  <p className="admin-objectives-panel-title">Finances — objectifs</p>
+                </div>
+                <div className="admin-objectives-panel-body space-y-4">
+                  <div className="admin-objectives-finance-note">{FINANCIAL_HELP}</div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <AdminField id="objectives-revenue" label="CA annuel (€)">
+                      <input
+                        id="objectives-revenue"
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        value={form.annualRevenue}
+                        onChange={(e) => updateField('annualRevenue', e.target.value)}
+                        placeholder="Ex. 1 500 000"
+                        className="admin-input admin-input--plain"
+                      />
+                    </AdminField>
+                    <AdminField id="objectives-profit" label="Profit annuel HARX (€)">
+                      <input
+                        id="objectives-profit"
+                        type="number"
+                        min={0}
+                        step="0.01"
+                        value={form.annualProfit}
+                        onChange={(e) => updateField('annualProfit', e.target.value)}
+                        placeholder="Ex. 1 000 000"
+                        className="admin-input admin-input--plain"
+                      />
+                    </AdminField>
+                  </div>
+                </div>
+              </div>
+
+              <div className="admin-objectives-panel">
+                <div className="admin-objectives-panel-body">
+                  <AdminField id="objectives-notes" label="Notes internes">
+                    <textarea
+                      id="objectives-notes"
+                      rows={3}
+                      value={form.notes}
+                      onChange={(e) => updateField('notes', e.target.value)}
+                      className="admin-textarea"
+                      placeholder="Contexte, rappels pour l'équipe…"
+                    />
+                  </AdminField>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <TrackSection title="Croissance — réel vs objectif" icon={Users} variant="track" rows={growthRows} />
+              <TrackSection title="Finances — réel vs objectif" icon={TrendingUp} variant="finance" rows={financeRows} />
+            </div>
           </div>
 
           <AdminSaveBar
