@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: 'https://harx25register.netlify.app/',
+    base: 'https://harx26register-recette.netlify.app/',
     plugins: [
       react({
         jsxRuntime: 'classic',
