@@ -12,6 +12,28 @@ interface TokenPayload {
 
 const SESSION_COOKIE_OPTS = { path: '/', sameSite: 'Lax' as const };
 
+/** Remove persisted userId from localStorage and cookies (both path variants). */
+export function clearSessionUserId(): void {
+  localStorage.removeItem('userId');
+  Cookies.remove('userId', SESSION_COOKIE_OPTS);
+  Cookies.remove('userId');
+}
+
+/** Clear all auth session data (token, userId, profile caches). */
+export function clearAuthSession(): void {
+  localStorage.removeItem('token');
+  clearSessionUserId();
+  localStorage.removeItem('userType');
+  localStorage.removeItem('companyId');
+  localStorage.removeItem('companyName');
+  localStorage.removeItem('companyLogo');
+  localStorage.removeItem('userFullName');
+  localStorage.removeItem('userEmail');
+  localStorage.removeItem('companyOnboardingProgress');
+  localStorage.removeItem('selectedGigId');
+  localStorage.removeItem('pendingUserType');
+}
+
 /** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
 export function syncSessionUserIdCookie(token?: string | null): string | null {
   const userId = getSessionUserId(token);
@@ -206,7 +228,7 @@ export async function redirectIfAuthenticated(token?: string | null): Promise<bo
   if (!userId) {
     const recoveryInProgress = sessionStorage.getItem("passwordRecoveryFlow");
     if (recoveryInProgress || localStorage.getItem("token")) {
-      localStorage.removeItem("token");
+      clearAuthSession();
     }
     return false;
   }

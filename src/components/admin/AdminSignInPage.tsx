@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Lock, Mail, Shield } from 'lucide-react';
-import Cookies from 'js-cookie';
 import { adminApi } from '../../lib/api';
 import { useAuth } from '../../contexts/AuthContext';
 import { syncSessionUserIdCookie } from '../../lib/authRedirect';
@@ -24,11 +23,9 @@ export default function AdminSignInPage() {
       const user = result.data.user;
 
       localStorage.setItem('token', token);
-      localStorage.setItem('userId', user.userId);
       localStorage.setItem('userFullName', user.fullName);
       localStorage.setItem('userEmail', user.email);
       syncSessionUserIdCookie(token);
-      Cookies.set('userId', user.userId, { path: '/', sameSite: 'Lax' });
       setToken(token);
       hardNavigate('/admin');
     } catch (err: unknown) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
+import { clearAuthSession } from '../lib/authRedirect';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
 
@@ -85,7 +86,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
 
     // Old recovery flow wrote JWT to localStorage.token — clear it to stop /auth ↔ /company loops.
     if (saved || step !== 'email') {
-      localStorage.removeItem('token');
+      clearAuthSession();
     }
   }, []);
 

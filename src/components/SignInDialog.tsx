@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
-import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie } from '../lib/authRedirect';
+import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
 import { useAuth } from '../contexts/AuthContext';
-import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
@@ -45,7 +44,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     setIsAlreadyLoggedIn(true);
     const userId = syncSessionUserIdCookie() ?? getSessionUserId();
     if (!userId) {
-      localStorage.removeItem('token');
+      clearAuthSession();
       setIsAlreadyLoggedIn(false);
       return;
     }
@@ -155,9 +154,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         const decoded: any = jwtDecode(resultData.token);
         const userId = decoded.userId;
         setToken(resultData.token);
-        localStorage.setItem('token', resultData.token);
-        localStorage.setItem('userId', userId);
-        Cookies.set('userId', userId, { path: '/', sameSite: 'Lax' });
+        syncSessionUserIdCookie(resultData.token);
         setStep('success');
         const redirectTo = await getPostLoginRedirectUrl(userId, resultData.token);
         setTimeout(() => {
