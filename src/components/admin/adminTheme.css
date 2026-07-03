@@ -1001,6 +1001,188 @@
   box-shadow: 0 10px 28px rgba(219, 39, 119, 0.1);
 }
 
+/* ── Objectifs HARX ── */
+.admin-objectives-hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  color: #fff;
+  background: linear-gradient(135deg, #ed1c24 0%, #e6188d 55%, #f7941e 100%);
+  box-shadow: 0 16px 40px rgba(230, 24, 141, 0.28);
+}
+
+.admin-objectives-hero::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.22) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.admin-objectives-hero-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-objectives-hero-title {
+  font-size: 1.125rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+}
+
+.admin-objectives-hero-meta {
+  font-size: 0.8125rem;
+  opacity: 0.92;
+  margin-top: 0.25rem;
+}
+
+.admin-objectives-hero-pill {
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(6px);
+}
+
+.admin-objectives-panel {
+  border-radius: 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(230, 24, 141, 0.08);
+}
+
+.admin-objectives-panel-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.85);
+  background: linear-gradient(135deg, rgba(254, 242, 242, 0.7) 0%, rgba(253, 242, 248, 0.65) 100%);
+}
+
+.admin-objectives-panel-head--finance {
+  background: linear-gradient(135deg, rgba(255, 247, 237, 0.85) 0%, rgba(253, 242, 248, 0.7) 100%);
+}
+
+.admin-objectives-panel-head--track {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.75) 0%, rgba(253, 242, 248, 0.65) 100%);
+}
+
+.admin-objectives-panel-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  color: #e6188d;
+  background: rgba(230, 24, 141, 0.1);
+}
+
+.admin-objectives-panel-icon--finance {
+  color: #ea580c;
+  background: rgba(247, 148, 30, 0.14);
+}
+
+.admin-objectives-panel-icon--track {
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.1);
+}
+
+.admin-objectives-panel-title {
+  font-size: 0.9375rem;
+  font-weight: 800;
+  color: #1e1b4b;
+}
+
+.admin-objectives-panel-body {
+  padding: 1.25rem;
+}
+
+.admin-objectives-finance-note {
+  border-radius: 0.875rem;
+  border: 1px solid rgba(247, 148, 30, 0.28);
+  background: linear-gradient(135deg, rgba(255, 251, 235, 0.95) 0%, rgba(253, 242, 248, 0.75) 100%);
+  padding: 0.875rem 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: #475569;
+}
+
+.admin-objectives-finance-note strong {
+  color: #c2186f;
+  font-weight: 800;
+}
+
+.admin-objectives-track-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .admin-objectives-track-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.admin-objectives-track-grid--finance {
+  grid-template-columns: 1fr;
+}
+
+.admin-objectives-track-card {
+  border-radius: 0.875rem;
+  border: 1px solid rgba(226, 232, 240, 0.95);
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.875rem 1rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.admin-objectives-track-card:hover {
+  border-color: rgba(230, 24, 141, 0.28);
+  box-shadow: 0 6px 20px rgba(230, 24, 141, 0.08);
+}
+
+.admin-objectives-track-card--finance:hover {
+  border-color: rgba(247, 148, 30, 0.35);
+  box-shadow: 0 6px 20px rgba(247, 148, 30, 0.1);
+}
+
+.admin-objectives-progress-track {
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: rgba(226, 232, 240, 0.85);
+  overflow: hidden;
+}
+
+.admin-objectives-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+.admin-objectives-progress-fill--reached {
+  background: linear-gradient(90deg, #10b981 0%, #34d399 100%);
+}
+
+.admin-objectives-progress-fill--on_track {
+  background: linear-gradient(90deg, #f7941e 0%, #e6188d 100%);
+}
+
+.admin-objectives-progress-fill--behind {
+  background: linear-gradient(90deg, #ed1c24 0%, #e6188d 100%);
+}
+
 .admin-custom-rate-box {
   padding: 1.25rem 1.5rem 1.5rem;
   border-top: 1px solid rgba(226, 232, 240, 0.8);
