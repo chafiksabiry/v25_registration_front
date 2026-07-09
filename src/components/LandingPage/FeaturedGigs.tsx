@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Briefcase, MapPin, DollarSign, Target, Code, Heart, Sparkles, Building2, Monitor, ShoppingBag, GraduationCap, Plane, Stethoscope } from 'lucide-react';
-
-interface Gig {
-  _id: string;
-  title: string;
-  description: string;
-  category: string;
-  commission: {
-    commission_per_call: number;
-    currency?: { code: string; symbol: string } | string;
-  };
-}
+import { gigsApi, Gig } from '../../services/gigsApi';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Technology: <Monitor className="w-5 h-5" />,
@@ -30,23 +20,8 @@ export function FeaturedGigs() {
   useEffect(() => {
     const fetchGigs = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-production.up.railway.app/api';
-        
-        let response = await fetch(`${apiUrl}/gigs/active`);
-        let json = await response.json();
-        
-        let fetchedGigs = json.data || [];
-        
-        // Fallback to all gigs if active gigs are less than 3
-        if (fetchedGigs.length < 3) {
-          response = await fetch(`${apiUrl}/gigs`);
-          json = await response.json();
-          fetchedGigs = json.data || [];
-        }
-
-        // Shuffle and take 3
-        const shuffled = fetchedGigs.sort(() => 0.5 - Math.random());
-        setGigs(shuffled.slice(0, 3));
+        const featuredGigs = await gigsApi.fetchFeaturedGigs();
+        setGigs(featuredGigs);
       } catch (error) {
         console.error('Error fetching gigs:', error);
         // Add some dummy fallback gigs if API fails completely to ensure landing page looks good
