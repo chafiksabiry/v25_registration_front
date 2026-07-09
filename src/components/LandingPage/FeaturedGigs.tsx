@@ -36,21 +36,21 @@ export function FeaturedGigs() {
             title: 'B2B Software Sales Executive',
             description: 'Close high-ticket enterprise SaaS deals with warm leads provided.',
             category: 'Technology',
-            commission: { commission_per_call: 150 }
+            commission: { commission_per_call: 15, commission_per_transaction: 500, bonus: 100 }
           },
           {
             _id: '2',
             title: 'Healthcare Solutions Representative',
             description: 'Present innovative telemedicine platforms to clinics and hospitals.',
             category: 'Healthcare',
-            commission: { commission_per_call: 200 }
+            commission: { commission_per_call: 20, commission_per_transaction: 800 }
           },
           {
             _id: '3',
             title: 'Real Estate Investment Advisor',
             description: 'Qualify potential property investors for exclusive commercial real estate opportunities.',
             category: 'RealEstate',
-            commission: { commission_per_call: 300 }
+            commission: { commission_per_call: 30, bonus: 500 }
           }
         ]);
       } finally {
@@ -172,23 +172,50 @@ export function FeaturedGigs() {
                 )}
               </div>
 
-              <div className="mt-auto relative z-10 flex items-center justify-between pt-6 border-t border-white/10">
-                <div className="group/commission">
-                  <p className="text-xs text-slate-400 font-medium mb-1">Commission</p>
-                  <div className="relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
-                    <span className="text-xl font-black text-white drop-shadow-[0_0_10px_rgba(255,77,77,0.8)]">
-                      {gig.commission?.commission_per_call ? `€${gig.commission.commission_per_call}` : 'Variable'}
-                    </span>
-                    <span className="text-xs font-bold text-harx-300 uppercase tracking-wide">/ success</span>
+              <div className="mt-auto relative z-10 flex flex-col justify-between pt-6 border-t border-white/10">
+                <div className="group/commission mb-4">
+                  <p className="text-xs text-slate-400 font-medium mb-3">Commissions (Your 70% share)</p>
+                  <div className="flex flex-wrap gap-2">
+                    {gig.commission?.commission_per_call && (
+                      <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
+                        <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(255,77,77,0.8)]">
+                          €{(gig.commission.commission_per_call * 0.7).toFixed(2)}
+                        </span>
+                        <span className="text-[9px] font-bold text-harx-300 uppercase tracking-wide">/ call</span>
+                      </div>
+                    )}
+                    {gig.commission?.commission_per_transaction && (
+                      <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-alt-500/10 border border-harx-alt-500/30 animate-glow-pulse group-hover/commission:border-harx-alt-400/60 transition-all duration-300" style={{ animationDelay: '0.5s' }}>
+                        <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">
+                          €{(gig.commission.commission_per_transaction * 0.7).toFixed(2)}
+                        </span>
+                        <span className="text-[9px] font-bold text-harx-alt-300 uppercase tracking-wide">/ success</span>
+                      </div>
+                    )}
+                    {gig.commission?.bonus && (
+                      <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 animate-glow-pulse group-hover/commission:border-purple-400/60 transition-all duration-300" style={{ animationDelay: '1s' }}>
+                        <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">
+                          €{(gig.commission.bonus * 0.7).toFixed(2)}
+                        </span>
+                        <span className="text-[9px] font-bold text-purple-300 uppercase tracking-wide">bonus</span>
+                      </div>
+                    )}
+                    {!gig.commission?.commission_per_call && !gig.commission?.commission_per_transaction && !gig.commission?.bonus && (
+                      <div className="relative inline-flex items-center px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30">
+                         <span className="text-sm font-black text-white">Variable</span>
+                      </div>
+                    )}
                   </div>
                 </div>
                 
-                <button 
-                  onClick={() => window.location.href = '/reporchestrator/profile-import'}
-                  className="w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center group-hover:bg-gradient-harx transition-all duration-300 shadow-md hover:shadow-harx-500/30"
-                >
-                  <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
-                </button>
+                <div className="flex justify-end">
+                  <button 
+                    onClick={() => window.location.href = '/reporchestrator/profile-import'}
+                    className="w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center group-hover:bg-gradient-harx transition-all duration-300 shadow-md hover:shadow-harx-500/30"
+                  >
+                    <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
+                  </button>
+                </div>
               </div>
             </div>
           ))}

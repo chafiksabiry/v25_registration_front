@@ -4,7 +4,9 @@ export interface Gig {
   description: string;
   category: string;
   commission: {
-    commission_per_call: number;
+    commission_per_call?: number;
+    commission_per_transaction?: number;
+    bonus?: number;
     currency?: { code: string; symbol: string } | string;
   };
   requirements?: string;
