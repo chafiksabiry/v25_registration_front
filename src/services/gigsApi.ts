@@ -7,6 +7,10 @@ export interface Gig {
     commission_per_call: number;
     currency?: { code: string; symbol: string } | string;
   };
+  requirements?: string;
+  goals?: string;
+  language?: string;
+  location?: string;
 }
 
 const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-production.up.railway.app/api';

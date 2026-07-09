@@ -16,6 +16,11 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 export function FeaturedGigs() {
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
+
+  const toggleExpand = (id: string) => {
+    setExpandedCard(prev => prev === id ? null : id);
+  };
 
   useEffect(() => {
     const fetchGigs = async () => {
@@ -114,31 +119,68 @@ export function FeaturedGigs() {
             >
               <div className="absolute inset-0 bg-gradient-to-br from-harx-500/5 to-harx-alt-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
-              <div className="relative z-10">
-                <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-harx-500/10 group-hover:scale-110 transition-transform duration-500">
-                  {CATEGORY_ICONS[gig.category] || CATEGORY_ICONS['Default']}
-                </div>
-                
-                <div className="inline-block px-3 py-1 bg-white/[0.04] border border-white/10 text-slate-200 text-xs font-semibold rounded-full mb-4">
-                  {gig.category || 'Business'}
+              <div className="relative z-10 flex-grow">
+                <div className="flex justify-between items-start mb-6">
+                  <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center shadow-lg shadow-harx-500/10 group-hover:scale-110 transition-transform duration-500">
+                    {CATEGORY_ICONS[gig.category] || CATEGORY_ICONS['Default']}
+                  </div>
+                  <div className="inline-block px-3 py-1 bg-white/[0.04] border border-white/10 text-slate-200 text-xs font-semibold rounded-full">
+                    {gig.category || 'Business'}
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 drop-shadow-[0_1px_8px_rgba(255,77,77,0.15)]">
                   {gig.title}
                 </h3>
                 
-                <p className="text-slate-350 mb-8 line-clamp-3 text-sm leading-relaxed">
-                  {gig.description}
-                </p>
+                <div className="mb-6">
+                  <p className={`text-slate-350 text-sm leading-relaxed ${expandedCard === gig._id ? '' : 'line-clamp-3'} transition-all duration-300`}>
+                    {gig.description}
+                  </p>
+                  {(gig.description?.length > 120) && (
+                    <button 
+                      onClick={() => toggleExpand(gig._id)}
+                      className="text-harx-400 hover:text-harx-300 text-xs font-semibold mt-2 transition-colors inline-flex items-center"
+                    >
+                      {expandedCard === gig._id ? 'Read less' : 'Read more...'}
+                    </button>
+                  )}
+                </div>
+
+                {/* Additional Details (shown when expanded) */}
+                {expandedCard === gig._id && (
+                  <div className="space-y-3 mb-6 animate-fade-in border-t border-white/10 pt-4">
+                    {gig.requirements && (
+                      <div>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Requirements</span>
+                        <p className="text-sm text-slate-200">{gig.requirements}</p>
+                      </div>
+                    )}
+                    {gig.goals && (
+                      <div>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Goals</span>
+                        <p className="text-sm text-slate-200">{gig.goals}</p>
+                      </div>
+                    )}
+                    {gig.language && (
+                      <div>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Language</span>
+                        <p className="text-sm text-slate-200">{gig.language}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="mt-auto relative z-10 flex items-center justify-between pt-6 border-t border-white/10">
-                <div>
+                <div className="group/commission">
                   <p className="text-xs text-slate-400 font-medium mb-1">Commission</p>
-                  <p className="text-lg font-bold text-white">
-                    {gig.commission?.commission_per_call ? `€${gig.commission.commission_per_call}` : 'Variable'}
-                    <span className="text-sm font-normal text-slate-400"> / success</span>
-                  </p>
+                  <div className="relative inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
+                    <span className="text-xl font-black text-white drop-shadow-[0_0_10px_rgba(255,77,77,0.8)]">
+                      {gig.commission?.commission_per_call ? `€${gig.commission.commission_per_call}` : 'Variable'}
+                    </span>
+                    <span className="text-xs font-bold text-harx-300 uppercase tracking-wide">/ success</span>
+                  </div>
                 </div>
                 
                 <button 
