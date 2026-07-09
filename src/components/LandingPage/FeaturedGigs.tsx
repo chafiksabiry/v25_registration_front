@@ -3,14 +3,14 @@ import { ArrowRight, Briefcase, MapPin, DollarSign, Target, Code, Heart, Sparkle
 import { gigsApi, Gig } from '../../services/gigsApi';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  Technology: <Monitor className="w-5 h-5" />,
-  Healthcare: <Stethoscope className="w-5 h-5" />,
-  Education: <GraduationCap className="w-5 h-5" />,
-  Travel: <Plane className="w-5 h-5" />,
-  Retail: <ShoppingBag className="w-5 h-5" />,
-  Finance: <DollarSign className="w-5 h-5" />,
-  RealEstate: <Building2 className="w-5 h-5" />,
-  Default: <Briefcase className="w-5 h-5" />
+  Technology: <Monitor className="w-6 h-6 text-white" />,
+  Healthcare: <Stethoscope className="w-6 h-6 text-white" />,
+  Education: <GraduationCap className="w-6 h-6 text-white" />,
+  Travel: <Plane className="w-6 h-6 text-white" />,
+  Retail: <ShoppingBag className="w-6 h-6 text-white" />,
+  Finance: <DollarSign className="w-6 h-6 text-white" />,
+  RealEstate: <Building2 className="w-6 h-6 text-white" />,
+  Default: <Briefcase className="w-6 h-6 text-white" />
 };
 
 export function FeaturedGigs() {
@@ -58,7 +58,7 @@ export function FeaturedGigs() {
 
   if (loading) {
     return (
-      <section className="py-24 bg-gray-50/50">
+      <section className="py-24 bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16 animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mx-auto mb-4"></div>
@@ -66,14 +66,14 @@ export function FeaturedGigs() {
           </div>
           <div className="flex flex-wrap justify-center gap-8">
             {[1, 2, 3].map(i => (
-              <div key={i} className="w-full flex-1 min-w-[300px] max-w-[400px] bg-white rounded-3xl p-8 shadow-sm animate-pulse border border-gray-100">
-                <div className="h-12 w-12 bg-gray-100 rounded-xl mb-6"></div>
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-5/6 mb-8"></div>
-                <div className="flex justify-between items-center mt-auto">
-                  <div className="h-6 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-8 bg-gray-200 rounded-full w-24"></div>
+              <div key={i} className="w-full flex-1 min-w-[300px] max-w-[400px] glass-card-premium rounded-3xl p-8 animate-pulse">
+                <div className="h-14 w-14 bg-white/10 rounded-xl mb-6"></div>
+                <div className="h-6 bg-white/20 rounded w-3/4 mb-4"></div>
+                <div className="h-4 bg-white/10 rounded w-full mb-2"></div>
+                <div className="h-4 bg-white/10 rounded w-5/6 mb-8"></div>
+                <div className="flex justify-between items-center mt-auto pt-6 border-t border-white/10">
+                  <div className="h-6 bg-white/20 rounded w-1/3"></div>
+                  <div className="h-10 w-10 bg-white/10 rounded-full"></div>
                 </div>
               </div>
             ))}
@@ -86,21 +86,21 @@ export function FeaturedGigs() {
   if (gigs.length === 0) return null;
 
   return (
-    <section className="py-24 relative overflow-hidden bg-gray-50/50" id="featured-gigs">
+    <section className="py-24 relative overflow-hidden bg-transparent" id="featured-gigs">
       {/* Background decorations */}
       <div className="absolute top-0 right-0 -translate-y-12 translate-x-1/3">
-        <div className="w-96 h-96 bg-blue-100/50 rounded-full blur-3xl" />
+        <div className="w-96 h-96 bg-harx-500/10 rounded-full blur-3xl animate-pulse-slow" />
       </div>
       <div className="absolute bottom-0 left-0 translate-y-1/3 -translate-x-1/3">
-        <div className="w-96 h-96 bg-indigo-100/50 rounded-full blur-3xl" />
+        <div className="w-96 h-96 bg-harx-alt-500/10 rounded-full blur-3xl animate-pulse-slow" style={{ animationDelay: '2s' }} />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 tracking-tight mb-4">
-            Discover <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Active Gigs</span>
+        <div className="text-center mb-16 animate-fade-in">
+          <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+            Discover <span className="bg-clip-text text-transparent bg-gradient-harx">Active Gigs</span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-xl text-slate-350 max-w-2xl mx-auto leading-relaxed">
             Browse exciting opportunities and start earning by representing top global companies today.
           </p>
         </div>
@@ -109,41 +109,41 @@ export function FeaturedGigs() {
           {gigs.map((gig, index) => (
             <div 
               key={gig._id}
-              className="w-full flex-1 min-w-[300px] max-w-[400px] group relative bg-white/70 backdrop-blur-md rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              className="w-full flex-1 min-w-[300px] max-w-[400px] group relative glass-card-premium rounded-2xl p-8 hover:border-harx-500/30 hover:-translate-y-1 transition-all duration-500 flex flex-col"
               style={{ animationDelay: `${index * 150}ms` }}
             >
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-br from-harx-500/5 to-harx-alt-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
               
               <div className="relative z-10">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+                <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-harx-500/10 group-hover:scale-110 transition-transform duration-500">
                   {CATEGORY_ICONS[gig.category] || CATEGORY_ICONS['Default']}
                 </div>
                 
-                <div className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full mb-4">
+                <div className="inline-block px-3 py-1 bg-white/[0.04] border border-white/10 text-slate-200 text-xs font-semibold rounded-full mb-4">
                   {gig.category || 'Business'}
                 </div>
 
-                <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
+                <h3 className="text-xl font-bold text-white mb-3 line-clamp-2 drop-shadow-[0_1px_8px_rgba(255,77,77,0.15)]">
                   {gig.title}
                 </h3>
                 
-                <p className="text-gray-600 mb-8 line-clamp-3 text-sm leading-relaxed">
+                <p className="text-slate-350 mb-8 line-clamp-3 text-sm leading-relaxed">
                   {gig.description}
                 </p>
               </div>
 
-              <div className="mt-auto relative z-10 flex items-center justify-between pt-6 border-t border-gray-100">
+              <div className="mt-auto relative z-10 flex items-center justify-between pt-6 border-t border-white/10">
                 <div>
-                  <p className="text-xs text-gray-500 font-medium mb-1">Commission</p>
-                  <p className="text-lg font-bold text-gray-900">
+                  <p className="text-xs text-slate-400 font-medium mb-1">Commission</p>
+                  <p className="text-lg font-bold text-white">
                     {gig.commission?.commission_per_call ? `€${gig.commission.commission_per_call}` : 'Variable'}
-                    <span className="text-sm font-normal text-gray-500"> / success</span>
+                    <span className="text-sm font-normal text-slate-400"> / success</span>
                   </p>
                 </div>
                 
                 <button 
                   onClick={() => window.location.href = '/reporchestrator/profile-import'}
-                  className="w-10 h-10 bg-gray-900 text-white rounded-full flex items-center justify-center group-hover:bg-blue-600 transition-colors shadow-sm"
+                  className="w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center group-hover:bg-gradient-harx transition-all duration-300 shadow-md hover:shadow-harx-500/30"
                 >
                   <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
                 </button>
@@ -155,7 +155,7 @@ export function FeaturedGigs() {
         <div className="mt-16 text-center">
           <button 
             onClick={() => window.location.href = '/reporchestrator/profile-import'}
-            className="inline-flex items-center justify-center px-8 py-4 text-base font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-full transition-colors"
+            className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-white/[0.03] border border-white/10 hover:border-harx-500 hover:bg-white/[0.08] rounded-full transition-all duration-300 shadow-lg hover:shadow-harx-500/20"
           >
             Explore all opportunities
             <ArrowRight className="w-5 h-5 ml-2" />
