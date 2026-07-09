@@ -176,31 +176,31 @@ export function FeaturedGigs() {
                 <div className="group/commission mb-4">
                   <p className="text-xs text-slate-400 font-medium mb-3">Commissions</p>
                   <div className="flex flex-wrap gap-2">
-                    {gig.commission?.commission_per_call && (
+                    {(gig.commission?.commission_per_call ?? 0) > 0 && (
                       <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(255,77,77,0.8)]">
-                          €{(gig.commission.commission_per_call * 0.7).toFixed(2)}
+                          €{(gig.commission.commission_per_call! * 0.7).toFixed(2)}
                         </span>
                         <span className="text-[9px] font-bold text-harx-300 uppercase tracking-wide">/ call</span>
                       </div>
                     )}
-                    {gig.commission?.commission_per_transaction && (
+                    {(gig.commission?.commission_per_transaction ?? 0) > 0 && (
                       <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-alt-500/10 border border-harx-alt-500/30 animate-glow-pulse group-hover/commission:border-harx-alt-400/60 transition-all duration-300" style={{ animationDelay: '0.5s' }}>
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">
-                          €{(gig.commission.commission_per_transaction * 0.7).toFixed(2)}
+                          €{(gig.commission.commission_per_transaction! * 0.7).toFixed(2)}
                         </span>
                         <span className="text-[9px] font-bold text-harx-alt-300 uppercase tracking-wide">/ success</span>
                       </div>
                     )}
-                    {gig.commission?.bonus && (
+                    {(gig.commission?.bonus ?? 0) > 0 && (
                       <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-purple-500/10 border border-purple-500/30 animate-glow-pulse group-hover/commission:border-purple-400/60 transition-all duration-300" style={{ animationDelay: '1s' }}>
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">
-                          €{(gig.commission.bonus * 0.7).toFixed(2)}
+                          €{(gig.commission.bonus! * 0.7).toFixed(2)}
                         </span>
                         <span className="text-[9px] font-bold text-purple-300 uppercase tracking-wide">bonus</span>
                       </div>
                     )}
-                    {!gig.commission?.commission_per_call && !gig.commission?.commission_per_transaction && !gig.commission?.bonus && (
+                    {!(gig.commission?.commission_per_call ?? 0) && !(gig.commission?.commission_per_transaction ?? 0) && !(gig.commission?.bonus ?? 0) && (
                       <div className="relative inline-flex items-center px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30">
                          <span className="text-sm font-black text-white">Variable</span>
                       </div>
