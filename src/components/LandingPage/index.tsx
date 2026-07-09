@@ -5,6 +5,7 @@ import { HowItWorks } from './HowItWorks';
 import { Pricing } from './Pricing';
 import { ForClients } from './ForClients';
 import { ForReps } from './ForReps';
+import { FeaturedGigs } from './FeaturedGigs';
 import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
@@ -150,6 +151,8 @@ export function LandingPage({
       />
 
       <Hero onGetStarted={onGetStarted} />
+
+      <FeaturedGigs />
 
       <section id="how-it-works" className="scroll-mt-28 bg-white text-slate-900">
         <HowItWorks onGetStarted={onGetStarted} />
