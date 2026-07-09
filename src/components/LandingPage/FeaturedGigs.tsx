@@ -64,9 +64,9 @@ export function FeaturedGigs() {
             <div className="h-8 bg-gray-200 rounded w-1/4 mx-auto mb-4"></div>
             <div className="h-4 bg-gray-200 rounded w-2/4 mx-auto"></div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="flex flex-wrap justify-center gap-8">
             {[1, 2, 3].map(i => (
-              <div key={i} className="bg-white rounded-3xl p-8 shadow-sm animate-pulse border border-gray-100">
+              <div key={i} className="w-full flex-1 min-w-[300px] max-w-[400px] bg-white rounded-3xl p-8 shadow-sm animate-pulse border border-gray-100">
                 <div className="h-12 w-12 bg-gray-100 rounded-xl mb-6"></div>
                 <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
                 <div className="h-4 bg-gray-200 rounded w-full mb-2"></div>
@@ -105,11 +105,11 @@ export function FeaturedGigs() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {gigs.map((gig, index) => (
             <div 
               key={gig._id}
-              className="group relative bg-white/70 backdrop-blur-md rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              className="w-full flex-1 min-w-[300px] max-w-[400px] group relative bg-white/70 backdrop-blur-md rounded-3xl p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/80 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
               style={{ animationDelay: `${index * 150}ms` }}
             >
               <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-indigo-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
