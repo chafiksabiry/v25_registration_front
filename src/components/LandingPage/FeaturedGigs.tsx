@@ -174,7 +174,7 @@ export function FeaturedGigs() {
 
               <div className="mt-auto relative z-10 flex flex-col justify-between pt-6 border-t border-white/10">
                 <div className="group/commission mb-4">
-                  <p className="text-xs text-slate-400 font-medium mb-3">Commissions (Your 70% share)</p>
+                  <p className="text-xs text-slate-400 font-medium mb-3">Commissions</p>
                   <div className="flex flex-wrap gap-2">
                     {gig.commission?.commission_per_call && (
                       <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
