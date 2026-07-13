@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, Users, Brain } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
