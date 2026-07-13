@@ -13,6 +13,7 @@ import {
 } from '../lib/registerNavigation';
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
+import { useTranslation } from 'react-i18next';
 
 type Step = RegisterFormStep | 'success';
 
@@ -60,6 +61,7 @@ export default function RegistrationDialog({
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (defaultUserType) {
@@ -102,7 +104,7 @@ export default function RegistrationDialog({
     try {
       const accountVerificationResult = await auth.verifyAccount(storedUserId);
       if (!accountVerificationResult.success) {
-        newErrors.general = accountVerificationResult.message || 'Account verification failed';
+        newErrors.general = accountVerificationResult.message || t('register.errGeneralFailed', 'Account verification failed');
         return false;
       }
 
@@ -124,7 +126,7 @@ export default function RegistrationDialog({
       setTimeout(() => onSignIn(), 1500);
       return true;
     } catch (err) {
-      newErrors.general = err instanceof Error ? err.message : 'Account verification failed';
+      newErrors.general = err instanceof Error ? err.message : t('register.errGeneralFailed', 'Account verification failed');
       return false;
     }
   };
@@ -138,10 +140,10 @@ export default function RegistrationDialog({
     try {
       await auth.sendOTP(registeredUserId, formData.phone);
       setSmsOtpAvailable(true);
-      setSmsNotice('SMS code sent. Check your phone.');
+      setSmsNotice(t('register.smsNoticeSent', 'SMS code sent. Check your phone.'));
     } catch {
       setSmsOtpAvailable(false);
-      setSmsNotice('SMS unavailable. Continue with email verification only.');
+      setSmsNotice(t('register.smsNoticeUnavailable', 'SMS unavailable. Continue with email verification only.'));
     } finally {
       setIsLoading(false);
     }
@@ -154,7 +156,7 @@ export default function RegistrationDialog({
       switch (step) {
         case 'name':
           if (formData.fullName.trim().length < 3) {
-            newErrors.name = 'Please enter your full name';
+            newErrors.name = t('register.errName', 'Please enter your full name');
           } else {
             pushStep('email');
           }
@@ -162,7 +164,7 @@ export default function RegistrationDialog({
 
         case 'email':
           if (!validateEmail(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
+            newErrors.email = t('register.errEmail', 'Please enter a valid email address');
           } else {
             pushStep('password');
           }
@@ -170,7 +172,7 @@ export default function RegistrationDialog({
 
         case 'password':
           if (!validatePassword(formData.password)) {
-            newErrors.password = 'Password must be at least 8 characters with letters and numbers';
+            newErrors.password = t('register.errPassword', 'Password must be at least 8 characters with letters and numbers');
           } else {
             pushStep('phone');
           }
@@ -178,7 +180,7 @@ export default function RegistrationDialog({
 
         case 'phone':
           if (!validatePhone(formData.phone)) {
-            newErrors.phone = 'Please enter a valid phone number';
+            newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
           } else {
             pushStep('terms');
           }
@@ -186,11 +188,11 @@ export default function RegistrationDialog({
 
         case 'terms':
           if (!formData.termsAccepted) {
-            newErrors.terms = 'Please accept the terms and conditions';
+            newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
           } else {
             const incompleteStep = getFirstIncompleteStep();
             if (incompleteStep) {
-              newErrors.general = 'Some registration details are missing. Please complete all steps.';
+              newErrors.general = t('register.errGeneralMissing', 'Some registration details are missing. Please complete all steps.');
               pushStep(incompleteStep);
               break;
             }
@@ -211,14 +213,14 @@ export default function RegistrationDialog({
               }
             } catch (error) {
               if ((error as any).response?.data?.message === 'Email already registered') {
-                newErrors.email = 'This email is already registered';
+                newErrors.email = t('register.errEmailTaken', 'This email is already registered');
                 pushStep('email');
                 setErrors(newErrors);
                 return;
               } else {
                 newErrors.general =
                   (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                  || 'Registration failed, please try again';
+                  || t('register.errGeneralFailed', 'Registration failed, please try again');
                 setErrors(newErrors);
                 return;
               }
@@ -245,7 +247,7 @@ export default function RegistrationDialog({
               await auth.sendOTP(RegisterResult.data._id, formData.phone);
               setSmsOtpAvailable(true);
             } catch {
-              setSmsNotice('SMS verification is temporarily unavailable. Use the email code to complete registration.');
+              setSmsNotice(t('register.smsNoticeTempUnavailable', 'SMS verification is temporarily unavailable. Use the email code to complete registration.'));
             }
 
             pushStep('verification');
@@ -254,18 +256,18 @@ export default function RegistrationDialog({
 
         case 'verification': {
           if (!formData.emailOTP || formData.emailOTP.length !== 6) {
-            newErrors.verification = 'Please enter the 6-digit email verification code';
+            newErrors.verification = t('register.errEmailCode', 'Please enter the 6-digit email verification code');
             break;
           }
           if (smsOtpAvailable && (!formData.phoneOTP || formData.phoneOTP.length !== 6)) {
-            newErrors.verification = 'Please enter both the email code and the SMS code';
+            newErrors.verification = t('register.errBothCodes', 'Please enter both the email code and the SMS code');
             break;
           }
 
           setIsLoading(true);
 
           if (!registeredUserId) {
-            newErrors.general = 'Registration session expired. Please start again.';
+            newErrors.general = t('register.errSessionExpired', 'Registration session expired. Please start again.');
             pushStep('terms');
             break;
           }
@@ -275,8 +277,8 @@ export default function RegistrationDialog({
             if (otpVerificationResult.error) {
               const otpMessage = otpVerificationResult.message || '';
               newErrors.general = otpMessage.toLowerCase().includes('expired')
-                ? 'SMS code expired. Use "Try SMS verification" to request a new code.'
-                : 'Invalid SMS code. Please try again.';
+                ? t('register.errSmsExpired', 'SMS code expired. Use "Try SMS verification" to request a new code.')
+                : t('register.errInvalidSms', 'Invalid SMS code. Please try again.');
               break;
             }
           }
@@ -286,7 +288,7 @@ export default function RegistrationDialog({
             code: formData.emailOTP
           });
           if (emailVerificationResult.result?.error) {
-            newErrors.general = 'Invalid email verification code';
+            newErrors.general = t('register.errInvalidEmail', 'Invalid email verification code');
             break;
           }
 
@@ -296,7 +298,7 @@ export default function RegistrationDialog({
         default: break;
       }
     } catch (err) {
-      newErrors.general = err instanceof Error ? err.message : 'An unexpected error occurred';
+      newErrors.general = err instanceof Error ? err.message : t('register.errUnexpected', 'An unexpected error occurred');
     } finally {
       setIsLoading(false);
       setErrors(newErrors);
@@ -342,11 +344,11 @@ export default function RegistrationDialog({
                 <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
               </div>
               <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                Start Your <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">Journey Today</span>
+                {t('signIn.brandTitle1', 'Start Your')} <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.
+                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
               </p>
             </div>
           </div>
@@ -357,7 +359,7 @@ export default function RegistrationDialog({
               {step !== 'success' && (
                 <button onClick={goBack} className="flex items-center text-sm text-slate-450 hover:text-white mb-6 transition-colors">
                   <ArrowLeft className="h-4 w-4 mr-1.5" />
-                  Back
+                  {t('register.back', 'Back')}
                 </button>
               )}
 
@@ -384,23 +386,23 @@ export default function RegistrationDialog({
 
               <div className="text-center mb-8 lg:text-left">
                 <h2 className="text-3xl font-extrabold text-white mb-2">
-                  {step === 'name' ? 'Create Account' :
-                    step === 'email' ? 'Contact Details' :
-                      step === 'password' ? 'Secure Account' :
-                        step === 'phone' ? 'Phone Verification' :
-                          step === 'terms' ? 'Final Step' :
-                            step === 'verification' ? 'Verify Account' : 'Success'}
+                  {step === 'name' ? t('register.titleName', 'Create Account') :
+                    step === 'email' ? t('register.titleEmail', 'Contact Details') :
+                      step === 'password' ? t('register.titlePassword', 'Secure Account') :
+                        step === 'phone' ? t('register.titlePhone', 'Phone Verification') :
+                          step === 'terms' ? t('register.titleTerms', 'Final Step') :
+                            step === 'verification' ? t('register.titleVerification', 'Verify Account') : t('register.titleSuccess', 'Success')}
                 </h2>
                 <p className="text-slate-400 text-sm">
-                  {step === 'name' ? 'Let\'s get to know you.' :
-                    step === 'email' ? 'Where should we send updates?' :
-                      step === 'password' ? 'Protect your account.' :
-                        step === 'phone' ? 'For account security.' :
-                          step === 'terms' ? 'Review our policies.' :
+                  {step === 'name' ? t('register.descName', "Let's get to know you.") :
+                    step === 'email' ? t('register.descEmail', 'Where should we send updates?') :
+                      step === 'password' ? t('register.descPassword', 'Protect your account.') :
+                        step === 'phone' ? t('register.descPhone', 'For account security.') :
+                          step === 'terms' ? t('register.descTerms', 'Review our policies.') :
                             step === 'verification'
-                              ? (smsOtpAvailable ? 'Check your email and phone for codes.' : 'Check your email for the verification code.')
+                              ? (smsOtpAvailable ? t('register.descVerificationBoth', 'Check your email and phone for codes.') : t('register.descVerificationEmail', 'Check your email for the verification code.'))
                               :
-                              'Account created successfully!'}
+                              t('register.descSuccess', 'Account created successfully!')}
                 </p>
               </div>
 
@@ -421,7 +423,7 @@ export default function RegistrationDialog({
                         value={formData.fullName}
                         onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                         className="input-premium-glow"
-                        placeholder="Full Name"
+                        placeholder={t('register.placeholderName', 'Full Name')}
                         autoFocus
                       />
                     </div>
@@ -438,7 +440,7 @@ export default function RegistrationDialog({
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="input-premium-glow"
-                        placeholder="Work Email"
+                        placeholder={t('register.placeholderEmail', 'Work Email')}
                         autoFocus
                       />
                     </div>
@@ -455,7 +457,7 @@ export default function RegistrationDialog({
                         value={formData.password}
                         onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="input-premium-glow pr-12"
-                        placeholder="Choose a strong password"
+                        placeholder={t('register.placeholderPassword', 'Choose a strong password')}
                         autoFocus
                       />
                       <button
@@ -466,7 +468,7 @@ export default function RegistrationDialog({
                         {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     </div>
-                    <p className="text-xs text-slate-500 pl-2">Must be at least 8 characters with letters and numbers.</p>
+                    <p className="text-xs text-slate-500 pl-2">{t('register.passwordHint', 'Must be at least 8 characters with letters and numbers.')}</p>
                     {errors.password && <p className="text-red-400 text-sm pl-2">{errors.password}</p>}
                   </div>
                 )}
@@ -480,7 +482,7 @@ export default function RegistrationDialog({
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="input-premium-glow"
-                        placeholder="+1 (555) 000-0000"
+                        placeholder={t('register.placeholderPhone', '+1 (555) 000-0000')}
                         autoFocus
                       />
                     </div>
@@ -494,11 +496,11 @@ export default function RegistrationDialog({
                       <div className="flex items-start space-x-3">
                         <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-slate-300 leading-relaxed">
-                          By creating an account, you agree to comply with our{' '}
-                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">Terms of Service</a>{' '}
-                          and acknowledge our{' '}
-                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">Privacy Policy</a>.
-                          We prioritize your data security.
+                          {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
+                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
+                          {t('register.termsAnd', 'and acknowledge our')}{' '}
+                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
+                          {t('register.termsSecurity', 'We prioritize your data security.')}
                         </p>
                       </div>
                     </div>
@@ -510,7 +512,7 @@ export default function RegistrationDialog({
                         onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
                         className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
                       />
-                      <span className="text-slate-200 font-medium">I agree to the Terms & Conditions</span>
+                      <span className="text-slate-200 font-medium">{t('register.termsCheckbox', 'I agree to the Terms & Conditions')}</span>
                     </label>
                     {errors.terms && <p className="text-red-400 text-sm pl-2">{errors.terms}</p>}
                   </div>
@@ -524,7 +526,7 @@ export default function RegistrationDialog({
                       </div>
                     )}
                     <div className="space-y-4">
-                      <label className="block text-sm font-medium text-slate-300">Email Code (sent to {formData.email})</label>
+                      <label className="block text-sm font-medium text-slate-300">{t('register.emailCodeLabel', 'Email Code (sent to {{email}})', { email: formData.email })}</label>
                       <input
                         type="text"
                         maxLength={6}
@@ -536,7 +538,7 @@ export default function RegistrationDialog({
                     </div>
                     {smsOtpAvailable ? (
                       <div className="space-y-4">
-                        <label className="block text-sm font-medium text-slate-300">SMS Code (sent to {formData.phone})</label>
+                        <label className="block text-sm font-medium text-slate-300">{t('register.smsCodeLabel', 'SMS Code (sent to {{phone}})', { phone: formData.phone })}</label>
                         <input
                           type="text"
                           maxLength={6}
@@ -553,7 +555,7 @@ export default function RegistrationDialog({
                         disabled={isLoading}
                         className="w-full text-sm text-harx-400 hover:text-harx-300 font-medium hover:underline disabled:opacity-50 transition-colors"
                       >
-                        Try SMS verification (optional)
+                        {t('register.trySms', 'Try SMS verification (optional)')}
                       </button>
                     )}
                     {errors.verification && <p className="text-red-400 text-sm pl-2">{errors.verification}</p>}
@@ -570,7 +572,7 @@ export default function RegistrationDialog({
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     ) : (
                       <>
-                        <span>{step === 'terms' ? 'Create Account' : step === 'verification' ? 'Verify & Complete' : 'Continue'}</span>
+                        <span>{step === 'terms' ? t('register.btnCreateAccount', 'Create Account') : step === 'verification' ? t('register.btnVerifyComplete', 'Verify & Complete') : t('register.btnContinue', 'Continue')}</span>
                         <ArrowRight className="h-5 w-5" />
                       </>
                     )}
@@ -582,8 +584,8 @@ export default function RegistrationDialog({
                     <div className="w-20 h-20 bg-green-950/30 border border-green-900/50 rounded-full flex items-center justify-center mb-4">
                       <Check className="h-10 w-10 text-green-400" />
                     </div>
-                    <h3 className="text-2xl font-bold text-white">Registration Successful!</h3>
-                    <p className="text-slate-400">Redirecting to login...</p>
+                    <h3 className="text-2xl font-bold text-white">{t('register.successTitle', 'Registration Successful!')}</h3>
+                    <p className="text-slate-400">{t('register.redirectingLogin', 'Redirecting to login...')}</p>
                     <div className="w-full max-w-xs bg-slate-800 rounded-full h-1.5 overflow-hidden">
                       <div className="bg-green-500 h-full w-full animate-[shimmer_1s_infinite]"></div>
                     </div>
@@ -593,9 +595,9 @@ export default function RegistrationDialog({
                 {!isLoading && step === 'name' && (
                   <div className="mt-8 text-center border-t border-white/[0.06] pt-6">
                     <p className="text-slate-400 text-sm">
-                      Already have an account?{' '}
+                      {t('register.alreadyHaveAccount', 'Already have an account?')} {' '}
                       <button onClick={onSignIn} className="text-harx-400 font-semibold hover:text-harx-300 hover:underline transition-colors">
-                        Sign in
+                        {t('register.signIn', 'Sign in')}
                       </button>
                     </p>
                   </div>

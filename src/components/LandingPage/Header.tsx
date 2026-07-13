@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowRight, Building2, Headphones, Menu, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
@@ -26,6 +27,8 @@ interface HeaderProps {
 export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
+  const { t, i18n } = useTranslation();
+
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -38,11 +41,15 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     setIsMenuOpen(false);
   };
 
+  const toggleLanguage = () => {
+    i18n.changeLanguage(i18n.language.startsWith('fr') ? 'en' : 'fr');
+  };
+
   const navLinks: NavLink[] = [
-    { id: 'how-it-works', label: 'How It Works' },
-    { id: 'pricing', label: 'Pricing' },
-    { id: 'clients', label: 'For Companies', variant: 'company' },
-    { id: 'reps', label: 'For Reps', variant: 'rep' },
+    { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
+    { id: 'pricing', label: t('header.pricing', 'Pricing') },
+    { id: 'clients', label: t('header.forCompanies', 'For Companies'), variant: 'company' },
+    { id: 'reps', label: t('header.forReps', 'For Reps'), variant: 'rep' },
   ];
 
   const linkClass = (variant: NavLink['variant']) => {
@@ -96,11 +103,17 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
         </div>
 
         <div className="hidden md:flex items-center gap-2.5">
+          <button
+            onClick={toggleLanguage}
+            className="text-white/90 hover:text-white font-semibold text-sm px-2 py-1 transition-colors uppercase"
+          >
+            {i18n.language.startsWith('fr') ? 'EN' : 'FR'}
+          </button>
           <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
-            Sign In
+            {t('header.signIn', 'Sign In')}
           </button>
           <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
-            Get Started
+            {t('header.getStarted', 'Get Started')}
             <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
           </button>
         </div>
@@ -137,11 +150,17 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
               </a>
             ))}
             <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
+              <button
+                onClick={toggleLanguage}
+                className="w-full py-2.5 text-white/90 hover:text-white font-semibold text-base transition-colors uppercase border border-white/20 rounded-xl"
+              >
+                {i18n.language.startsWith('fr') ? 'Switch to English' : 'Passer en Français'}
+              </button>
               <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
-                Sign In
+                {t('header.signIn', 'Sign In')}
               </button>
               <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
-                Get Started
+                {t('header.getStarted', 'Get Started')}
                 <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
               </button>
             </div>
