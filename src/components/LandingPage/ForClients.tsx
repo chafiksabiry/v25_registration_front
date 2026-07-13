@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, BarChart, Globe, Rocket, Shield, Phone, Mail, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';

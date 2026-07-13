@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArrowRight, Bot, Clock, Globe, Laptop, PhoneCall, Target, CheckCircle2, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
