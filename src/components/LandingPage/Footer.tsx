@@ -1,29 +1,31 @@
 import React from 'react';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 
-const navigation = {
-  company: [
-    { name: 'How It Works', href: '#how-it-works' },
-    { name: 'Pricing', href: '#pricing' },
-    { name: 'For Companies', href: '#clients' },
-    { name: 'For Reps', href: '#reps' },
-  ],
-  legal: [
-    { name: 'Privacy Policy', href: '/privacy' },
-    { name: 'Terms of Service', href: '/terms' },
-    { name: 'Cookie Policy', href: '/cookies' },
-    { name: 'GDPR Compliance', href: '/gdpr' },
-  ],
-  social: [
-    { name: 'Facebook', href: 'https://facebook.com/harx.ai', icon: Facebook },
-    { name: 'Twitter', href: 'https://twitter.com/harx_ai', icon: Twitter },
-    { name: 'LinkedIn', href: 'https://linkedin.com/company/harx-ai', icon: Linkedin },
-    { name: 'Instagram', href: 'https://instagram.com/harx.ai', icon: Instagram },
-  ],
-};
-
 export function Footer() {
+  const { t } = useTranslation();
+
+  const navigation = {
+    company: [
+      { name: t('footer.navHowItWorks', 'How It Works'), href: '#how-it-works' },
+      { name: t('footer.navPricing', 'Pricing'), href: '#pricing' },
+      { name: t('footer.navForCompanies', 'For Companies'), href: '#clients' },
+      { name: t('footer.navForReps', 'For Reps'), href: '#reps' },
+    ],
+    legal: [
+      { name: t('footer.navPrivacy', 'Privacy Policy'), href: '/privacy' },
+      { name: t('footer.navTerms', 'Terms of Service'), href: '/terms' },
+      { name: t('footer.navCookie', 'Cookie Policy'), href: '/cookies' },
+      { name: t('footer.navGDPR', 'GDPR Compliance'), href: '/gdpr' },
+    ],
+    social: [
+      { name: 'Facebook', href: 'https://facebook.com/harx.ai', icon: Facebook },
+      { name: 'Twitter', href: 'https://twitter.com/harx_ai', icon: Twitter },
+      { name: 'LinkedIn', href: 'https://linkedin.com/company/harx-ai', icon: Linkedin },
+      { name: 'Instagram', href: 'https://instagram.com/harx.ai', icon: Instagram },
+    ],
+  };
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     if (href.startsWith('#')) {
@@ -48,10 +50,10 @@ export function Footer() {
               <Logo className="h-14 w-auto md:h-16" />
             </div>
             <p className="text-gray-400 mb-1">
-              AI-Powered Transaction-as-a-Service Platform
+              {t('footer.subtitle', 'AI-Powered Transaction-as-a-Service Platform')}
             </p>
             <p className="text-gray-400 mb-4">
-              Powered by AI
+              {t('footer.poweredBy', 'Powered by AI')}
             </p>
             <div className="space-y-2">
               <div className="flex items-center text-gray-400">
@@ -73,7 +75,7 @@ export function Footer() {
 
           {/* Navigation */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.company', 'Company')}</h3>
             <ul className="space-y-2">
               {navigation.company.map((item) => (
                 <li key={item.name}>
@@ -91,7 +93,7 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Legal</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.legal', 'Legal')}</h3>
             <ul className="space-y-2">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
@@ -109,21 +111,21 @@ export function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Stay Updated</h3>
+            <h3 className="text-lg font-semibold mb-4">{t('footer.stayUpdated', 'Stay Updated')}</h3>
             <p className="text-gray-400 mb-4">
-              Subscribe to our newsletter for the latest updates and insights.
+              {t('footer.newsletterDesc', 'Subscribe to our newsletter for the latest updates and insights.')}
             </p>
             <form className="space-y-2">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('footer.emailPlaceholder', 'Enter your email')}
                 className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-harx-500"
               />
               <button
                 type="submit"
                 className="w-full px-4 py-2 bg-harx-500 text-white rounded-lg hover:bg-harx-600 transition-colors"
               >
-                Subscribe
+                {t('footer.subscribe', 'Subscribe')}
               </button>
             </form>
           </div>
@@ -147,7 +149,7 @@ export function Footer() {
               ))}
             </div>
             <p className="text-gray-400 text-sm">
-              © {currentYear} HARX Technologies Inc. All rights reserved.
+              {t('footer.rights', '© {{year}} HARX Technologies Inc. All rights reserved.', { year: currentYear })}
             </p>
           </div>
         </div>

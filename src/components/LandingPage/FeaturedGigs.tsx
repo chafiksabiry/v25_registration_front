@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ArrowRight, Briefcase, MapPin, DollarSign, Target, Code, Heart, Sparkles, Building2, Monitor, ShoppingBag, GraduationCap, Plane, Stethoscope } from 'lucide-react';
 import { gigsApi, Gig } from '../../services/gigsApi';
+import { useTranslation } from 'react-i18next';
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   Technology: <Monitor className="w-6 h-6 text-white" />,
@@ -17,6 +18,7 @@ export function FeaturedGigs() {
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const toggleExpand = (id: string) => {
     setExpandedCard(prev => prev === id ? null : id);
@@ -103,10 +105,10 @@ export function FeaturedGigs() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-3xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
-            Discover <span className="bg-clip-text text-transparent bg-gradient-harx">Active Gigs</span>
+            {t('featuredGigs.title1', 'Discover')} <span className="bg-clip-text text-transparent bg-gradient-harx">{t('featuredGigs.title2', 'Active Gigs')}</span>
           </h2>
           <p className="text-xl text-slate-350 max-w-2xl mx-auto leading-relaxed">
-            Browse exciting opportunities and start earning by representing top global companies today.
+            {t('featuredGigs.desc', 'Browse exciting opportunities and start earning by representing top global companies today.')}
           </p>
         </div>
 
@@ -142,7 +144,7 @@ export function FeaturedGigs() {
                       onClick={() => toggleExpand(gig._id)}
                       className="text-harx-400 hover:text-harx-300 text-xs font-semibold mt-2 transition-colors inline-flex items-center"
                     >
-                      {expandedCard === gig._id ? 'Read less' : 'Read more...'}
+                      {expandedCard === gig._id ? t('featuredGigs.readLess', 'Read less') : t('featuredGigs.readMore', 'Read more...')}
                     </button>
                   )}
                 </div>
@@ -152,19 +154,19 @@ export function FeaturedGigs() {
                   <div className="space-y-3 mb-6 animate-fade-in border-t border-white/10 pt-4">
                     {gig.requirements && (
                       <div>
-                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Requirements</span>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">{t('featuredGigs.requirements', 'Requirements')}</span>
                         <p className="text-sm text-slate-200">{gig.requirements}</p>
                       </div>
                     )}
                     {gig.goals && (
                       <div>
-                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Goals</span>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">{t('featuredGigs.goals', 'Goals')}</span>
                         <p className="text-sm text-slate-200">{gig.goals}</p>
                       </div>
                     )}
                     {gig.language && (
                       <div>
-                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">Language</span>
+                        <span className="text-xs text-slate-400 uppercase tracking-wider font-semibold block mb-1">{t('featuredGigs.language', 'Language')}</span>
                         <p className="text-sm text-slate-200">{gig.language}</p>
                       </div>
                     )}
@@ -174,14 +176,14 @@ export function FeaturedGigs() {
 
               <div className="mt-auto relative z-10 flex flex-col justify-between pt-6 border-t border-white/10">
                 <div className="group/commission mb-4">
-                  <p className="text-xs text-slate-400 font-medium mb-3">Commissions</p>
+                  <p className="text-xs text-slate-400 font-medium mb-3">{t('featuredGigs.commissions', 'Commissions')}</p>
                   <div className="flex flex-wrap gap-2">
                     {(gig.commission?.commission_per_call ?? 0) > 0 && (
                       <div className="relative inline-flex flex-col gap-0.5 px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30 animate-glow-pulse group-hover/commission:border-harx-400/60 transition-all duration-300">
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(255,77,77,0.8)]">
                           €{(gig.commission.commission_per_call! * 0.7).toFixed(2)}
                         </span>
-                        <span className="text-[9px] font-bold text-harx-300 uppercase tracking-wide">/ call</span>
+                        <span className="text-[9px] font-bold text-harx-300 uppercase tracking-wide">{t('featuredGigs.perCall', '/ call')}</span>
                       </div>
                     )}
                     {(gig.commission?.commission_per_transaction ?? 0) > 0 && (
@@ -189,7 +191,7 @@ export function FeaturedGigs() {
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]">
                           €{(gig.commission.commission_per_transaction! * 0.7).toFixed(2)}
                         </span>
-                        <span className="text-[9px] font-bold text-harx-alt-300 uppercase tracking-wide">/ success</span>
+                        <span className="text-[9px] font-bold text-harx-alt-300 uppercase tracking-wide">{t('featuredGigs.perSuccess', '/ success')}</span>
                       </div>
                     )}
                     {(gig.commission?.bonus ?? 0) > 0 && (
@@ -197,12 +199,12 @@ export function FeaturedGigs() {
                         <span className="text-sm font-black text-white drop-shadow-[0_0_8px_rgba(168,85,247,0.8)]">
                           €{(gig.commission.bonus! * 0.7).toFixed(2)}
                         </span>
-                        <span className="text-[9px] font-bold text-purple-300 uppercase tracking-wide">bonus</span>
+                        <span className="text-[9px] font-bold text-purple-300 uppercase tracking-wide">{t('featuredGigs.bonus', 'bonus')}</span>
                       </div>
                     )}
                     {!(gig.commission?.commission_per_call ?? 0) && !(gig.commission?.commission_per_transaction ?? 0) && !(gig.commission?.bonus ?? 0) && (
                       <div className="relative inline-flex items-center px-3 py-1.5 rounded-lg bg-harx-500/10 border border-harx-500/30">
-                         <span className="text-sm font-black text-white">Variable</span>
+                         <span className="text-sm font-black text-white">{t('featuredGigs.variable', 'Variable')}</span>
                       </div>
                     )}
                   </div>
@@ -226,7 +228,7 @@ export function FeaturedGigs() {
             onClick={() => window.location.href = '/reporchestrator/profile-import'}
             className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-white/[0.03] border border-white/10 hover:border-harx-500 hover:bg-white/[0.08] rounded-full transition-all duration-300 shadow-lg hover:shadow-harx-500/20"
           >
-            Explore all opportunities
+            {t('featuredGigs.exploreAll', 'Explore all opportunities')}
             <ArrowRight className="w-5 h-5 ml-2" />
           </button>
         </div>
