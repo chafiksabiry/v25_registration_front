@@ -1,5 +1,6 @@
 import React from 'react';
 import { Check } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { getPlanPriceLabel, type PricingPlan } from './pricingPlansConfig';
 
 type PricingPlansGridProps = {
@@ -23,6 +24,7 @@ export function PricingPlansGrid({
   showCta = false,
   onCtaClick,
 }: PricingPlansGridProps) {
+  const { t } = useTranslation();
   const gridClass = columns === 4 ? 'pricing-plans-grid--4' : 'pricing-plans-grid--3';
   const withCtaClass = showCta ? 'pricing-plans-grid--with-cta' : '';
   const descClass = columns === 4 ? 'pricing-plan-desc--rep' : 'pricing-plan-desc--company';
@@ -37,7 +39,7 @@ export function PricingPlansGrid({
           >
             <div className="pricing-plan-head">
               {plan.popular ? (
-                <p className="pricing-plan-badge">Most popular</p>
+                <p className="pricing-plan-badge">{t('pricing.mostPopular', 'Most popular')}</p>
               ) : (
                 <div className="pricing-plan-badge-spacer" aria-hidden="true" />
               )}
@@ -49,18 +51,18 @@ export function PricingPlansGrid({
 
               <div className="pricing-plan-price-row">
                 <span className="pricing-plan-price">{getPlanPriceLabel(plan)}</span>
-                <span className="pricing-plan-interval">per month</span>
+                <span className="pricing-plan-interval">{t('pricing.perMonth', 'per month')}</span>
               </div>
             </div>
 
             {showCta && onCtaClick ? (
               <button type="button" onClick={onCtaClick} className="pricing-plan-cta">
-                {plan.ctaLabel ?? 'Start trial'}
+                {plan.ctaLabel ? t(`pricing.${plan.ctaLabel}`, plan.ctaLabel) : t('pricing.startTrial', 'Start trial')}
               </button>
             ) : null}
 
             <div>
-              <p className="pricing-plan-features-title">This includes:</p>
+              <p className="pricing-plan-features-title">{t('pricing.thisIncludes', 'This includes:')}</p>
               <ul className="pricing-plan-features">
                 {plan.features.map((feature) => (
                   <li key={feature}>
