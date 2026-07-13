@@ -529,5 +529,27 @@
     "redirectingLogin": "Redirection vers la connexion...",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "signIn": "Se connecter"
+  },
+  "choicePage": {
+    "marketplace": "Marketplace HARX",
+    "title1": "Transformez Votre",
+    "title2": "Centre de Contact",
+    "subtitle": "Connectez-vous à des opportunités ou trouvez le talent idéal pour vos besoins en service client.",
+    "companyTitle": "Publier une mission",
+    "companyDesc": "Pour les entreprises recherchant des talents en service client",
+    "comingSoon": "Bientôt disponible",
+    "companyFeat1": "Représentants du service client",
+    "companyFeat2": "Professionnels de la télévente",
+    "companyFeat3": "Agents de support par chat en direct",
+    "companyFeat4": "Spécialistes du support technique",
+    "repTitle": "Trouver des missions",
+    "repDesc": "Pour les professionnels des centres de contact",
+    "repFeat1": "Travaillez avec des entreprises de premier plan",
+    "repFeat2": "Opportunités à distance disponibles",
+    "repFeat3": "Horaires flexibles",
+    "repFeat4": "Rejoignez des communautés professionnelles",
+    "trust1": "Pas de frais de configuration",
+    "trust2": "Professionnels vérifiés",
+    "trust3": "Mise en relation basée sur l'IA"
   }
 }

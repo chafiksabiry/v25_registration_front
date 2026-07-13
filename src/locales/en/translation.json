@@ -529,5 +529,27 @@
     "redirectingLogin": "Redirecting to login...",
     "alreadyHaveAccount": "Already have an account?",
     "signIn": "Sign in"
+  },
+  "choicePage": {
+    "marketplace": "HARX Marketplace",
+    "title1": "Transform Your",
+    "title2": "Contact Center",
+    "subtitle": "Connect with opportunities or find the perfect talent for your customer service needs.",
+    "companyTitle": "Post a Gig",
+    "companyDesc": "For companies seeking customer service talent",
+    "comingSoon": "Coming soon",
+    "companyFeat1": "Customer Service Representatives",
+    "companyFeat2": "Telesales Professionals",
+    "companyFeat3": "Live Chat Support Agents",
+    "companyFeat4": "Technical Support Specialists",
+    "repTitle": "Find Gigs",
+    "repDesc": "For contact center professionals",
+    "repFeat1": "Work with Leading Companies",
+    "repFeat2": "Remote Opportunities Available",
+    "repFeat3": "Flexible Scheduling Options",
+    "repFeat4": "Join Professional Communities",
+    "trust1": "No setup fees",
+    "trust2": "Verified professionals",
+    "trust3": "AI-powered matching"
   }
 }
