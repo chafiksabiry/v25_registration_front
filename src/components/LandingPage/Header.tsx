@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Building2, Headphones, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
+import { LanguageSelector } from '../LanguageSelector';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
@@ -40,11 +41,6 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     }
     setIsMenuOpen(false);
   };
-
-  const toggleLanguage = () => {
-    i18n.changeLanguage(i18n.language.startsWith('fr') ? 'en' : 'fr');
-  };
-
   const navLinks: NavLink[] = [
     { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
     { id: 'pricing', label: t('header.pricing', 'Pricing') },
@@ -103,12 +99,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
         </div>
 
         <div className="hidden md:flex items-center gap-2.5">
-          <button
-            onClick={toggleLanguage}
-            className="text-white/90 hover:text-white font-semibold text-sm px-2 py-1 transition-colors uppercase"
-          >
-            {i18n.language.startsWith('fr') ? 'EN' : 'FR'}
-          </button>
+          <LanguageSelector />
           <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
             {t('header.signIn', 'Sign In')}
           </button>
@@ -150,12 +141,9 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
               </a>
             ))}
             <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
-              <button
-                onClick={toggleLanguage}
-                className="w-full py-2.5 text-white/90 hover:text-white font-semibold text-base transition-colors uppercase border border-white/20 rounded-xl"
-              >
-                {i18n.language.startsWith('fr') ? 'Switch to English' : 'Passer en Français'}
-              </button>
+              <div className="flex justify-center mb-4">
+                <LanguageSelector />
+              </div>
               <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
                 {t('header.signIn', 'Sign In')}
               </button>
