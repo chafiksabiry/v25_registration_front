@@ -78,25 +78,108 @@ export function getSessionToken(): string {
 const REP_ONBOARDING_STATE_KEY = "rep_onboarding_state";
 const PROFILE_DATA_KEY = "profileData";
 
-function computeRepRedirectFromProfile(profileData: {
+type RepPhaseStatus = { status?: string };
+type RepProfileSnapshot = {
   isBasicProfileCompleted?: boolean;
   status?: string;
-  onboardingProgress?: { phases?: Record<string, { status?: string }> };
-}): string | null {
-  const creation = import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
-  const dashboard = import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile";
-  const orchestrator = import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
+  generatedSummary?: string;
+  professionalSummary?: { profileDescription?: string };
+  experience?: unknown[];
+  experiences?: unknown[];
+  personalInfo?: { firstName?: string; first_name?: string };
+  gigs?: Array<{ status?: string } | null>;
+  onboardingProgress?: {
+    currentPhase?: number;
+    phases?: Record<string, RepPhaseStatus>;
+  };
+};
 
-  if (!profileData.isBasicProfileCompleted) return creation;
-  const p = profileData.onboardingProgress?.phases;
-  const allDone =
-    p?.phase1?.status === "completed" &&
-    p?.phase2?.status === "completed" &&
-    p?.phase3?.status === "completed" &&
-    p?.phase4?.status === "completed" &&
-    p?.phase5?.status === "completed";
+/** Mount prefix for the unified rep app (qiankun host = `/reps`). */
+function getRepMountBase(): string {
+  const creation =
+    import.meta.env.VITE_REP_CREATION_PROFILE_URL || "/reps/profile-import";
+  if (creation.endsWith("/profile-import")) {
+    const base = creation.slice(0, -"/profile-import".length);
+    return base || "/reps";
+  }
+  const orchestrator = import.meta.env.VITE_REP_ORCHESTRATOR_URL || "/reps";
+  return String(orchestrator).replace(/\/$/, "") || "/reps";
+}
+
+function toRepAbsoluteUrl(appPath: string): string {
+  const base = getRepMountBase();
+  const path = appPath.startsWith("/") ? appPath : `/${appPath}`;
+  return `${base}${path}`;
+}
+
+function isRepPhaseCompleted(
+  phases: Record<string, RepPhaseStatus> | undefined,
+  n: number
+): boolean {
+  return phases?.[`phase${n}`]?.status === "completed";
+}
+
+function hasRepProfileContent(profile: RepProfileSnapshot): boolean {
+  if (profile.isBasicProfileCompleted === true) return true;
+  if (typeof profile.generatedSummary === "string" && profile.generatedSummary.trim()) {
+    return true;
+  }
+  const desc = profile.professionalSummary?.profileDescription;
+  if (typeof desc === "string" && desc.trim()) return true;
+  if (Array.isArray(profile.experience) && profile.experience.length > 0) return true;
+  if (Array.isArray(profile.experiences) && profile.experiences.length > 0) return true;
+  const firstName =
+    profile.personalInfo?.firstName || profile.personalInfo?.first_name;
+  return typeof firstName === "string" && Boolean(firstName.trim());
+}
+
+/**
+ * Resume the current onboarding step after login.
+ * Do not key solely on `isBasicProfileCompleted` — that flag is only set at
+ * the end of the CV editor, so mid-funnel reps were always sent to Import CV.
+ */
+function computeRepRedirectFromProfile(profileData: RepProfileSnapshot): string {
+  const phases = profileData.onboardingProgress?.phases;
+  const currentPhase = Number(profileData.onboardingProgress?.currentPhase) || 1;
   const isPublished = profileData.status === "completed";
-  return allDone && isPublished ? dashboard : orchestrator;
+  const coreDone =
+    isPublished ||
+    [1, 2, 3, 4].every((n) => isRepPhaseCompleted(phases, n));
+  const gigEngaged =
+    Array.isArray(profileData.gigs) &&
+    profileData.gigs.some(
+      (g) => g && ["requested", "enrolled"].includes(String(g.status))
+    );
+
+  if (isPublished) return toRepAbsoluteUrl("/dashboard");
+  if (coreDone && gigEngaged) return toRepAbsoluteUrl("/profile");
+  if (coreDone || isRepPhaseCompleted(phases, 4)) {
+    return toRepAbsoluteUrl("/marketplace");
+  }
+  if (
+    isRepPhaseCompleted(phases, 3) ||
+    currentPhase >= 4 ||
+    phases?.phase4?.status === "in_progress"
+  ) {
+    return toRepAbsoluteUrl("/orchestrator/subscription");
+  }
+  if (
+    isRepPhaseCompleted(phases, 2) ||
+    currentPhase >= 3 ||
+    phases?.phase3?.status === "in_progress"
+  ) {
+    return toRepAbsoluteUrl("/orchestrator/skills");
+  }
+  if (profileData.isBasicProfileCompleted === true) {
+    return toRepAbsoluteUrl("/orchestrator/profile");
+  }
+  if (hasRepProfileContent(profileData)) {
+    return toRepAbsoluteUrl("/profile-editor");
+  }
+  return (
+    import.meta.env.VITE_REP_CREATION_PROFILE_URL ||
+    toRepAbsoluteUrl("/profile-import")
+  );
 }
 
 function syncRepOnboardingToLocalStorage(
@@ -115,13 +198,18 @@ function syncRepOnboardingToLocalStorage(
     }
     localStorage.setItem("rep_phase_completion", JSON.stringify(snapshot));
 
+    const nextPath = computeRepRedirectFromProfile(
+      profileData as RepProfileSnapshot
+    );
+
     localStorage.setItem(
       REP_ONBOARDING_STATE_KEY,
       JSON.stringify({
         userId,
         isBasicProfileCompleted: profileData.isBasicProfileCompleted === true,
-        allPhasesDone: [1, 2, 3, 4, 5].every((n) => snapshot[n]),
+        allPhasesDone: [1, 2, 3, 4].every((n) => snapshot[n]),
         isPublished: profileData.status === "completed",
+        nextPath,
         updatedAt: Date.now(),
       })
     );
@@ -130,22 +218,17 @@ function syncRepOnboardingToLocalStorage(
   }
 }
 
+/** Fallback only when the profile API is unreachable. */
 function getRepRedirectFromLocalStorage(userId: string): string | null {
   try {
     const stateRaw = localStorage.getItem(REP_ONBOARDING_STATE_KEY);
     if (stateRaw) {
       const state = JSON.parse(stateRaw) as {
         userId?: string;
-        isBasicProfileCompleted?: boolean;
-        allPhasesDone?: boolean;
-        isPublished?: boolean;
+        nextPath?: string;
       };
-      if (state.userId === userId) {
-        const creation = import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
-        const dashboard = import.meta.env.VITE_REP_DASHBOARD_URL || "/reps/profile";
-        const orchestrator = import.meta.env.VITE_REP_ORCHESTRATOR_URL || null;
-        if (!state.isBasicProfileCompleted) return creation;
-        return state.allPhasesDone && state.isPublished ? dashboard : orchestrator;
+      if (state.userId === userId && typeof state.nextPath === "string" && state.nextPath) {
+        return state.nextPath;
       }
     }
 
@@ -154,7 +237,7 @@ function getRepRedirectFromLocalStorage(userId: string): string | null {
       return computeRepRedirectFromProfile(JSON.parse(profileRaw));
     }
   } catch {
-    /* fall through to API */
+    /* fall through */
   }
   return null;
 }
@@ -198,10 +281,8 @@ export async function getPostLoginRedirectUrl(
       }
     }
 
-    // Fast path: use localStorage snapshot (no API round-trip on every login).
-    const cachedRedirect = getRepRedirectFromLocalStorage(userId);
-    if (cachedRedirect) return cachedRedirect;
-
+    // Always prefer live profile so login resumes the real onboarding step
+    // (stale localStorage used to force /profile-import).
     try {
       const { data: profileData } = await axios.get(
         `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
@@ -210,7 +291,11 @@ export async function getPostLoginRedirectUrl(
       syncRepOnboardingToLocalStorage(profileData, userId);
       return computeRepRedirectFromProfile(profileData);
     } catch {
-      return import.meta.env.VITE_REP_CREATION_PROFILE_URL || null;
+      return (
+        getRepRedirectFromLocalStorage(userId) ||
+        import.meta.env.VITE_REP_CREATION_PROFILE_URL ||
+        toRepAbsoluteUrl("/profile-import")
+      );
     }
   } catch {
     return null;
