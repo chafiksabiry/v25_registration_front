@@ -212,7 +212,7 @@ export function FeaturedGigs() {
                 
                 <div className="flex justify-end">
                   <button 
-                    onClick={() => window.location.href = '/reporchestrator/profile-import'}
+                    onClick={() => window.location.href = '/reps/profile-import'}
                     className="w-10 h-10 bg-white/10 text-white rounded-full flex items-center justify-center group-hover:bg-gradient-harx transition-all duration-300 shadow-md hover:shadow-harx-500/30"
                   >
                     <ArrowRight className="w-5 h-5 -rotate-45 group-hover:rotate-0 transition-transform duration-300" />
@@ -225,7 +225,7 @@ export function FeaturedGigs() {
 
         <div className="mt-16 text-center">
           <button 
-            onClick={() => window.location.href = '/reporchestrator/profile-import'}
+            onClick={() => window.location.href = '/reps/profile-import'}
             className="inline-flex items-center justify-center px-8 py-4 text-base font-semibold text-white bg-white/[0.03] border border-white/10 hover:border-harx-500 hover:bg-white/[0.08] rounded-full transition-all duration-300 shadow-lg hover:shadow-harx-500/20"
           >
             {t('featuredGigs.exploreAll', 'Explore all opportunities')}
