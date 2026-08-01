@@ -1,12 +1,14 @@
 import React from 'react';
 import { ArrowRight, Brain, LineChart, Sparkles, Users2, Bot, Gauge, MessageSquare, Shield, Zap, Globe } from 'lucide-react';
 import { Button } from './Button';
+import { useTranslation } from 'react-i18next';
 
 interface FeaturesProps {
   onGetStarted: () => void;
 }
 
 export function Features({ onGetStarted }: FeaturesProps) {
+  const { t } = useTranslation();
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -19,11 +21,10 @@ export function Features({ onGetStarted }: FeaturesProps) {
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
-            AI-Powered Excellence in Customer Engagement
+            {t('features.title', 'AI-Powered Excellence in Customer Engagement')}
           </h2>
           <p className="text-xl text-gray-600">
-            Experience the perfect blend of human expertise and artificial intelligence,
-            delivering exceptional customer experiences at scale.
+            {t('features.desc', 'Experience the perfect blend of human expertise and artificial intelligence, delivering exceptional customer experiences at scale.')}
           </p>
         </div>
 
@@ -34,27 +35,26 @@ export function Features({ onGetStarted }: FeaturesProps) {
             <div className="w-16 h-16 bg-gradient-harx rounded-xl flex items-center justify-center mb-6">
               <Bot className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-2xl font-semibold mb-4">AI Everywhere</h3>
+            <h3 className="text-2xl font-semibold mb-4">{t('features.box1.title', 'AI Everywhere')}</h3>
             <p className="text-gray-600 mb-6">
-              Our intelligent system permeates every aspect of customer service,
-              ensuring consistent, data-driven excellence across all touchpoints.
+              {t('features.box1.desc', 'Our intelligent system permeates every aspect of customer service, ensuring consistent, data-driven excellence across all touchpoints.')}
             </p>
             <ul className="space-y-4">
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Automated Call Summarization</span>
+                <span>{t('features.box1.list1', 'Automated Call Summarization')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Automated quality monitoring</span>
+                <span>{t('features.box1.list2', 'Automated quality monitoring')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Smart knowledge base</span>
+                <span>{t('features.box1.list3', 'Smart knowledge base')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Intelligent Workflow Automation</span>
+                <span>{t('features.box1.list4', 'Intelligent Workflow Automation')}</span>
               </li>
             </ul>
           </div>
@@ -64,27 +64,26 @@ export function Features({ onGetStarted }: FeaturesProps) {
             <div className="w-16 h-16 bg-gradient-harx rounded-xl flex items-center justify-center mb-6">
               <Brain className="h-8 w-8 text-white" />
             </div>
-            <h3 className="text-2xl font-semibold mb-4">AI Augmented Agents</h3>
+            <h3 className="text-2xl font-semibold mb-4">{t('features.box2.title', 'AI Augmented Agents')}</h3>
             <p className="text-gray-600 mb-6">
-              Empower your human workforce with AI-driven insights and tools,
-              maximizing efficiency while maintaining the human touch.
+              {t('features.box2.desc', 'Empower your human workforce with AI-driven insights and tools, maximizing efficiency while maintaining the human touch.')}
             </p>
             <ul className="space-y-4">
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Real-time decision support</span>
+                <span>{t('features.box2.list1', 'Real-time decision support')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Real-Time Conversation Guidance</span>
+                <span>{t('features.box2.list2', 'Real-Time Conversation Guidance')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Continuous Agent Learning</span>
+                <span>{t('features.box2.list3', 'Continuous Agent Learning')}</span>
               </li>
               <li className="flex items-start">
                 <ArrowRight className="h-5 w-5 text-harx-500 mt-1 mr-2 flex-shrink-0" />
-                <span>Contextual recommendations</span>
+                <span>{t('features.box2.list4', 'Contextual recommendations')}</span>
               </li>
             </ul>
           </div>
@@ -217,7 +216,7 @@ export function Features({ onGetStarted }: FeaturesProps) {
             className="w-full group"
             onClick={() => scrollToSection('how-it-works')}
           >
-            See How It Works
+            {t('features.cta', 'See How It Works')}
             <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
           </Button>
         </div>

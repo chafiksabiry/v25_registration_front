@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
 import { clearAuthSession } from '../lib/authRedirect';
+import { useTranslation } from 'react-i18next';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
 
@@ -66,6 +67,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const pushStep = (next: RecoveryStep, patch?: Partial<RecoverySession>) => {
     setStep(next);
@@ -106,7 +108,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
     switch (step) {
       case 'email':
         if (!formData.email) {
-          setError('Please enter your email address');
+          setError(t('recovery.errEmail', 'Please enter your email address'));
           return;
         }
         try {
@@ -114,13 +116,13 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
           pushStep('verification', { email: formData.email });
         } catch (err: any) {
-          setError(err.message || 'Failed to send verification code');
+          setError(err.message || t('recovery.errUnexpected', 'Failed to send verification code'));
         }
         break;
 
       case 'verification':
         if (formData.verificationCode.length !== 6) {
-          setError('Please enter a valid 6-digit code');
+          setError(t('recovery.errCode', 'Please enter a valid 6-digit code'));
           return;
         }
         try {
@@ -129,31 +131,31 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
             code: formData.verificationCode,
           });
           if (resultverificationEmail.result && resultverificationEmail.result.error) {
-            setError('Invalid email verification code');
+            setError(t('recovery.errInvalidCode', 'Invalid email verification code'));
           } else if (resultverificationEmail.token) {
             // Keep recovery token in session only — NOT localStorage.token.
             // Writing to localStorage triggers GuestOnly → /company redirect loop.
             setRecoveryToken(resultverificationEmail.token);
             pushStep('new-password', { recoveryToken: resultverificationEmail.token });
           } else {
-            setError('Verification failed: No token received');
+            setError(t('recovery.errNoToken', 'Verification failed: No token received'));
           }
         } catch (err: any) {
-          setError(err.message || 'Verification failed');
+          setError(err.message || t('recovery.errUnexpected', 'Verification failed'));
         }
         break;
 
       case 'new-password':
         if (formData.newPassword.length < 8) {
-          setError('Password must be at least 8 characters long');
+          setError(t('recovery.errPasswordLength', 'Password must be at least 8 characters long'));
           return;
         }
         if (formData.newPassword !== formData.confirmPassword) {
-          setError('Passwords do not match');
+          setError(t('recovery.errPasswordMatch', 'Passwords do not match'));
           return;
         }
         if (!recoveryToken) {
-          setError('Session expired. Please start the recovery process again.');
+          setError(t('recovery.errSession', 'Session expired. Please start the recovery process again.'));
           pushStep('email');
           return;
         }
@@ -162,7 +164,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           clearRecoveryFlow();
           pushStep('success');
         } catch (err: any) {
-          setError(err.message || 'Failed to reset password');
+          setError(err.message || t('recovery.errUnexpected', 'Failed to reset password'));
         }
         break;
 
@@ -188,7 +190,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                 <div className="absolute -inset-2 bg-gradient-to-r from-harx-400/15 to-harx-alt-400/15 rounded-lg blur-lg -z-10" />
               </div>
               <h1 className="text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent">HARX</h1>
-              <p className="text-gray-500 font-medium tracking-wide">We inspire growth</p>
+              <p className="text-gray-500 font-medium tracking-wide">{t('recovery.inspireGrowth', 'We inspire growth')}</p>
             </div>
           </div>
 
@@ -196,8 +198,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
             {step === 'email' && (
               <div className="space-y-4">
                 <div className="text-left">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Reset Your Password</h2>
-                  <p className="text-gray-600">Enter your registered email to reset your password.</p>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.resetTitle', 'Reset Your Password')}</h2>
+                  <p className="text-gray-600">{t('recovery.resetDesc', 'Enter your registered email to reset your password.')}</p>
                 </div>
 
                 <div className="relative">
@@ -207,7 +209,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className="w-full pl-12 pr-4 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all placeholder:text-gray-400"
-                    placeholder="Enter your email"
+                    placeholder={t('recovery.emailPlaceholder', 'Enter your email')}
                   />
                 </div>
               </div>
@@ -215,9 +217,9 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
 
             {step === 'verification' && (
               <div className="space-y-4 text-left">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Verify Your Identity</h2>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.verifyTitle', 'Verify Your Identity')}</h2>
                 <p className="text-gray-600 leading-relaxed">
-                  We sent a 6-digit code to <span className="font-semibold text-harx-600">{formData.email}</span>. Please enter it below.
+                  {t('recovery.verifyDesc', 'We sent a 6-digit code to {{email}}. Please enter it below.', { email: formData.email })}
                 </p>
 
                 <div className="relative">
@@ -236,8 +238,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
 
             {step === 'new-password' && (
               <div className="space-y-4 text-left">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">Create New Password</h2>
-                <p className="text-gray-600 mb-4">Set a strong password for your account.</p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.newPasswordTitle', 'Create New Password')}</h2>
+                <p className="text-gray-600 mb-4">{t('recovery.newPasswordDesc', 'Set a strong password for your account.')}</p>
                 <div className="space-y-3">
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
@@ -246,7 +248,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                       value={formData.newPassword}
                       onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
                       className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
-                      placeholder="New password"
+                      placeholder={t('recovery.newPasswordPlaceholder', 'New password')}
                     />
                     {formData.newPassword.length > 0 && (
                       <button
@@ -266,7 +268,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                       value={formData.confirmPassword}
                       onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                       className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
-                      placeholder="Confirm new password"
+                      placeholder={t('recovery.confirmPasswordPlaceholder', 'Confirm new password')}
                     />
                     {formData.confirmPassword.length > 0 && (
                       <button
@@ -290,8 +292,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-gray-900">Success!</h2>
-                  <p className="text-gray-600">Your password has been reset. You can now log in.</p>
+                  <h2 className="text-2xl font-bold text-gray-900">{t('recovery.successTitle', 'Success!')}</h2>
+                  <p className="text-gray-600">{t('recovery.successDesc', 'Your password has been reset. You can now log in.')}</p>
                 </div>
               </div>
             )}
@@ -309,7 +311,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
               onClick={handleContinue}
               className="btn-primary w-full group"
             >
-              {step === 'success' ? 'Back to Sign In' : 'Continue'}
+              {step === 'success' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnContinue', 'Continue')}
               {step !== 'success' && <KeyRound className="ml-2 h-4 w-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />}
             </button>
 
@@ -318,7 +320,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
                 onClick={handleBackToSignIn}
                 className="w-full text-gray-500 py-2 font-medium hover:text-gray-700 transition-colors"
               >
-                Back to Sign In
+                {t('recovery.btnBack', 'Back to Sign In')}
               </button>
             )}
           </div>

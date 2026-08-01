@@ -8,6 +8,7 @@ import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
 import { useHistoryBack } from '../hooks/useHistoryBack';
+import { useTranslation } from 'react-i18next';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -37,6 +38,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!isSessionActive()) return;
@@ -83,7 +85,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       setResendTimeout(30);
       setFormData((prev) => ({ ...prev, verificationCode: '' }));
     } catch {
-      setError('Failed to resend verification code');
+      setError(t('signIn.errUnexpected', 'Failed to resend verification code'));
     } finally {
       setIsLoading(false);
     }
@@ -101,7 +103,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       setResendTimeout(30);
       setFormData((prev) => ({ ...prev, verificationCode: '' }));
     } catch {
-      setError('Failed to send SMS code');
+      setError(t('signIn.errUnexpected', 'Failed to send SMS code'));
       setVerificationMethod('email');
     } finally {
       setIsLoading(false);
@@ -119,7 +121,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     try {
       if (step === 'credentials') {
         if (!formData.email || !formData.password) {
-          setError('Please enter both email and password.');
+          setError(t('signIn.errMissingFields', 'Please enter both email and password.'));
           return;
         }
         const result = await auth.login({ email: formData.email, password: formData.password });
@@ -132,21 +134,21 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       }
       if (step === '2fa') {
         if (formData.verificationCode.length !== 6) {
-          setError('Please enter a valid 6-digit code.');
+          setError(t('signIn.errInvalidCode', 'Please enter a valid 6-digit code.'));
           return;
         }
         let resultData: { token: string };
         if (verificationMethod === 'email') {
           const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
           if (res.result?.error) {
-            setError('Invalid email verification code');
+            setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
             return;
           }
           resultData = res;
         } else {
           const res = await auth.verifyOTP(formData.userId, formData.verificationCode);
           if (res.error) {
-            setError('Invalid SMS verification code');
+            setError(t('signIn.errInvalidSmsCode', 'Invalid SMS verification code'));
             return;
           }
           resultData = res;
@@ -172,9 +174,9 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       }
     } catch (err: any) {
       if (step === 'credentials') {
-        setError(err.response?.data?.message || 'Invalid email or password. Please try again.');
+        setError(err.response?.data?.message || t('signIn.errUnexpected', 'Invalid email or password. Please try again.'));
       } else {
-        setError(err.message || 'An unexpected error occurred. Please try again.');
+        setError(err.message || t('signIn.errUnexpected', 'An unexpected error occurred. Please try again.'));
       }
     } finally {
       setIsLoading(false);
@@ -211,11 +213,11 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                 <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
               </div>
               <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                Start Your <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">Journey Today</span>
+                {t('signIn.brandTitle1', 'Start Your')} <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
               </h1>
               <p className="text-slate-400 text-sm leading-relaxed">
-                Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.
+                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
               </p>
             </div>
           </div>
@@ -225,8 +227,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
             <div className="max-w-md mx-auto w-full">
               {isAlreadyLoggedIn ? (
                 <div className="space-y-4 text-center">
-                  <h2 className="text-xl font-bold text-white">Already Logged In</h2>
-                  <p className="text-slate-400">Redirecting you to your dashboard...</p>
+                  <h2 className="text-xl font-bold text-white">{t('signIn.alreadyLoggedIn', 'Already Logged In')}</h2>
+                  <p className="text-slate-400">{t('signIn.redirecting', 'Redirecting you to your dashboard...')}</p>
                   <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
                 </div>
               ) : (
@@ -238,13 +240,13 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                       className="mb-6 flex items-center text-sm text-slate-450 transition-colors hover:text-white"
                     >
                       <ArrowLeft className="mr-1.5 h-4 w-4" />
-                      Back
+                      {t('signIn.back', 'Back')}
                     </button>
                   )}
 
                   <div className="text-center mb-8 lg:text-left">
-                    <h2 className="text-3xl font-extrabold text-white mb-2">Welcome Back</h2>
-                    <p className="text-slate-400 text-sm">Sign in to your account to continue.</p>
+                    <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
+                    <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
                   </div>
 
                   {step === 'credentials' && (
@@ -256,7 +258,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                           className="input-premium-glow"
-                          placeholder="Enter your email"
+                          placeholder={t('signIn.emailPlaceholder', 'Enter your email')}
                         />
                       </div>
                       <div className="relative group">
@@ -266,7 +268,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           value={formData.password}
                           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                           className="input-premium-glow pr-12"
-                          placeholder="Enter your password"
+                          placeholder={t('signIn.passwordPlaceholder', 'Enter your password')}
                         />
                         <button
                           type="button"
@@ -286,10 +288,10 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                             onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
                             className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 focus:ring-offset-slate-900 w-4 h-4"
                           />
-                          <span className="text-sm text-slate-300">Remember me</span>
+                          <span className="text-sm text-slate-300">{t('signIn.rememberMe', 'Remember me')}</span>
                         </label>
                         <button type="button" onClick={onForgotPassword} className="text-sm text-harx-400 font-medium hover:text-harx-300 transition-colors">
-                          Forgot password?
+                          {t('signIn.forgotPassword', 'Forgot password?')}
                         </button>
                       </div>
                     </div>
@@ -298,12 +300,12 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                   {step === '2fa' && (
                     <>
                       <h2 className="text-2xl font-bold text-white mb-2">
-                        {verificationMethod === 'email' ? 'Email Verification' : 'SMS Verification'}
+                        {verificationMethod === 'email' ? t('signIn.emailVerification', 'Email Verification') : t('signIn.smsVerification', 'SMS Verification')}
                       </h2>
                       <p className="text-slate-400 text-sm mb-6">
                         {verificationMethod === 'email'
-                          ? `We sent a 6-digit code to ${formData.email}. Enter it below.`
-                          : 'We sent a 6-digit code to your phone. Enter it below.'}
+                          ? t('signIn.emailSentCode', 'We sent a 6-digit code to {{email}}. Enter it below.', { email: formData.email })
+                          : t('signIn.smsSentCode', 'We sent a 6-digit code to your phone. Enter it below.')}
                       </p>
                       <div className="relative group mb-4">
                         <KeyRound className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-500 transition-colors" />
@@ -323,7 +325,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                         className={`w-full flex items-center justify-center gap-2 text-sm mb-4 transition-colors ${resendTimeout > 0 ? 'text-slate-500 cursor-not-allowed' : 'text-harx-400 hover:text-harx-300'}`}
                       >
                         <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                        {resendTimeout > 0 ? `Resend code in ${resendTimeout}s` : 'Resend verification code'}
+                        {resendTimeout > 0 ? t('signIn.resendCodeIn', 'Resend code in {{seconds}}s', { seconds: resendTimeout }) : t('signIn.resendVerification', 'Resend verification code')}
                       </button>
                       {verificationMethod === 'email' && formData.phone && (
                         <button
@@ -332,7 +334,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           disabled={isLoading}
                           className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-450 hover:text-harx-alt-300 transition-colors"
                         >
-                          <Phone className="h-4 w-4" /> Try SMS verification instead
+                          <Phone className="h-4 w-4" /> {t('signIn.trySmsInstead', 'Try SMS verification instead')}
                         </button>
                       )}
                       {verificationMethod === 'sms' && (
@@ -342,7 +344,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           disabled={isLoading}
                           className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-450 hover:text-harx-alt-300 mt-2 transition-colors"
                         >
-                          <Mail className="h-4 w-4" /> Try Email verification instead
+                          <Mail className="h-4 w-4" /> {t('signIn.tryEmailInstead', 'Try Email verification instead')}
                         </button>
                       )}
                     </>
@@ -350,8 +352,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
 
                   {step === 'success' && (
                     <div className="space-y-4 text-center py-4">
-                      <h2 className="text-2xl font-bold text-green-450">Login Successful!</h2>
-                      <p className="text-slate-350">Redirecting to your dashboard...</p>
+                      <h2 className="text-2xl font-bold text-green-450">{t('signIn.successTitle', 'Login Successful!')}</h2>
+                      <p className="text-slate-350">{t('signIn.successRedirect', 'Redirecting to your dashboard...')}</p>
                       <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
                     </div>
                   )}
@@ -374,7 +376,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                         {isLoading ? (
                           <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         ) : (
-                          'Sign In'
+                          t('signIn.signInBtn', 'Sign In')
                         )}
                       </button>
                     </div>
@@ -390,16 +392,16 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                       {isLoading ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        'Verify'
+                        t('signIn.verifyBtn', 'Verify')
                       )}
                     </button>
                   )}
 
                   {step === 'credentials' && (
                     <p className="text-center text-sm text-slate-400 mt-6 pt-4 border-t border-white/[0.06]">
-                      Don&apos;t have an account?{' '}
+                      {t('signIn.noAccount', "Don't have an account?")}{' '}
                       <button type="button" onClick={onRegister} className="text-harx-400 font-semibold hover:text-harx-300 transition-colors">
-                        Sign up
+                        {t('signIn.signUp', 'Sign up')}
                       </button>
                     </p>
                   )}

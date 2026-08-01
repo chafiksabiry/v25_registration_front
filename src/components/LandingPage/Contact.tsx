@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Building2, Mail, MessageSquare, Phone, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 
 export function Contact() {
   const [inquiryType, setInquiryType] = useState('client');
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen pt-16">
@@ -11,10 +13,10 @@ export function Contact() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Get in Touch
+              {t('contact.title', 'Get in Touch')}
             </h1>
             <p className="text-xl text-gray-600">
-              Have questions? We're here to help you succeed with HARX.
+              {t('contact.subtitle', "Have questions? We're here to help you succeed with HARX.")}
             </p>
           </div>
 
@@ -29,7 +31,7 @@ export function Contact() {
                 }`}
                 onClick={() => setInquiryType('client')}
               >
-                I'm a Potential Client
+                {t('contact.potentialClient', "I'm a Potential Client")}
               </button>
               <button
                 className={`flex-1 py-3 px-6 rounded-lg text-center transition-colors ${
@@ -39,7 +41,7 @@ export function Contact() {
                 }`}
                 onClick={() => setInquiryType('rep')}
               >
-                I Want to Be a Rep
+                {t('contact.wantToBeRep', "I Want to Be a Rep")}
               </button>
             </div>
 
@@ -58,7 +60,7 @@ export function Contact() {
                   })
                   .then(response => {
                     if (response.ok) {
-                      alert('Thank you for your message. We will get back to you soon!');
+                      alert(t('contact.successMsg', 'Thank you for your message. We will get back to you soon!'));
                       e.currentTarget.reset();
                     } else {
                       throw new Error('Form submission failed');
@@ -66,7 +68,7 @@ export function Contact() {
                   })
                   .catch(error => {
                     console.error('Error:', error);
-                    alert('There was an error submitting the form. Please try again later.');
+                    alert(t('contact.errorMsg', 'There was an error submitting the form. Please try again later.'));
                   });
                 }}
                 className="space-y-6"
@@ -80,7 +82,7 @@ export function Contact() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name <span className="text-red-500">*</span>
+                      {t('contact.fullName', 'Full Name')} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -93,14 +95,14 @@ export function Contact() {
                         required
                         maxLength={80}
                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-harx-600 focus:border-transparent"
-                        placeholder="John Doe"
+                        placeholder={t('contact.johnDoe', "John Doe")}
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Email <span className="text-red-500">*</span>
+                      {t('contact.email', 'Email')} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -113,14 +115,14 @@ export function Contact() {
                         required
                         maxLength={100}
                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-harx-600 focus:border-transparent"
-                        placeholder="john@example.com"
+                        placeholder={t('contact.emailPlaceholder', "john@example.com")}
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone <span className="text-red-500">*</span>
+                      {t('contact.phone', 'Phone')} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -140,7 +142,7 @@ export function Contact() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {inquiryType === 'client' ? 'Company' : 'Location'} <span className="text-red-500">*</span>
+                      {inquiryType === 'client' ? t('contact.company', 'Company') : t('contact.location', 'Location')} <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -153,7 +155,7 @@ export function Contact() {
                         required
                         maxLength={200}
                         className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-harx-600 focus:border-transparent"
-                        placeholder={inquiryType === 'client' ? 'Company Name' : 'City, Country'}
+                        placeholder={inquiryType === 'client' ? t('contact.companyPlaceholder', 'Company Name') : t('contact.locationPlaceholder', 'City, Country')}
                       />
                     </div>
                   </div>
@@ -161,7 +163,7 @@ export function Contact() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Message
+                    {t('contact.message', 'Message')}
                   </label>
                   <div className="relative">
                     <div className="absolute top-3 left-3 pointer-events-none">
@@ -172,17 +174,17 @@ export function Contact() {
                       name="Description"
                       rows={4}
                       className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-harx-600 focus:border-transparent"
-                      placeholder="Tell us about your needs..."
+                      placeholder={t('contact.messagePlaceholder', "Tell us about your needs...")}
                     />
                   </div>
                 </div>
 
                 <div className="flex justify-end gap-4">
                   <Button type="reset" variant="secondary" size="lg">
-                    Reset
+                    {t('contact.reset', 'Reset')}
                   </Button>
                   <Button type="submit" size="lg">
-                    Send Message
+                    {t('contact.send', 'Send Message')}
                   </Button>
                 </div>
               </form>
@@ -193,12 +195,12 @@ export function Contact() {
           <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="text-center">
               <Mail className="h-8 w-8 text-harx-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Email Us</h3>
+              <h3 className="font-semibold mb-2">{t('contact.emailUs', 'Email Us')}</h3>
               <p className="text-gray-600">sales@harx.ai</p>
             </div>
             <div className="text-center">
               <Building2 className="h-8 w-8 text-harx-600 mx-auto mb-4" />
-              <h3 className="font-semibold mb-2">Visit Us</h3>
+              <h3 className="font-semibold mb-2">{t('contact.visitUs', 'Visit Us')}</h3>
               <p className="text-gray-600">
                 HARX TECHNOLOGIES Inc.<br />
                 16192 Coastal Hwy<br />
