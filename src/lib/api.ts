@@ -1,9 +1,15 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+
+if (!API_URL) {
+  console.error(
+    '[registration] VITE_API_URL is missing — API calls will hit the Netlify SPA and silently fail'
+  );
+}
 
 const api = axios.create({
-  baseURL: API_URL,
+  baseURL: API_URL || undefined,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -244,11 +250,24 @@ export const publicPlansApi = {
 
 export const newsletter = {
   subscribe: async (data: { email: string; locale?: string }) => {
+    if (!API_URL) {
+      throw new Error('VITE_API_URL is not configured');
+    }
     const response = await api.post('/newsletter/subscribe', data);
-    return response.data as {
+    const payload = response.data;
+    // Guard against Netlify SPA fallback (HTML 200) or unexpected payloads
+    if (
+      !payload ||
+      typeof payload !== 'object' ||
+      payload.success !== true ||
+      !payload.data?.email
+    ) {
+      throw new Error('Invalid newsletter subscribe response');
+    }
+    return payload as {
       success: boolean;
       message?: string;
-      data?: { email: string; created: boolean };
+      data: { email: string; created: boolean };
     };
   },
 };
