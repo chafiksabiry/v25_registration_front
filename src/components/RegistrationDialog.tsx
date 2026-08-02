@@ -497,9 +497,9 @@ export default function RegistrationDialog({
                         <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
                         <p className="text-sm text-slate-300 leading-relaxed">
                           {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
+                          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
                           {t('register.termsAnd', 'and acknowledge our')}{' '}
-                          <a href="#" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
+                          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
                           {t('register.termsSecurity', 'We prioritize your data security.')}
                         </p>
                       </div>
