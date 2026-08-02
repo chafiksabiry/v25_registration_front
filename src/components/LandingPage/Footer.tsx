@@ -60,7 +60,10 @@ export function Footer() {
         email: trimmed,
         locale: i18n.language?.split('-')[0] || 'en',
       });
-      const created = result?.data?.created !== false;
+      if (!result?.success || !result?.data?.email) {
+        throw new Error('Invalid newsletter subscribe response');
+      }
+      const created = result.data.created === true;
       setFeedback({
         type: 'success',
         text: created
