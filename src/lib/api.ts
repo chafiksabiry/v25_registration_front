@@ -242,6 +242,17 @@ export const publicPlansApi = {
   },
 };
 
+export const newsletter = {
+  subscribe: async (data: { email: string; locale?: string }) => {
+    const response = await api.post('/newsletter/subscribe', data);
+    return response.data as {
+      success: boolean;
+      message?: string;
+      data?: { email: string; created: boolean };
+    };
+  },
+};
+
 export const files = {
   upload: async (file: File, metadata?: any) => {
     const formData = new FormData();
