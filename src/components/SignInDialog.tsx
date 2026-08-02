@@ -1,447 +1,414 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin } from 'lucide-react';
-import axios from 'axios';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
+import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
+import { hardNavigate } from '../lib/appNavigation';
 import { useAuth } from '../contexts/AuthContext';
-//import { sendVerificationEmail } from '../utils/aws';
-import Cookies from 'js-cookie';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
+import { Header } from './LandingPage/Header';
+import { useHistoryBack } from '../hooks/useHistoryBack';
+import { useTranslation } from 'react-i18next';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
 interface SignInDialogProps {
   onRegister: () => void;
   onForgotPassword: () => void;
+  onSuccess?: () => void;
+  onGetStarted?: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function SignInDialog({ onRegister, onForgotPassword }: SignInDialogProps) {
+export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted, onNavigateToSection }: SignInDialogProps) {
   const { setToken } = useAuth();
+  const goBack = useHistoryBack('/');
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     rememberMe: false,
-    verificationCode: ''
+    verificationCode: '',
+    userId: '',
+    phone: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimeout, setResendTimeout] = useState(0);
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
-  const [redirectPath, setRedirectPath] = useState<string | null>(null);
-  const [isRedirecting, setIsRedirecting] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const checkExistingUser = async () => {
-      const userId = Cookies.get('userId');
-      const hasRedirected = localStorage.getItem('hasRedirected');
-      
-      if (userId && !hasRedirected) {
-        try {
-          const checkFirstLogin = await auth.checkFirstLogin(userId);
-          const checkUserType = await auth.checkUserType(userId);
-          let redirectTo;
+    if (!isSessionActive()) return;
 
-          if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
-            redirectTo = '/app2';
-          } else if (checkUserType.userType === 'company') {
-            const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-            console.log("onboardingProgress", onboardingProgress);
-            if (onboardingProgress.currentPhase !== 4 || 
-                !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-              console.log("we are here to redirect to orchestrator");
-              redirectTo = '/app11';
-            } else {
-              redirectTo = '/app7';
-            }
-          } else {
-            //user type is rep
-            try {
-              const token = localStorage.getItem('token'); // Get token from localStorage
-              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
-              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
-              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
-              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
+    setIsAlreadyLoggedIn(true);
+    const userId = syncSessionUserIdCookie() ?? getSessionUserId();
+    if (!userId) {
+      clearAuthSession();
+      setIsAlreadyLoggedIn(false);
+      return;
+    }
 
-              const { data: profileData } = await axios.get(
-                `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${token}`
-                  }
-                }
-              );
-              console.log('profileData', profileData);
-              Cookies.set('agentId', profileData._id);
-              
-              if (!profileData.isBasicProfileCompleted) {
-                redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
-              } else {
-                redirectTo = (
-                  profileData.onboardingProgress.phases.phase1.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase2.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase3.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase4.status === "completed"
-                )
-                  ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
-                  : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
-              }
-              console.log('Selected redirect URL:', redirectTo);
-            } catch (error) {
-              console.error('Error fetching rep profile:', error);
-              // If there's an error fetching the profile, default to profile creation
-              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
-            }
-          }
+    const fallbackTimer = window.setTimeout(() => {
+      hardNavigate('/company');
+    }, 3000);
 
-          setIsAlreadyLoggedIn(true);
-          setRedirectPath(redirectTo);
-          localStorage.setItem('hasRedirected', 'true');
-          
-          // Redirect after showing the message for 2 seconds
-          setTimeout(() => {
-            window.location.href = redirectTo;
-          }, 2000);
-        } catch (error) {
-          console.error('Error checking user type:', error);
-          localStorage.removeItem('hasRedirected');
-        }
-      }
-    };
+    getPostLoginRedirectUrl(userId, getSessionToken())
+      .then((dest) => {
+        clearTimeout(fallbackTimer);
+        hardNavigate(dest || '/company');
+      })
+      .catch(() => {
+        clearTimeout(fallbackTimer);
+        hardNavigate('/company');
+      });
 
-    checkExistingUser();
-    
-    // Cleanup function to remove the redirect flag when component unmounts
-    return () => {
-      localStorage.removeItem('hasRedirected');
-    };
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   useEffect(() => {
     let timer: number;
     if (resendTimeout > 0) {
-      timer = window.setInterval(() => {
-        setResendTimeout(prev => prev - 1);
-      }, 1000);
+      timer = window.setInterval(() => setResendTimeout((prev) => prev - 1), 1000);
     }
-    return () => {
-      if (timer) clearInterval(timer);
-    };
+    return () => { if (timer) clearInterval(timer); };
   }, [resendTimeout]);
 
   const handleResendOTP = async () => {
     if (resendTimeout > 0) return;
-
     setError(null);
     setIsLoading(true);
-
     try {
       await auth.resendVerification(formData.email);
-      setResendTimeout(30); // 30 seconds cooldown
-      setFormData(prev => ({ ...prev, verificationCode: '' }));
-    } catch (err) {
-      setError('Failed to resend verification code');
+      setResendTimeout(30);
+      setFormData((prev) => ({ ...prev, verificationCode: '' }));
+    } catch {
+      setError(t('signIn.errUnexpected', 'Failed to resend verification code'));
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSendSMS = async () => {
+    if (!formData.userId || !formData.phone) {
+      setError('Phone number not available. Cannot send SMS.');
+      return;
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      await auth.sendOTP(formData.userId, formData.phone);
+      setResendTimeout(30);
+      setFormData((prev) => ({ ...prev, verificationCode: '' }));
+    } catch {
+      setError(t('signIn.errUnexpected', 'Failed to send SMS code'));
+      setVerificationMethod('email');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSwitchToSMS = async () => {
+    setVerificationMethod('sms');
+    await handleSendSMS();
   };
 
   const handleSignIn = async () => {
+    setError(null);
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      setError(null);
-
       if (step === 'credentials') {
         if (!formData.email || !formData.password) {
-          setError('Please enter both email and password.');
+          setError(t('signIn.errMissingFields', 'Please enter both email and password.'));
           return;
         }
-
-        try {
-          const result = await auth.login({ email: formData.email, password: formData.password });
-          console.log("result", result);
-          const verification = await auth.sendVerificationEmail(formData.email, result.data.code);
-          console.log("verification", verification);
-          setStep('2fa');
-          setResendTimeout(30); // Set initial cooldown
-        } catch (err) {
-          setError('Invalid email or password. Please try again.');
-          return;
-        }
-      } else if (step === '2fa') {
-        if (formData.verificationCode.length !== 6) {
-          setError('Please enter a valid verification code.');
-          return;
-        }
-
-        const resultverificationEmail = await auth.verifyEmail({
-          email: formData.email,
-          code: formData.verificationCode
-        });
-        if (resultverificationEmail.result.error) { setError('Invalid email verification code'); }
-        else {
-          // Decode the token to get the payload
-          const decoded: any = jwtDecode(resultverificationEmail.token);
-          // Assuming userId is in the payload, like: { userId: "12345", ... }
-          const userId = decoded.userId;
-          setToken(resultverificationEmail.token);
-          localStorage.setItem('token', resultverificationEmail.token); // Store token in localStorage
-          Cookies.set('userId', userId); // Save only the userId
-          console.log("userId", Cookies.get('userId'));
-          setStep('success');
-          const checkFirstLogin = await auth.checkFirstLogin(userId);
-          console.log("checkFirstLogin", checkFirstLogin);
-          const checkUserType = await auth.checkUserType(userId);
-          console.log("checkUserType", checkUserType);
-          let redirectTo;
-          if (checkFirstLogin.isFirstLogin || checkUserType.userType == null) {
-            redirectTo = '/app2';
-          } else if (checkUserType.userType === 'company') {
-          const { data: onboardingProgress } = await axios.get(`${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`);
-          console.log("onboardingProgress", onboardingProgress);
-          if (onboardingProgress.currentPhase !== 4 || 
-              !onboardingProgress.phases.find((phase: any) => phase.id === 4)?.completed) {
-            console.log("we are here to redirect to orchestrator");
-            redirectTo = '/app11';
-           
-          } else {
-              redirectTo = '/app7';
-          }
-          } else {
-            // User type is rep
-            try {
-              console.log('Rep API URL:', import.meta.env.VITE_REP_API_URL);
-              console.log('Rep Orchestrator URL:', import.meta.env.VITE_REP_ORCHESTRATOR_URL);
-              console.log('Rep Creation Profile URL:', import.meta.env.VITE_REP_CREATION_PROFILE_URL);
-              console.log('Rep Dashboard URL:', import.meta.env.VITE_REP_DASHBOARD_URL);
-
-              const { data: profileData } = await axios.get(
-                `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${resultverificationEmail.token}`
-                  }
-                }
-              );
-              console.log('profileData', profileData);
-              Cookies.set('agentId', profileData._id);
-              
-              if (!profileData.isBasicProfileCompleted) {
-                redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
-              } else {
-                redirectTo = (
-                  profileData.onboardingProgress.phases.phase1.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase2.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase3.status === "completed" &&
-                  profileData.onboardingProgress.phases.phase4.status === "completed"
-                )
-                  ? `${import.meta.env.VITE_REP_DASHBOARD_URL}`
-                  : `${import.meta.env.VITE_REP_ORCHESTRATOR_URL}`;
-              }
-              console.log('Selected redirect URL:', redirectTo);
-            } catch (error) {
-              console.error('Error fetching rep profile:', error);
-              // If there's an error fetching the profile, default to profile creation
-              redirectTo = `${import.meta.env.VITE_REP_CREATION_PROFILE_URL}`;
-            }
-          }
-          setTimeout(() => {
-            window.location.href = redirectTo;
-          }, 1500);
-        }
+        const result = await auth.login({ email: formData.email, password: formData.password });
+        setFormData((prev) => ({ ...prev, userId: result.data.userId, phone: result.data.phone || '' }));
+        await auth.sendVerificationEmail(formData.email, result.data.code);
+        setStep('2fa');
+        setVerificationMethod('email');
+        setResendTimeout(30);
+        return;
       }
-    } catch (err) {
-      setError('An unexpected error occurred. Please try again later.');
+      if (step === '2fa') {
+        if (formData.verificationCode.length !== 6) {
+          setError(t('signIn.errInvalidCode', 'Please enter a valid 6-digit code.'));
+          return;
+        }
+        let resultData: { token: string };
+        if (verificationMethod === 'email') {
+          const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
+          if (res.result?.error) {
+            setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
+            return;
+          }
+          resultData = res;
+        } else {
+          const res = await auth.verifyOTP(formData.userId, formData.verificationCode);
+          if (res.error) {
+            setError(t('signIn.errInvalidSmsCode', 'Invalid SMS verification code'));
+            return;
+          }
+          resultData = res;
+        }
+        const decoded: any = jwtDecode(resultData.token);
+        const userId = decoded.userId;
+        setToken(resultData.token);
+        syncSessionUserIdCookie(resultData.token);
+        setStep('success');
+        const redirectTo = await getPostLoginRedirectUrl(userId, resultData.token);
+        setTimeout(() => {
+          if (onSuccess) {
+            onSuccess();
+            return;
+          }
+          // Only navigate when we have a real destination. Otherwise we
+          // stay on the success screen instead of dumping the user on the
+          // blank `/app2` placeholder.
+          if (redirectTo) {
+            hardNavigate(redirectTo);
+          }
+        }, 1500);
+      }
+    } catch (err: any) {
+      if (step === 'credentials') {
+        setError(err.response?.data?.message || t('signIn.errUnexpected', 'Invalid email or password. Please try again.'));
+      } else {
+        setError(err.message || t('signIn.errUnexpected', 'An unexpected error occurred. Please try again.'));
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
-        <div className="space-y-6">
-          <div className="text-center space-y-4">
-            <div className="flex flex-col items-center space-y-2">
-              <img
-                src={`${import.meta.env.VITE_FRONT_URL}harx_ai_logo.jpeg`}
-                alt="HARX Logo"
-                className="h-12 w-12 rounded-lg object-cover"
-              />
-              <h1 className="text-2xl font-bold text-gray-800">HARX</h1>
-              <p className="text-sm text-gray-600">We inspire growth</p>
+    <div className="min-h-screen w-full flex flex-col bg-space-dark-950 text-white animate-fade-in relative overflow-auto">
+      <Header
+        onSignIn={() => {}}
+        onGetStarted={onGetStarted || (() => {})}
+        onNavigateToSection={onNavigateToSection}
+      />
+      
+      {/* Immersive background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float" />
+        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
+      </div>
+
+      <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+          {/* Left Side - Brand Section */}
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
+              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
+                <img
+                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
+                  alt="HARX Mascotte"
+                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
+                  loading="eager"
+                />
+                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
+              </div>
+              <h1 className="text-3xl font-extrabold leading-tight mb-4">
+                {t('signIn.brandTitle1', 'Start Your')} <br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
+              </h1>
+              <p className="text-slate-400 text-sm leading-relaxed">
+                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
+              </p>
             </div>
           </div>
 
-          {isAlreadyLoggedIn ? (
-            <div className="space-y-4 text-center">
-              <h2 className="text-2xl font-bold text-gray-800">Already Logged In</h2>
-              <p className="text-gray-600">You are already logged in. Redirecting you to your dashboard...</p>
-              <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-            </div>
-          ) : (
-            <>
-              {step === 'credentials' && (
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
+          {/* Right Side - Form Section */}
+          <div className="lg:col-span-3 bg-slate-900/40 p-8 lg:p-14 flex flex-col justify-center relative">
+            <div className="max-w-md mx-auto w-full">
+              {isAlreadyLoggedIn ? (
+                <div className="space-y-4 text-center">
+                  <h2 className="text-xl font-bold text-white">{t('signIn.alreadyLoggedIn', 'Already Logged In')}</h2>
+                  <p className="text-slate-400">{t('signIn.redirecting', 'Redirecting you to your dashboard...')}</p>
+                  <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
+                </div>
+              ) : (
+                <>
+                  {step === 'credentials' && (
+                    <button
+                      type="button"
+                      onClick={goBack}
+                      className="mb-6 flex items-center text-sm text-slate-450 transition-colors hover:text-white"
+                    >
+                      <ArrowLeft className="mr-1.5 h-4 w-4" />
+                      {t('signIn.back', 'Back')}
+                    </button>
+                  )}
 
-                  <div className="space-y-4">
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your email"
-                      />
-                    </div>
+                  <div className="text-center mb-8 lg:text-left">
+                    <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
+                    <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
+                  </div>
 
-                    <div className="relative">
-                      <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                      <input
-                        type="password"
-                        value={formData.password}
-                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        placeholder="Enter your password"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <label className="flex items-center space-x-2">
+                  {step === 'credentials' && (
+                    <div className="space-y-4">
+                      <div className="relative group">
+                        <Mail className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
                         <input
-                          type="checkbox"
-                          checked={formData.rememberMe}
-                          onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                          className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                          type="email"
+                          value={formData.email}
+                          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          className="input-premium-glow"
+                          placeholder={t('signIn.emailPlaceholder', 'Enter your email')}
                         />
-                        <span className="text-sm text-gray-600">Remember me</span>
-                      </label>
+                      </div>
+                      <div className="relative group">
+                        <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={formData.password}
+                          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          className="input-premium-glow pr-12"
+                          placeholder={t('signIn.passwordPlaceholder', 'Enter your password')}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword((v) => !v)}
+                          className="absolute right-4 top-3.5 text-slate-400 hover:text-harx-400 transition-colors focus:outline-none"
+                          tabIndex={-1}
+                          aria-label={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <label className="flex items-center space-x-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.rememberMe}
+                            onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
+                            className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 focus:ring-offset-slate-900 w-4 h-4"
+                          />
+                          <span className="text-sm text-slate-300">{t('signIn.rememberMe', 'Remember me')}</span>
+                        </label>
+                        <button type="button" onClick={onForgotPassword} className="text-sm text-harx-400 font-medium hover:text-harx-300 transition-colors">
+                          {t('signIn.forgotPassword', 'Forgot password?')}
+                        </button>
+                      </div>
+                    </div>
+                  )}
 
+                  {step === '2fa' && (
+                    <>
+                      <h2 className="text-2xl font-bold text-white mb-2">
+                        {verificationMethod === 'email' ? t('signIn.emailVerification', 'Email Verification') : t('signIn.smsVerification', 'SMS Verification')}
+                      </h2>
+                      <p className="text-slate-400 text-sm mb-6">
+                        {verificationMethod === 'email'
+                          ? t('signIn.emailSentCode', 'We sent a 6-digit code to {{email}}. Enter it below.', { email: formData.email })
+                          : t('signIn.smsSentCode', 'We sent a 6-digit code to your phone. Enter it below.')}
+                      </p>
+                      <div className="relative group mb-4">
+                        <KeyRound className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-500 transition-colors" />
+                        <input
+                          type="text"
+                          maxLength={6}
+                          value={formData.verificationCode}
+                          onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
+                          className="input-premium-glow text-center tracking-widest text-lg font-bold"
+                          placeholder="000000"
+                        />
+                      </div>
                       <button
-                        onClick={onForgotPassword}
-                        className="text-sm text-blue-600 hover:underline"
+                        type="button"
+                        onClick={handleResendOTP}
+                        disabled={resendTimeout > 0 || isLoading}
+                        className={`w-full flex items-center justify-center gap-2 text-sm mb-4 transition-colors ${resendTimeout > 0 ? 'text-slate-500 cursor-not-allowed' : 'text-harx-400 hover:text-harx-300'}`}
                       >
-                        Forgot password?
+                        <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+                        {resendTimeout > 0 ? t('signIn.resendCodeIn', 'Resend code in {{seconds}}s', { seconds: resendTimeout }) : t('signIn.resendVerification', 'Resend verification code')}
+                      </button>
+                      {verificationMethod === 'email' && formData.phone && (
+                        <button
+                          type="button"
+                          onClick={handleSwitchToSMS}
+                          disabled={isLoading}
+                          className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-450 hover:text-harx-alt-300 transition-colors"
+                        >
+                          <Phone className="h-4 w-4" /> {t('signIn.trySmsInstead', 'Try SMS verification instead')}
+                        </button>
+                      )}
+                      {verificationMethod === 'sms' && (
+                        <button
+                          type="button"
+                          onClick={() => { setVerificationMethod('email'); setError(null); }}
+                          disabled={isLoading}
+                          className="w-full flex items-center justify-center gap-2 text-sm text-harx-alt-450 hover:text-harx-alt-300 mt-2 transition-colors"
+                        >
+                          <Mail className="h-4 w-4" /> {t('signIn.tryEmailInstead', 'Try Email verification instead')}
+                        </button>
+                      )}
+                    </>
+                  )}
+
+                  {step === 'success' && (
+                    <div className="space-y-4 text-center py-4">
+                      <h2 className="text-2xl font-bold text-green-450">{t('signIn.successTitle', 'Login Successful!')}</h2>
+                      <p className="text-slate-350">{t('signIn.successRedirect', 'Redirecting to your dashboard...')}</p>
+                      <div className="animate-spin h-8 w-8 border-4 border-harx-500 border-t-transparent rounded-full mx-auto" />
+                    </div>
+                  )}
+
+                  {error && (
+                    <div className="flex items-center gap-3 text-red-400 bg-red-950/30 border border-red-900/50 p-3.5 rounded-xl mt-4 text-left">
+                      <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                      <p className="text-sm font-medium">{error}</p>
+                    </div>
+                  )}
+
+                  {step === 'credentials' && (
+                    <div className="mt-6 space-y-4">
+                      <button
+                        type="button"
+                        onClick={handleSignIn}
+                        disabled={isLoading}
+                        className="btn-primary"
+                      >
+                        {isLoading ? (
+                          <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          t('signIn.signInBtn', 'Sign In')
+                        )}
                       </button>
                     </div>
-                  </div>
-                </div>
-              )}
-
-              {step === '2fa' && (
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-gray-800">Email Verification</h2>
-                  <p className="text-gray-600">We sent a 6-digit code to {formData.email}. Please enter it to complete the login process.</p>
-
-                  <div className="relative">
-                    <KeyRound className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={formData.verificationCode}
-                      onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
-                      className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter 6-digit code"
-                    />
-                  </div>
-
-                  <button
-                    onClick={handleResendOTP}
-                    disabled={resendTimeout > 0 || isLoading}
-                    className={`w-full flex items-center justify-center space-x-2 text-sm ${resendTimeout > 0 ? 'text-gray-400 cursor-not-allowed' : 'text-blue-600 hover:text-blue-700'
-                      }`}
-                  >
-                    <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-                    <span>
-                      {resendTimeout > 0
-                        ? `Resend code in ${resendTimeout}s`
-                        : 'Resend verification code'}
-                    </span>
-                  </button>
-                </div>
-              )}
-
-              {step === 'success' && (
-                <div className="space-y-4 text-center">
-                  <h2 className="text-2xl font-bold text-gray-800">Login Successful!</h2>
-                  <p className="text-gray-600">Redirecting to dashboard...</p>
-                  <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
-                </div>
-              )}
-
-              {error && (
-                <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
-                  <AlertCircle className="h-5 w-5" />
-                  <p className="text-sm">{error}</p>
-                </div>
-              )}
-
-              {step === 'credentials' && (
-                <div className="space-y-4">
-                  <button
-                    onClick={handleSignIn}
-                    disabled={isLoading}
-                    className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                      }`}
-                  >
-                    {isLoading ? (
-                      <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                    ) : (
-                      'Sign In'
-                    )}
-                  </button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={handleLinkedInSignIn}
-                    className="w-full flex items-center justify-center space-x-2 bg-[#0077b5] text-white py-3 px-4 rounded-lg hover:bg-[#006396] transition-colors"
-                  >
-                    <Linkedin className="h-5 w-5" />
-                    <span>Sign in with LinkedIn</span>
-                  </button>
-                </div>
-              )}
-
-              {step === '2fa' && (
-                <button
-                  onClick={handleSignIn}
-                  disabled={isLoading}
-                  className={`w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center ${isLoading ? 'opacity-75 cursor-not-allowed' : ''
-                    }`}
-                >
-                  {isLoading ? (
-                    <div className="animate-spin h-5 w-5 border-2 border-white border-t-transparent rounded-full"></div>
-                  ) : (
-                    'Verify'
                   )}
-                </button>
-              )}
 
-              {step === 'credentials' && (
-                <p className="text-center text-sm text-gray-600">
-                  Don't have an account?{' '}
-                  <button
-                    onClick={onRegister}
-                    className="text-blue-600 hover:underline"
-                  >
-                    Sign up
-                  </button>
-                </p>
+                  {step === '2fa' && (
+                    <button
+                      type="button"
+                      onClick={handleSignIn}
+                      disabled={isLoading}
+                      className="btn-primary mt-6"
+                    >
+                      {isLoading ? (
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        t('signIn.verifyBtn', 'Verify')
+                      )}
+                    </button>
+                  )}
+
+                  {step === 'credentials' && (
+                    <p className="text-center text-sm text-slate-400 mt-6 pt-4 border-t border-white/[0.06]">
+                      {t('signIn.noAccount', "Don't have an account?")}{' '}
+                      <button type="button" onClick={onRegister} className="text-harx-400 font-semibold hover:text-harx-300 transition-colors">
+                        {t('signIn.signUp', 'Sign up')}
+                      </button>
+                    </p>
+                  )}
+                </>
               )}
-            </>
-          )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

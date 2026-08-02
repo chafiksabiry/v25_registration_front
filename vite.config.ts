@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import qiankun from 'vite-plugin-qiankun';
 import * as cheerio from 'cheerio';
+import { stripHostManagedTrackingScripts } from './scripts/stripTrackingFromMicrofrontendHtml';
 
 // Plugin to remove React Refresh preamble
 const removeReactRefreshScript = () => {
@@ -11,6 +12,7 @@ const removeReactRefreshScript = () => {
     transformIndexHtml(html: any) {
       const $ = cheerio.load(html);
       $('script[src="/@react-refresh"]').remove();
+      stripHostManagedTrackingScripts($);
       return $.html();
     },
   };
@@ -20,12 +22,12 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   return {
-    base: 'https://prod-registration.harx.ai/',
+    base: 'https://harx26register-dev.netlify.app/',
     plugins: [
       react({
         jsxRuntime: 'classic',
       }),
-      qiankun('app1', {
+      qiankun('auth', {
         useDevMode: true,
       }),
       removeReactRefreshScript(), // Add the script removal plugin
@@ -36,10 +38,11 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: 5157,
+      strictPort: true,
       cors: true,
       hmr: false,
       fs: {
-        strict: true, // Ensure static assets are correctly resolved
+        strict: true,
       },
     },
     build: {
@@ -48,7 +51,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           format: 'umd',
-          name: 'app1',
+          name: 'auth',
           entryFileNames: 'index.js', // Fixed name for the JS entry file
           chunkFileNames: 'chunk-[name].js', // Fixed name for chunks
           assetFileNames: (assetInfo) => {
