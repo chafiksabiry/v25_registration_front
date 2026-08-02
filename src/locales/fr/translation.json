@@ -387,6 +387,11 @@
     "newsletterDesc": "Abonnez-vous à notre newsletter pour les dernières mises à jour et informations.",
     "emailPlaceholder": "Entrez votre email",
     "subscribe": "S'abonner",
+    "newsletterSubmitting": "Abonnement…",
+    "newsletterSuccess": "Merci ! Vous êtes abonné.",
+    "newsletterAlready": "Vous êtes déjà abonné.",
+    "newsletterEmailRequired": "Veuillez entrer votre adresse e-mail.",
+    "newsletterError": "Impossible de s'abonner. Réessayez.",
     "rights": "© {{year}} HARX Technologies Inc. Tous droits réservés."
   },
   "hero": {
