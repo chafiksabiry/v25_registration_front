@@ -48,8 +48,15 @@ export const auth = {
     return response.data;
   },
   verifyOTP: async (userId: string, otp: string) => {
-    const response = await api.post('/auth/verify-otp', {userId,otp});
-    return response.data;
+    try {
+      const response = await api.post('/auth/verify-otp', { userId, otp });
+      return response.data;
+    } catch (err: unknown) {
+      const message =
+        (err as { response?: { data?: { error?: string } } }).response?.data?.error
+        || 'Failed to verify OTP';
+      return { error: true, message };
+    }
   },
   verifyAccount: async (userId: string)=> {
     const response= await api.post('/auth/verify-account', {userId});
@@ -60,9 +67,15 @@ export const auth = {
     console.log("responseRecovery",response);
     return response.data;
   },
-  changePassword: async (email: string, newPassword: string ) => {
-    const response= await api.post('/auth/change-password',{ email,newPassword});
-    console.log("responsechangePassword",response);
+  changePassword: async (email: string, newPassword: string, recoveryToken?: string) => {
+    const response = await api.post(
+      '/auth/change-password',
+      { email, newPassword },
+      recoveryToken
+        ? { headers: { Authorization: `Bearer ${recoveryToken}` } }
+        : undefined
+    );
+    console.log("responsechangePassword", response);
     return response.data;
   },
   linkedinSignIn: async (code: string) => {
@@ -82,7 +95,151 @@ export const auth = {
   checkUserType: async(userId: String) =>{
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
+  },
+  changeUserType: async (userId: string, newType: 'company' | 'rep') => {
+    const response = await api.post('/auth/change-user-type', { userId, newType });
+    return response.data;
   }
+};
+
+export const adminApi = {
+  login: async (data: { email: string; password: string }) => {
+    const response = await api.post('/admin/login', data);
+    return response.data;
+  },
+  stats: async () => {
+    const response = await api.get('/admin/stats');
+    return response.data;
+  },
+  users: async (params?: {
+    page?: number;
+    search?: string;
+    limit?: number;
+    typeUser?: string;
+    verified?: string;
+    onboardingStatus?: string;
+    planName?: string;
+  }) => {
+    const response = await api.get('/admin/users', { params });
+    return response.data;
+  },
+  userDetail: async (userId: string) => {
+    const response = await api.get(`/admin/users/${userId}`);
+    return response.data;
+  },
+  updateFinancials: async (
+    userId: string,
+    payload: {
+      target: 'company_minutes' | 'company_wallet' | 'rep_wallet';
+      action: 'add' | 'set';
+      amount: number;
+      reason?: string;
+    },
+  ) => {
+    const response = await api.patch(`/admin/users/${userId}/financials`, payload);
+    return response.data;
+  },
+  walletOverview: async () => {
+    const response = await api.get('/admin/wallet/overview');
+    return response.data;
+  },
+  minutesPricing: async () => {
+    const response = await api.get('/admin/pricing/minutes');
+    return response.data;
+  },
+  updateMinutesPricing: async (payload: {
+    minutePacks: Array<{
+      label: string;
+      minutes: number;
+      priceCents: number;
+      active?: boolean;
+    }>;
+    minutesCustomRateCents?: number;
+  }) => {
+    const response = await api.patch('/admin/pricing/minutes', payload);
+    return response.data;
+  },
+  phoneLinePricing: async () => {
+    const response = await api.get('/admin/pricing/phone-line');
+    return response.data;
+  },
+  updatePhoneLinePricing: async (payload: {
+    setupFeeEuros?: number;
+    setupFeeCents?: number;
+    currency?: string;
+    trialDays?: number;
+  }) => {
+    const response = await api.patch('/admin/pricing/phone-line', payload);
+    return response.data;
+  },
+  companyPlans: async () => {
+    const response = await api.get('/admin/plans/company');
+    return response.data;
+  },
+  updateCompanyPlan: async (
+    planId: string,
+    payload: {
+      name?: string;
+      price?: number;
+      currency?: string;
+      stripePriceId?: string;
+      description?: string;
+      features?: string[];
+      isPopular?: boolean;
+      maxGigs?: number;
+      maxReps?: number;
+    },
+  ) => {
+    const response = await api.patch(`/admin/plans/company/${planId}`, payload);
+    return response.data;
+  },
+  repPlans: async () => {
+    const response = await api.get('/admin/plans/rep');
+    return response.data;
+  },
+  updateRepPlan: async (
+    planId: string,
+    payload: {
+      name?: string;
+      price?: number;
+      currency?: string;
+      stripePriceId?: string;
+      description?: string;
+      features?: string[];
+      isActive?: boolean;
+      sortOrder?: number;
+    },
+  ) => {
+    const response = await api.patch(`/admin/plans/rep/${planId}`, payload);
+    return response.data;
+  },
+  objectives: async () => {
+    const response = await api.get('/admin/objectives');
+    return response.data;
+  },
+  updateObjectives: async (payload: {
+    year?: number;
+    companies?: number | null;
+    repsOnboarded?: number | null;
+    repsWithActiveSubscription?: number | null;
+    annualRevenue?: number | null;
+    annualProfit?: number | null;
+    notes?: string;
+  }) => {
+    const response = await api.patch('/admin/objectives', payload);
+    return response.data;
+  },
+};
+
+export const publicPlansApi = {
+  companyPlans: async () => {
+    const response = await api.get('/plans/company');
+    return response.data;
+  },
+  repPlans: async () => {
+    const response = await api.get('/plans/rep');
+    return response.data;
+  },
 };
 
 export const files = {

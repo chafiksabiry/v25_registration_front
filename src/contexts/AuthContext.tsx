@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { jwtDecode } from 'jwt-decode';
+import { clearAuthSession } from '../lib/authRedirect';
 
 interface User {
   userId: string;
@@ -29,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (newToken) {
       localStorage.setItem('token', newToken);
     } else {
-      localStorage.removeItem('token');
+      clearAuthSession();
     }
     setTokenState(newToken);
   };
