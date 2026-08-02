@@ -30,6 +30,7 @@ import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
+import { LegalPage } from './components/legal/LegalPage';
 
 function RootLayout() {
   return (
@@ -110,6 +111,11 @@ export const appRouter = createBrowserRouter(
             { path: 'plans/rep', element: <AdminRepPlansPage /> },
           ],
         },
+        // Public legal pages (not behind GuestOnly — readable while logged in too)
+        { path: 'privacy', element: <LegalPage /> },
+        { path: 'terms', element: <LegalPage /> },
+        { path: 'cookies', element: <LegalPage /> },
+        { path: 'gdpr', element: <LegalPage /> },
         {
           element: <GuestAuthLayout />,
           children: [

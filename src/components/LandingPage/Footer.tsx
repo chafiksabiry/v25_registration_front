@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
@@ -6,6 +7,7 @@ import { newsletter } from '../../lib/api';
 
 export function Footer() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -36,9 +38,11 @@ export function Footer() {
       const element = document.getElementById(href.substring(1));
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        navigate('/' + href);
       }
     } else {
-      window.location.href = href;
+      navigate(href);
     }
   };
 
@@ -143,13 +147,12 @@ export function Footer() {
             <ul className="space-y-2">
               {navigation.legal.map((item) => (
                 <li key={item.name}>
-                  <a
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
+                  <Link
+                    to={item.href}
                     className="text-gray-400 hover:text-white transition-colors"
                   >
                     {item.name}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
