@@ -370,6 +370,12 @@
     "emailUs": "Envoyez-nous un email",
     "visitUs": "Rendez-nous visite"
   },
+  "legal": {
+    "backHome": "Retour à l'accueil",
+    "lastUpdated": "Dernière mise à jour",
+    "otherPolicies": "Autres politiques",
+    "disclaimer": "Cette page est fournie à titre informatif et ne constitue pas un conseil juridique. Consultez un avocat pour votre situation."
+  },
   "footer": {
     "subtitle": "Plateforme Transaction-as-a-Service propulsée par l'IA",
     "poweredBy": "Propulsé par l'IA",
