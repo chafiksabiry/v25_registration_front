@@ -4,10 +4,27 @@
 
 [build.environment]
   VITE_FRONT_URL = "https://harx26register-dev.netlify.app/"
+  # Default: develop Railway (branch deploys / preview). Override in Netlify UI per context if needed.
+  VITE_API_URL = "https://v25registrationbackend-development.up.railway.app/api"
   SECRETS_SCAN_OMIT_KEYS = "VITE_LINKEDIN_CLIENT_ID,VITE_REP_CREATION_PROFILE_URL,VITE_COMPANY_API_URL,VITE_REP_API_URL,VITE_REP_ORCHESTRATOR_URL,VITE_REP_DASHBOARD_URL,VITE_API_URL,VITE_FRONT_URL,VITE_OPENAI_API_KEY,VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
   VITE_REP_ORCHESTRATOR_URL = "/reps"
   VITE_REP_DASHBOARD_URL = "/reps/profile"
   VITE_REP_CREATION_PROFILE_URL = "/reps/profile-import"
+
+# Production Netlify context → production Railway + harx DB
+[context.production.environment]
+  VITE_API_URL = "https://v25registrationbackend-production.up.railway.app/api"
+  VITE_FRONT_URL = "https://harx26register.netlify.app/"
+
+# Recette / branch named recette
+[context.recette.environment]
+  VITE_API_URL = "https://v25registrationbackend-recette.up.railway.app/api"
+
+[context.branch-deploy.environment]
+  VITE_API_URL = "https://v25registrationbackend-development.up.railway.app/api"
+
+[context.deploy-preview.environment]
+  VITE_API_URL = "https://v25registrationbackend-development.up.railway.app/api"
 
 [[headers]]
   for = "/*"
