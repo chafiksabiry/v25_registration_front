@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
+import { newsletter } from '../../lib/api';
 
 export function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const navigation = {
     company: [
@@ -35,6 +39,45 @@ export function Footer() {
       }
     } else {
       window.location.href = href;
+    }
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = email.trim();
+    if (!trimmed) {
+      setFeedback({
+        type: 'error',
+        text: t('footer.newsletterEmailRequired', 'Please enter your email address.'),
+      });
+      return;
+    }
+
+    setLoading(true);
+    setFeedback(null);
+    try {
+      const result = await newsletter.subscribe({
+        email: trimmed,
+        locale: i18n.language?.split('-')[0] || 'en',
+      });
+      const created = result?.data?.created !== false;
+      setFeedback({
+        type: 'success',
+        text: created
+          ? t('footer.newsletterSuccess', 'Thanks! You are subscribed.')
+          : t('footer.newsletterAlready', 'You are already subscribed.'),
+      });
+      if (created) setEmail('');
+    } catch (err: unknown) {
+      const axiosErr = err as { response?: { data?: { message?: string } } };
+      setFeedback({
+        type: 'error',
+        text:
+          axiosErr?.response?.data?.message ||
+          t('footer.newsletterError', 'Could not subscribe. Please try again.'),
+      });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -115,18 +158,36 @@ export function Footer() {
             <p className="text-gray-400 mb-4">
               {t('footer.newsletterDesc', 'Subscribe to our newsletter for the latest updates and insights.')}
             </p>
-            <form className="space-y-2">
+            <form className="space-y-2" onSubmit={handleSubscribe}>
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder={t('footer.emailPlaceholder', 'Enter your email')}
-                className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-harx-500"
+                disabled={loading}
+                autoComplete="email"
+                required
+                className="w-full px-4 py-2 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-harx-500 disabled:opacity-60"
               />
               <button
                 type="submit"
-                className="w-full px-4 py-2 bg-harx-500 text-white rounded-lg hover:bg-harx-600 transition-colors"
+                disabled={loading}
+                className="w-full px-4 py-2 bg-harx-500 text-white rounded-lg hover:bg-harx-600 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                {t('footer.subscribe', 'Subscribe')}
+                {loading
+                  ? t('footer.newsletterSubmitting', 'Subscribing…')
+                  : t('footer.subscribe', 'Subscribe')}
               </button>
+              {feedback && (
+                <p
+                  className={`text-sm ${
+                    feedback.type === 'success' ? 'text-green-400' : 'text-red-400'
+                  }`}
+                  role="status"
+                >
+                  {feedback.text}
+                </p>
+              )}
             </form>
           </div>
         </div>
