@@ -121,8 +121,16 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
     setIsLoading(true);
     try {
       if (step === 'credentials') {
-        if (!formData.email || !formData.password) {
+        if (!formData.email?.trim() && !formData.password) {
           setError(t('signIn.errMissingFields', 'Please enter both email and password.'));
+          return;
+        }
+        if (!formData.email?.trim()) {
+          setError(t('signIn.errMissingEmail', 'Veuillez saisir votre email.'));
+          return;
+        }
+        if (!formData.password) {
+          setError(t('signIn.errMissingPassword', 'Veuillez saisir votre mot de passe.'));
           return;
         }
 
