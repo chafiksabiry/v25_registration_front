@@ -17,9 +17,21 @@ let root: ReturnType<typeof createRoot> | null = null;
 
 function render(props: { container?: HTMLElement }) {
   const { container } = props;
-  const rootElement = container
+  // Do not paint into the host #root while under qiankun (destroys shell containers).
+  if (qiankunWindow.__POWERED_BY_QIANKUN__ && !container) {
+    return;
+  }
+
+  let rootElement: Element | null = container
     ? container.querySelector('#root')
     : document.getElementById('root');
+
+  if (container && !rootElement) {
+    const el = document.createElement('div');
+    el.id = 'root';
+    container.appendChild(el);
+    rootElement = el;
+  }
 
   if (rootElement) {
     syncVisitorTracking();
@@ -83,12 +95,10 @@ export async function unmount(props: any) {
   return Promise.resolve();
 }
 
-// Standalone mode: If the app is running outside Qiankun, it will use this code
+// Standalone only — in qiankun, wait for mount(props) with the real container
 if (!qiankunWindow.__POWERED_BY_QIANKUN__) {
   console.log('[Auth] Running in standalone mode');
   render({});
 } else {
-  console.log('[Auth] Running inside Qiankun');
-  // Qiankun will control the lifecycle
-  render({});
+  console.log('[Auth] Running inside Qiankun — waiting for mount()');
 }
