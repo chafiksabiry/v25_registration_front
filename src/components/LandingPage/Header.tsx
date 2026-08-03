@@ -1,8 +1,16 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, Menu, X } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageSelector } from '../LanguageSelector';
+import { useAuth } from '../../contexts/AuthContext';
+import {
+  getPostLoginRedirectUrl,
+  getSessionToken,
+  getSessionUserId,
+  isSessionActive,
+} from '../../lib/authRedirect';
+import { hardNavigate } from '../../lib/appNavigation';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
@@ -27,8 +35,10 @@ interface HeaderProps {
 
 export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-
-  const { t, i18n } = useTranslation();
+  const [dashboardLoading, setDashboardLoading] = React.useState(false);
+  const { t } = useTranslation();
+  const { token, setToken, loading: authLoading } = useAuth();
+  const loggedIn = !authLoading && isSessionActive(token);
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -41,6 +51,31 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     }
     setIsMenuOpen(false);
   };
+
+  const goToDashboard = async () => {
+    setDashboardLoading(true);
+    setIsMenuOpen(false);
+    try {
+      const userId = getSessionUserId(token);
+      if (!userId) {
+        hardNavigate('/company');
+        return;
+      }
+      const dest = await getPostLoginRedirectUrl(userId, getSessionToken());
+      hardNavigate(dest || '/company');
+    } catch {
+      hardNavigate('/company');
+    } finally {
+      setDashboardLoading(false);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsMenuOpen(false);
+    setToken(null);
+    hardNavigate('/');
+  };
+
   const navLinks: NavLink[] = [
     { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
     { id: 'pricing', label: t('header.pricing', 'Pricing') },
@@ -67,6 +102,66 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     }
     return null;
   };
+
+  const authActionsDesktop = loggedIn ? (
+    <>
+      <button
+        type="button"
+        className="nav-cta nav-cta--started group"
+        onClick={() => void goToDashboard()}
+        disabled={dashboardLoading}
+      >
+        <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+        {dashboardLoading
+          ? t('header.loading', 'Loading…')
+          : t('header.dashboard', 'Dashboard')}
+      </button>
+      <button type="button" className="nav-cta nav-cta--signin" onClick={handleLogout}>
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+        {t('header.logout', 'Log out')}
+      </button>
+    </>
+  ) : (
+    <>
+      <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
+        {t('header.signIn', 'Sign In')}
+      </button>
+      <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
+        {t('header.getStarted', 'Get Started')}
+        <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+      </button>
+    </>
+  );
+
+  const authActionsMobile = loggedIn ? (
+    <>
+      <button
+        type="button"
+        className="nav-cta nav-cta--started nav-cta--full group"
+        onClick={() => void goToDashboard()}
+        disabled={dashboardLoading}
+      >
+        <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+        {dashboardLoading
+          ? t('header.loading', 'Loading…')
+          : t('header.dashboard', 'Dashboard')}
+      </button>
+      <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={handleLogout}>
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+        {t('header.logout', 'Log out')}
+      </button>
+    </>
+  ) : (
+    <>
+      <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
+        {t('header.signIn', 'Sign In')}
+      </button>
+      <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
+        {t('header.getStarted', 'Get Started')}
+        <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+      </button>
+    </>
+  );
 
   return (
     <header
@@ -100,13 +195,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
 
         <div className="hidden md:flex items-center gap-2.5">
           <LanguageSelector />
-          <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
-            {t('header.signIn', 'Sign In')}
-          </button>
-          <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
-            {t('header.getStarted', 'Get Started')}
-            <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-          </button>
+          {authActionsDesktop}
         </div>
 
         <button
@@ -118,7 +207,6 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
         </button>
       </nav>
 
-      {/* Mobile menu */}
       {isMenuOpen && (
         <div
           style={{ backgroundImage: HARX_NAV_GRADIENT }}
@@ -144,13 +232,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
               <div className="flex justify-center mb-4">
                 <LanguageSelector />
               </div>
-              <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
-                {t('header.signIn', 'Sign In')}
-              </button>
-              <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
-                {t('header.getStarted', 'Get Started')}
-                <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-              </button>
+              {authActionsMobile}
             </div>
           </div>
         </div>

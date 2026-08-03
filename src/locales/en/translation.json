@@ -5,7 +5,10 @@
     "forCompanies": "For Companies",
     "forReps": "For Reps",
     "signIn": "Sign In",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "logout": "Log out",
+    "loading": "Loading…"
   },
   "hero": {
     "badge": "AI-Powered • 60,000+ Expert Agents • Transaction-as-a-Service",
@@ -449,7 +452,10 @@
     "forCompanies": "For Companies",
     "forReps": "For Reps",
     "signIn": "Sign In",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard",
+    "logout": "Log out",
+    "loading": "Loading…"
   },
   "signIn": {
     "errUnexpected": "An unexpected error occurred. Please try again.",
