@@ -9,6 +9,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
+import { mapSignInError } from '../lib/authErrors';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -102,8 +103,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       await auth.sendOTP(formData.userId, formData.phone);
       setResendTimeout(30);
       setFormData((prev) => ({ ...prev, verificationCode: '' }));
-    } catch {
-      setError(t('signIn.errUnexpected', 'Failed to send SMS code'));
+    } catch (err) {
+      setError(mapSignInError(err, t, 'sms'));
       setVerificationMethod('email');
     } finally {
       setIsLoading(false);
@@ -124,9 +125,34 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           setError(t('signIn.errMissingFields', 'Please enter both email and password.'));
           return;
         }
-        const result = await auth.login({ email: formData.email, password: formData.password });
-        setFormData((prev) => ({ ...prev, userId: result.data.userId, phone: result.data.phone || '' }));
-        await auth.sendVerificationEmail(formData.email, result.data.code);
+        let result: { data?: { userId?: string; phone?: string; code?: string } };
+        try {
+          result = await auth.login({ email: formData.email, password: formData.password });
+        } catch (err) {
+          setError(mapSignInError(err, t, 'credentials'));
+          return;
+        }
+
+        const code = result?.data?.code;
+        setFormData((prev) => ({
+          ...prev,
+          userId: result?.data?.userId || prev.userId,
+          phone: result?.data?.phone || prev.phone || '',
+        }));
+
+        if (code) {
+          try {
+            await auth.sendVerificationEmail(formData.email, code);
+          } catch (err) {
+            // Credentials were valid — still move to 2FA so the user can resend.
+            setError(mapSignInError(err, t, 'email'));
+            setStep('2fa');
+            setVerificationMethod('email');
+            setResendTimeout(30);
+            return;
+          }
+        }
+
         setStep('2fa');
         setVerificationMethod('email');
         setResendTimeout(30);
@@ -139,16 +165,25 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         }
         let resultData: { token: string };
         if (verificationMethod === 'email') {
-          const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
-          if (res.result?.error) {
-            setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
+          try {
+            const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
+            if (res.result?.error) {
+              setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
+              return;
+            }
+            resultData = res;
+          } catch (err) {
+            setError(mapSignInError(err, t, 'email'));
             return;
           }
-          resultData = res;
         } else {
           const res = await auth.verifyOTP(formData.userId, formData.verificationCode);
           if (res.error) {
-            setError(t('signIn.errInvalidSmsCode', 'Invalid SMS verification code'));
+            setError(
+              res.message && !/failed to verify otp/i.test(String(res.message))
+                ? String(res.message)
+                : t('signIn.errInvalidSmsCode', 'Invalid SMS verification code')
+            );
             return;
           }
           resultData = res;
@@ -164,20 +199,13 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
             onSuccess();
             return;
           }
-          // Only navigate when we have a real destination. Otherwise we
-          // stay on the success screen instead of dumping the user on the
-          // blank `/app2` placeholder.
           if (redirectTo) {
             hardNavigate(redirectTo);
           }
         }, 1500);
       }
-    } catch (err: any) {
-      if (step === 'credentials') {
-        setError(err.response?.data?.message || t('signIn.errUnexpected', 'Invalid email or password. Please try again.'));
-      } else {
-        setError(err.message || t('signIn.errUnexpected', 'An unexpected error occurred. Please try again.'));
-      }
+    } catch (err: unknown) {
+      setError(mapSignInError(err, t, step === '2fa' ? '2fa' : 'credentials'));
     } finally {
       setIsLoading(false);
     }
