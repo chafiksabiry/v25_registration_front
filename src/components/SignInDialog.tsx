@@ -85,8 +85,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       await auth.resendVerification(formData.email);
       setResendTimeout(30);
       setFormData((prev) => ({ ...prev, verificationCode: '' }));
-    } catch {
-      setError(t('signIn.errUnexpected', 'Failed to resend verification code'));
+    } catch (err) {
+      setError(mapSignInError(err, t, 'resend'));
     } finally {
       setIsLoading(false);
     }
@@ -94,7 +94,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
 
   const handleSendSMS = async () => {
     if (!formData.userId || !formData.phone) {
-      setError('Phone number not available. Cannot send SMS.');
+      setError(t('signIn.errPhoneMissing', 'Numéro de téléphone indisponible pour le SMS.'));
       return;
     }
     setError(null);
@@ -125,32 +125,40 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           setError(t('signIn.errMissingFields', 'Please enter both email and password.'));
           return;
         }
-        let result: { data?: { userId?: string; phone?: string; code?: string } };
+
+        let result: { data: { userId: string; phone?: string; code: string } };
         try {
           result = await auth.login({ email: formData.email, password: formData.password });
         } catch (err) {
-          setError(mapSignInError(err, t, 'credentials'));
+          setError(mapSignInError(err, t, 'login'));
           return;
         }
 
-        const code = result?.data?.code;
+        if (!result?.data?.userId || !result?.data?.code) {
+          setError(
+            t(
+              'signIn.errServer',
+              'Le service de connexion est temporairement indisponible. Réessayez plus tard.'
+            )
+          );
+          return;
+        }
+
         setFormData((prev) => ({
           ...prev,
-          userId: result?.data?.userId || prev.userId,
-          phone: result?.data?.phone || prev.phone || '',
+          userId: result.data.userId,
+          phone: result.data.phone || '',
         }));
 
-        if (code) {
-          try {
-            await auth.sendVerificationEmail(formData.email, code);
-          } catch (err) {
-            // Credentials were valid — still move to 2FA so the user can resend.
-            setError(mapSignInError(err, t, 'email'));
-            setStep('2fa');
-            setVerificationMethod('email');
-            setResendTimeout(30);
-            return;
-          }
+        try {
+          await auth.sendVerificationEmail(formData.email, result.data.code);
+        } catch (err) {
+          // Credentials were valid — still open 2FA so the user can resend.
+          setStep('2fa');
+          setVerificationMethod('email');
+          setResendTimeout(0);
+          setError(mapSignInError(err, t, 'sendCode'));
+          return;
         }
 
         setStep('2fa');
@@ -158,6 +166,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         setResendTimeout(30);
         return;
       }
+
       if (step === '2fa') {
         if (formData.verificationCode.length !== 6) {
           setError(t('signIn.errInvalidCode', 'Please enter a valid 6-digit code.'));
@@ -165,28 +174,27 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         }
         let resultData: { token: string };
         if (verificationMethod === 'email') {
-          try {
-            const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
-            if (res.result?.error) {
-              setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
-              return;
-            }
-            resultData = res;
-          } catch (err) {
-            setError(mapSignInError(err, t, 'email'));
+          const res = await auth.verifyEmail({ email: formData.email, code: formData.verificationCode });
+          if (res.result?.error) {
+            setError(t('signIn.errInvalidEmailCode', 'Invalid email verification code'));
             return;
           }
+          resultData = res;
         } else {
           const res = await auth.verifyOTP(formData.userId, formData.verificationCode);
           if (res.error) {
             setError(
-              res.message && !/failed to verify otp/i.test(String(res.message))
+              res.message
                 ? String(res.message)
                 : t('signIn.errInvalidSmsCode', 'Invalid SMS verification code')
             );
             return;
           }
           resultData = res;
+        }
+        if (!resultData?.token) {
+          setError(mapSignInError(new Error('missing token'), t, 'verify'));
+          return;
         }
         const decoded: any = jwtDecode(resultData.token);
         const userId = decoded.userId;
@@ -205,7 +213,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         }, 1500);
       }
     } catch (err: unknown) {
-      setError(mapSignInError(err, t, step === '2fa' ? '2fa' : 'credentials'));
+      setError(mapSignInError(err, t, step === '2fa' ? 'verify' : 'login'));
     } finally {
       setIsLoading(false);
     }
