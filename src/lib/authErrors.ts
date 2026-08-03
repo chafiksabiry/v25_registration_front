@@ -1,141 +1,164 @@
 import type { TFunction } from 'i18next';
 
-/** Extract status + human message from axios / fetch-style errors. */
-export function extractAuthError(err: unknown): {
+type SignInErrorContext = 'login' | 'sendCode' | 'verify' | 'resend' | 'sms';
+
+function readAxiosPayload(err: unknown): {
   status?: number;
-  message: string;
-  network: boolean;
+  raw: string;
 } {
-  const ax = err as {
+  const e = err as {
     message?: string;
     code?: string;
-    response?: { status?: number; data?: unknown };
+    response?: { status?: number; data?: { message?: string; error?: string } };
   };
 
-  const status = ax?.response?.status;
-  const data = ax?.response?.data;
-  let message = '';
+  const data = e?.response?.data;
+  const fromBody =
+    (typeof data?.message === 'string' && data.message) ||
+    (typeof data?.error === 'string' && data.error) ||
+    '';
+  const fromAxios =
+    (typeof e?.message === 'string' && e.message) ||
+    (typeof e?.code === 'string' && e.code) ||
+    '';
 
-  if (data && typeof data === 'object') {
-    const d = data as Record<string, unknown>;
-    const candidate = d.message ?? d.error ?? d.msg ?? d.detail;
-    if (typeof candidate === 'string') message = candidate;
-    else if (Array.isArray(candidate) && typeof candidate[0] === 'string') {
-      message = candidate[0];
-    }
-  } else if (typeof data === 'string' && data.trim() && !data.trim().startsWith('<')) {
-    message = data;
-  }
-
-  if (!message && typeof ax?.message === 'string') {
-    message = ax.message;
-  }
-
-  const network =
-    ax?.code === 'ERR_NETWORK' ||
-    /network error|failed to fetch|timeout/i.test(message) ||
-    (!status && /Network Error/i.test(message));
-
-  return { status, message: message.trim(), network };
+  return {
+    status: e?.response?.status,
+    raw: (fromBody || fromAxios || '').trim(),
+  };
 }
 
-const isGenericAxiosMessage = (msg: string) =>
-  /^request failed with status code \d+$/i.test(msg) ||
-  /^network error$/i.test(msg) ||
-  msg.length === 0;
+function looksLikeHtml(text: string): boolean {
+  return /<!DOCTYPE|<html/i.test(text);
+}
 
 /**
  * Map login / 2FA failures to clear i18n copy — never the vague
- * "Une erreur inattendue…" for known auth cases.
+ * "Une erreur inattendue s'est produite".
  */
 export function mapSignInError(
   err: unknown,
   t: TFunction,
-  step: 'credentials' | '2fa' | 'email' | 'sms'
+  context: SignInErrorContext
 ): string {
-  const { status, message, network } = extractAuthError(err);
-  const lower = message.toLowerCase();
+  const { status, raw } = readAxiosPayload(err);
+  const lower = raw.toLowerCase();
 
-  if (network || status === 502 || status === 503 || status === 504) {
+  if (
+    !status &&
+    (lower.includes('network error') ||
+      lower.includes('timeout') ||
+      lower === 'err_network' ||
+      lower.includes('failed to fetch'))
+  ) {
     return t(
       'signIn.errNetwork',
-      'Unable to reach the server. Check your connection and try again.'
+      'Impossible de joindre le serveur. Vérifiez votre connexion et réessayez.'
     );
   }
 
   if (status === 429) {
     return t(
-      'signIn.errTooMany',
-      'Too many attempts. Please wait a moment and try again.'
-    );
-  }
-
-  // Email delivery failure (after valid login)
-  if (
-    step === 'email' &&
-    (status === 500 ||
-      status === 502 ||
-      /mail|smtp|send.*email|email.*send|nodemailer/i.test(lower))
-  ) {
-    return t(
-      'signIn.errEmailSendFailed',
-      'We could not send the verification email. Please try resending the code.'
+      'signIn.errRateLimit',
+      'Trop de tentatives. Attendez un moment puis réessayez.'
     );
   }
 
   if (
-    step === 'credentials' &&
-    (/invalid credentials|user not found|incorrect password|wrong password|invalid email or password/i.test(
-      lower
-    ) ||
-      status === 400 ||
-      status === 401 ||
-      status === 403)
+    lower.includes('invalid credentials') ||
+    (context === 'login' && (status === 400 || status === 401 || status === 403))
   ) {
     return t(
       'signIn.errInvalidCredentials',
-      'Incorrect email or password. Please try again.'
+      'Email ou mot de passe incorrect.'
     );
-  }
-
-  if (/expired/i.test(lower)) {
-    return t(
-      'signIn.errCodeExpired',
-      'This verification code has expired. Please request a new one.'
-    );
-  }
-
-  if (step === 'sms' || (step === '2fa' && /sms|otp/i.test(lower))) {
-    return t('signIn.errInvalidSmsCode', 'Invalid SMS verification code');
   }
 
   if (
-    step === '2fa' ||
-    step === 'email' ||
-    /invalid.*code|code.*invalid|verification/i.test(lower)
+    context === 'sendCode' ||
+    context === 'resend' ||
+    lower.includes('verification email') ||
+    lower.includes('failed to send') ||
+    (context === 'login' && status != null && status >= 500)
   ) {
-    if (status === 400 || status === 401 || /invalid|expired|code|verification/i.test(lower)) {
-      return t('signIn.errInvalidEmailCode', 'Invalid email verification code');
+    if (context === 'sendCode' || context === 'resend' || lower.includes('email')) {
+      return t(
+        'signIn.errEmailSend',
+        "Impossible d'envoyer le code de vérification par email. Réessayez dans un instant."
+      );
     }
+  }
+
+  if (context === 'sms' || lower.includes('sms') || lower.includes('otp')) {
+    if (lower.includes('region') || lower.includes('21408')) {
+      return t(
+        'signIn.errSmsUnavailable',
+        'SMS indisponible pour cette région. Utilisez la vérification par email.'
+      );
+    }
+    if (context === 'sms' || lower.includes('failed to send')) {
+      return t(
+        'signIn.errSmsSend',
+        "Impossible d'envoyer le code SMS. Réessayez ou utilisez l'email."
+      );
+    }
+  }
+
+  if (
+    context === 'verify' ||
+    lower.includes('invalid or expired') ||
+    lower.includes('invalid email') ||
+    lower.includes('invalid otp') ||
+    lower.includes('invalid code')
+  ) {
     return t(
-      'signIn.errVerifyFailed',
-      'Verification failed. Please check the code and try again.'
+      'signIn.errInvalidEmailCode',
+      'Code de vérification invalide ou expiré.'
     );
   }
 
-  if (message && !isGenericAxiosMessage(message)) {
-    return message;
-  }
-
-  if (step === 'credentials') {
+  if (status != null && status >= 500) {
     return t(
-      'signIn.errInvalidCredentials',
-      'Incorrect email or password. Please try again.'
+      'signIn.errServer',
+      'Le service de connexion est temporairement indisponible. Réessayez plus tard.'
     );
   }
 
-  return t(
-    'signIn.errVerifyFailed',
-    'Verification failed. Please check the code and try again.'
-  );
+  if (raw && raw.length < 180 && !looksLikeHtml(raw)) {
+    if (lower.includes('invalid credentials')) {
+      return t(
+        'signIn.errInvalidCredentials',
+        'Email ou mot de passe incorrect.'
+      );
+    }
+  }
+
+  switch (context) {
+    case 'login':
+      return t(
+        'signIn.errInvalidCredentials',
+        'Email ou mot de passe incorrect.'
+      );
+    case 'sendCode':
+    case 'resend':
+      return t(
+        'signIn.errEmailSend',
+        "Impossible d'envoyer le code de vérification par email. Réessayez dans un instant."
+      );
+    case 'sms':
+      return t(
+        'signIn.errSmsSend',
+        "Impossible d'envoyer le code SMS. Réessayez ou utilisez l'email."
+      );
+    case 'verify':
+      return t(
+        'signIn.errInvalidEmailCode',
+        'Code de vérification invalide ou expiré.'
+      );
+    default:
+      return t(
+        'signIn.errGeneric',
+        'La connexion a échoué. Vérifiez vos informations et réessayez.'
+      );
+  }
 }
