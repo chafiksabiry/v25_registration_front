@@ -8,9 +8,10 @@ import {
   getPostLoginRedirectUrl,
   getSessionToken,
   getSessionUserId,
-  isSessionActive,
+  hasUiSession,
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
+import { subscribeAuthChanged } from '../../lib/authSync';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
@@ -36,9 +37,21 @@ interface HeaderProps {
 export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
+  const [sessionTick, setSessionTick] = React.useState(0);
   const { t } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
-  const loggedIn = !authLoading && isSessionActive(token);
+
+  React.useEffect(() => {
+    return subscribeAuthChanged(() => {
+      setSessionTick((n) => n + 1);
+    });
+  }, []);
+
+  // JWT or userId cookie/localStorage (same soft session as /reps).
+  const loggedIn = React.useMemo(
+    () => !authLoading && hasUiSession(token || undefined),
+    [authLoading, token, sessionTick]
+  );
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
     const element = document.getElementById(sectionId);

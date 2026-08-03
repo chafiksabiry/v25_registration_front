@@ -30,7 +30,8 @@ function decodeUser(token: string | null): User | null {
   if (!token) return null;
   try {
     const decoded = jwtDecode<User>(token);
-    if (decoded.exp * 1000 < Date.now()) return null;
+    if (decoded.exp && decoded.exp * 1000 < Date.now()) return null;
+    if (!decoded.userId) return null;
     return decoded;
   } catch {
     return null;
@@ -59,10 +60,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const decoded = decodeUser(token);
     if (token && !decoded) {
-      clearAuthSession();
+      // Drop only the bad/expired JWT — do NOT wipe userId/profileData.
+      // Clearing the full session made /reps look logged-in (profile cache)
+      // while the landing navbar flipped back to Sign In.
+      try {
+        localStorage.removeItem('token');
+      } catch {
+        /* ignore */
+      }
       setTokenState(null);
       setUser(null);
-      broadcastAuthChanged({ token: null, userId: null, source: 'registration' });
     } else {
       setUser(decoded);
     }
@@ -70,6 +77,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [token]);
 
   useEffect(() => {
+    const syncFromStorage = () => {
+      const next = readStoredAuthToken();
+      setTokenState((prev) => (prev === next ? prev : next));
+    };
+
+    // Re-read after mount (qiankun remount / navigation from /reps).
+    syncFromStorage();
+
     return subscribeAuthChanged((detail) => {
       const next =
         detail.source === 'registration' || detail.source === 'event'
