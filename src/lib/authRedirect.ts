@@ -46,7 +46,7 @@ export function syncSessionUserIdCookie(token?: string | null): string | null {
 
 /** Valid JWT in localStorage (full login session). */
 export function isSessionActive(token?: string | null): boolean {
-  const stored = token ?? localStorage.getItem("token");
+  const stored = token ?? localStorage.getItem('token');
   if (!stored) return false;
 
   try {
@@ -56,6 +56,16 @@ export function isSessionActive(token?: string | null): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * Navbar session: valid JWT OR lingering userId (cookie/localStorage).
+ * Reps can stay usable via userId/profileData after JWT expiry; the landing
+ * header must follow the same rule or it keeps showing Sign In.
+ */
+export function hasUiSession(token?: string | null): boolean {
+  if (isSessionActive(token)) return true;
+  return Boolean(getSessionUserId(token));
 }
 
 export function getSessionUserId(token?: string | null): string | null {
