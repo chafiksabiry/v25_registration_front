@@ -46,6 +46,16 @@ export async function bootstrap() {
 
 export async function mount(props: any) {
   console.log('[Auth] Mounting...', props);
+  // Always remount React tree so AuthContext re-reads token after logout/login
+  // in another microfrontend (reps/company) without a full browser refresh.
+  if (root) {
+    try {
+      root.unmount();
+    } catch {
+      /* ignore */
+    }
+    root = null;
+  }
   const { container } = props;
   if (container) {
     console.log('[Auth] Found container for mounting:', container);
