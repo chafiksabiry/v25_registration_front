@@ -6,6 +6,10 @@ import { isSessionActive, redirectIfAuthenticated } from '../../lib/authRedirect
 const isPasswordRecoveryRoute = (pathname: string) =>
   pathname === '/auth/recovery' || pathname.endsWith('/auth/recovery');
 
+/** Landing home — stay here when logged in; user opens Dashboard from the header. */
+const isLandingHomeRoute = (pathname: string) =>
+  pathname === '/' || pathname === '';
+
 export function AuthSpinner() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-space-dark-950">
@@ -14,16 +18,17 @@ export function AuthSpinner() {
   );
 }
 
-/** Blocks landing/sign-in for users who already have a session. */
+/** Blocks guest auth screens for users who already have a session (not the landing `/`). */
 export function GuestOnly({ children }: { children: React.ReactNode }) {
   const { loading, token } = useAuth();
   const location = useLocation();
   const [allowed, setAllowed] = useState<boolean | null>(null);
   const onRecovery = isPasswordRecoveryRoute(location.pathname);
+  const onLanding = isLandingHomeRoute(location.pathname);
 
   useEffect(() => {
-    // Password reset is not a full login — never auto-redirect away from it.
-    if (loading || onRecovery) {
+    // Password reset + landing home: never auto-redirect away.
+    if (loading || onRecovery || onLanding) {
       setAllowed(true);
       return;
     }
@@ -37,9 +42,9 @@ export function GuestOnly({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [loading, token, onRecovery]);
+  }, [loading, token, onRecovery, onLanding]);
 
-  if (onRecovery) return <>{children}</>;
+  if (onRecovery || onLanding) return <>{children}</>;
   if (loading || allowed === null) return <AuthSpinner />;
   if (!allowed) return <AuthSpinner />;
   return <>{children}</>;
