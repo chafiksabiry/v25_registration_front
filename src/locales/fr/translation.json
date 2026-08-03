@@ -5,7 +5,10 @@
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les Agents",
     "signIn": "Se Connecter",
-    "getStarted": "Démarrer"
+    "getStarted": "Démarrer",
+    "dashboard": "Tableau de bord",
+    "logout": "Déconnexion",
+    "loading": "Chargement…"
   },
   "hero": {
     "badge": "Propulsé par l'IA • +60 000 Agents Experts • Transaction-as-a-Service",
@@ -449,7 +452,10 @@
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les Agents",
     "signIn": "Se Connecter",
-    "getStarted": "Démarrer"
+    "getStarted": "Démarrer",
+    "dashboard": "Tableau de bord",
+    "logout": "Déconnexion",
+    "loading": "Chargement…"
   },
   "signIn": {
     "errUnexpected": "Une erreur inattendue s'est produite. Veuillez réessayer.",
