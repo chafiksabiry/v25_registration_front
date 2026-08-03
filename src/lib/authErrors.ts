@@ -5,11 +5,15 @@ type SignInErrorContext = 'login' | 'sendCode' | 'verify' | 'resend' | 'sms';
 function readAxiosPayload(err: unknown): {
   status?: number;
   raw: string;
+  code: string;
 } {
   const e = err as {
     message?: string;
     code?: string;
-    response?: { status?: number; data?: { message?: string; error?: string } };
+    response?: {
+      status?: number;
+      data?: { message?: string; error?: string; code?: string };
+    };
   };
 
   const data = e?.response?.data;
@@ -25,6 +29,7 @@ function readAxiosPayload(err: unknown): {
   return {
     status: e?.response?.status,
     raw: (fromBody || fromAxios || '').trim(),
+    code: (typeof data?.code === 'string' ? data.code : '').toUpperCase(),
   };
 }
 
@@ -41,7 +46,7 @@ export function mapSignInError(
   t: TFunction,
   context: SignInErrorContext
 ): string {
-  const { status, raw } = readAxiosPayload(err);
+  const { status, raw, code } = readAxiosPayload(err);
   const lower = raw.toLowerCase();
 
   if (
@@ -64,50 +69,67 @@ export function mapSignInError(
     );
   }
 
-  if (
-    lower.includes('invalid credentials') ||
-    (context === 'login' && (status === 400 || status === 401 || status === 403))
-  ) {
-    return t(
-      'signIn.errInvalidCredentials',
-      'Email ou mot de passe incorrect.'
-    );
+  // Login: email unknown vs wrong password (before generic / 2FA mappings)
+  if (context === 'login') {
+    if (
+      code === 'INVALID_EMAIL' ||
+      lower === 'invalid email' ||
+      lower.includes('user not found') ||
+      lower.includes('email not found')
+    ) {
+      return t('signIn.errInvalidEmail', 'Cet email ne correspond à aucun compte.');
+    }
+    if (
+      code === 'INVALID_PASSWORD' ||
+      lower === 'invalid password' ||
+      lower.includes('wrong password') ||
+      lower.includes('incorrect password')
+    ) {
+      return t('signIn.errInvalidPassword', 'Mot de passe incorrect.');
+    }
+    if (
+      code === 'INVALID_CREDENTIALS' ||
+      lower.includes('invalid credentials') ||
+      status === 400 ||
+      status === 401 ||
+      status === 403
+    ) {
+      return t(
+        'signIn.errInvalidCredentials',
+        'Email ou mot de passe incorrect.'
+      );
+    }
   }
 
   if (
     context === 'sendCode' ||
     context === 'resend' ||
     lower.includes('verification email') ||
-    lower.includes('failed to send') ||
-    (context === 'login' && status != null && status >= 500)
+    lower.includes('failed to send verification')
   ) {
-    if (context === 'sendCode' || context === 'resend' || lower.includes('email')) {
-      return t(
-        'signIn.errEmailSend',
-        "Impossible d'envoyer le code de vérification par email. Réessayez dans un instant."
-      );
-    }
+    return t(
+      'signIn.errEmailSend',
+      "Impossible d'envoyer le code de vérification par email. Réessayez dans un instant."
+    );
   }
 
-  if (context === 'sms' || lower.includes('sms') || lower.includes('otp')) {
+  if (context === 'sms' || (lower.includes('sms') && lower.includes('fail'))) {
     if (lower.includes('region') || lower.includes('21408')) {
       return t(
         'signIn.errSmsUnavailable',
         'SMS indisponible pour cette région. Utilisez la vérification par email.'
       );
     }
-    if (context === 'sms' || lower.includes('failed to send')) {
-      return t(
-        'signIn.errSmsSend',
-        "Impossible d'envoyer le code SMS. Réessayez ou utilisez l'email."
-      );
-    }
+    return t(
+      'signIn.errSmsSend',
+      "Impossible d'envoyer le code SMS. Réessayez ou utilisez l'email."
+    );
   }
 
   if (
     context === 'verify' ||
     lower.includes('invalid or expired') ||
-    lower.includes('invalid email') ||
+    lower.includes('invalid email verification') ||
     lower.includes('invalid otp') ||
     lower.includes('invalid code')
   ) {
@@ -122,15 +144,6 @@ export function mapSignInError(
       'signIn.errServer',
       'Le service de connexion est temporairement indisponible. Réessayez plus tard.'
     );
-  }
-
-  if (raw && raw.length < 180 && !looksLikeHtml(raw)) {
-    if (lower.includes('invalid credentials')) {
-      return t(
-        'signIn.errInvalidCredentials',
-        'Email ou mot de passe incorrect.'
-      );
-    }
   }
 
   switch (context) {
