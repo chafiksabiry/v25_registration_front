@@ -18,17 +18,26 @@ const removeReactRefreshScript = () => {
   };
 };
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(({ mode, command }) => {
   const env = loadEnv(mode, process.cwd(), '');
+  const isServe = command === 'serve';
+  const publicBase = isServe
+    ? 'http://localhost:5157/'
+    : `${(
+        process.env.VITE_MF_BASE_URL ||
+        process.env.URL ||
+        process.env.DEPLOY_PRIME_URL ||
+        'https://harx26register-dev.netlify.app'
+      ).replace(/\/+$/, '')}/`;
 
   return {
-    base: 'https://harx26register-dev.netlify.app/',
+    base: publicBase,
     plugins: [
       react({
         jsxRuntime: 'classic',
       }),
       qiankun('auth', {
-        useDevMode: true,
+        useDevMode: isServe,
       }),
       removeReactRefreshScript(), // Add the script removal plugin
     ],
