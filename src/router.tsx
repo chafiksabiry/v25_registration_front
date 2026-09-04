@@ -15,6 +15,7 @@ import {
   RegisterScreen,
   RegisterCompanyScreen,
   RegisterRepScreen,
+  RegisterCallCenterScreen,
   RecoveryScreen,
 } from './routes/AuthRoutes';
 import AdminLayout from './components/admin/AdminLayout';
@@ -125,6 +126,7 @@ export const appRouter = createBrowserRouter(
             { path: 'auth/register', element: <RegisterScreen /> },
             { path: 'auth/register-company', element: <RegisterCompanyScreen /> },
             { path: 'auth/register-rep', element: <RegisterRepScreen /> },
+            { path: 'auth/register-call-center', element: <RegisterCallCenterScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },

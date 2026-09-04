@@ -4,34 +4,23 @@ import { Search } from 'lucide-react';
 
 
 
-export type TypeFilter = 'all' | 'rep' | 'company';
+export type TypeFilter = 'all' | 'rep' | 'company' | 'call-center';
 
 export type VerifiedFilter = 'all' | 'true' | 'false';
 
 export type OnboardingFilter =
-
   | 'all'
-
   | 'completed'
-
   | 'in_progress'
-
   | 'not_started'
-
   | 'pending'
-
   | 'missing';
 
-
-
 export const TYPE_FILTERS: { value: TypeFilter; label: string }[] = [
-
   { value: 'all', label: 'Tous' },
-
   { value: 'rep', label: 'REPs' },
-
   { value: 'company', label: 'Companies' },
-
+  { value: 'call-center', label: 'Call Centers' },
 ];
 
 

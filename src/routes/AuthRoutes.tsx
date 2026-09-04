@@ -99,6 +99,20 @@ export function RegisterRepScreen() {
   );
 }
 
+export function RegisterCallCenterScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return (
+    <AuthScreen title="Inscription call center">
+      <RegistrationDialog
+        defaultUserType="call-center"
+        onSignIn={() => navigate('/auth/signin')}
+        onGetStarted={() => navigate('/auth/choice')}
+        onNavigateToSection={handleNavigateToSection}
+      />
+    </AuthScreen>
+  );
+}
+
 export function RecoveryScreen() {
   const { navigate } = useAuthContext();
   return (

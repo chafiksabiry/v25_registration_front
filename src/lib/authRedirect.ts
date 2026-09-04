@@ -268,7 +268,11 @@ export async function getPostLoginRedirectUrl(
       return "/admin";
     }
 
-    if (checkUserType.userType === "company") {
+    // Call centers use the company product surface for now.
+    if (
+      checkUserType.userType === "company" ||
+      checkUserType.userType === "call-center"
+    ) {
       try {
         const { data: onboardingProgress } = await axios.get(
           `${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`
