@@ -585,10 +585,10 @@
     "companyFeat2": "Professionnels de la télévente",
     "companyFeat3": "Agents de support par chat en direct",
     "companyFeat4": "Spécialistes du support technique",
-    "callCenterTitle": "Call Center",
-    "callCenterDesc": "Pour les call centers qui gèrent campagnes et agents",
-    "callCenterCta": "Rejoindre en tant que Call Center",
-    "ccFeat1": "Gérer les opérations du call center",
+    "callCenterTitle": "Centre d'appels",
+    "callCenterDesc": "Pour les centres d'appels qui gèrent campagnes et agents",
+    "callCenterCta": "Rejoindre en tant que centre d'appels",
+    "ccFeat1": "Gérer les opérations du centre d'appels",
     "ccFeat2": "Lancer des campagnes entrantes et sortantes",
     "ccFeat3": "Recruter agents et superviseurs",
     "ccFeat4": "Suivre la performance et la qualité",
@@ -607,7 +607,7 @@
     "typeAll": "Tous",
     "typeRep": "REPs",
     "typeCompany": "Entreprises",
-    "typeCallCenter": "Call Centers",
+    "typeCallCenter": "Centres d'appels",
     "verifiedAll": "Tous statuts",
     "verifiedYes": "Vérifiés",
     "verifiedNo": "Non vérifiés",
@@ -619,12 +619,12 @@
     "onboardingMissing": "Manquant"
   },
   "authScreens": {
-    "registerCallCenter": "Inscription call center"
+    "registerCallCenter": "Inscription centre d'appels"
   },
   "userTypes": {
     "company": "Entreprise",
     "rep": "REP",
-    "call-center": "Call Center",
+    "call-center": "Centre d'appels",
     "admin": "Admin"
   }
 }
