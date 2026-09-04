@@ -102,7 +102,10 @@ export const auth = {
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
   },
-  changeUserType: async (userId: string, newType: 'company' | 'rep') => {
+  changeUserType: async (
+    userId: string,
+    newType: 'company' | 'rep' | 'call-center'
+  ) => {
     const response = await api.post('/auth/change-user-type', { userId, newType });
     return response.data;
   }
