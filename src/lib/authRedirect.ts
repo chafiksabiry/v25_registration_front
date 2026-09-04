@@ -268,12 +268,15 @@ export async function getPostLoginRedirectUrl(
       return "/admin";
     }
 
-    // Call centers use the company product surface for now.
+    // Call centers get a dedicated host entry that mounts the company orchestrator.
     if (
       checkUserType.userType === "company" ||
       checkUserType.userType === "call-center"
     ) {
+      const dest =
+        checkUserType.userType === "call-center" ? "/call-center" : "/company";
       try {
+        localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
           `${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`
         );
@@ -281,16 +284,16 @@ export async function getPostLoginRedirectUrl(
           onboardingProgress.currentPhase !== 4 ||
           !onboardingProgress.phases?.find((p: { id: number }) => p.id === 4)?.completed
         ) {
-          return "/company";
+          return dest;
         }
-        return "/company";
+        return dest;
       } catch (e: unknown) {
         const status =
           e &&
           typeof e === "object" &&
           "response" in e &&
           (e as { response?: { status?: number } }).response?.status;
-        if (status === 404) return "/company";
+        if (status === 404) return dest;
         throw e;
       }
     }
