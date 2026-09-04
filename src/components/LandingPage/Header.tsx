@@ -38,7 +38,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
   const [sessionTick, setSessionTick] = React.useState(0);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
 
   React.useEffect(() => {
@@ -69,6 +69,13 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
     setDashboardLoading(true);
     setIsMenuOpen(false);
     try {
+      // Persist current landing language so /reps does not fall back to English.
+      try {
+        const lang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+        localStorage.setItem('i18nextLng', lang);
+      } catch {
+        /* ignore */
+      }
       const userId = getSessionUserId(token);
       if (!userId) {
         hardNavigate('/company');

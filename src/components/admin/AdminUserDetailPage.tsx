@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, RefreshCw, Wallet } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../lib/api';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { CompanyProfileView, ProfileHero, RepProfileView } from './AdminProfileViews';
+import { rowTypeUserLabel } from './adminUserRowUtils';
 import { InfoCard, SectionCard, formatDate } from './adminUiUtils';
 
 type UserDetail = {
@@ -32,6 +34,7 @@ type UserDetail = {
 
 export default function AdminUserDetailPage() {
   const { userId = '' } = useParams();
+  const { t } = useTranslation();
   const [detail, setDetail] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -161,7 +164,7 @@ export default function AdminUserDetailPage() {
           <SectionCard title="Compte plateforme">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InfoCard label="Email" value={detail.user.email} />
-              <InfoCard label="Type de compte" value={detail.user.typeUser || '—'} />
+              <InfoCard label="Type de compte" value={rowTypeUserLabel(detail.user.typeUser, t)} />
               <InfoCard label="Phase onboarding" value={detail.onboarding?.display || '—'} />
               <InfoCard label="Statut onboarding" value={detail.onboarding?.statusLabel || '—'} />
             </div>

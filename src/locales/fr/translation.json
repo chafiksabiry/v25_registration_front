@@ -585,6 +585,13 @@
     "companyFeat2": "Professionnels de la télévente",
     "companyFeat3": "Agents de support par chat en direct",
     "companyFeat4": "Spécialistes du support technique",
+    "callCenterTitle": "Call Center",
+    "callCenterDesc": "Pour les call centers qui gèrent campagnes et agents",
+    "callCenterCta": "Rejoindre en tant que Call Center",
+    "ccFeat1": "Gérer les opérations du call center",
+    "ccFeat2": "Lancer des campagnes entrantes et sortantes",
+    "ccFeat3": "Recruter agents et superviseurs",
+    "ccFeat4": "Suivre la performance et la qualité",
     "repTitle": "Trouver des missions",
     "repDesc": "Pour les professionnels des centres de contact",
     "repFeat1": "Travaillez avec des entreprises de premier plan",
@@ -594,5 +601,30 @@
     "trust1": "Pas de frais de configuration",
     "trust2": "Professionnels vérifiés",
     "trust3": "Mise en relation basée sur l'IA"
+  },
+  "adminFilters": {
+    "searchPlaceholder": "Rechercher nom, email, company, REP, téléphone…",
+    "typeAll": "Tous",
+    "typeRep": "REPs",
+    "typeCompany": "Entreprises",
+    "typeCallCenter": "Call Centers",
+    "verifiedAll": "Tous statuts",
+    "verifiedYes": "Vérifiés",
+    "verifiedNo": "Non vérifiés",
+    "onboardingAll": "Tous onboarding",
+    "onboardingCompleted": "Terminé",
+    "onboardingInProgress": "En cours",
+    "onboardingNotStarted": "Non démarré",
+    "onboardingPending": "En attente",
+    "onboardingMissing": "Manquant"
+  },
+  "authScreens": {
+    "registerCallCenter": "Inscription call center"
+  },
+  "userTypes": {
+    "company": "Entreprise",
+    "rep": "REP",
+    "call-center": "Call Center",
+    "admin": "Admin"
   }
 }
