@@ -38,7 +38,12 @@ export function LanguageSelector() {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const selectLanguage = (lang: 'fr' | 'en') => {
-    i18n.changeLanguage(lang);
+    void i18n.changeLanguage(lang);
+    try {
+      localStorage.setItem('i18nextLng', lang);
+    } catch {
+      /* ignore */
+    }
     setIsOpen(false);
   };
 
