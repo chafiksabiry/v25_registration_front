@@ -32,6 +32,9 @@ export function clearAuthSession(): void {
   localStorage.removeItem('companyOnboardingProgress');
   localStorage.removeItem('selectedGigId');
   localStorage.removeItem('pendingUserType');
+  localStorage.removeItem('callCenterStaff');
+  localStorage.removeItem('employerCompanyId');
+  localStorage.removeItem('mustChangePassword');
 }
 
 /** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
@@ -301,6 +304,23 @@ export async function getPostLoginRedirectUrl(
     // Always prefer live profile so login resumes the real onboarding step
     // (stale localStorage used to force /profile-import).
     try {
+      // Call-center staff (provisioned by employer): skip marketplace onboarding.
+      if (
+        checkUserType.employerCompanyId ||
+        checkUserType.mustChangePassword
+      ) {
+        localStorage.setItem('userType', 'rep');
+        localStorage.setItem('callCenterStaff', '1');
+        if (checkUserType.employerCompanyId) {
+          localStorage.setItem('employerCompanyId', checkUserType.employerCompanyId);
+        }
+        if (checkUserType.mustChangePassword) {
+          localStorage.setItem('mustChangePassword', '1');
+          return toRepAbsoluteUrl('/account-settings?changePassword=1');
+        }
+        return toRepAbsoluteUrl('/dashboard');
+      }
+
       const { data: profileData } = await axios.get(
         `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -308,6 +328,9 @@ export async function getPostLoginRedirectUrl(
       syncRepOnboardingToLocalStorage(profileData, userId);
       return computeRepRedirectFromProfile(profileData);
     } catch {
+      if (localStorage.getItem('callCenterStaff') === '1') {
+        return toRepAbsoluteUrl('/dashboard');
+      }
       return (
         getRepRedirectFromLocalStorage(userId) ||
         import.meta.env.VITE_REP_CREATION_PROFILE_URL ||
