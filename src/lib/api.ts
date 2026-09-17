@@ -242,6 +242,39 @@ export const adminApi = {
 
 export const publicPlansApi = {
   companyPlans: async () => {
+    // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
+    const companyBack = (
+      import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
+      import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
+      'https://v25comporchestratorback-production.up.railway.app'
+    ).replace(/\/$/, '');
+    try {
+      const response = await axios.get(`${companyBack}/api/subscriptions/plans`);
+      const plans = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.plans)
+          ? response.data.plans
+          : [];
+      if (plans.length) {
+        return {
+          success: true,
+          data: {
+            plans: plans.map((p: Record<string, unknown>) => ({
+              id: String(p._id ?? p.id ?? ''),
+              name: String(p.name ?? ''),
+              description: String(p.description ?? ''),
+              price: Number(p.price),
+              priceCents: p.priceCents,
+              currency: String(p.currency || 'eur').toLowerCase(),
+              features: Array.isArray(p.features) ? p.features.map(String) : [],
+              popular: Boolean(p.isPopular ?? p.popular),
+            })),
+          },
+        };
+      }
+    } catch (err) {
+      console.warn('[pricing] company Stripe plans fetch failed, falling back to registration API', err);
+    }
     const response = await api.get('/plans/company');
     return response.data;
   },
