@@ -15,12 +15,13 @@ export const REP_PRICING_PLANS: PricingPlan[] = [];
 
 function formatPrice(price: number): string {
   if (!Number.isFinite(price)) return '—';
+  // Keep exact cents (e.g. 29.99) — never drop decimals / round to integer.
   return new Intl.NumberFormat('en-IE', {
     style: 'currency',
     currency: 'EUR',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(price);
+  }).format(Number(Number(price).toFixed(2)));
 }
 
 export function getPlanPriceLabel(plan: PricingPlan): string {
@@ -28,11 +29,15 @@ export function getPlanPriceLabel(plan: PricingPlan): string {
 }
 
 export function mapApiPlanToPricingPlan(plan: Record<string, unknown>): PricingPlan {
+  const priceCents = Number(plan.priceCents);
+  const price = Number.isFinite(priceCents)
+    ? Number((priceCents / 100).toFixed(2))
+    : Number(Number(plan.price).toFixed(2));
   return {
     id: String(plan.id ?? ''),
     name: String(plan.name ?? ''),
     description: String(plan.description ?? ''),
-    price: Number(plan.price),
+    price,
     currency: 'eur',
     features: Array.isArray(plan.features) ? plan.features.map(String) : [],
     popular: Boolean(plan.popular ?? plan.isPopular),
