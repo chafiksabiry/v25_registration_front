@@ -3,6 +3,7 @@ import { ArrowRight, Building2, Headphones, LayoutDashboard, LogOut, Menu, X } f
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageSelector } from '../LanguageSelector';
+import { persistHarxLanguage } from '../../lib/i18n';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   getPostLoginRedirectUrl,
@@ -72,7 +73,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
       // Persist current landing language so /reps does not fall back to English.
       try {
         const lang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
-        localStorage.setItem('i18nextLng', lang);
+        persistHarxLanguage(lang, lang === 'en' ? { explicit: true } : undefined);
       } catch {
         /* ignore */
       }

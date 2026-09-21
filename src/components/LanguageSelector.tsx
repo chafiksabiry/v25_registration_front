@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { persistHarxLanguage } from '../lib/i18n';
+import { persistHarxLanguage, applyHarxLanguage } from '../lib/i18n';
 
 const FrenchFlag = () => (
   <svg width="20" height="14" viewBox="0 0 3 2" className="rounded-sm overflow-hidden shrink-0">
@@ -34,7 +34,7 @@ export function LanguageSelector() {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const isFrench = i18n.language.startsWith('fr');
+  const isFrench = i18n.language.toLowerCase().startsWith('fr');
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -43,6 +43,10 @@ export function LanguageSelector() {
     void i18n.changeLanguage(lang);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    void applyHarxLanguage();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
