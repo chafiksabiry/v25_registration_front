@@ -6,22 +6,28 @@ import translationFR from '../locales/fr/translation.json';
 
 /** Shared with reps / company — keep language across microfrontends. */
 export const HARX_LANG_KEY = 'i18nextLng';
+/** Set when the user picks a language in the switcher (vs accidental EN default). */
+export const HARX_LANG_EXPLICIT_KEY = 'harxLangExplicit';
 
 export function readHarxLanguage(): 'fr' | 'en' {
   try {
-    const raw = localStorage.getItem(HARX_LANG_KEY) || '';
-    if (raw.toLowerCase().startsWith('en')) return 'en';
-    if (raw.toLowerCase().startsWith('fr')) return 'fr';
+    const raw = (localStorage.getItem(HARX_LANG_KEY) || '').toLowerCase();
+    const explicit = localStorage.getItem(HARX_LANG_EXPLICIT_KEY) === '1';
+    if (raw.startsWith('fr')) return 'fr';
+    if (raw.startsWith('en') && explicit) return 'en';
   } catch {
     /* ignore */
   }
   return 'fr';
 }
 
-export function persistHarxLanguage(lang: string): void {
+export function persistHarxLanguage(lang: string, opts?: { explicit?: boolean }): void {
   const normalized = lang.toLowerCase().startsWith('en') ? 'en' : 'fr';
   try {
     localStorage.setItem(HARX_LANG_KEY, normalized);
+    if (opts?.explicit) {
+      localStorage.setItem(HARX_LANG_EXPLICIT_KEY, '1');
+    }
   } catch {
     /* ignore */
   }
@@ -45,6 +51,8 @@ i18n.use(initReactI18next).init({
     escapeValue: false,
   },
 });
+
+persistHarxLanguage(i18n.language || 'fr');
 
 i18n.on('languageChanged', (lng) => {
   persistHarxLanguage(lng);
