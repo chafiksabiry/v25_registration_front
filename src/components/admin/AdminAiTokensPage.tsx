@@ -19,7 +19,6 @@ const PROVIDER_FILTERS: Array<{ key: ProviderKey; label: string }> = [
   { key: 'openai', label: 'OpenAI' },
   { key: 'anthropic', label: 'Claude' },
   { key: 'gemini', label: 'Gemini' },
-  { key: 'estimated', label: 'Estimé' },
 ];
 
 function normalizeProvider(raw?: string | null): Exclude<ProviderKey, 'all'> {
