@@ -139,6 +139,27 @@ export function buildAccountLedger(
         direction: 'neutral',
       });
     }
+
+    for (const row of financials.tokenUsage || []) {
+      const provider = row.provider || row.meta?.provider || 'ai';
+      pushLine(lines, {
+        id: String(row._id || row.id || row.usageId),
+        date: row.createdAt,
+        category: 'Tokens AI',
+        cause: row.tool || 'Usage AI',
+        details: [
+          String(provider).toUpperCase(),
+          row.model || null,
+          row.estimated ? 'estimé' : null,
+          row.gigId ? `gig ${row.gigId}` : null,
+        ]
+          .filter(Boolean)
+          .join(' · '),
+        amountLabel: `-${row.tokensUsed || 0} tok`,
+        status: 'completed',
+        direction: 'debit',
+      });
+    }
   }
 
   if (isRep) {

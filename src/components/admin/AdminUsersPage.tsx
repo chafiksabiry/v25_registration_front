@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../lib/api';
 import AdminUserFilters, {
   type OnboardingFilter,
   type TypeFilter,
   type VerifiedFilter,
 } from './AdminUserFilters';
-import { rowCreatedAt, rowName } from './adminUserRowUtils';
+import { rowCreatedAt, rowName, rowTypeUserLabel } from './adminUserRowUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -66,6 +67,7 @@ function onboardingBadgeClass(status: string) {
 
 export default function AdminUsersPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
@@ -177,7 +179,7 @@ export default function AdminUsersPage() {
                         )}
                     </td>
                     <td className="px-6 py-3 text-slate-600">{rowPhone(user)}</td>
-                    <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
+                    <td className="px-6 py-3">{rowTypeUserLabel(user.typeUser, t)}</td>
                     <td className="px-6 py-3">
                       {user.planName ? (
                         <div className="space-y-1">
