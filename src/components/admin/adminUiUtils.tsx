@@ -107,11 +107,13 @@ export function FinancialAdjustForm({
   target,
   userId,
   onUpdated,
+  amountPlaceholder = 'Montant',
 }: {
   label: string;
-  target: 'company_minutes' | 'company_wallet' | 'rep_wallet';
+  target: 'company_minutes' | 'company_wallet' | 'company_ai_tokens' | 'rep_wallet';
   userId: string;
   onUpdated: () => void;
+  amountPlaceholder?: string;
 }) {
   const [amount, setAmount] = React.useState('');
   const [reason, setReason] = React.useState('');
@@ -166,11 +168,11 @@ export function FinancialAdjustForm({
         step="0.01"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
-        placeholder="Montant"
+        placeholder={amountPlaceholder}
         className="admin-input !pl-3"
         required
       />
-      {(target === 'company_wallet' || target === 'company_minutes') && (
+      {(target === 'company_wallet' || target === 'company_minutes' || target === 'company_ai_tokens') && (
         <input
           type="text"
           value={reason}

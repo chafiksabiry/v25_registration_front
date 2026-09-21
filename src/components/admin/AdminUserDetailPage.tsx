@@ -107,10 +107,19 @@ export default function AdminUserDetailPage() {
         <div className="flex flex-wrap gap-2">
           {(isCompany || isRep) && (
             <Link
-              to={`/admin/wallet?userId=${userId}`}
+              to={
+                isCompany
+                  ? `/admin/ai-tokens?userId=${userId}`
+                  : `/admin/wallet?userId=${userId}`
+              }
               className="admin-btn-dark"
             >
-              <Wallet size={16} /> Gérer wallet & finances
+              <Wallet size={16} /> {isCompany ? 'Tokens AI & finances' : 'Gérer wallet & finances'}
+            </Link>
+          )}
+          {isCompany && (
+            <Link to={`/admin/wallet?userId=${userId}`} className="admin-btn-secondary">
+              Wallet entreprise
             </Link>
           )}
           <button
