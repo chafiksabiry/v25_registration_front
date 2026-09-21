@@ -26,3 +26,11 @@ export function rowCreatedAt(user: AdminUserRow) {
     user.typeUser === 'company' ? user.profileCreatedAt || user.createdAt : user.createdAt;
   return value ? new Date(value).toLocaleString('fr-FR') : '—';
 }
+
+export function rowTypeUserLabel(
+  typeUser: string | null | undefined,
+  t: (key: string, defaultValue?: string) => string
+) {
+  if (!typeUser) return '—';
+  return t(`userTypes.${typeUser}`, typeUser);
+}

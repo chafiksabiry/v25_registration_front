@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../lib/api';
 import AdminUserFilters, {
   type OnboardingFilter,
   type TypeFilter,
   type VerifiedFilter,
 } from './AdminUserFilters';
-import { type AdminUserRow, rowEmail, rowName } from './adminUserRowUtils';
+import { type AdminUserRow, rowEmail, rowName, rowTypeUserLabel } from './adminUserRowUtils';
 
 type Stats = {
   totals: {
@@ -30,6 +31,7 @@ function StatCard({ label, value, accent }: { label: string; value: number; acce
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [stats, setStats] = useState<Stats | null>(null);
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [search, setSearch] = useState('');
@@ -166,7 +168,7 @@ export default function AdminDashboardPage() {
                             <p className="text-xs text-slate-400 mt-0.5">Connexion: {user.email}</p>
                           )}
                       </td>
-                      <td className="px-6 py-3 capitalize">{user.typeUser || '—'}</td>
+                      <td className="px-6 py-3">{rowTypeUserLabel(user.typeUser, t)}</td>
                       <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
                     </tr>
                   ))}

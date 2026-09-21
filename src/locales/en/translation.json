@@ -585,6 +585,13 @@
     "companyFeat2": "Telesales Professionals",
     "companyFeat3": "Live Chat Support Agents",
     "companyFeat4": "Technical Support Specialists",
+    "callCenterTitle": "Call Center",
+    "callCenterDesc": "For call centers running campaigns and agents",
+    "callCenterCta": "Join as Call Center",
+    "ccFeat1": "Manage call-center operations",
+    "ccFeat2": "Run outbound & inbound campaigns",
+    "ccFeat3": "Staff agents and supervisors",
+    "ccFeat4": "Track performance & quality",
     "repTitle": "Find Gigs",
     "repDesc": "For contact center professionals",
     "repFeat1": "Work with Leading Companies",
@@ -594,5 +601,30 @@
     "trust1": "No setup fees",
     "trust2": "Verified professionals",
     "trust3": "AI-powered matching"
+  },
+  "adminFilters": {
+    "searchPlaceholder": "Search name, email, company, REP, phone…",
+    "typeAll": "All",
+    "typeRep": "REPs",
+    "typeCompany": "Companies",
+    "typeCallCenter": "Call Centers",
+    "verifiedAll": "All statuses",
+    "verifiedYes": "Verified",
+    "verifiedNo": "Not verified",
+    "onboardingAll": "All onboarding",
+    "onboardingCompleted": "Completed",
+    "onboardingInProgress": "In progress",
+    "onboardingNotStarted": "Not started",
+    "onboardingPending": "Pending",
+    "onboardingMissing": "Missing"
+  },
+  "authScreens": {
+    "registerCallCenter": "Call center signup"
+  },
+  "userTypes": {
+    "company": "Company",
+    "rep": "REP",
+    "call-center": "Call Center",
+    "admin": "Admin"
   }
 }
