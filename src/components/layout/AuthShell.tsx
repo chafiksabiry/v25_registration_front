@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
+import type { SignupUserType } from '../ChoicePage';
 
 /**
  * Shared shell for the auth screens (landing + choice + signin + register +
@@ -12,7 +13,7 @@ export interface AuthOutletContext {
   pendingSection: string | null;
   setPendingSection: (section: string | null) => void;
   handleNavigateToSection: (sectionId: string) => void;
-  handleSelectRole: (role: 'company' | 'rep') => void;
+  handleSelectRole: (role: SignupUserType) => void;
 }
 
 export function useAuthContext() {
@@ -29,9 +30,14 @@ export default function AuthShell() {
     navigate('/');
   };
 
-  const handleSelectRole = (role: 'company' | 'rep') => {
+  const handleSelectRole = (role: SignupUserType) => {
     localStorage.setItem('pendingUserType', role);
-    navigate(role === 'company' ? '/auth/register-company' : '/auth/register-rep', {
+    const pathByRole: Record<SignupUserType, string> = {
+      company: '/auth/register-company',
+      rep: '/auth/register-rep',
+      'call-center': '/auth/register-call-center',
+    };
+    navigate(pathByRole[role], {
       state: { returnTo: '/auth/choice' },
     });
   };
