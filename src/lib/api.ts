@@ -139,10 +139,25 @@ export const adminApi = {
   updateFinancials: async (
     userId: string,
     payload: {
-      target: 'company_minutes' | 'company_wallet' | 'rep_wallet';
-      action: 'add' | 'set';
-      amount: number;
+      target:
+        | 'company_minutes'
+        | 'company_wallet'
+        | 'company_ai_tokens'
+        | 'company_ai_providers'
+        | 'rep_wallet';
+      action?: 'add' | 'set';
+      amount?: number;
       reason?: string;
+      providers?: {
+        openai?: boolean;
+        anthropic?: boolean;
+        gemini?: boolean;
+      };
+      aiProviders?: {
+        openai?: boolean;
+        anthropic?: boolean;
+        gemini?: boolean;
+      };
     },
   ) => {
     const response = await api.patch(`/admin/users/${userId}/financials`, payload);

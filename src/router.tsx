@@ -24,6 +24,7 @@ import AdminDashboardPage from './components/admin/AdminDashboardPage';
 import AdminUsersPage from './components/admin/AdminUsersPage';
 import AdminUserDetailPage from './components/admin/AdminUserDetailPage';
 import AdminWalletPage from './components/admin/AdminWalletPage';
+import AdminAiTokensPage from './components/admin/AdminAiTokensPage';
 import AdminPricingMinutesPage from './components/admin/AdminPricingMinutesPage';
 import AdminPricingPhonePage from './components/admin/AdminPricingPhonePage';
 import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
@@ -105,6 +106,7 @@ export const appRouter = createBrowserRouter(
             { path: 'users', element: <AdminUsersPage /> },
             { path: 'users/:userId', element: <AdminUserDetailPage /> },
             { path: 'wallet', element: <AdminWalletPage /> },
+            { path: 'ai-tokens', element: <AdminAiTokensPage /> },
             { path: 'objectives', element: <AdminObjectivesPage /> },
             { path: 'pricing/minutes', element: <AdminPricingMinutesPage /> },
             { path: 'pricing/phone-line', element: <AdminPricingPhonePage /> },
