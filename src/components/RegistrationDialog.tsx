@@ -25,7 +25,7 @@ function stepFromSearch(param: string | null): Step {
 }
 
 interface RegistrationDialogProps {
-  defaultUserType?: 'company' | 'rep';
+  defaultUserType?: 'company' | 'rep' | 'call-center';
   onSignIn: () => void;
   onGetStarted?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
@@ -114,7 +114,10 @@ export default function RegistrationDialog({
       const pendingUserType = localStorage.getItem('pendingUserType');
       if (pendingUserType) {
         try {
-          await auth.changeUserType(storedUserId, pendingUserType as 'company' | 'rep');
+          await auth.changeUserType(
+            storedUserId,
+            pendingUserType as 'company' | 'rep' | 'call-center'
+          );
           localStorage.removeItem('pendingUserType');
         } catch (err) {
           console.error('Failed to change user type:', err);
@@ -231,7 +234,11 @@ export default function RegistrationDialog({
             // abandons the flow before verifying — fixing accounts that ended
             // up with `typeUser: null` in DB.
             const pendingUserType = localStorage.getItem('pendingUserType');
-            if (pendingUserType === 'company' || pendingUserType === 'rep') {
+            if (
+              pendingUserType === 'company' ||
+              pendingUserType === 'rep' ||
+              pendingUserType === 'call-center'
+            ) {
               try {
                 await auth.changeUserType(RegisterResult.data._id, pendingUserType);
               } catch (err) {

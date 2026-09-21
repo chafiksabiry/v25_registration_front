@@ -17,11 +17,20 @@ import companyBanner from './assets/choice-company.jpg';
 import repBanner from './assets/choice-rep.jpg';
 import { useTranslation } from 'react-i18next';
 
+export type SignupUserType = 'company' | 'rep' | 'call-center';
+
 interface ChoicePageProps {
-  onSelectRole: (role: 'company' | 'rep') => void;
+  onSelectRole: (role: SignupUserType) => void;
   onSignIn: () => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
+
+const callCenterFeatures = [
+  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'Manage call-center operations' },
+  { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Run outbound & inbound campaigns' },
+  { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Staff agents and supervisors' },
+  { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'Track performance & quality' },
+];
 
 const companyFeatures = [
   { icon: HeadphonesIcon, labelKey: 'choicePage.companyFeat1', defaultLabel: 'Customer Service Representatives' },
@@ -73,7 +82,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
 
       {/* Cards */}
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-10 flex items-start md:items-center justify-center">
-        <div className="grid lg:grid-cols-2 gap-6 max-w-5xl w-full mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full mx-auto">
           {/* Company Card — disabled */}
           <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 border border-harx-100/70 overflow-hidden opacity-60 grayscale pointer-events-none select-none">
             <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-400 via-harx-500 to-harx-600" />
@@ -119,6 +128,53 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
                 className="mt-6 w-full bg-gradient-to-r from-slate-400 to-slate-500 text-white/80 py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 cursor-not-allowed"
               >
                 {t('choicePage.companyTitle', 'Post a Gig')}
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          {/* Call Center Card */}
+          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-emerald-500/5 hover:shadow-2xl hover:shadow-emerald-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-emerald-100/70 overflow-hidden">
+            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-600" />
+            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-500 to-harx-500">
+              <img
+                src={companyBanner}
+                alt="Call center floor"
+                loading="eager"
+                decoding="async"
+                className="absolute inset-0 w-full h-full object-cover opacity-80 transition-opacity duration-700 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/90 via-emerald-700/45 to-teal-500/20" />
+              <div className="absolute bottom-4 left-5 right-5 z-10">
+                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
+                  <HeadphonesIcon className="w-5 h-5 text-white" />
+                </div>
+                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">
+                  {t('choicePage.callCenterTitle', 'Call Center')}
+                </h2>
+                <p className="text-white/90 text-sm font-medium">
+                  {t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
+                </p>
+              </div>
+            </div>
+
+            <div className="p-6">
+              <div className="space-y-3">
+                {callCenterFeatures.map(({ icon: Icon, labelKey, defaultLabel }) => (
+                  <div key={labelKey} className="flex items-center text-slate-700">
+                    <div className="p-1.5 bg-emerald-50 rounded-lg mr-3">
+                      <Icon className="w-4 h-4 text-emerald-600" />
+                    </div>
+                    <span className="font-semibold text-sm">{t(labelKey, defaultLabel)}</span>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => onSelectRole('call-center')}
+                className="mt-6 w-full bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-emerald-500/40 active:scale-[0.98]"
+              >
+                {t('choicePage.callCenterCta', 'Join as Call Center')}
                 <ArrowRight className="w-5 h-5" />
               </button>
             </div>
