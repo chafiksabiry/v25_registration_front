@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { persistHarxLanguage } from '../lib/i18n';
 
 const FrenchFlag = () => (
   <svg width="20" height="14" viewBox="0 0 3 2" className="rounded-sm overflow-hidden shrink-0">
@@ -38,12 +39,8 @@ export function LanguageSelector() {
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const selectLanguage = (lang: 'fr' | 'en') => {
+    persistHarxLanguage(lang, { explicit: true });
     void i18n.changeLanguage(lang);
-    try {
-      localStorage.setItem('i18nextLng', lang);
-    } catch {
-      /* ignore */
-    }
     setIsOpen(false);
   };
 
