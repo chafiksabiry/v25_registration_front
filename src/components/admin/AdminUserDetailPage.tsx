@@ -114,7 +114,7 @@ export default function AdminUserDetailPage() {
               }
               className="admin-btn-dark"
             >
-              <Wallet size={16} /> {isCompany ? 'Tokens AI & finances' : 'Gérer wallet & finances'}
+              <Wallet size={16} /> {isCompany ? 'Consommation tokens AI' : 'Gérer wallet & finances'}
             </Link>
           )}
           {isCompany && (

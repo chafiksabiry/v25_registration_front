@@ -264,17 +264,10 @@ export default function AdminWalletPage() {
                           userId={selectedUserId}
                           onUpdated={refreshAll}
                         />
-                        <FinancialAdjustForm
-                          label="Ajuster les tokens AI"
-                          target="company_ai_tokens"
-                          userId={selectedUserId}
-                          onUpdated={refreshAll}
-                          amountPlaceholder="Nombre de tokens"
-                        />
                         <div className="admin-info-tile flex flex-col justify-center gap-2">
-                          <p className="font-semibold text-slate-900">Filtres providers AI</p>
+                          <p className="font-semibold text-slate-900">Consommation tokens AI</p>
                           <p className="text-sm text-slate-500">
-                            OpenAI / Claude / Gemini se gèrent dans la section Tokens AI.
+                            Voir l’usage OpenAI / Claude / Gemini pour cette company.
                           </p>
                           <Link
                             to={`/admin/ai-tokens?userId=${selectedUserId}`}
