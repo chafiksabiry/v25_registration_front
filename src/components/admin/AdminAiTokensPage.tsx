@@ -2,28 +2,57 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ArrowLeft, RefreshCw, Search, Sparkles } from 'lucide-react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { adminApi } from '../../lib/api';
-import { AdminToggle } from './adminPageShell';
-import { FinancialAdjustForm, InfoCard, SectionCard } from './adminUiUtils';
-import { WalletLedgerList } from './WalletLedgerList';
-import { buildAccountLedger } from './walletLedger';
+import { InfoCard, SectionCard, formatDate } from './adminUiUtils';
 
-type AiProviders = {
-  openai: boolean;
-  anthropic: boolean;
-  gemini: boolean;
+type ProviderKey = 'all' | 'openai' | 'anthropic' | 'gemini' | 'estimated' | 'other';
+
+type ProviderStats = {
+  tokensUsed: number;
+  requests: number;
+  inputTokens: number;
+  outputTokens: number;
+  lastUsedAt?: string | null;
 };
 
-const DEFAULT_PROVIDERS: AiProviders = {
-  openai: true,
-  anthropic: true,
-  gemini: true,
-};
-
-const PROVIDER_ROWS: Array<{ key: keyof AiProviders; label: string; hint: string }> = [
-  { key: 'openai', label: 'OpenAI', hint: 'GPT / filtres OpenAI' },
-  { key: 'anthropic', label: 'Claude (Anthropic)', hint: 'Fallback & modèles Claude' },
-  { key: 'gemini', label: 'Gemini (Google)', hint: 'Modèles Gemini / Vertex' },
+const PROVIDER_FILTERS: Array<{ key: ProviderKey; label: string }> = [
+  { key: 'all', label: 'Tous' },
+  { key: 'openai', label: 'OpenAI' },
+  { key: 'anthropic', label: 'Claude' },
+  { key: 'gemini', label: 'Gemini' },
+  { key: 'estimated', label: 'Estimé' },
 ];
+
+function normalizeProvider(raw?: string | null): Exclude<ProviderKey, 'all'> {
+  const key = String(raw || '').toLowerCase().trim();
+  if (key === 'openai') return 'openai';
+  if (key === 'anthropic' || key === 'claude') return 'anthropic';
+  if (key === 'gemini' || key === 'google') return 'gemini';
+  if (key === 'estimated') return 'estimated';
+  return 'other';
+}
+
+function providerLabel(key: string): string {
+  switch (normalizeProvider(key)) {
+    case 'openai':
+      return 'OpenAI';
+    case 'anthropic':
+      return 'Claude';
+    case 'gemini':
+      return 'Gemini';
+    case 'estimated':
+      return 'Estimé';
+    default:
+      return key || 'Autre';
+  }
+}
+
+function formatTokens(value?: number | null) {
+  return new Intl.NumberFormat('fr-FR').format(Math.max(0, Math.round(Number(value || 0))));
+}
+
+function emptyStats(): ProviderStats {
+  return { tokensUsed: 0, requests: 0, inputTokens: 0, outputTokens: 0, lastUsedAt: null };
+}
 
 export default function AdminAiTokensPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,12 +68,10 @@ export default function AdminAiTokensPage() {
   >([]);
   const [detail, setDetail] = useState<Record<string, any> | null>(null);
   const [search, setSearch] = useState('');
-  const [providers, setProviders] = useState<AiProviders>(DEFAULT_PROVIDERS);
+  const [providerFilter, setProviderFilter] = useState<ProviderKey>('all');
   const [loadingOverview, setLoadingOverview] = useState(true);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const [savingProviders, setSavingProviders] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [providerMessage, setProviderMessage] = useState<string | null>(null);
 
   const loadOverview = useCallback(() => {
     setLoadingOverview(true);
@@ -64,23 +91,13 @@ export default function AdminAiTokensPage() {
   const loadDetail = useCallback(() => {
     if (!selectedUserId) {
       setDetail(null);
-      setProviders(DEFAULT_PROVIDERS);
       return;
     }
     setLoadingDetail(true);
-    setProviderMessage(null);
     adminApi
       .userDetail(selectedUserId)
-      .then((response) => {
-        setDetail(response.data);
-        const raw = response.data?.financials?.tokens?.aiProviders;
-        setProviders({
-          openai: raw?.openai !== false,
-          anthropic: raw?.anthropic !== false,
-          gemini: raw?.gemini !== false,
-        });
-      })
-      .catch(() => setError('Impossible de charger les tokens AI de ce compte.'))
+      .then((response) => setDetail(response.data))
+      .catch(() => setError('Impossible de charger la consommation AI de ce compte.'))
       .finally(() => setLoadingDetail(false));
   }, [selectedUserId]);
 
@@ -104,42 +121,28 @@ export default function AdminAiTokensPage() {
   const selectedAccount = accounts.find((a) => a.userId === selectedUserId);
   const financials = detail?.financials as Record<string, any> | undefined;
   const tokens = financials?.tokens;
+  const byProvider = (financials?.tokenUsageByProvider || {}) as Record<string, ProviderStats>;
   const isCompany = detail?.profile?.type === 'company';
 
-  const ledgerLines = useMemo(() => {
-    if (!selectedUserId || !financials || !isCompany) return [];
-    return buildAccountLedger(financials, true, false).filter(
-      (line) => line.category === 'Tokens AI',
-    );
-  }, [selectedUserId, financials, isCompany]);
+  const usageRows = useMemo(() => {
+    const rows = (financials?.tokenUsage || []) as Array<Record<string, any>>;
+    if (providerFilter === 'all') return rows;
+    return rows.filter((row) => normalizeProvider(row.provider || row.meta?.provider) === providerFilter);
+  }, [financials?.tokenUsage, providerFilter]);
 
   const refreshAll = () => {
     loadOverview();
     loadDetail();
   };
 
-  const saveProviders = async () => {
-    if (!selectedUserId) return;
-    setSavingProviders(true);
-    setError(null);
-    setProviderMessage(null);
-    try {
-      await adminApi.updateFinancials(selectedUserId, {
-        target: 'company_ai_providers',
-        providers,
-      });
-      setProviderMessage('Filtres providers enregistrés.');
-      loadDetail();
-    } catch {
-      setError('Impossible d’enregistrer les filtres providers.');
-    } finally {
-      setSavingProviders(false);
-    }
-  };
-
   if (loadingOverview && accounts.length === 0) {
-    return <p className="text-violet-600/70 animate-pulse">Chargement des tokens AI…</p>;
+    return <p className="text-violet-600/70 animate-pulse">Chargement de la consommation AI…</p>;
   }
+
+  const openai = byProvider.openai || emptyStats();
+  const anthropic = byProvider.anthropic || emptyStats();
+  const gemini = byProvider.gemini || emptyStats();
+  const total = byProvider.total || emptyStats();
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -149,7 +152,7 @@ export default function AdminAiTokensPage() {
             <Sparkles className="text-fuchsia-600" /> Tokens AI
           </h1>
           <p className="admin-page-subtitle">
-            Solde prepaid et filtres providers (OpenAI, Claude, Gemini) par company
+            Consommation OpenAI / Claude / Gemini par company
           </p>
         </div>
         <button type="button" onClick={refreshAll} className="admin-btn-secondary">
@@ -165,20 +168,15 @@ export default function AdminAiTokensPage() {
 
       {selectedUserId && isCompany && financials && (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          <InfoCard label="Solde tokens AI" value={String(tokens?.tokens ?? 0)} />
-          <InfoCard label="Tokens achetés" value={String(tokens?.purchasedTokens ?? 0)} />
-          <InfoCard label="Tokens consommés" value={String(tokens?.consumedTokens ?? 0)} />
-          <InfoCard
-            label="Providers actifs"
-            value={`${[providers.openai && 'OpenAI', providers.anthropic && 'Claude', providers.gemini && 'Gemini']
-              .filter(Boolean)
-              .join(' · ') || 'Aucun'}`}
-          />
+          <InfoCard label="Total consommé" value={formatTokens(total.tokensUsed || tokens?.consumedTokens)} />
+          <InfoCard label="OpenAI" value={`${formatTokens(openai.tokensUsed)} tok · ${openai.requests || 0} req`} />
+          <InfoCard label="Claude" value={`${formatTokens(anthropic.tokensUsed)} tok · ${anthropic.requests || 0} req`} />
+          <InfoCard label="Gemini" value={`${formatTokens(gemini.tokensUsed)} tok · ${gemini.requests || 0} req`} />
         </div>
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-[320px_1fr] gap-6">
-        <SectionCard title="Companies" description="Sélectionnez une company pour gérer ses tokens AI.">
+        <SectionCard title="Companies" description="Sélectionnez une company pour voir sa consommation.">
           <div className="relative mb-3">
             <Search className="absolute left-3 top-3 h-4 w-4 text-slate-400" />
             <input
@@ -218,8 +216,8 @@ export default function AdminAiTokensPage() {
           {!selectedUserId && (
             <SectionCard title="Sélection requise">
               <p className="text-sm text-slate-500">
-                Choisissez une company à gauche pour créditer des tokens AI et activer / désactiver
-                OpenAI, Claude ou Gemini.
+                Choisissez une company à gauche pour afficher la consommation token par provider
+                (OpenAI, Claude, Gemini).
               </p>
             </SectionCard>
           )}
@@ -247,63 +245,107 @@ export default function AdminAiTokensPage() {
             isCompany && (
               <>
                 <SectionCard
-                  title="Solde tokens AI"
-                  description="Ajustement manuel du prepaid AI (crédits consommés à l’usage)."
+                  title="Répartition par provider"
+                  description="Totaux agrégés depuis le journal d’usage AI."
                 >
-                  <FinancialAdjustForm
-                    label="Ajuster les tokens AI"
-                    target="company_ai_tokens"
-                    userId={selectedUserId}
-                    onUpdated={refreshAll}
-                    amountPlaceholder="Nombre de tokens"
-                  />
-                </SectionCard>
-
-                <SectionCard
-                  title="Filtres providers"
-                  description="Désactivez un provider pour bloquer son usage côté company."
-                >
-                  <div className="space-y-4">
-                    {PROVIDER_ROWS.map((row) => (
-                      <div
-                        key={row.key}
-                        className="flex items-center justify-between gap-4 admin-info-tile"
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {[
+                      { key: 'openai', label: 'OpenAI', stats: openai },
+                      { key: 'anthropic', label: 'Claude', stats: anthropic },
+                      { key: 'gemini', label: 'Gemini', stats: gemini },
+                    ].map((card) => (
+                      <button
+                        key={card.key}
+                        type="button"
+                        onClick={() => setProviderFilter(card.key as ProviderKey)}
+                        className={`admin-info-tile text-left transition-all ${
+                          providerFilter === card.key ? 'ring-2 ring-fuchsia-400/50' : ''
+                        }`}
                       >
-                        <div>
-                          <p className="font-semibold text-slate-900">{row.label}</p>
-                          <p className="text-xs text-slate-500 mt-0.5">{row.hint}</p>
-                        </div>
-                        <AdminToggle
-                          checked={providers[row.key]}
-                          onChange={(value) =>
-                            setProviders((current) => ({ ...current, [row.key]: value }))
-                          }
-                          label={row.label}
-                        />
-                      </div>
+                        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          {card.label}
+                        </p>
+                        <p className="mt-2 text-2xl font-bold text-slate-900">
+                          {formatTokens(card.stats.tokensUsed)}
+                        </p>
+                        <p className="mt-1 text-sm text-slate-500">
+                          {card.stats.requests || 0} requête(s)
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400">
+                          in {formatTokens(card.stats.inputTokens)} · out{' '}
+                          {formatTokens(card.stats.outputTokens)}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-400">
+                          Dernier usage : {formatDate(card.stats.lastUsedAt)}
+                        </p>
+                      </button>
                     ))}
-                    {providerMessage && (
-                      <p className="text-sm text-emerald-600">{providerMessage}</p>
-                    )}
-                    <button
-                      type="button"
-                      disabled={savingProviders}
-                      onClick={saveProviders}
-                      className="admin-btn-dark disabled:opacity-50"
-                    >
-                      {savingProviders ? 'Enregistrement…' : 'Enregistrer les filtres'}
-                    </button>
                   </div>
                 </SectionCard>
 
                 <SectionCard
-                  title="Journal d’usage AI"
-                  description={`${ledgerLines.length} ligne(s) récente(s)`}
+                  title="Journal de consommation"
+                  description={`${usageRows.length} ligne(s) · solde restant ${formatTokens(tokens?.tokens)}`}
                 >
-                  <WalletLedgerList
-                    lines={ledgerLines}
-                    emptyMessage="Aucun usage de tokens AI enregistré pour cette company."
-                  />
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {PROVIDER_FILTERS.map((filter) => (
+                      <button
+                        key={filter.key}
+                        type="button"
+                        onClick={() => setProviderFilter(filter.key)}
+                        className={`admin-filter-pill text-xs ${
+                          providerFilter === filter.key
+                            ? 'admin-filter-pill--active'
+                            : 'admin-filter-pill--idle'
+                        }`}
+                      >
+                        {filter.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {usageRows.length === 0 ? (
+                    <p className="text-sm text-slate-500">
+                      Aucune consommation AI enregistrée pour ce filtre.
+                    </p>
+                  ) : (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-xs uppercase tracking-wide text-slate-500 border-b border-slate-200">
+                            <th className="py-2 pr-3 font-semibold">Date</th>
+                            <th className="py-2 pr-3 font-semibold">Provider</th>
+                            <th className="py-2 pr-3 font-semibold">Outil</th>
+                            <th className="py-2 pr-3 font-semibold">Modèle</th>
+                            <th className="py-2 pr-3 font-semibold text-right">Tokens</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {usageRows.map((row) => (
+                            <tr
+                              key={String(row._id || row.id || row.usageId)}
+                              className="border-b border-slate-100 last:border-0"
+                            >
+                              <td className="py-2.5 pr-3 text-slate-600 whitespace-nowrap">
+                                {formatDate(row.createdAt)}
+                              </td>
+                              <td className="py-2.5 pr-3 font-medium text-slate-900">
+                                {providerLabel(row.provider || row.meta?.provider)}
+                              </td>
+                              <td className="py-2.5 pr-3 text-slate-600">{row.tool || '—'}</td>
+                              <td className="py-2.5 pr-3 text-slate-500">{row.model || '—'}</td>
+                              <td className="py-2.5 pr-3 text-right font-semibold text-slate-900">
+                                {formatTokens(row.tokensUsed)}
+                                {row.estimated ? (
+                                  <span className="ml-1 text-xs font-normal text-amber-600">est.</span>
+                                ) : null}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </SectionCard>
               </>
             )
