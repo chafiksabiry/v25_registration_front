@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
 
@@ -25,6 +25,10 @@ export default function AuthShell() {
   const location = useLocation();
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname, location.search]);
+
   const handleNavigateToSection = (sectionId: string) => {
     setPendingSection(sectionId);
     navigate('/');
@@ -37,6 +41,7 @@ export default function AuthShell() {
       rep: '/auth/register-rep',
       'call-center': '/auth/register-call-center',
     };
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     navigate(pathByRole[role], {
       state: { returnTo: '/auth/choice' },
     });
