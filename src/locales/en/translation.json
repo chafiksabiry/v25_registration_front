@@ -198,7 +198,10 @@
     "errNoToken": "Verification failed: No token received",
     "errPasswordLength": "Password must be at least 8 characters long",
     "errPasswordMatch": "Passwords do not match",
-    "errSession": "Session expired. Please start the recovery process again."
+    "errSession": "Session expired. Please start the recovery process again.",
+    "errUnknownEmail": "No account is linked to this email.",
+    "errSend": "The code could not be sent right now. Please try again in a moment.",
+    "errServer": "Password reset failed. Please try again in a moment."
   },
   "featuredGigs": {
     "title1": "Discover",
