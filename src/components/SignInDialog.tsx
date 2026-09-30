@@ -44,6 +44,10 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   const { t } = useTranslation();
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [step]);
+
+  useEffect(() => {
     if (!isSessionActive()) return;
 
     setIsAlreadyLoggedIn(true);
