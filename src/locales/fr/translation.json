@@ -191,6 +191,7 @@
     "successTitle": "Succès !",
     "successDesc": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.",
     "btnBack": "Retour à la connexion",
+    "btnPrevious": "Retour",
     "btnContinue": "Continuer",
     "errEmail": "Veuillez entrer votre adresse email",
     "errCode": "Veuillez entrer un code valide à 6 chiffres",

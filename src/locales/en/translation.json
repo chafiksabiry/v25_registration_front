@@ -191,6 +191,7 @@
     "successTitle": "Success!",
     "successDesc": "Your password has been reset. You can now log in.",
     "btnBack": "Back to Sign In",
+    "btnPrevious": "Back",
     "btnContinue": "Continue",
     "errEmail": "Please enter your email address",
     "errCode": "Please enter a valid 6-digit code",
