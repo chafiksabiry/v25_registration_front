@@ -101,7 +101,6 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
 
   const pushStep = (next: RecoveryStep, patch?: Partial<RecoverySession>) => {
     setStep(next);
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     navigate({ pathname: '/auth/recovery', search: `?step=${next}` });
     writeRecoverySession({
       email: patch?.email ?? formData.email,

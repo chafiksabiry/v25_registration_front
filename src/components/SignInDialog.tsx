@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
@@ -43,8 +43,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   const [isAlreadyLoggedIn, setIsAlreadyLoggedIn] = useState(false);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
   }, [step]);
 
   useEffect(() => {
