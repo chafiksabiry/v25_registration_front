@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
 
@@ -25,8 +25,11 @@ export default function AuthShell() {
   const location = useLocation();
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    window.scrollTo(0, 0);
   }, [location.pathname, location.search]);
 
   const handleNavigateToSection = (sectionId: string) => {
@@ -41,7 +44,6 @@ export default function AuthShell() {
       rep: '/auth/register-rep',
       'call-center': '/auth/register-call-center',
     };
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
     navigate(pathByRole[role], {
       state: { returnTo: '/auth/choice' },
     });
