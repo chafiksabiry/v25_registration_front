@@ -74,12 +74,15 @@ function ChoiceCard({
   disabled?: boolean;
   onClick?: () => void;
 }) {
+  const interactive = Boolean(onClick) && !disabled;
+
   return (
     <article
+      onClick={interactive ? onClick : undefined}
       className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-lg ${
-        disabled
-          ? 'border-slate-200/80'
-          : 'border-rose-100 shadow-rose-500/10 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl'
+        interactive
+          ? 'cursor-pointer border-rose-100 shadow-rose-500/10 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl'
+          : 'border-slate-200/80'
       }`}
     >
       <div className="relative h-52 shrink-0 overflow-hidden">
@@ -116,7 +119,6 @@ function ChoiceCard({
           type="button"
           disabled={disabled}
           aria-disabled={disabled || undefined}
-          onClick={disabled ? undefined : onClick}
           className={`mt-6 flex h-14 w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-center text-sm font-bold leading-tight ${
             disabled
               ? 'cursor-not-allowed bg-slate-200 text-slate-500'
