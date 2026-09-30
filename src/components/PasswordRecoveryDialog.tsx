@@ -215,13 +215,13 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
         <div className="absolute top-[8%] left-[15%] w-[42%] h-[42%] bg-rose-500/30 blur-[120px] rounded-full animate-float" />
         <div className="absolute bottom-[8%] right-[8%] w-[48%] h-[48%] bg-fuchsia-600/25 blur-[140px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
       </div>
-      <div className="flex-1 flex items-center justify-center p-4 py-10 relative z-10">
-        <div className="w-full max-w-md glass-card-premium rounded-3xl p-8 relative z-10">
+      <div className="flex min-h-screen items-center justify-center px-4 pb-10 pt-24 relative z-10">
+        <div className="w-full max-w-md glass-card-premium rounded-3xl p-8 text-center relative z-10">
           {step !== 'success' && (
             <button
               type="button"
               onClick={step === 'email' ? handleBackToSignIn : () => pushStep(step === 'new-password' ? 'verification' : 'email')}
-              className="mb-6 flex items-center text-sm text-rose-200 transition-colors hover:text-white"
+              className="mb-6 mx-auto flex items-center text-sm text-rose-200 transition-colors hover:text-white"
             >
               <ArrowLeft className="mr-1.5 h-4 w-4" />
               {step === 'email' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnPrevious', 'Back')}
@@ -230,7 +230,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
 
           {step === 'email' && (
             <>
-              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2">{t('recovery.resetTitle', 'Reset Your Password')}</h2>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.resetTitle', 'Reset Your Password')}</h2>
               <p className="text-rose-100/80 text-sm mb-8">{t('recovery.resetDesc', 'Enter your registered email to reset your password.')}</p>
               <div className="relative group">
                 <Mail className="absolute left-4 top-3.5 h-5 w-5 text-rose-200 group-focus-within:text-white transition-colors" />
@@ -247,7 +247,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
 
           {step === 'verification' && (
             <>
-              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2">{t('recovery.verifyTitle', 'Verify Your Identity')}</h2>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.verifyTitle', 'Verify Your Identity')}</h2>
               <p className="text-rose-100/80 text-sm mb-8">
                 {t('recovery.verifyDesc', 'We sent a 6-digit code to {{email}}. Please enter it below.', { email: formData.email })}
               </p>
@@ -268,7 +268,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
 
           {step === 'new-password' && (
             <>
-              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2">{t('recovery.newPasswordTitle', 'Create New Password')}</h2>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.newPasswordTitle', 'Create New Password')}</h2>
               <p className="text-rose-100/80 text-sm mb-8">{t('recovery.newPasswordDesc', 'Set a strong password for your account.')}</p>
               <div className="space-y-4">
                 <div className="relative group">
@@ -326,7 +326,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           )}
 
           {error && (
-            <div className="flex items-center gap-3 text-rose-50 bg-rose-950/50 border border-rose-300/40 p-3.5 rounded-xl mt-4 text-left">
+            <div className="flex items-center justify-center gap-3 text-rose-50 bg-rose-950/50 border border-rose-300/40 p-3.5 rounded-xl mt-4">
               <AlertCircle className="h-5 w-5 shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
