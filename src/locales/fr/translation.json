@@ -198,7 +198,10 @@
     "errNoToken": "Échec de la vérification : Aucun jeton reçu",
     "errPasswordLength": "Le mot de passe doit comporter au moins 8 caractères",
     "errPasswordMatch": "Les mots de passe ne correspondent pas",
-    "errSession": "Session expirée. Veuillez recommencer le processus de récupération."
+    "errSession": "Session expirée. Veuillez recommencer le processus de récupération.",
+    "errUnknownEmail": "Aucun compte n'est associé à cet email.",
+    "errSend": "Impossible d'envoyer le code pour le moment. Réessayez dans un instant.",
+    "errServer": "La réinitialisation a échoué. Réessayez dans un instant."
   },
   "featuredGigs": {
     "title1": "Découvrez les",
