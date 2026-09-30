@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Building2,
   Users,
@@ -11,6 +11,7 @@ import {
   Target,
   Sparkles,
   CheckCircle2,
+  type LucideIcon,
 } from 'lucide-react';
 import { Header } from './LandingPage/Header';
 import companyBanner from './assets/choice-company.jpg';
@@ -46,9 +47,91 @@ const repFeatures = [
   { icon: Users, labelKey: 'choicePage.repFeat4', defaultLabel: 'Join Professional Communities' },
 ];
 
+type Feature = { icon: LucideIcon; id: string; label: string };
+
+function ChoiceCard({
+  title,
+  description,
+  badge,
+  badgeTone,
+  icon: Icon,
+  image,
+  imageAlt,
+  features,
+  cta,
+  disabled,
+  onClick,
+}: {
+  title: string;
+  description: string;
+  badge: string;
+  badgeTone: 'muted' | 'live';
+  icon: LucideIcon;
+  image: string;
+  imageAlt: string;
+  features: Feature[];
+  cta: string;
+  disabled?: boolean;
+  onClick?: () => void;
+}) {
+  return (
+    <article
+      className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-lg ${
+        disabled
+          ? 'border-slate-200/80'
+          : 'border-rose-100 shadow-rose-500/10 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl'
+      }`}
+    >
+      <div className="relative h-52 shrink-0 overflow-hidden">
+        <img src={image} alt={imageAlt} className="absolute inset-0 h-full w-full object-cover" />
+        <div className={`absolute inset-0 ${disabled ? 'bg-slate-900/55' : 'bg-gradient-to-t from-rose-950/80 via-rose-700/45 to-rose-500/15'}`} />
+        <div className="absolute inset-x-5 bottom-4 flex flex-col">
+          <div className="mb-2 inline-flex w-fit rounded-xl bg-white/20 p-2 ring-1 ring-white/30">
+            <Icon className="h-5 w-5 text-white" />
+          </div>
+          <h2 className="line-clamp-2 min-h-[3.5rem] text-2xl font-black leading-tight text-white">{title}</h2>
+          <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-white/90">{description}</p>
+          <span
+            className={`mt-2 inline-flex h-6 w-fit items-center rounded-full px-3 text-[11px] font-bold uppercase tracking-wide ${
+              badgeTone === 'live' ? 'bg-white text-rose-600' : 'bg-white/20 text-white'
+            }`}
+          >
+            {badge}
+          </span>
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col p-6">
+        <ul className="flex-1 space-y-2">
+          {features.map(({ icon: FeatureIcon, id, label }) => (
+            <li key={id} className="flex min-h-10 items-center text-slate-700">
+              <span className={`mr-3 inline-flex shrink-0 rounded-lg p-1.5 ${disabled ? 'bg-slate-100' : 'bg-rose-50'}`}>
+                <FeatureIcon className={`h-4 w-4 ${disabled ? 'text-slate-500' : 'text-rose-600'}`} />
+              </span>
+              <span className="text-sm font-semibold leading-snug">{label}</span>
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          disabled={disabled}
+          aria-disabled={disabled || undefined}
+          onClick={disabled ? undefined : onClick}
+          className={`mt-6 flex h-14 w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-center text-sm font-bold leading-tight ${
+            disabled
+              ? 'cursor-not-allowed bg-slate-200 text-slate-500'
+              : 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/25 transition-all hover:shadow-rose-500/40 active:scale-[0.98]'
+          }`}
+        >
+          {cta}
+          <ArrowRight className="h-4 w-4 shrink-0" />
+        </button>
+      </div>
+    </article>
+  );
+}
+
 export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
-  const [companyLoaded, setCompanyLoaded] = useState(false);
-  const [repLoaded, setRepLoaded] = useState(false);
   const { t } = useTranslation();
 
   return (
@@ -81,153 +164,44 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       </div>
 
       {/* Cards */}
-      <div className="relative z-10 flex-1 container mx-auto px-4 pb-10 flex items-start md:items-center justify-center">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl w-full mx-auto">
-          {/* Company Card — disabled */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-500/5 border border-harx-100/70 overflow-hidden opacity-60 grayscale pointer-events-none select-none">
-            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-400 via-harx-500 to-harx-600" />
-            {/* Banner: brand gradient always visible instantly, photo fades in on top */}
-            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-600 via-harx-500 to-harx-alt-500">
-              <img
-                src={companyBanner}
-                alt="Team collaborating in an office"
-                loading="eager"
-                decoding="async"
-                onLoad={() => setCompanyLoaded(true)}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:scale-105 ${companyLoaded ? 'opacity-100' : 'opacity-0'}`}
-              />
-              {/* Brand color tint for readability + identity */}
-              <div className="absolute inset-0 bg-gradient-to-t from-harx-700/90 via-harx-600/45 to-harx-500/20" />
-              <div className="absolute bottom-4 left-5 right-5 z-10">
-                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
-                  <Building2 className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">{t('choicePage.companyTitle', 'Post a Gig')}</h2>
-                <p className="text-white/90 text-sm font-medium">{t('choicePage.companyDesc', 'For companies seeking customer service talent')}</p>
-                <span className="inline-block mt-2 px-3 py-0.5 rounded-full bg-white/25 text-white text-xs font-bold uppercase tracking-wide">
-                  {t('choicePage.comingSoon', 'Coming soon')}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="space-y-3">
-                {companyFeatures.map(({ icon: Icon, labelKey, defaultLabel }) => (
-                  <div key={labelKey} className="flex items-center text-slate-700">
-                    <div className="p-1.5 bg-harx-50 rounded-lg mr-3">
-                      <Icon className="w-4 h-4 text-harx-600" />
-                    </div>
-                    <span className="font-semibold text-sm">{t(labelKey, defaultLabel)}</span>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="mt-6 w-full bg-gradient-to-r from-slate-400 to-slate-500 text-white/80 py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 cursor-not-allowed"
-              >
-                {t('choicePage.companyTitle', 'Post a Gig')}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Call Center Card — disabled */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-emerald-500/5 border border-emerald-100/70 overflow-hidden opacity-60 grayscale pointer-events-none select-none">
-            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-600" />
-            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-emerald-600 via-teal-500 to-harx-500">
-              <img
-                src={companyBanner}
-                alt="Call center floor"
-                loading="eager"
-                decoding="async"
-                className="absolute inset-0 w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/90 via-emerald-700/45 to-teal-500/20" />
-              <div className="absolute bottom-4 left-5 right-5 z-10">
-                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
-                  <HeadphonesIcon className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">
-                  {t('choicePage.callCenterTitle', 'Call Center')}
-                </h2>
-                <p className="text-white/90 text-sm font-medium">
-                  {t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
-                </p>
-                <span className="inline-block mt-2 px-3 py-0.5 rounded-full bg-white/25 text-white text-xs font-bold uppercase tracking-wide">
-                  {t('choicePage.comingSoon', 'Coming soon')}
-                </span>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="space-y-3">
-                {callCenterFeatures.map(({ icon: Icon, labelKey, defaultLabel }) => (
-                  <div key={labelKey} className="flex items-center text-slate-700">
-                    <div className="p-1.5 bg-emerald-50 rounded-lg mr-3">
-                      <Icon className="w-4 h-4 text-emerald-600" />
-                    </div>
-                    <span className="font-semibold text-sm">{t(labelKey, defaultLabel)}</span>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                disabled
-                aria-disabled="true"
-                className="mt-6 w-full bg-gradient-to-r from-slate-400 to-slate-500 text-white/80 py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 cursor-not-allowed"
-              >
-                {t('choicePage.callCenterCta', 'Join as Call Center')}
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Professional Card */}
-          <div className="group relative bg-white/90 backdrop-blur rounded-3xl shadow-xl shadow-harx-alt-500/5 hover:shadow-2xl hover:shadow-harx-alt-500/20 transition-all duration-500 transform hover:-translate-y-1.5 border border-harx-alt-100/70 overflow-hidden">
-            <div className="absolute inset-x-0 top-0 h-1.5 z-20 bg-gradient-to-r from-harx-alt-400 via-harx-alt-500 to-harx-alt-600" />
-            {/* Banner: brand gradient always visible instantly, photo fades in on top */}
-            <div className="relative h-40 overflow-hidden bg-gradient-to-br from-harx-alt-500 via-harx-alt-600 to-harx-600">
-              <img
-                src={repBanner}
-                alt="Contact center professionals at work"
-                loading="eager"
-                decoding="async"
-                onLoad={() => setRepLoaded(true)}
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 group-hover:scale-105 ${repLoaded ? 'opacity-100' : 'opacity-0'}`}
-              />
-              {/* Brand color tint for readability + identity */}
-              <div className="absolute inset-0 bg-gradient-to-t from-harx-alt-700/90 via-harx-alt-600/45 to-harx-alt-500/20" />
-              <div className="absolute bottom-4 left-5 right-5 z-10">
-                <div className="inline-flex p-2 rounded-xl bg-white/20 backdrop-blur-sm mb-2 ring-1 ring-white/30">
-                  <Headphones className="w-5 h-5 text-white" />
-                </div>
-                <h2 className="text-2xl md:text-3xl font-black text-white leading-tight drop-shadow-sm">{t('choicePage.repTitle', 'Find Gigs')}</h2>
-                <p className="text-white/90 text-sm font-medium">{t('choicePage.repDesc', 'For contact center professionals')}</p>
-              </div>
-            </div>
-
-            <div className="p-6">
-              <div className="space-y-3">
-                {repFeatures.map(({ icon: Icon, labelKey, defaultLabel }) => (
-                  <div key={labelKey} className="flex items-center text-slate-700">
-                    <div className="p-1.5 bg-harx-alt-50 rounded-lg mr-3">
-                      <Icon className="w-4 h-4 text-harx-alt-600" />
-                    </div>
-                    <span className="font-semibold text-sm">{t(labelKey, defaultLabel)}</span>
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={() => onSelectRole('rep')}
-                className="mt-6 w-full bg-gradient-to-r from-harx-alt-500 to-harx-alt-600 text-white py-3.5 px-6 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-lg hover:shadow-harx-alt-500/40 active:scale-[0.98]"
-              >
-                {t('choicePage.repTitle', 'Find Gigs')}
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
+      <div className="relative z-10 flex-1 container mx-auto px-4 pb-12">
+        <div className="mx-auto grid w-full max-w-6xl items-stretch gap-6 lg:grid-cols-3">
+          <ChoiceCard
+            disabled
+            icon={Building2}
+            image={companyBanner}
+            imageAlt="Équipe en entreprise"
+            title={t('choicePage.companyTitle', 'Post a Gig')}
+            description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
+            badge={t('choicePage.comingSoon', 'Coming soon')}
+            badgeTone="muted"
+            features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
+            cta={t('choicePage.companyTitle', 'Post a Gig')}
+          />
+          <ChoiceCard
+            disabled
+            icon={HeadphonesIcon}
+            image={companyBanner}
+            imageAlt="Centre d'appels"
+            title={t('choicePage.callCenterTitle', 'Call Center')}
+            description={t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
+            badge={t('choicePage.comingSoon', 'Coming soon')}
+            badgeTone="muted"
+            features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
+            cta={t('choicePage.callCenterCta', 'Join as Call Center')}
+          />
+          <ChoiceCard
+            icon={Headphones}
+            image={repBanner}
+            imageAlt="Professionnels en centre de contact"
+            title={t('choicePage.repTitle', 'Find Gigs')}
+            description={t('choicePage.repDesc', 'For contact center professionals')}
+            badge={t('choicePage.available', 'Available')}
+            badgeTone="live"
+            features={repFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
+            cta={t('choicePage.repTitle', 'Find Gigs')}
+            onClick={() => onSelectRole('rep')}
+          />
         </div>
       </div>
 
