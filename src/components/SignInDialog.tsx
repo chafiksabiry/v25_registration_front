@@ -10,6 +10,7 @@ import { Header } from './LandingPage/Header';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
 import { mapSignInError } from '../lib/authErrors';
+import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
 
@@ -25,13 +26,16 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   const { setToken } = useAuth();
   const goBack = useHistoryBack('/');
   const [step, setStep] = useState<SignInStep>('credentials');
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false,
-    verificationCode: '',
-    userId: '',
-    phone: '',
+  const [formData, setFormData] = useState(() => {
+    const rememberedEmail = readRememberedEmail() ?? '';
+    return {
+      email: rememberedEmail,
+      password: '',
+      rememberMe: Boolean(rememberedEmail),
+      verificationCode: '',
+      userId: '',
+      phone: '',
+    };
   });
   const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
@@ -206,7 +210,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         }
         const decoded: any = jwtDecode(resultData.token);
         const userId = decoded.userId;
-        setToken(resultData.token);
+        setToken(resultData.token, formData.rememberMe);
+        rememberLoginEmail(formData.rememberMe ? formData.email : null);
         syncSessionUserIdCookie(resultData.token);
         setStep('success');
         const redirectTo = await getPostLoginRedirectUrl(userId, resultData.token);

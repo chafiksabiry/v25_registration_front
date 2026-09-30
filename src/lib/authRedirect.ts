@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
 import { hardNavigate } from "./appNavigation";
+import { readStoredAuthToken } from "./authSync";
 
 interface TokenPayload {
   userId?: string;
@@ -22,6 +23,8 @@ export function clearSessionUserId(): void {
 /** Clear all auth session data (token, userId, profile caches). */
 export function clearAuthSession(): void {
   localStorage.removeItem('token');
+  localStorage.removeItem('harx_remember');
+  document.cookie = 'harx_session=; path=/; max-age=0; SameSite=Lax';
   clearSessionUserId();
   localStorage.removeItem('userType');
   localStorage.removeItem('companyId');
@@ -49,7 +52,7 @@ export function syncSessionUserIdCookie(token?: string | null): string | null {
 
 /** Valid JWT in localStorage (full login session). */
 export function isSessionActive(token?: string | null): boolean {
-  const stored = token ?? localStorage.getItem('token');
+  const stored = token ?? readStoredAuthToken();
   if (!stored) return false;
 
   try {
@@ -72,7 +75,7 @@ export function hasUiSession(token?: string | null): boolean {
 }
 
 export function getSessionUserId(token?: string | null): string | null {
-  const stored = token ?? localStorage.getItem("token");
+  const stored = token ?? readStoredAuthToken();
   if (stored) {
     try {
       const decoded = jwtDecode<TokenPayload>(stored);
@@ -85,7 +88,7 @@ export function getSessionUserId(token?: string | null): string | null {
 }
 
 export function getSessionToken(): string {
-  return localStorage.getItem("token") ?? "";
+  return readStoredAuthToken() ?? "";
 }
 
 const REP_ONBOARDING_STATE_KEY = "rep_onboarding_state";
@@ -352,7 +355,7 @@ export async function redirectIfAuthenticated(token?: string | null): Promise<bo
   // Without the userId cookie the company/rep apps reject the user → redirect loop.
   if (!userId) {
     const recoveryInProgress = sessionStorage.getItem("passwordRecoveryFlow");
-    if (recoveryInProgress || localStorage.getItem("token")) {
+    if (recoveryInProgress || readStoredAuthToken()) {
       clearAuthSession();
     }
     return false;
