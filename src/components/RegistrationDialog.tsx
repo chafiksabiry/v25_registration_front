@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
@@ -69,8 +69,8 @@ export default function RegistrationDialog({
     }
   }, [defaultUserType]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
   }, [step]);
 
   useEffect(() => {
