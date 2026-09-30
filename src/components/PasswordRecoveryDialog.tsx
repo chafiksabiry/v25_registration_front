@@ -38,6 +38,33 @@ function writeRecoverySession(data: RecoverySession | null) {
   }
 }
 
+function recoveryErrorText(
+  err: unknown,
+  t: (key: string, fallback: string) => string,
+  fallback: string
+) {
+  const axiosErr = err as {
+    message?: string;
+    response?: { status?: number; data?: { error?: string; message?: string } };
+  };
+  const status = axiosErr.response?.status;
+  const code = axiosErr.response?.data?.error || '';
+
+  if (code === 'EMAIL_NOT_REGISTERED' || status === 404) {
+    return t('recovery.errUnknownEmail', "Aucun compte n'est associé à cet email.");
+  }
+  if (code === 'EMAIL_REQUIRED') {
+    return t('recovery.errEmail', 'Veuillez entrer votre adresse email');
+  }
+  if (code === 'EMAIL_SEND_FAILED') {
+    return t('recovery.errSend', "Impossible d'envoyer le code pour le moment. Réessayez dans un instant.");
+  }
+  if (!axiosErr.response || axiosErr.message === 'Network Error' || (status != null && status >= 500)) {
+    return t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.');
+  }
+  return fallback;
+}
+
 function stepFromSearch(param: string | null, session: RecoverySession | null): RecoveryStep {
   if (param && RECOVERY_STEPS.includes(param as RecoveryStep)) return param as RecoveryStep;
   if (session?.step) return session.step;
@@ -118,8 +145,8 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           const verificationCode = await auth.generateVerificationCode(formData.email);
           await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
           pushStep('verification', { email: formData.email });
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Failed to send verification code'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
 
@@ -143,8 +170,8 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           } else {
             setError(t('recovery.errNoToken', 'Verification failed: No token received'));
           }
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Verification failed'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errUnexpected', 'Verification failed')));
         }
         break;
 
@@ -166,8 +193,8 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           await auth.changePassword(formData.email, formData.confirmPassword, recoveryToken);
           clearRecoveryFlow();
           pushStep('success');
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Failed to reset password'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
 
