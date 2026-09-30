@@ -70,6 +70,10 @@ export default function RegistrationDialog({
   }, [defaultUserType]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [step]);
+
+  useEffect(() => {
     if (!isSessionActive()) {
       clearSessionUserId();
       setRegisteredUserId(null);
