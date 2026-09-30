@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
@@ -7,7 +7,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
-import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
 import { mapSignInError } from '../lib/authErrors';
 import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
@@ -24,7 +23,6 @@ interface SignInDialogProps {
 
 export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, onGetStarted, onNavigateToSection }: SignInDialogProps) {
   const { setToken } = useAuth();
-  const goBack = useHistoryBack('/');
   const [step, setStep] = useState<SignInStep>('credentials');
   const [formData, setFormData] = useState(() => {
     const rememberedEmail = readRememberedEmail() ?? '';
@@ -282,17 +280,6 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                 </div>
               ) : (
                 <>
-                  {step === 'credentials' && (
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      className="mb-6 flex items-center text-sm text-slate-450 transition-colors hover:text-white"
-                    >
-                      <ArrowLeft className="mr-1.5 h-4 w-4" />
-                      {t('signIn.back', 'Back')}
-                    </button>
-                  )}
-
                   <div className="text-center mb-8 lg:text-left">
                     <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
                     <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
