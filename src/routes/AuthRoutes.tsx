@@ -116,10 +116,14 @@ export function RegisterCallCenterScreen() {
 }
 
 export function RecoveryScreen() {
-  const { navigate } = useAuthContext();
+  const { navigate, handleNavigateToSection } = useAuthContext();
   return (
     <AuthScreen title="Récupération de compte">
-      <PasswordRecoveryDialog onBack={() => navigate('/auth/signin')} />
+      <PasswordRecoveryDialog
+        onBack={() => navigate('/auth/signin')}
+        onGetStarted={() => navigate('/auth/choice')}
+        onNavigateToSection={handleNavigateToSection}
+      />
     </AuthScreen>
   );
 }

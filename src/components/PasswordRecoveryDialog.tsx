@@ -4,6 +4,7 @@ import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff } from 'luc
 import { auth } from '../lib/api';
 import { clearAuthSession } from '../lib/authRedirect';
 import { useTranslation } from 'react-i18next';
+import { Header } from './LandingPage/Header';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
 
@@ -45,9 +46,11 @@ function stepFromSearch(param: string | null, session: RecoverySession | null): 
 
 interface PasswordRecoveryDialogProps {
   onBack: () => void;
+  onGetStarted?: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialogProps) {
+export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigateToSection }: PasswordRecoveryDialogProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const saved = readRecoverySession();
@@ -175,8 +178,18 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient">
-      <div className="bg-white rounded-3xl w-full max-w-xl p-6 md:p-8 relative shadow-2xl border border-harx-100">
+    <div className="min-h-screen w-full flex flex-col bg-space-dark-950 text-white animate-fade-in relative overflow-auto">
+      <Header
+        onSignIn={onBack}
+        onGetStarted={onGetStarted || onBack}
+        onNavigateToSection={onNavigateToSection}
+      />
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float" />
+        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
+      </div>
+      <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
+      <div className="bg-white rounded-3xl w-full max-w-xl p-6 md:p-8 relative shadow-2xl border border-harx-100 text-slate-900">
         <div className="space-y-6">
           <div className="text-center">
             <div className="flex flex-col items-center mb-4">
@@ -325,6 +338,7 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
