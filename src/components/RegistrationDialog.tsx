@@ -219,18 +219,23 @@ export default function RegistrationDialog({
                 setRegisteredUserId(RegisterResult.data._id as string);
               }
             } catch (error) {
-              if ((error as any).response?.data?.message === 'Email already registered') {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Email already registered') {
                 newErrors.email = t('register.errEmailTaken', 'This email is already registered');
                 pushStep('email');
                 setErrors(newErrors);
                 return;
-              } else {
-                newErrors.general =
-                  (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                  || t('register.errGeneralFailed', 'Registration failed, please try again');
+              }
+              if (apiMessage === 'Phone already registered') {
+                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
+                pushStep('phone');
                 setErrors(newErrors);
                 return;
               }
+              newErrors.general =
+                apiMessage || t('register.errGeneralFailed', 'Registration failed, please try again');
+              setErrors(newErrors);
+              return;
             }
 
             // Persist the role chosen on ChoicePage immediately, BEFORE email/SMS
