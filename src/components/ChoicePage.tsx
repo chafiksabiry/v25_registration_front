@@ -11,6 +11,7 @@ import {
   Target,
   Sparkles,
   CheckCircle2,
+  Wallet,
   type LucideIcon,
 } from 'lucide-react';
 import { Header } from './LandingPage/Header';
@@ -45,6 +46,7 @@ const repFeatures = [
   { icon: Phone, labelKey: 'choicePage.repFeat2', defaultLabel: 'Remote Opportunities Available' },
   { icon: Headphones, labelKey: 'choicePage.repFeat3', defaultLabel: 'Flexible Scheduling Options' },
   { icon: Users, labelKey: 'choicePage.repFeat4', defaultLabel: 'Join Professional Communities' },
+  { icon: Wallet, labelKey: 'choicePage.repFeat5', defaultLabel: 'Earn additional income' },
 ];
 
 type Feature = { icon: LucideIcon; id: string; label: string };
