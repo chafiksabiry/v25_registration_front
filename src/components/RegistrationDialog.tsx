@@ -173,7 +173,21 @@ export default function RegistrationDialog({
           if (!validateEmail(formData.email)) {
             newErrors.email = t('register.errEmail', 'Please enter a valid email address');
           } else {
-            pushStep('password');
+            setIsLoading(true);
+            try {
+              await auth.checkEmail(formData.email.trim());
+              pushStep('password');
+            } catch (error) {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Email already registered') {
+                newErrors.email = t('register.errEmailTaken', 'This email is already registered');
+              } else {
+                newErrors.email =
+                  apiMessage || t('register.errEmail', 'Please enter a valid email address');
+              }
+            } finally {
+              setIsLoading(false);
+            }
           }
           break;
 
@@ -189,7 +203,21 @@ export default function RegistrationDialog({
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
           } else {
-            pushStep('terms');
+            setIsLoading(true);
+            try {
+              await auth.checkPhone(formData.phone.trim());
+              pushStep('terms');
+            } catch (error) {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Phone already registered') {
+                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
+              } else {
+                newErrors.phone =
+                  apiMessage || t('register.errPhone', 'Please enter a valid phone number');
+              }
+            } finally {
+              setIsLoading(false);
+            }
           }
           break;
 
