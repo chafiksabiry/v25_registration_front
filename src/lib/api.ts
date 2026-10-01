@@ -253,6 +253,15 @@ export const adminApi = {
     const response = await api.patch('/admin/objectives', payload);
     return response.data;
   },
+  onboardingSatisfaction: async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    scoredOnly?: boolean;
+  }) => {
+    const response = await api.get('/admin/onboarding-satisfaction', { params });
+    return response.data;
+  },
 };
 
 export const publicPlansApi = {
