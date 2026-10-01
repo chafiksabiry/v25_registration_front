@@ -30,6 +30,16 @@ export const auth = {
     return response.data;
   },
 
+  checkEmail: async (email: string) => {
+    const response = await api.post('/auth/check-email', { email });
+    return response.data as { available: boolean; message?: string };
+  },
+
+  checkPhone: async (phone: string) => {
+    const response = await api.post('/auth/check-phone', { phone });
+    return response.data as { available: boolean; message?: string };
+  },
+
   login: async (data: { email: string; password: string }) => {
     const response = await api.post('/auth/login', data);
     return response.data;
