@@ -30,6 +30,7 @@ import AdminPricingPhonePage from './components/admin/AdminPricingPhonePage';
 import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
 import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
+import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 import { LegalPage } from './components/legal/LegalPage';
@@ -105,6 +106,7 @@ export const appRouter = createBrowserRouter(
             { index: true, element: <AdminDashboardPage /> },
             { path: 'users', element: <AdminUsersPage /> },
             { path: 'users/:userId', element: <AdminUserDetailPage /> },
+            { path: 'satisfaction', element: <AdminSatisfactionPage /> },
             { path: 'wallet', element: <AdminWalletPage /> },
             { path: 'ai-tokens', element: <AdminAiTokensPage /> },
             { path: 'objectives', element: <AdminObjectivesPage /> },
