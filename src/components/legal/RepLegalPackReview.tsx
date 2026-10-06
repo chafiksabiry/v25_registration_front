@@ -12,13 +12,13 @@ export const REP_LEGAL_PACKS = [
     id: 'fr',
     file: 'HARX_Pack_Juridique_FR.pdf',
     titleKey: 'register.legalFrTitle',
-    titleDefault: 'Pack juridique (français)',
+    titleDefault: 'Conditions générales',
   },
   {
     id: 'en',
     file: 'HARX_Legal_Pack_EN.pdf',
     titleKey: 'register.legalEnTitle',
-    titleDefault: 'Legal pack (English)',
+    titleDefault: 'Terms of Use',
   },
 ] as const;
 
@@ -98,7 +98,7 @@ function PdfScroller({
       } catch {
         if (!cancelled) {
           setLoading(false);
-          setError(t('register.legalLoadError', 'Unable to open this document.'));
+          setError(t('register.legalLoadError', 'Unable to open the Terms of Use.'));
         }
       }
     })();
@@ -125,7 +125,7 @@ function PdfScroller({
       >
         {loading && (
           <p className="py-8 text-center text-sm text-slate-300">
-            {t('register.legalLoading', 'Loading the document…')}
+            {t('register.legalLoading', 'Loading the Terms of Use…')}
           </p>
         )}
         {error && <p className="py-8 text-center text-sm text-red-400">{error}</p>}
@@ -156,7 +156,7 @@ export function RepLegalPackReview({
       <p className="text-sm leading-relaxed text-slate-300">
         {t(
           'register.legalIntro',
-          'Open the document and scroll to the bottom before you accept.'
+          'Open the Terms of Use and scroll to the bottom before you accept.'
         )}
       </p>
       <button
@@ -189,7 +189,7 @@ export function RepLegalPackReview({
                 {t(pack.titleKey, pack.titleDefault)}
               </h3>
               <p className="mt-1 text-sm text-slate-300">
-                {t('register.legalScrollHint', 'Scroll to the bottom of the document to mark it as read.')}
+                {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read the Terms of Use.')}
               </p>
             </div>
             <button
@@ -208,7 +208,7 @@ export function RepLegalPackReview({
           {read && (
             <p className="flex items-center justify-center gap-2 border-t border-white/10 px-5 py-3 text-sm font-medium text-emerald-300">
               <Check className="h-4 w-4" />
-              {t('register.legalReached', 'You reached the end of this document.')}
+              {t('register.legalReached', 'You reached the end of the Terms of Use.')}
             </p>
           )}
         </div>,
