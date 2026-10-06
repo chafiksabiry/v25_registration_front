@@ -14,6 +14,11 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
+import {
+  REP_LEGAL_PACKS,
+  RepLegalPackReview,
+  type RepLegalPackId,
+} from './legal/RepLegalPackReview';
 
 type Step = RegisterFormStep | 'success';
 
@@ -61,7 +66,10 @@ export default function RegistrationDialog({
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
+  const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
   const { t } = useTranslation();
+  const isRepSignup = defaultUserType === 'rep' || registerPath === '/auth/register-rep';
+  const legalPacksRead = REP_LEGAL_PACKS.every((pack) => readLegalPacks.includes(pack.id));
 
   useEffect(() => {
     if (defaultUserType) {
@@ -222,7 +230,12 @@ export default function RegistrationDialog({
           break;
 
         case 'terms':
-          if (!formData.termsAccepted) {
+          if (isRepSignup && !legalPacksRead) {
+            newErrors.terms = t(
+              'register.errLegalScroll',
+              'Open both documents and scroll each one to the bottom.'
+            );
+          } else if (!formData.termsAccepted) {
             newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
           } else {
             const incompleteStep = getFirstIncompleteStep();
@@ -536,23 +549,35 @@ export default function RegistrationDialog({
 
                 {step === 'terms' && (
                   <div className="space-y-6">
-                    <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
-                      <div className="flex items-start space-x-3">
-                        <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-slate-300 leading-relaxed">
-                          {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
-                          {t('register.termsAnd', 'and acknowledge our')}{' '}
-                          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
-                          {t('register.termsSecurity', 'We prioritize your data security.')}
-                        </p>
+                    {isRepSignup ? (
+                      <RepLegalPackReview
+                        readIds={readLegalPacks}
+                        onRead={(id) =>
+                          setReadLegalPacks((current) =>
+                            current.includes(id) ? current : [...current, id]
+                          )
+                        }
+                      />
+                    ) : (
+                      <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
+                        <div className="flex items-start space-x-3">
+                          <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-slate-300 leading-relaxed">
+                            {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
+                            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
+                            {t('register.termsAnd', 'and acknowledge our')}{' '}
+                            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
+                            {t('register.termsSecurity', 'We prioritize your data security.')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
-                    <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-xl border border-white/[0.08] hover:bg-slate-800/40 transition-colors">
+                    <label className={`flex items-center space-x-3 p-4 rounded-xl border border-white/[0.08] transition-colors ${isRepSignup && !legalPacksRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}>
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
+                        disabled={isRepSignup && !legalPacksRead}
                         onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
                         className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
                       />
