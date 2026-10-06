@@ -23,6 +23,11 @@ export const REP_LEGAL_PACKS = [
 
 export type RepLegalPackId = (typeof REP_LEGAL_PACKS)[number]['id'];
 
+export function legalPackForLanguage(language: string) {
+  const id: RepLegalPackId = language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  return REP_LEGAL_PACKS.find((pack) => pack.id === id) ?? REP_LEGAL_PACKS[1];
+}
+
 function pdfUrl(file: string): string {
   const base = import.meta.env.BASE_URL || '/';
   return `${base}${file}`;
@@ -136,56 +141,55 @@ export function RepLegalPackReview({
   readIds: RepLegalPackId[];
   onRead: (id: RepLegalPackId) => void;
 }) {
-  const { t } = useTranslation();
-  const [openId, setOpenId] = useState<RepLegalPackId | null>(null);
-  const openPack = REP_LEGAL_PACKS.find((pack) => pack.id === openId) ?? null;
+  const { t, i18n } = useTranslation();
+  const pack = legalPackForLanguage(i18n.language);
+  const [open, setOpen] = useState(false);
+  const read = readIds.includes(pack.id);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pack.id]);
 
   return (
     <div className="space-y-3">
       <p className="text-sm leading-relaxed text-slate-300">
         {t(
           'register.legalIntro',
-          'Open each document and scroll to the bottom before you accept.'
+          'Open the document and scroll to the bottom before you accept.'
         )}
       </p>
-      {REP_LEGAL_PACKS.map((pack) => {
-        const read = readIds.includes(pack.id);
-        return (
-          <button
-            key={pack.id}
-            type="button"
-            onClick={() => setOpenId(pack.id)}
-            className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-slate-950/40 px-4 py-3 text-left hover:bg-slate-800/50"
-          >
-            <span className="flex items-center gap-3">
-              <FileText className="h-5 w-5 text-harx-400" />
-              <span className="font-medium text-slate-100">
-                {t(pack.titleKey, pack.titleDefault)}
-              </span>
-            </span>
-            <span
-              className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-                read ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-slate-300'
-              }`}
-            >
-              {read
-                ? t('register.legalRead', 'Read')
-                : t('register.legalOpen', 'Open')}
-            </span>
-          </button>
-        );
-      })}
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-slate-950/40 px-4 py-3 text-left hover:bg-slate-800/50"
+      >
+        <span className="flex items-center gap-3">
+          <FileText className="h-5 w-5 text-harx-400" />
+          <span className="font-medium text-slate-100">
+            {t(pack.titleKey, pack.titleDefault)}
+          </span>
+        </span>
+        <span
+          className={`rounded-full px-2.5 py-1 text-xs font-bold ${
+            read ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-slate-300'
+          }`}
+        >
+          {read
+            ? t('register.legalRead', 'Read')
+            : t('register.legalOpen', 'Open')}
+        </span>
+      </button>
 
-      {openPack && (
+      {open && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
           <div className="flex h-[min(90vh,820px)] w-full max-w-3xl flex-col rounded-2xl border border-white/10 bg-slate-950 p-4 shadow-2xl">
             <div className="mb-3 flex items-center justify-between gap-3">
               <h3 className="text-base font-bold text-white">
-                {t(openPack.titleKey, openPack.titleDefault)}
+                {t(pack.titleKey, pack.titleDefault)}
               </h3>
               <button
                 type="button"
-                onClick={() => setOpenId(null)}
+                onClick={() => setOpen(false)}
                 className="rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white"
                 aria-label={t('register.legalClose', 'Close')}
               >
@@ -193,10 +197,10 @@ export function RepLegalPackReview({
               </button>
             </div>
             <PdfScroller
-              url={pdfUrl(openPack.file)}
-              onReachedEnd={() => onRead(openPack.id)}
+              url={pdfUrl(pack.file)}
+              onReachedEnd={() => onRead(pack.id)}
             />
-            {readIds.includes(openPack.id) && (
+            {read && (
               <p className="mt-3 flex items-center gap-2 text-sm font-medium text-emerald-300">
                 <Check className="h-4 w-4" />
                 {t('register.legalReached', 'You reached the end of this document.')}

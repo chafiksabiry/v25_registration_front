@@ -15,7 +15,7 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
 import {
-  REP_LEGAL_PACKS,
+  legalPackForLanguage,
   RepLegalPackReview,
   type RepLegalPackId,
 } from './legal/RepLegalPackReview';
@@ -67,9 +67,10 @@ export default function RegistrationDialog({
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isRepSignup = defaultUserType === 'rep' || registerPath === '/auth/register-rep';
-  const legalPacksRead = REP_LEGAL_PACKS.every((pack) => readLegalPacks.includes(pack.id));
+  const requiredLegalPack = legalPackForLanguage(i18n.language);
+  const legalPackRead = readLegalPacks.includes(requiredLegalPack.id);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -80,6 +81,11 @@ export default function RegistrationDialog({
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
+
+  useEffect(() => {
+    if (!isRepSignup || legalPackRead || !formData.termsAccepted) return;
+    setFormData((current) => ({ ...current, termsAccepted: false }));
+  }, [isRepSignup, legalPackRead, i18n.language]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -230,10 +236,10 @@ export default function RegistrationDialog({
           break;
 
         case 'terms':
-          if (isRepSignup && !legalPacksRead) {
+          if (isRepSignup && !legalPackRead) {
             newErrors.terms = t(
               'register.errLegalScroll',
-              'Open both documents and scroll each one to the bottom.'
+              'Open the document and scroll it to the bottom.'
             );
           } else if (!formData.termsAccepted) {
             newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
@@ -573,11 +579,11 @@ export default function RegistrationDialog({
                       </div>
                     )}
 
-                    <label className={`flex items-center space-x-3 p-4 rounded-xl border border-white/[0.08] transition-colors ${isRepSignup && !legalPacksRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}>
+                    <label className={`flex items-center space-x-3 p-4 rounded-xl border border-white/[0.08] transition-colors ${isRepSignup && !legalPackRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}>
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
-                        disabled={isRepSignup && !legalPacksRead}
+                        disabled={isRepSignup && !legalPackRead}
                         onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
                         className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
                       />
