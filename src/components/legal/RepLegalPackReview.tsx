@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Check, FileText, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
@@ -69,14 +70,17 @@ function PdfScroller({
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
           if (cancelled) return;
           const page = await pdf.getPage(pageNumber);
-          const viewport = page.getViewport({ scale: 1.35 });
+          const base = page.getViewport({ scale: 1 });
+          const displayWidth = Math.min(980, Math.max(320, window.innerWidth - 48));
+          const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+          const viewport = page.getViewport({ scale: (displayWidth / base.width) * pixelRatio });
           const canvas = document.createElement('canvas');
           const context = canvas.getContext('2d');
           canvas.width = viewport.width;
           canvas.height = viewport.height;
-          canvas.style.width = '100%';
+          canvas.style.width = `${displayWidth}px`;
           canvas.style.height = 'auto';
-          canvas.className = 'mb-3 bg-white shadow-sm';
+          canvas.className = 'mx-auto mb-4 bg-white shadow-md';
           if (context) {
             await page.render({ canvasContext: context, viewport, canvas }).promise;
           }
@@ -113,14 +117,11 @@ function PdfScroller({
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <p className="mb-3 text-sm text-slate-300">
-        {t('register.legalScrollHint', 'Scroll to the bottom of the document to mark it as read.')}
-      </p>
+    <div className="flex min-h-0 flex-1 flex-col bg-slate-900">
       <div
         ref={scrollerRef}
         onScroll={onScroll}
-        className="min-h-0 flex-1 overflow-y-auto rounded-xl bg-slate-800/80 p-3"
+        className="min-h-0 flex-1 overflow-y-auto px-4 py-6"
       >
         {loading && (
           <p className="py-8 text-center text-sm text-slate-300">
@@ -180,34 +181,38 @@ export function RepLegalPackReview({
         </span>
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/70 p-4">
-          <div className="flex h-[min(90vh,820px)] w-full max-w-3xl flex-col rounded-2xl border border-white/10 bg-slate-950 p-4 shadow-2xl">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <h3 className="text-base font-bold text-white">
+      {open && createPortal(
+        <div className="fixed inset-0 z-[200] flex flex-col bg-slate-950">
+          <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-4">
+            <div>
+              <h3 className="text-lg font-bold text-white">
                 {t(pack.titleKey, pack.titleDefault)}
               </h3>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white"
-                aria-label={t('register.legalClose', 'Close')}
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            <PdfScroller
-              url={pdfUrl(pack.file)}
-              onReachedEnd={() => onRead(pack.id)}
-            />
-            {read && (
-              <p className="mt-3 flex items-center gap-2 text-sm font-medium text-emerald-300">
-                <Check className="h-4 w-4" />
-                {t('register.legalReached', 'You reached the end of this document.')}
+              <p className="mt-1 text-sm text-slate-300">
+                {t('register.legalScrollHint', 'Scroll to the bottom of the document to mark it as read.')}
               </p>
-            )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white"
+              aria-label={t('register.legalClose', 'Close')}
+            >
+              <X className="h-6 w-6" />
+            </button>
           </div>
-        </div>
+          <PdfScroller
+            url={pdfUrl(pack.file)}
+            onReachedEnd={() => onRead(pack.id)}
+          />
+          {read && (
+            <p className="flex items-center justify-center gap-2 border-t border-white/10 px-5 py-3 text-sm font-medium text-emerald-300">
+              <Check className="h-4 w-4" />
+              {t('register.legalReached', 'You reached the end of this document.')}
+            </p>
+          )}
+        </div>,
+        document.body
       )}
     </div>
   );
