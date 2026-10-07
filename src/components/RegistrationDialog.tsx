@@ -15,7 +15,7 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
 import {
-  legalPackForLanguage,
+  allLegalPacksRead,
   RepLegalPackReview,
   type RepLegalPackId,
 } from './legal/RepLegalPackReview';
@@ -67,10 +67,10 @@ export default function RegistrationDialog({
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const isRepSignup = defaultUserType === 'rep' || registerPath === '/auth/register-rep';
-  const requiredLegalPack = legalPackForLanguage(i18n.language);
-  const legalPackRead = readLegalPacks.includes(requiredLegalPack.id);
+  // Both FR + EN legal PDFs must be opened and scrolled to the end.
+  const legalPackRead = allLegalPacksRead(readLegalPacks);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -85,7 +85,7 @@ export default function RegistrationDialog({
   useEffect(() => {
     if (!isRepSignup || legalPackRead || !formData.termsAccepted) return;
     setFormData((current) => ({ ...current, termsAccepted: false }));
-  }, [isRepSignup, legalPackRead, i18n.language]);
+  }, [isRepSignup, legalPackRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -239,7 +239,7 @@ export default function RegistrationDialog({
           if (isRepSignup && !legalPackRead) {
             newErrors.terms = t(
               'register.errLegalScroll',
-              'Open the Terms of Use and scroll to the bottom.'
+              'Open both legal documents and scroll each to the bottom.'
             );
           }
           if (!formData.termsAccepted) {
