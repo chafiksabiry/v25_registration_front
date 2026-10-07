@@ -239,11 +239,19 @@ export default function RegistrationDialog({
           if (isRepSignup && !legalPackRead) {
             newErrors.terms = t(
               'register.errLegalScroll',
-              'Open the document and scroll it to the bottom.'
+              'Open the Terms of Use and scroll to the bottom.'
             );
-          } else if (!formData.termsAccepted) {
-            newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
-          } else {
+          }
+          if (!formData.termsAccepted) {
+            newErrors.terms =
+              newErrors.terms ||
+              t('register.errTerms', 'Please accept the terms and conditions');
+          }
+          if (newErrors.terms) {
+            break;
+          }
+
+          {
             const incompleteStep = getFirstIncompleteStep();
             if (incompleteStep) {
               newErrors.general = t('register.errGeneralMissing', 'Some registration details are missing. Please complete all steps.');
@@ -557,12 +565,19 @@ export default function RegistrationDialog({
                   <div className="space-y-6">
                     {isRepSignup ? (
                       <RepLegalPackReview
+                        hasError={Boolean(errors.terms) && !legalPackRead}
                         readIds={readLegalPacks}
-                        onRead={(id) =>
+                        onRead={(id) => {
                           setReadLegalPacks((current) =>
                             current.includes(id) ? current : [...current, id]
-                          )
-                        }
+                          );
+                          setErrors((current) => {
+                            if (!current.terms) return current;
+                            const next = { ...current };
+                            delete next.terms;
+                            return next;
+                          });
+                        }}
                       />
                     ) : (
                       <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
@@ -579,17 +594,42 @@ export default function RegistrationDialog({
                       </div>
                     )}
 
-                    <label className={`flex items-center space-x-3 p-4 rounded-xl border border-white/[0.08] transition-colors ${isRepSignup && !legalPackRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}>
+                    <label
+                      className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors ${
+                        errors.terms
+                          ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
+                          : 'border-white/[0.08]'
+                      } ${
+                        isRepSignup && !legalPackRead
+                          ? 'cursor-not-allowed opacity-60'
+                          : 'cursor-pointer hover:bg-slate-800/40'
+                      }`}
+                    >
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
                         disabled={isRepSignup && !legalPackRead}
-                        onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
-                        className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData({ ...formData, termsAccepted: checked });
+                          if (checked) {
+                            setErrors((current) => {
+                              if (!current.terms) return current;
+                              const next = { ...current };
+                              delete next.terms;
+                              return next;
+                            });
+                          }
+                        }}
+                        className={`rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all ${
+                          errors.terms ? 'border-red-500' : 'border-slate-700'
+                        }`}
                       />
-                      <span className="text-slate-200 font-medium">{t('register.termsCheckbox', 'I agree to the Terms & Conditions')}</span>
+                      <span className={`font-medium ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
+                        {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
+                      </span>
                     </label>
-                    {errors.terms && <p className="text-red-400 text-sm pl-2">{errors.terms}</p>}
+                    {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
                   </div>
                 )}
 
@@ -639,6 +679,7 @@ export default function RegistrationDialog({
 
                 {step !== 'success' && (
                   <button
+                    type="button"
                     onClick={handleNext}
                     disabled={isLoading}
                     className={`btn-primary flex items-center justify-center space-x-2 mt-8 ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
