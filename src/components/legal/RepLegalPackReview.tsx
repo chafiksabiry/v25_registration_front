@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Check, ChevronDown, ScrollText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
@@ -11,21 +11,32 @@ export const REP_LEGAL_PACKS = [
     id: 'fr',
     file: 'HARX_Pack_Juridique_FR.pdf',
     titleKey: 'register.legalFrTitle',
-    titleDefault: 'Conditions générales',
+    titleDefault: 'Conditions générales (FR)',
   },
   {
     id: 'en',
     file: 'HARX_Legal_Pack_EN.pdf',
     titleKey: 'register.legalEnTitle',
-    titleDefault: 'Terms of Use',
+    titleDefault: 'Terms of Use (EN)',
   },
 ] as const;
 
 export type RepLegalPackId = (typeof REP_LEGAL_PACKS)[number]['id'];
 
-export function legalPackForLanguage(language: string) {
-  const id: RepLegalPackId = language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
-  return REP_LEGAL_PACKS.find((pack) => pack.id === id) ?? REP_LEGAL_PACKS[1];
+/** Preferred pack first (UI language), then the other — both must be read. */
+export function orderedLegalPacks(language: string) {
+  const preferred: RepLegalPackId = language.toLowerCase().startsWith('fr')
+    ? 'fr'
+    : 'en';
+  return [...REP_LEGAL_PACKS].sort((a, b) => {
+    if (a.id === preferred) return -1;
+    if (b.id === preferred) return 1;
+    return 0;
+  });
+}
+
+export function allLegalPacksRead(readIds: RepLegalPackId[]): boolean {
+  return REP_LEGAL_PACKS.every((pack) => readIds.includes(pack.id));
 }
 
 function pdfUrl(file: string): string {
@@ -102,7 +113,9 @@ function InlinePdfScroller({
       } catch {
         if (!cancelled) {
           setLoading(false);
-          setError(t('register.legalLoadError', 'Unable to open the Terms of Use.'));
+          setError(
+            t('register.legalLoadError', 'Unable to open the Terms of Use.')
+          );
         }
       }
     })();
@@ -139,47 +152,56 @@ function InlinePdfScroller({
   );
 }
 
-export function RepLegalPackReview({
-  readIds,
+function LegalPackAccordion({
+  pack,
+  read,
+  expanded,
+  onToggle,
   onRead,
-  hasError = false,
+  hasError,
 }: {
-  readIds: RepLegalPackId[];
-  onRead: (id: RepLegalPackId) => void;
-  hasError?: boolean;
+  pack: (typeof REP_LEGAL_PACKS)[number];
+  read: boolean;
+  expanded: boolean;
+  onToggle: () => void;
+  onRead: () => void;
+  hasError: boolean;
 }) {
-  const { t, i18n } = useTranslation();
-  const pack = legalPackForLanguage(i18n.language);
-  const [expanded, setExpanded] = useState(true);
-  const read = readIds.includes(pack.id);
-
-  useEffect(() => {
-    setExpanded(true);
-  }, [pack.id]);
+  const { t } = useTranslation();
 
   return (
     <div
-      className={`space-y-3 rounded-xl border p-4 ${
-        hasError
-          ? 'border-red-500 bg-red-950/20 ring-1 ring-red-500/30'
-          : 'border-white/[0.08] bg-slate-950/40'
+      className={`rounded-xl border ${
+        hasError && !read
+          ? 'border-red-500/60 bg-red-950/15'
+          : read
+            ? 'border-emerald-500/30 bg-emerald-950/10'
+            : 'border-white/[0.08] bg-slate-950/40'
       }`}
     >
       <button
         type="button"
-        onClick={() => setExpanded((v) => !v)}
-        className="flex w-full items-center justify-between gap-3 text-left"
+        onClick={onToggle}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
       >
         <span className="flex min-w-0 items-center gap-2.5">
-          <ScrollText className={`h-4 w-4 shrink-0 ${hasError ? 'text-red-400' : 'text-harx-400'}`} />
+          <ScrollText
+            className={`h-4 w-4 shrink-0 ${
+              read ? 'text-emerald-400' : hasError ? 'text-red-400' : 'text-harx-400'
+            }`}
+          />
           <span className="min-w-0">
-            <span className={`block text-sm font-semibold ${hasError ? 'text-red-200' : 'text-slate-100'}`}>
+            <span
+              className={`block text-sm font-semibold ${
+                read ? 'text-emerald-100' : hasError && !read ? 'text-red-200' : 'text-slate-100'
+              }`}
+            >
               {t(pack.titleKey, pack.titleDefault)}
             </span>
             <span className="mt-0.5 block text-[11px] text-slate-400">
               {t(
                 'register.legalScrollHint',
-                'Scroll to the bottom to confirm you have read the Terms of Use.'
+                'Scroll to the bottom to confirm you have read this document.'
               )}
             </span>
           </span>
@@ -196,35 +218,135 @@ export function RepLegalPackReview({
           >
             {read
               ? t('register.legalRead', 'Read')
-              : t('register.legalOpen', 'Open')}
+              : expanded
+                ? t('register.legalScroll', 'Scroll')
+                : t('register.legalOpen', 'Open')}
           </span>
           <ChevronDown
-            className={`h-4 w-4 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+            className={`h-4 w-4 text-slate-400 transition-transform ${
+              expanded ? 'rotate-180' : ''
+            }`}
           />
         </span>
       </button>
 
       {expanded && (
-        <div className="space-y-2">
-          <InlinePdfScroller
-            url={pdfUrl(pack.file)}
-            onReachedEnd={() => onRead(pack.id)}
-          />
+        <div className="space-y-2 border-t border-white/[0.06] px-3 pb-3 pt-2">
+          <InlinePdfScroller url={pdfUrl(pack.file)} onReachedEnd={onRead} />
           {read ? (
             <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-300">
               <Check className="h-3.5 w-3.5" />
-              {t('register.legalReached', 'You reached the end of the Terms of Use.')}
+              {t('register.legalReached', 'You reached the end of this document.')}
             </p>
           ) : (
             <p className="text-[11px] text-slate-500">
               {t(
-                'register.legalIntro',
-                'Open the Terms of Use and scroll to the bottom before you accept.'
+                'register.legalDocHint',
+                'Scroll to the bottom of this document to mark it as read.'
               )}
             </p>
           )}
         </div>
       )}
+    </div>
+  );
+}
+
+/**
+ * REP signup: both legal PDFs (FR + EN) must be opened and scrolled to the end
+ * before the accept checkbox unlocks.
+ */
+export function RepLegalPackReview({
+  readIds,
+  onRead,
+  hasError = false,
+}: {
+  readIds: RepLegalPackId[];
+  onRead: (id: RepLegalPackId) => void;
+  hasError?: boolean;
+}) {
+  const { t, i18n } = useTranslation();
+  const packs = useMemo(
+    () => orderedLegalPacks(i18n.language),
+    [i18n.language]
+  );
+  const [expandedId, setExpandedId] = useState<RepLegalPackId | null>(
+    () => packs[0]?.id ?? null
+  );
+  const allRead = allLegalPacksRead(readIds);
+  const readCount = packs.filter((p) => readIds.includes(p.id)).length;
+
+  useEffect(() => {
+    // Prefer expanding the first unread pack when language changes.
+    const firstUnread = packs.find((p) => !readIds.includes(p.id));
+    setExpandedId(firstUnread?.id ?? packs[0]?.id ?? null);
+  }, [packs]);
+
+  // Auto-expand next unread when current pack is completed.
+  useEffect(() => {
+    if (!expandedId) return;
+    if (!readIds.includes(expandedId)) return;
+    const next = packs.find((p) => !readIds.includes(p.id));
+    if (next) setExpandedId(next.id);
+  }, [readIds, expandedId, packs]);
+
+  return (
+    <div
+      className={`space-y-3 rounded-xl border p-4 ${
+        hasError && !allRead
+          ? 'border-red-500 bg-red-950/20 ring-1 ring-red-500/30'
+          : 'border-white/[0.08] bg-slate-950/40'
+      }`}
+    >
+      <div className="space-y-1">
+        <p
+          className={`text-sm font-semibold ${
+            hasError && !allRead ? 'text-red-200' : 'text-slate-100'
+          }`}
+        >
+          {t('register.legalBothTitle', 'Legal documents')}
+        </p>
+        <p className="text-[11px] text-slate-400">
+          {t(
+            'register.legalIntro',
+            'Open both documents and scroll each to the bottom before you accept.'
+          )}{' '}
+          <span className="font-semibold text-slate-300">
+            ({readCount}/{packs.length})
+          </span>
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        {packs.map((pack) => {
+          const read = readIds.includes(pack.id);
+          return (
+            <LegalPackAccordion
+              key={pack.id}
+              pack={pack}
+              read={read}
+              expanded={expandedId === pack.id}
+              hasError={hasError}
+              onToggle={() =>
+                setExpandedId((current) =>
+                  current === pack.id ? null : pack.id
+                )
+              }
+              onRead={() => onRead(pack.id)}
+            />
+          );
+        })}
+      </div>
+
+      {allRead ? (
+        <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-300">
+          <Check className="h-3.5 w-3.5" />
+          {t(
+            'register.legalBothReached',
+            'Both documents have been read. You can accept the terms.'
+          )}
+        </p>
+      ) : null}
     </div>
   );
 }
