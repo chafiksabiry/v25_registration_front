@@ -33,47 +33,8 @@ function pdfUrl(file: string): string {
   return `${base}${file}`;
 }
 
-type TextItem = { str: string; transform: number[] };
-
-function pageItemsToText(items: TextItem[]): string {
-  let line = '';
-  let lastY: number | null = null;
-  const lines: string[] = [];
-
-  for (const item of items) {
-    const y = item.transform?.[5];
-    if (typeof y === 'number' && lastY !== null && Math.abs(y - lastY) > 4) {
-      if (line.trim()) lines.push(line.trim());
-      line = '';
-    }
-    const chunk = String(item.str || '');
-    if (!chunk) continue;
-    if (line && !line.endsWith(' ') && !chunk.startsWith(' ')) line += ' ';
-    line += chunk;
-    if (typeof y === 'number') lastY = y;
-  }
-  if (line.trim()) lines.push(line.trim());
-  return lines.join('\n');
-}
-
-type LegalBlock =
-  | { type: 'heading'; text: string }
-  | { type: 'paragraph'; text: string };
-
-function textToBlocks(text: string): LegalBlock[] {
-  const blocks: LegalBlock[] = [];
-  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
-  for (const line of lines) {
-    if (/^(article|art\.?)\s*\d+/i.test(line) || /^#{1,3}\s/.test(line)) {
-      blocks.push({ type: 'heading', text: line.replace(/^#+\s*/, '') });
-    } else {
-      blocks.push({ type: 'paragraph', text: line });
-    }
-  }
-  return blocks;
-}
-
-function InlineLegalScroller({
+/** Renders the PDF pages with original layout/styles inside a compact scroll area. */
+function InlinePdfScroller({
   url,
   onReachedEnd,
 }: {
@@ -82,9 +43,9 @@ function InlineLegalScroller({
 }) {
   const { t } = useTranslation();
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const pagesRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [blocks, setBlocks] = useState<LegalBlock[]>([]);
   const reachedRef = useRef(false);
 
   const markReached = () => {
@@ -98,27 +59,39 @@ function InlineLegalScroller({
     reachedRef.current = false;
     setLoading(true);
     setError(null);
-    setBlocks([]);
 
     (async () => {
       try {
         const pdf = await getDocument({ url }).promise;
-        const allText: string[] = [];
+        const host = pagesRef.current;
+        if (!host || cancelled) return;
+        host.replaceChildren();
+
+        const scrollerWidth = scrollerRef.current?.clientWidth || 360;
+        const displayWidth = Math.max(280, scrollerWidth - 16);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
 
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
           if (cancelled) return;
           const page = await pdf.getPage(pageNumber);
-          const content = await page.getTextContent();
-          const items = (content.items || []).filter(
-            (item): item is TextItem =>
-              Boolean(item) && typeof (item as TextItem).str === 'string'
-          );
-          const pageText = pageItemsToText(items);
-          if (pageText.trim()) allText.push(pageText);
+          const base = page.getViewport({ scale: 1 });
+          const viewport = page.getViewport({
+            scale: (displayWidth / base.width) * pixelRatio,
+          });
+          const canvas = document.createElement('canvas');
+          const context = canvas.getContext('2d');
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          canvas.style.width = `${displayWidth}px`;
+          canvas.style.height = 'auto';
+          canvas.className = 'mx-auto mb-3 block rounded-md bg-white shadow-sm';
+          if (context) {
+            await page.render({ canvasContext: context, viewport, canvas }).promise;
+          }
+          host.appendChild(canvas);
         }
 
         if (cancelled) return;
-        setBlocks(textToBlocks(allText.join('\n\n')));
         setLoading(false);
         requestAnimationFrame(() => {
           const scroller = scrollerRef.current;
@@ -151,7 +124,7 @@ function InlineLegalScroller({
     <div
       ref={scrollerRef}
       onScroll={onScroll}
-      className="max-h-56 overflow-y-auto rounded-xl border border-white/[0.08] bg-slate-950/50 px-3.5 py-3 sm:max-h-64"
+      className="max-h-56 overflow-y-auto rounded-xl border border-white/[0.08] bg-slate-900/80 px-2 py-2 sm:max-h-64"
     >
       {loading && (
         <p className="py-6 text-center text-xs text-slate-400">
@@ -161,24 +134,7 @@ function InlineLegalScroller({
       {error && (
         <p className="py-4 text-center text-xs text-red-300">{error}</p>
       )}
-      {!loading && !error && blocks.length > 0 && (
-        <div className="space-y-3">
-          {blocks.map((block, idx) =>
-            block.type === 'heading' ? (
-              <h4
-                key={`h-${idx}`}
-                className="pt-1 text-sm font-bold text-white first:pt-0"
-              >
-                {block.text}
-              </h4>
-            ) : (
-              <p key={`p-${idx}`} className="text-xs leading-relaxed text-slate-300">
-                {block.text}
-              </p>
-            )
-          )}
-        </div>
-      )}
+      <div ref={pagesRef} />
     </div>
   );
 }
@@ -250,7 +206,7 @@ export function RepLegalPackReview({
 
       {expanded && (
         <div className="space-y-2">
-          <InlineLegalScroller
+          <InlinePdfScroller
             url={pdfUrl(pack.file)}
             onReachedEnd={() => onRead(pack.id)}
           />
