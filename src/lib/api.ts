@@ -274,6 +274,91 @@ export const adminApi = {
   },
 };
 
+function metaLookup(meta: Record<string, unknown>, ...candidates: string[]): unknown {
+  const normalize = (s: string) => s.toLowerCase().replace(/[_\s-]+/g, '');
+  const wanted = candidates.map(normalize);
+  const entries = Object.entries(meta).map(([k, v]) => [normalize(k), v] as const);
+  for (const w of wanted) {
+    for (const [nk, value] of entries) {
+      if (nk === w) return value;
+    }
+  }
+  for (const w of wanted) {
+    for (const [nk, value] of entries) {
+      if (nk.startsWith(w) || w.startsWith(nk)) return value;
+    }
+  }
+  return undefined;
+}
+
+/** Prefers Stripe Catalog features; prepends quota bullets from product metadata when missing. */
+function mapStripeCompanyPlan(p: Record<string, unknown>) {
+  const meta =
+    p.metadata && typeof p.metadata === 'object'
+      ? (p.metadata as Record<string, unknown>)
+      : {};
+  const features = Array.isArray(p.features) ? p.features.map(String) : [];
+  const hasActiveGigs = features.some((f) => /^active\s+gigs?\b/i.test(f));
+  const hasActiveReps = features.some((f) => /^active\s+reps?\b/i.test(f));
+
+  const maxGigs = Number(
+    p.maxGigs ?? metaLookup(meta, 'ACTIVE GIGS', 'active_gigs', 'max_gigs')
+  );
+  const maxReps = Number(
+    p.maxReps ?? metaLookup(meta, 'ACTIVE REPS', 'active_reps', 'max_reps')
+  );
+  const minutes = Number(
+    p.communicationMinutes ??
+      metaLookup(meta, 'COMMUNICATION MINUTES', 'communication_minutes')
+  );
+  const localNumbers = Number(
+    p.activeLocalNumbers ??
+      metaLookup(meta, 'ACTIVE LOCAL NUMBER', 'ACTIVE LOCAL NUMBERS')
+  );
+  const aiToken = String(
+    p.aiToken ?? metaLookup(meta, 'AI TOKEN', 'ai_token') ?? ''
+  ).trim();
+
+  const quotas: string[] = [];
+  if (!hasActiveGigs && Number.isFinite(maxGigs) && maxGigs >= 0) {
+    quotas.push(`Active GIGs: ${maxGigs}`);
+  }
+  if (!hasActiveReps && Number.isFinite(maxReps) && maxReps >= 0) {
+    quotas.push(`Active REPs: ${maxReps}`);
+  }
+  if (
+    Number.isFinite(minutes) &&
+    minutes >= 0 &&
+    !features.some((f) => /communication\s+minutes/i.test(f))
+  ) {
+    quotas.push(`Communication minutes: ${minutes}`);
+  }
+  if (
+    Number.isFinite(localNumbers) &&
+    localNumbers >= 0 &&
+    !features.some((f) => /local\s+number/i.test(f))
+  ) {
+    quotas.push(`Active local numbers: ${localNumbers}`);
+  }
+  if (aiToken && !features.some((f) => /ai\s+token/i.test(f))) {
+    quotas.push(`AI tokens: ${aiToken}`);
+  }
+
+  return {
+    id: String(p._id ?? p.id ?? ''),
+    name: String(p.name ?? ''),
+    description: String(p.description ?? ''),
+    price: Number(p.price),
+    priceCents: p.priceCents,
+    currency: String(p.currency || 'eur').toLowerCase(),
+    features: [...quotas, ...features],
+    popular: Boolean(p.isPopular ?? p.popular),
+    maxGigs: Number.isFinite(maxGigs) ? maxGigs : undefined,
+    maxReps: Number.isFinite(maxReps) ? maxReps : undefined,
+    metadata: meta,
+  };
+}
+
 export const publicPlansApi = {
   companyPlans: async () => {
     // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
@@ -283,7 +368,9 @@ export const publicPlansApi = {
       'https://v25comporchestratorback-production.up.railway.app'
     ).replace(/\/$/, '');
     try {
-      const response = await axios.get(`${companyBack}/api/subscriptions/plans`);
+      const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {
+        timeout: 15000,
+      });
       const plans = Array.isArray(response.data)
         ? response.data
         : Array.isArray(response.data?.plans)
@@ -293,16 +380,7 @@ export const publicPlansApi = {
         return {
           success: true,
           data: {
-            plans: plans.map((p: Record<string, unknown>) => ({
-              id: String(p._id ?? p.id ?? ''),
-              name: String(p.name ?? ''),
-              description: String(p.description ?? ''),
-              price: Number(p.price),
-              priceCents: p.priceCents,
-              currency: String(p.currency || 'eur').toLowerCase(),
-              features: Array.isArray(p.features) ? p.features.map(String) : [],
-              popular: Boolean(p.isPopular ?? p.popular),
-            })),
+            plans: plans.map((p: Record<string, unknown>) => mapStripeCompanyPlan(p)),
           },
         };
       }
