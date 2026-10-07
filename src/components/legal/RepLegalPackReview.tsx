@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Check, ScrollText, X } from 'lucide-react';
+import { Check, ChevronDown, ScrollText } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getDocument, GlobalWorkerOptions } from 'pdfjs-dist';
 import pdfWorkerUrl from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
@@ -74,7 +73,7 @@ function textToBlocks(text: string): LegalBlock[] {
   return blocks;
 }
 
-function IntegratedLegalScroller({
+function InlineLegalScroller({
   url,
   onReachedEnd,
 }: {
@@ -119,8 +118,7 @@ function IntegratedLegalScroller({
         }
 
         if (cancelled) return;
-        const combined = allText.join('\n\n');
-        setBlocks(textToBlocks(combined));
+        setBlocks(textToBlocks(allText.join('\n\n')));
         setLoading(false);
         requestAnimationFrame(() => {
           const scroller = scrollerRef.current;
@@ -144,7 +142,7 @@ function IntegratedLegalScroller({
   const onScroll = () => {
     const el = scrollerRef.current;
     if (!el || loading) return;
-    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 48) {
+    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40) {
       markReached();
     }
   };
@@ -153,41 +151,34 @@ function IntegratedLegalScroller({
     <div
       ref={scrollerRef}
       onScroll={onScroll}
-      className="min-h-0 flex-1 overflow-y-auto bg-slate-950"
+      className="max-h-56 overflow-y-auto rounded-xl border border-white/[0.08] bg-slate-950/50 px-3.5 py-3 sm:max-h-64"
     >
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
-        {loading && (
-          <p className="py-12 text-center text-sm text-slate-400">
-            {t('register.legalLoading', 'Loading the Terms of Use…')}
-          </p>
-        )}
-        {error && (
-          <p className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-6 text-center text-sm text-red-300">
-            {error}
-          </p>
-        )}
-        {!loading && !error && blocks.length > 0 && (
-          <article className="space-y-5 rounded-2xl border border-white/[0.08] bg-slate-900/70 p-5 sm:p-7">
-            {blocks.map((block, idx) =>
-              block.type === 'heading' ? (
-                <h2
-                  key={`h-${idx}`}
-                  className="pt-2 text-base font-bold tracking-tight text-white first:pt-0 sm:text-lg"
-                >
-                  {block.text}
-                </h2>
-              ) : (
-                <p
-                  key={`p-${idx}`}
-                  className="text-sm leading-relaxed text-slate-300 sm:text-[15px]"
-                >
-                  {block.text}
-                </p>
-              )
-            )}
-          </article>
-        )}
-      </div>
+      {loading && (
+        <p className="py-6 text-center text-xs text-slate-400">
+          {t('register.legalLoading', 'Loading the Terms of Use…')}
+        </p>
+      )}
+      {error && (
+        <p className="py-4 text-center text-xs text-red-300">{error}</p>
+      )}
+      {!loading && !error && blocks.length > 0 && (
+        <div className="space-y-3">
+          {blocks.map((block, idx) =>
+            block.type === 'heading' ? (
+              <h4
+                key={`h-${idx}`}
+                className="pt-1 text-sm font-bold text-white first:pt-0"
+              >
+                {block.text}
+              </h4>
+            ) : (
+              <p key={`p-${idx}`} className="text-xs leading-relaxed text-slate-300">
+                {block.text}
+              </p>
+            )
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -203,91 +194,81 @@ export function RepLegalPackReview({
 }) {
   const { t, i18n } = useTranslation();
   const pack = legalPackForLanguage(i18n.language);
-  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(true);
   const read = readIds.includes(pack.id);
 
   useEffect(() => {
-    setOpen(false);
+    setExpanded(true);
   }, [pack.id]);
 
   return (
-    <div className="space-y-3">
-      <p className="text-sm leading-relaxed text-slate-300">
-        {t(
-          'register.legalIntro',
-          'Open the Terms of Use and scroll to the bottom before you accept.'
-        )}
-      </p>
+    <div
+      className={`space-y-3 rounded-xl border p-4 ${
+        hasError
+          ? 'border-red-500 bg-red-950/20 ring-1 ring-red-500/30'
+          : 'border-white/[0.08] bg-slate-950/40'
+      }`}
+    >
       <button
         type="button"
-        onClick={() => setOpen(true)}
-        className={`flex w-full items-center justify-between gap-3 rounded-xl border bg-slate-950/40 px-4 py-3 text-left transition-colors ${
-          hasError
-            ? 'border-red-500 ring-1 ring-red-500/40 hover:bg-red-950/20'
-            : 'border-white/[0.08] hover:bg-slate-800/50'
-        }`}
+        onClick={() => setExpanded((v) => !v)}
+        className="flex w-full items-center justify-between gap-3 text-left"
       >
-        <span className="flex items-center gap-3">
-          <ScrollText className={`h-5 w-5 ${hasError ? 'text-red-400' : 'text-harx-400'}`} />
-          <span className={`font-medium ${hasError ? 'text-red-200' : 'text-slate-100'}`}>
-            {t(pack.titleKey, pack.titleDefault)}
+        <span className="flex min-w-0 items-center gap-2.5">
+          <ScrollText className={`h-4 w-4 shrink-0 ${hasError ? 'text-red-400' : 'text-harx-400'}`} />
+          <span className="min-w-0">
+            <span className={`block text-sm font-semibold ${hasError ? 'text-red-200' : 'text-slate-100'}`}>
+              {t(pack.titleKey, pack.titleDefault)}
+            </span>
+            <span className="mt-0.5 block text-[11px] text-slate-400">
+              {t(
+                'register.legalScrollHint',
+                'Scroll to the bottom to confirm you have read the Terms of Use.'
+              )}
+            </span>
           </span>
         </span>
-        <span
-          className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-            read
-              ? 'bg-emerald-500/20 text-emerald-300'
-              : hasError
-                ? 'bg-red-500/20 text-red-300'
-                : 'bg-white/10 text-slate-300'
-          }`}
-        >
-          {read
-            ? t('register.legalRead', 'Read')
-            : t('register.legalOpen', 'Open')}
+        <span className="flex shrink-0 items-center gap-2">
+          <span
+            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+              read
+                ? 'bg-emerald-500/20 text-emerald-300'
+                : hasError
+                  ? 'bg-red-500/20 text-red-300'
+                  : 'bg-white/10 text-slate-300'
+            }`}
+          >
+            {read
+              ? t('register.legalRead', 'Read')
+              : t('register.legalOpen', 'Open')}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-slate-400 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          />
         </span>
       </button>
 
-      {open &&
-        createPortal(
-          <div className="fixed inset-0 z-[200] flex flex-col bg-slate-950">
-            <div className="flex items-start justify-between gap-4 border-b border-white/10 bg-slate-950/95 px-5 py-4 backdrop-blur-sm">
-              <div className="min-w-0">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-harx-400">
-                  {t('register.legalPackBadge', 'Legal')}
-                </p>
-                <h3 className="mt-1 text-lg font-bold text-white">
-                  {t(pack.titleKey, pack.titleDefault)}
-                </h3>
-                <p className="mt-1 text-sm text-slate-400">
-                  {t(
-                    'register.legalScrollHint',
-                    'Scroll to the bottom to confirm you have read the Terms of Use.'
-                  )}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="shrink-0 rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white"
-                aria-label={t('register.legalClose', 'Close')}
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <IntegratedLegalScroller
-              url={pdfUrl(pack.file)}
-              onReachedEnd={() => onRead(pack.id)}
-            />
-            {read && (
-              <p className="flex items-center justify-center gap-2 border-t border-white/10 bg-slate-950 px-5 py-3 text-sm font-medium text-emerald-300">
-                <Check className="h-4 w-4" />
-                {t('register.legalReached', 'You reached the end of the Terms of Use.')}
-              </p>
-            )}
-          </div>,
-          document.body
-        )}
+      {expanded && (
+        <div className="space-y-2">
+          <InlineLegalScroller
+            url={pdfUrl(pack.file)}
+            onReachedEnd={() => onRead(pack.id)}
+          />
+          {read ? (
+            <p className="flex items-center gap-1.5 text-xs font-medium text-emerald-300">
+              <Check className="h-3.5 w-3.5" />
+              {t('register.legalReached', 'You reached the end of the Terms of Use.')}
+            </p>
+          ) : (
+            <p className="text-[11px] text-slate-500">
+              {t(
+                'register.legalIntro',
+                'Open the Terms of Use and scroll to the bottom before you accept.'
+              )}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
