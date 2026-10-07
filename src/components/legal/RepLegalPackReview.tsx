@@ -11,13 +11,13 @@ export const REP_LEGAL_PACKS = [
     id: 'fr',
     file: 'HARX_Pack_Juridique_FR.pdf',
     titleKey: 'register.legalFrTitle',
-    titleDefault: 'Conditions générales (FR)',
+    titleDefault: 'Conditions générales',
   },
   {
     id: 'en',
     file: 'HARX_Legal_Pack_EN.pdf',
     titleKey: 'register.legalEnTitle',
-    titleDefault: 'Terms of Use (EN)',
+    titleDefault: 'Terms of Use',
   },
 ] as const;
 
