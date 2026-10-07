@@ -138,9 +138,11 @@ function PdfScroller({
 export function RepLegalPackReview({
   readIds,
   onRead,
+  hasError = false,
 }: {
   readIds: RepLegalPackId[];
   onRead: (id: RepLegalPackId) => void;
+  hasError?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const pack = legalPackForLanguage(i18n.language);
@@ -162,17 +164,25 @@ export function RepLegalPackReview({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-between gap-3 rounded-xl border border-white/[0.08] bg-slate-950/40 px-4 py-3 text-left hover:bg-slate-800/50"
+        className={`flex w-full items-center justify-between gap-3 rounded-xl border bg-slate-950/40 px-4 py-3 text-left transition-colors ${
+          hasError
+            ? 'border-red-500 ring-1 ring-red-500/40 hover:bg-red-950/20'
+            : 'border-white/[0.08] hover:bg-slate-800/50'
+        }`}
       >
         <span className="flex items-center gap-3">
-          <FileText className="h-5 w-5 text-harx-400" />
-          <span className="font-medium text-slate-100">
+          <FileText className={`h-5 w-5 ${hasError ? 'text-red-400' : 'text-harx-400'}`} />
+          <span className={`font-medium ${hasError ? 'text-red-200' : 'text-slate-100'}`}>
             {t(pack.titleKey, pack.titleDefault)}
           </span>
         </span>
         <span
           className={`rounded-full px-2.5 py-1 text-xs font-bold ${
-            read ? 'bg-emerald-500/20 text-emerald-300' : 'bg-white/10 text-slate-300'
+            read
+              ? 'bg-emerald-500/20 text-emerald-300'
+              : hasError
+                ? 'bg-red-500/20 text-red-300'
+                : 'bg-white/10 text-slate-300'
           }`}
         >
           {read
