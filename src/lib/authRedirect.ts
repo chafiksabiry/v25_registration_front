@@ -304,6 +304,24 @@ export async function getPostLoginRedirectUrl(
       }
     }
 
+    // Invited company teammate: company workspace and company permissions, not the REP app.
+    if (checkUserType.userType === "company-member") {
+      localStorage.setItem("userType", "company");
+      localStorage.removeItem("callCenterStaff");
+      const companyId = checkUserType.employerCompanyId;
+      if (companyId) {
+        localStorage.setItem("companyId", companyId);
+        localStorage.setItem("employerCompanyId", companyId);
+        Cookies.set("companyId", companyId, SESSION_COOKIE_OPTS);
+      }
+      if (checkUserType.mustChangePassword) {
+        localStorage.setItem("mustChangePassword", "1");
+        return "/company/#/dashboard/account-settings?changePassword=1";
+      }
+      localStorage.removeItem("mustChangePassword");
+      return "/company/#/dashboard/main";
+    }
+
     // Always prefer live profile so login resumes the real onboarding step
     // (stale localStorage used to force /profile-import).
     try {
