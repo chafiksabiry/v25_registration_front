@@ -30,6 +30,16 @@ export const auth = {
     return response.data;
   },
 
+  checkEmail: async (email: string) => {
+    const response = await api.post('/auth/check-email', { email });
+    return response.data as { available: boolean; message?: string };
+  },
+
+  checkPhone: async (phone: string) => {
+    const response = await api.post('/auth/check-phone', { phone });
+    return response.data as { available: boolean; message?: string };
+  },
+
   login: async (data: { email: string; password: string }) => {
     const response = await api.post('/auth/login', data);
     return response.data;
@@ -102,7 +112,10 @@ export const auth = {
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
   },
-  changeUserType: async (userId: string, newType: 'company' | 'rep') => {
+  changeUserType: async (
+    userId: string,
+    newType: 'company' | 'rep' | 'call-center'
+  ) => {
     const response = await api.post('/auth/change-user-type', { userId, newType });
     return response.data;
   }
@@ -136,10 +149,25 @@ export const adminApi = {
   updateFinancials: async (
     userId: string,
     payload: {
-      target: 'company_minutes' | 'company_wallet' | 'rep_wallet';
-      action: 'add' | 'set';
-      amount: number;
+      target:
+        | 'company_minutes'
+        | 'company_wallet'
+        | 'company_ai_tokens'
+        | 'company_ai_providers'
+        | 'rep_wallet';
+      action?: 'add' | 'set';
+      amount?: number;
       reason?: string;
+      providers?: {
+        openai?: boolean;
+        anthropic?: boolean;
+        gemini?: boolean;
+      };
+      aiProviders?: {
+        openai?: boolean;
+        anthropic?: boolean;
+        gemini?: boolean;
+      };
     },
   ) => {
     const response = await api.patch(`/admin/users/${userId}/financials`, payload);
@@ -235,10 +263,130 @@ export const adminApi = {
     const response = await api.patch('/admin/objectives', payload);
     return response.data;
   },
+  onboardingSatisfaction: async (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    scoredOnly?: boolean;
+  }) => {
+    const response = await api.get('/admin/onboarding-satisfaction', { params });
+    return response.data;
+  },
 };
+
+function metaLookup(meta: Record<string, unknown>, ...candidates: string[]): unknown {
+  const normalize = (s: string) => s.toLowerCase().replace(/[_\s-]+/g, '');
+  const wanted = candidates.map(normalize);
+  const entries = Object.entries(meta).map(([k, v]) => [normalize(k), v] as const);
+  for (const w of wanted) {
+    for (const [nk, value] of entries) {
+      if (nk === w) return value;
+    }
+  }
+  for (const w of wanted) {
+    for (const [nk, value] of entries) {
+      if (nk.startsWith(w) || w.startsWith(nk)) return value;
+    }
+  }
+  return undefined;
+}
+
+/** Prefers Stripe Catalog features; prepends quota bullets from product metadata when missing. */
+function mapStripeCompanyPlan(p: Record<string, unknown>) {
+  const meta =
+    p.metadata && typeof p.metadata === 'object'
+      ? (p.metadata as Record<string, unknown>)
+      : {};
+  const features = Array.isArray(p.features) ? p.features.map(String) : [];
+  const hasActiveGigs = features.some((f) => /^active\s+gigs?\b/i.test(f));
+  const hasActiveReps = features.some((f) => /^active\s+reps?\b/i.test(f));
+
+  const maxGigs = Number(
+    p.maxGigs ?? metaLookup(meta, 'ACTIVE GIGS', 'active_gigs', 'max_gigs')
+  );
+  const maxReps = Number(
+    p.maxReps ?? metaLookup(meta, 'ACTIVE REPS', 'active_reps', 'max_reps')
+  );
+  const minutes = Number(
+    p.communicationMinutes ??
+      metaLookup(meta, 'COMMUNICATION MINUTES', 'communication_minutes')
+  );
+  const localNumbers = Number(
+    p.activeLocalNumbers ??
+      metaLookup(meta, 'ACTIVE LOCAL NUMBER', 'ACTIVE LOCAL NUMBERS')
+  );
+  const aiToken = String(
+    p.aiToken ?? metaLookup(meta, 'AI TOKEN', 'ai_token') ?? ''
+  ).trim();
+
+  const quotas: string[] = [];
+  if (!hasActiveGigs && Number.isFinite(maxGigs) && maxGigs >= 0) {
+    quotas.push(`Active GIGs: ${maxGigs}`);
+  }
+  if (!hasActiveReps && Number.isFinite(maxReps) && maxReps >= 0) {
+    quotas.push(`Active REPs: ${maxReps}`);
+  }
+  if (
+    Number.isFinite(minutes) &&
+    minutes >= 0 &&
+    !features.some((f) => /communication\s+minutes/i.test(f))
+  ) {
+    quotas.push(`Communication minutes: ${minutes}`);
+  }
+  if (
+    Number.isFinite(localNumbers) &&
+    localNumbers >= 0 &&
+    !features.some((f) => /local\s+number/i.test(f))
+  ) {
+    quotas.push(`Active local numbers: ${localNumbers}`);
+  }
+  if (aiToken && !features.some((f) => /ai\s+token/i.test(f))) {
+    quotas.push(`AI tokens: ${aiToken}`);
+  }
+
+  return {
+    id: String(p._id ?? p.id ?? ''),
+    name: String(p.name ?? ''),
+    description: String(p.description ?? ''),
+    price: Number(p.price),
+    priceCents: p.priceCents,
+    currency: String(p.currency || 'eur').toLowerCase(),
+    features: [...quotas, ...features],
+    popular: Boolean(p.isPopular ?? p.popular),
+    maxGigs: Number.isFinite(maxGigs) ? maxGigs : undefined,
+    maxReps: Number.isFinite(maxReps) ? maxReps : undefined,
+    metadata: meta,
+  };
+}
 
 export const publicPlansApi = {
   companyPlans: async () => {
+    // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
+    const companyBack = (
+      import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
+      import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
+      'https://v25comporchestratorback-production.up.railway.app'
+    ).replace(/\/$/, '');
+    try {
+      const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {
+        timeout: 15000,
+      });
+      const plans = Array.isArray(response.data)
+        ? response.data
+        : Array.isArray(response.data?.plans)
+          ? response.data.plans
+          : [];
+      if (plans.length) {
+        return {
+          success: true,
+          data: {
+            plans: plans.map((p: Record<string, unknown>) => mapStripeCompanyPlan(p)),
+          },
+        };
+      }
+    } catch (err) {
+      console.warn('[pricing] company Stripe plans fetch failed, falling back to registration API', err);
+    }
     const response = await api.get('/plans/company');
     return response.data;
   },

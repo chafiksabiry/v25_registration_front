@@ -6,8 +6,6 @@ import { publicPlansApi } from '../../lib/api';
 import { Button } from './Button';
 import { PricingPlansGrid } from './PricingPlansGrid';
 import {
-  COMPANY_PRICING_PLANS,
-  REP_PRICING_PLANS,
   mapApiPlanToPricingPlan,
   type PricingPlan,
 } from './pricingPlansConfig';
@@ -21,25 +19,39 @@ type PricingAudience = 'company' | 'rep';
 export function Pricing({ onGetStarted }: PricingProps) {
   const navigate = useNavigate();
   const [audience, setAudience] = useState<PricingAudience>('company');
-  const [companyPlans, setCompanyPlans] = useState<PricingPlan[]>(COMPANY_PRICING_PLANS);
-  const [repPlans, setRepPlans] = useState<PricingPlan[]>(REP_PRICING_PLANS);
+  const [companyPlans, setCompanyPlans] = useState<PricingPlan[]>([]);
+  const [repPlans, setRepPlans] = useState<PricingPlan[]>([]);
+  const [plansLoading, setPlansLoading] = useState(true);
   const { t } = useTranslation();
 
   useEffect(() => {
+    setPlansLoading(true);
     Promise.all([publicPlansApi.companyPlans(), publicPlansApi.repPlans()])
       .then(([companyResponse, repResponse]) => {
-        const company = companyResponse.data?.plans;
-        const rep = repResponse.data?.plans;
+        const company =
+          companyResponse?.data?.plans ??
+          companyResponse?.data?.data?.plans ??
+          companyResponse?.plans;
+        const rep =
+          repResponse?.data?.plans ??
+          repResponse?.data?.data?.plans ??
+          repResponse?.plans;
         if (Array.isArray(company) && company.length) {
           setCompanyPlans(company.map(mapApiPlanToPricingPlan));
+        } else {
+          setCompanyPlans([]);
         }
         if (Array.isArray(rep) && rep.length) {
           setRepPlans(rep.map(mapApiPlanToPricingPlan));
+        } else {
+          setRepPlans([]);
         }
       })
       .catch(() => {
-        /* fallback statique */
-      });
+        setCompanyPlans([]);
+        setRepPlans([]);
+      })
+      .finally(() => setPlansLoading(false));
   }, []);
 
   const handleRepRegister = useCallback(() => {
@@ -152,19 +164,29 @@ export function Pricing({ onGetStarted }: PricingProps) {
           </div>
 
           <div className="mx-auto mb-6 w-full max-w-[90rem] px-1 sm:px-0">
-            {audience === 'company' ? (
+            {plansLoading ? (
+              <p className="py-10 text-center text-sm font-medium text-slate-500">
+                {t('pricing.loading', 'Loading plans…')}
+              </p>
+            ) : audience === 'company' ? (
               <div key="company-pricing" className="pricing-panel space-y-2">
                 <div className="pricing-panel-banner rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-1.5 text-center text-xs text-harx-800 md:text-sm">
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <span dangerouslySetInnerHTML={{ __html: t('pricing.companyBanner', '<strong>For companies</strong> — subscribe to post gigs on HARX.') }} />
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  <PricingPlansGrid
-                    plans={companyPlans}
-                    columns={3}
-                    showCta
-                    onCtaClick={handleCompanyRegister}
-                  />
+                  {companyPlans.length === 0 ? (
+                    <p className="py-10 text-center text-sm font-medium text-slate-500">
+                      {t('pricing.empty', 'No plans available yet.')}
+                    </p>
+                  ) : (
+                    <PricingPlansGrid
+                      plans={companyPlans}
+                      columns={3}
+                      showCta
+                      onCtaClick={handleCompanyRegister}
+                    />
+                  )}
                 </div>
               </div>
             ) : (
@@ -174,12 +196,18 @@ export function Pricing({ onGetStarted }: PricingProps) {
                   <span dangerouslySetInnerHTML={{ __html: t('pricing.repBanner', '<strong>For REPs</strong> — subscribe to access gigs and start earning.') }} />
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  <PricingPlansGrid
-                    plans={repPlans}
-                    columns={4}
-                    showCta
-                    onCtaClick={handleRepRegister}
-                  />
+                  {repPlans.length === 0 ? (
+                    <p className="py-10 text-center text-sm font-medium text-slate-500">
+                      {t('pricing.empty', 'No plans available yet.')}
+                    </p>
+                  ) : (
+                    <PricingPlansGrid
+                      plans={repPlans}
+                      columns={4}
+                      showCta
+                      onCtaClick={handleRepRegister}
+                    />
+                  )}
                 </div>
               </div>
             )}

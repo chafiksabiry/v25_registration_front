@@ -826,6 +826,35 @@ export function RepProfileView({ agent }: { agent: Record<string, any> }) {
         </div>
       </SectionCard>
 
+      {agent.onboardingSatisfaction?.done ? (
+        <SectionCard title="Avis onboarding" description="Feedback laissé après publication du profil.">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            <InfoCard
+              label="Note"
+              value={
+                agent.onboardingSatisfaction.score != null
+                  ? `${agent.onboardingSatisfaction.score}/5`
+                  : agent.onboardingSatisfaction.skipped
+                    ? 'Passé'
+                    : '—'
+              }
+            />
+            <InfoCard
+              label="Date"
+              value={
+                agent.onboardingSatisfaction.submittedAt
+                  ? formatDate(agent.onboardingSatisfaction.submittedAt)
+                  : '—'
+              }
+            />
+            <InfoCard
+              label="Commentaire"
+              value={agent.onboardingSatisfaction.comment || '—'}
+            />
+          </div>
+        </SectionCard>
+      ) : null}
+
       <SectionCard title="Résumé professionnel" description="Industries, activités et expertises du profil REP.">
         <ProfessionalSummaryPanel
           industries={industries}

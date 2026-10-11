@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { LandingPage } from '../components/LandingPage';
 import ChoicePage from '../components/ChoicePage';
 import SignInDialog from '../components/SignInDialog';
@@ -99,11 +100,30 @@ export function RegisterRepScreen() {
   );
 }
 
+export function RegisterCallCenterScreen() {
+  const { t } = useTranslation();
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return (
+    <AuthScreen title={t('authScreens.registerCallCenter', 'Call center signup')}>
+      <RegistrationDialog
+        defaultUserType="call-center"
+        onSignIn={() => navigate('/auth/signin')}
+        onGetStarted={() => navigate('/auth/choice')}
+        onNavigateToSection={handleNavigateToSection}
+      />
+    </AuthScreen>
+  );
+}
+
 export function RecoveryScreen() {
-  const { navigate } = useAuthContext();
+  const { navigate, handleNavigateToSection } = useAuthContext();
   return (
     <AuthScreen title="Récupération de compte">
-      <PasswordRecoveryDialog onBack={() => navigate('/auth/signin')} />
+      <PasswordRecoveryDialog
+        onBack={() => navigate('/auth/signin')}
+        onGetStarted={() => navigate('/auth/choice')}
+        onNavigateToSection={handleNavigateToSection}
+      />
     </AuthScreen>
   );
 }

@@ -149,6 +149,7 @@ export default function AdminWalletPage() {
           <>
             <InfoCard label="Wallet entreprise" value={formatMoney(financials.wallet?.balance)} />
             <InfoCard label="Minutes restantes" value={`${financials.minutes?.minutes ?? 0} min`} />
+            <InfoCard label="Tokens AI" value={String(financials.tokens?.tokens ?? 0)} />
             <InfoCard label="Dépenses téléphonie" value={formatMoney(phoneSpend)} />
             <InfoCard
               label="Commissions HARX (compte)"
@@ -263,6 +264,18 @@ export default function AdminWalletPage() {
                           userId={selectedUserId}
                           onUpdated={refreshAll}
                         />
+                        <div className="admin-info-tile flex flex-col justify-center gap-2">
+                          <p className="font-semibold text-slate-900">Consommation tokens AI</p>
+                          <p className="text-sm text-slate-500">
+                            Voir l’usage OpenAI / Claude / Gemini pour cette company.
+                          </p>
+                          <Link
+                            to={`/admin/ai-tokens?userId=${selectedUserId}`}
+                            className="admin-link text-sm"
+                          >
+                            Ouvrir Tokens AI →
+                          </Link>
+                        </div>
                       </>
                     )}
                     {isRep && (

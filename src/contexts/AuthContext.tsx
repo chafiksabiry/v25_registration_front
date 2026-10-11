@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import { clearAuthSession } from '../lib/authRedirect';
 import {
   broadcastAuthChanged,
+  persistAuthToken,
   readStoredAuthToken,
   subscribeAuthChanged,
 } from '../lib/authSync';
@@ -16,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   token: string | null;
-  setToken: (token: string | null) => void;
+  setToken: (token: string | null, remember?: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -43,9 +44,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(() => decodeUser(readStoredAuthToken()));
   const [loading, setLoading] = useState(true);
 
-  const setToken = (newToken: string | null) => {
+  const setToken = (newToken: string | null, remember = true) => {
     if (newToken) {
-      localStorage.setItem('token', newToken);
+      persistAuthToken(newToken, remember);
     } else {
       clearAuthSession();
     }

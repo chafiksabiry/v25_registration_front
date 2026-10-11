@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
 import { hardNavigate } from "./appNavigation";
+import { readStoredAuthToken } from "./authSync";
 
 interface TokenPayload {
   userId?: string;
@@ -22,6 +23,8 @@ export function clearSessionUserId(): void {
 /** Clear all auth session data (token, userId, profile caches). */
 export function clearAuthSession(): void {
   localStorage.removeItem('token');
+  localStorage.removeItem('harx_remember');
+  document.cookie = 'harx_session=; path=/; max-age=0; SameSite=Lax';
   clearSessionUserId();
   localStorage.removeItem('userType');
   localStorage.removeItem('companyId');
@@ -32,6 +35,9 @@ export function clearAuthSession(): void {
   localStorage.removeItem('companyOnboardingProgress');
   localStorage.removeItem('selectedGigId');
   localStorage.removeItem('pendingUserType');
+  localStorage.removeItem('callCenterStaff');
+  localStorage.removeItem('employerCompanyId');
+  localStorage.removeItem('mustChangePassword');
 }
 
 /** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
@@ -46,7 +52,7 @@ export function syncSessionUserIdCookie(token?: string | null): string | null {
 
 /** Valid JWT in localStorage (full login session). */
 export function isSessionActive(token?: string | null): boolean {
-  const stored = token ?? localStorage.getItem('token');
+  const stored = token ?? readStoredAuthToken();
   if (!stored) return false;
 
   try {
@@ -69,7 +75,7 @@ export function hasUiSession(token?: string | null): boolean {
 }
 
 export function getSessionUserId(token?: string | null): string | null {
-  const stored = token ?? localStorage.getItem("token");
+  const stored = token ?? readStoredAuthToken();
   if (stored) {
     try {
       const decoded = jwtDecode<TokenPayload>(stored);
@@ -82,7 +88,7 @@ export function getSessionUserId(token?: string | null): string | null {
 }
 
 export function getSessionToken(): string {
-  return localStorage.getItem("token") ?? "";
+  return readStoredAuthToken() ?? "";
 }
 
 const REP_ONBOARDING_STATE_KEY = "rep_onboarding_state";
@@ -268,8 +274,15 @@ export async function getPostLoginRedirectUrl(
       return "/admin";
     }
 
-    if (checkUserType.userType === "company") {
+    // Call centers get a dedicated host entry that mounts the company orchestrator.
+    if (
+      checkUserType.userType === "company" ||
+      checkUserType.userType === "call-center"
+    ) {
+      const dest =
+        checkUserType.userType === "call-center" ? "/call-center" : "/company";
       try {
+        localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
           `${import.meta.env.VITE_COMPANY_API_URL}/onboarding/companies/${userId}/onboardingProgress`
         );
@@ -277,23 +290,58 @@ export async function getPostLoginRedirectUrl(
           onboardingProgress.currentPhase !== 4 ||
           !onboardingProgress.phases?.find((p: { id: number }) => p.id === 4)?.completed
         ) {
-          return "/company";
+          return dest;
         }
-        return "/company";
+        return dest;
       } catch (e: unknown) {
         const status =
           e &&
           typeof e === "object" &&
           "response" in e &&
           (e as { response?: { status?: number } }).response?.status;
-        if (status === 404) return "/company";
+        if (status === 404) return dest;
         throw e;
       }
+    }
+
+    // Invited company teammate: company workspace and company permissions, not the REP app.
+    if (checkUserType.userType === "company-member") {
+      localStorage.setItem("userType", "company");
+      localStorage.removeItem("callCenterStaff");
+      const companyId = checkUserType.employerCompanyId;
+      if (companyId) {
+        localStorage.setItem("companyId", companyId);
+        localStorage.setItem("employerCompanyId", companyId);
+        Cookies.set("companyId", companyId, SESSION_COOKIE_OPTS);
+      }
+      if (checkUserType.mustChangePassword) {
+        localStorage.setItem("mustChangePassword", "1");
+        return "/company/#/dashboard/account-settings?changePassword=1";
+      }
+      localStorage.removeItem("mustChangePassword");
+      return "/company/#/dashboard/main";
     }
 
     // Always prefer live profile so login resumes the real onboarding step
     // (stale localStorage used to force /profile-import).
     try {
+      // Call-center staff (provisioned by employer): skip marketplace onboarding.
+      if (
+        checkUserType.employerCompanyId ||
+        checkUserType.mustChangePassword
+      ) {
+        localStorage.setItem('userType', 'rep');
+        localStorage.setItem('callCenterStaff', '1');
+        if (checkUserType.employerCompanyId) {
+          localStorage.setItem('employerCompanyId', checkUserType.employerCompanyId);
+        }
+        if (checkUserType.mustChangePassword) {
+          localStorage.setItem('mustChangePassword', '1');
+          return toRepAbsoluteUrl('/account-settings?changePassword=1');
+        }
+        return toRepAbsoluteUrl('/dashboard');
+      }
+
       const { data: profileData } = await axios.get(
         `${import.meta.env.VITE_REP_API_URL}/profiles/${userId}`,
         { headers: { Authorization: `Bearer ${token}` } }
@@ -301,6 +349,9 @@ export async function getPostLoginRedirectUrl(
       syncRepOnboardingToLocalStorage(profileData, userId);
       return computeRepRedirectFromProfile(profileData);
     } catch {
+      if (localStorage.getItem('callCenterStaff') === '1') {
+        return toRepAbsoluteUrl('/dashboard');
+      }
       return (
         getRepRedirectFromLocalStorage(userId) ||
         import.meta.env.VITE_REP_CREATION_PROFILE_URL ||
@@ -322,7 +373,7 @@ export async function redirectIfAuthenticated(token?: string | null): Promise<bo
   // Without the userId cookie the company/rep apps reject the user → redirect loop.
   if (!userId) {
     const recoveryInProgress = sessionStorage.getItem("passwordRecoveryFlow");
-    if (recoveryInProgress || localStorage.getItem("token")) {
+    if (recoveryInProgress || readStoredAuthToken()) {
       clearAuthSession();
     }
     return false;

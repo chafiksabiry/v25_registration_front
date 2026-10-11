@@ -15,6 +15,7 @@ import {
   RegisterScreen,
   RegisterCompanyScreen,
   RegisterRepScreen,
+  RegisterCallCenterScreen,
   RecoveryScreen,
 } from './routes/AuthRoutes';
 import AdminLayout from './components/admin/AdminLayout';
@@ -23,11 +24,13 @@ import AdminDashboardPage from './components/admin/AdminDashboardPage';
 import AdminUsersPage from './components/admin/AdminUsersPage';
 import AdminUserDetailPage from './components/admin/AdminUserDetailPage';
 import AdminWalletPage from './components/admin/AdminWalletPage';
+import AdminAiTokensPage from './components/admin/AdminAiTokensPage';
 import AdminPricingMinutesPage from './components/admin/AdminPricingMinutesPage';
 import AdminPricingPhonePage from './components/admin/AdminPricingPhonePage';
 import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
 import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
+import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 import { LegalPage } from './components/legal/LegalPage';
@@ -103,7 +106,9 @@ export const appRouter = createBrowserRouter(
             { index: true, element: <AdminDashboardPage /> },
             { path: 'users', element: <AdminUsersPage /> },
             { path: 'users/:userId', element: <AdminUserDetailPage /> },
+            { path: 'satisfaction', element: <AdminSatisfactionPage /> },
             { path: 'wallet', element: <AdminWalletPage /> },
+            { path: 'ai-tokens', element: <AdminAiTokensPage /> },
             { path: 'objectives', element: <AdminObjectivesPage /> },
             { path: 'pricing/minutes', element: <AdminPricingMinutesPage /> },
             { path: 'pricing/phone-line', element: <AdminPricingPhonePage /> },
@@ -125,6 +130,7 @@ export const appRouter = createBrowserRouter(
             { path: 'auth/register', element: <RegisterScreen /> },
             { path: 'auth/register-company', element: <RegisterCompanyScreen /> },
             { path: 'auth/register-rep', element: <RegisterRepScreen /> },
+            { path: 'auth/register-call-center', element: <RegisterCallCenterScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },

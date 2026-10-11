@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
@@ -14,6 +14,11 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
+import {
+  allLegalPacksRead,
+  RepLegalPackReview,
+  type RepLegalPackId,
+} from './legal/RepLegalPackReview';
 
 type Step = RegisterFormStep | 'success';
 
@@ -25,7 +30,7 @@ function stepFromSearch(param: string | null): Step {
 }
 
 interface RegistrationDialogProps {
-  defaultUserType?: 'company' | 'rep';
+  defaultUserType?: 'company' | 'rep' | 'call-center';
   onSignIn: () => void;
   onGetStarted?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
@@ -61,13 +66,26 @@ export default function RegistrationDialog({
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
+  const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
   const { t } = useTranslation();
+  const isRepSignup = defaultUserType === 'rep' || registerPath === '/auth/register-rep';
+  // Both FR + EN legal PDFs must be opened and scrolled to the end.
+  const legalPackRead = allLegalPacksRead(readLegalPacks);
 
   useEffect(() => {
     if (defaultUserType) {
       localStorage.setItem('pendingUserType', defaultUserType);
     }
   }, [defaultUserType]);
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [step]);
+
+  useEffect(() => {
+    if (!isRepSignup || legalPackRead || !formData.termsAccepted) return;
+    setFormData((current) => ({ ...current, termsAccepted: false }));
+  }, [isRepSignup, legalPackRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -114,7 +132,10 @@ export default function RegistrationDialog({
       const pendingUserType = localStorage.getItem('pendingUserType');
       if (pendingUserType) {
         try {
-          await auth.changeUserType(storedUserId, pendingUserType as 'company' | 'rep');
+          await auth.changeUserType(
+            storedUserId,
+            pendingUserType as 'company' | 'rep' | 'call-center'
+          );
           localStorage.removeItem('pendingUserType');
         } catch (err) {
           console.error('Failed to change user type:', err);
@@ -166,7 +187,21 @@ export default function RegistrationDialog({
           if (!validateEmail(formData.email)) {
             newErrors.email = t('register.errEmail', 'Please enter a valid email address');
           } else {
-            pushStep('password');
+            setIsLoading(true);
+            try {
+              await auth.checkEmail(formData.email.trim());
+              pushStep('password');
+            } catch (error) {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Email already registered') {
+                newErrors.email = t('register.errEmailTaken', 'This email is already registered');
+              } else {
+                newErrors.email =
+                  apiMessage || t('register.errEmail', 'Please enter a valid email address');
+              }
+            } finally {
+              setIsLoading(false);
+            }
           }
           break;
 
@@ -182,14 +217,41 @@ export default function RegistrationDialog({
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
           } else {
-            pushStep('terms');
+            setIsLoading(true);
+            try {
+              await auth.checkPhone(formData.phone.trim());
+              pushStep('terms');
+            } catch (error) {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Phone already registered') {
+                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
+              } else {
+                newErrors.phone =
+                  apiMessage || t('register.errPhone', 'Please enter a valid phone number');
+              }
+            } finally {
+              setIsLoading(false);
+            }
           }
           break;
 
         case 'terms':
+          if (isRepSignup && !legalPackRead) {
+            newErrors.terms = t(
+              'register.errLegalScroll',
+              'Open both legal documents and scroll each to the bottom.'
+            );
+          }
           if (!formData.termsAccepted) {
-            newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
-          } else {
+            newErrors.terms =
+              newErrors.terms ||
+              t('register.errTerms', 'Please accept the terms and conditions');
+          }
+          if (newErrors.terms) {
+            break;
+          }
+
+          {
             const incompleteStep = getFirstIncompleteStep();
             if (incompleteStep) {
               newErrors.general = t('register.errGeneralMissing', 'Some registration details are missing. Please complete all steps.');
@@ -212,18 +274,23 @@ export default function RegistrationDialog({
                 setRegisteredUserId(RegisterResult.data._id as string);
               }
             } catch (error) {
-              if ((error as any).response?.data?.message === 'Email already registered') {
+              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
+              if (apiMessage === 'Email already registered') {
                 newErrors.email = t('register.errEmailTaken', 'This email is already registered');
                 pushStep('email');
                 setErrors(newErrors);
                 return;
-              } else {
-                newErrors.general =
-                  (error as { response?: { data?: { message?: string } } }).response?.data?.message
-                  || t('register.errGeneralFailed', 'Registration failed, please try again');
+              }
+              if (apiMessage === 'Phone already registered') {
+                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
+                pushStep('phone');
                 setErrors(newErrors);
                 return;
               }
+              newErrors.general =
+                apiMessage || t('register.errGeneralFailed', 'Registration failed, please try again');
+              setErrors(newErrors);
+              return;
             }
 
             // Persist the role chosen on ChoicePage immediately, BEFORE email/SMS
@@ -231,7 +298,11 @@ export default function RegistrationDialog({
             // abandons the flow before verifying — fixing accounts that ended
             // up with `typeUser: null` in DB.
             const pendingUserType = localStorage.getItem('pendingUserType');
-            if (pendingUserType === 'company' || pendingUserType === 'rep') {
+            if (
+              pendingUserType === 'company' ||
+              pendingUserType === 'rep' ||
+              pendingUserType === 'call-center'
+            ) {
               try {
                 await auth.changeUserType(RegisterResult.data._id, pendingUserType);
               } catch (err) {
@@ -492,29 +563,73 @@ export default function RegistrationDialog({
 
                 {step === 'terms' && (
                   <div className="space-y-6">
-                    <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
-                      <div className="flex items-start space-x-3">
-                        <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-slate-300 leading-relaxed">
-                          {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                          <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
-                          {t('register.termsAnd', 'and acknowledge our')}{' '}
-                          <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
-                          {t('register.termsSecurity', 'We prioritize your data security.')}
-                        </p>
+                    {isRepSignup ? (
+                      <RepLegalPackReview
+                        hasError={Boolean(errors.terms) && !legalPackRead}
+                        readIds={readLegalPacks}
+                        onRead={(id) => {
+                          setReadLegalPacks((current) =>
+                            current.includes(id) ? current : [...current, id]
+                          );
+                          setErrors((current) => {
+                            if (!current.terms) return current;
+                            const next = { ...current };
+                            delete next.terms;
+                            return next;
+                          });
+                        }}
+                      />
+                    ) : (
+                      <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
+                        <div className="flex items-start space-x-3">
+                          <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-slate-300 leading-relaxed">
+                            {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
+                            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
+                            {t('register.termsAnd', 'and acknowledge our')}{' '}
+                            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
+                            {t('register.termsSecurity', 'We prioritize your data security.')}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    )}
 
-                    <label className="flex items-center space-x-3 cursor-pointer p-4 rounded-xl border border-white/[0.08] hover:bg-slate-800/40 transition-colors">
+                    <label
+                      className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors ${
+                        errors.terms
+                          ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
+                          : 'border-white/[0.08]'
+                      } ${
+                        isRepSignup && !legalPackRead
+                          ? 'cursor-not-allowed opacity-60'
+                          : 'cursor-pointer hover:bg-slate-800/40'
+                      }`}
+                    >
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
-                        onChange={(e) => setFormData({ ...formData, termsAccepted: e.target.checked })}
-                        className="rounded border-slate-700 bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all"
+                        disabled={isRepSignup && !legalPackRead}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData({ ...formData, termsAccepted: checked });
+                          if (checked) {
+                            setErrors((current) => {
+                              if (!current.terms) return current;
+                              const next = { ...current };
+                              delete next.terms;
+                              return next;
+                            });
+                          }
+                        }}
+                        className={`rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all ${
+                          errors.terms ? 'border-red-500' : 'border-slate-700'
+                        }`}
                       />
-                      <span className="text-slate-200 font-medium">{t('register.termsCheckbox', 'I agree to the Terms & Conditions')}</span>
+                      <span className={`font-medium ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
+                        {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
+                      </span>
                     </label>
-                    {errors.terms && <p className="text-red-400 text-sm pl-2">{errors.terms}</p>}
+                    {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
                   </div>
                 )}
 
@@ -564,6 +679,7 @@ export default function RegistrationDialog({
 
                 {step !== 'success' && (
                   <button
+                    type="button"
                     onClick={handleNext}
                     disabled={isLoading}
                     className={`btn-primary flex items-center justify-center space-x-2 mt-8 ${isLoading ? 'opacity-80 cursor-wait' : ''}`}

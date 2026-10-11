@@ -1,4 +1,4 @@
-import { Building2, Clock, LayoutDashboard, Phone, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { Building2, Clock, LayoutDashboard, Phone, Sparkles, Star, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
 
 export type AdminSection = {
   to: string;
@@ -28,10 +28,22 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     icon: Users,
   },
   {
+    to: '/admin/satisfaction',
+    label: 'Avis onboarding',
+    shortLabel: 'Avis',
+    icon: Star,
+  },
+  {
     to: '/admin/wallet',
     label: 'Wallet',
     shortLabel: 'Wallet',
     icon: Wallet,
+  },
+  {
+    to: '/admin/ai-tokens',
+    label: 'Tokens AI',
+    shortLabel: 'AI',
+    icon: Sparkles,
   },
   {
     to: '/admin/objectives',
@@ -68,11 +80,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: 'Plateforme',
-    items: ADMIN_SECTIONS.slice(0, 4),
+    items: ADMIN_SECTIONS.slice(0, 6),
   },
   {
     label: 'Tarification',
-    items: ADMIN_SECTIONS.slice(4),
+    items: ADMIN_SECTIONS.slice(6),
   },
 ];
 

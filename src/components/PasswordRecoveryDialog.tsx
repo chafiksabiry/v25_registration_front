@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
 import { clearAuthSession } from '../lib/authRedirect';
 import { useTranslation } from 'react-i18next';
+import { Header } from './LandingPage/Header';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
 
@@ -37,6 +38,33 @@ function writeRecoverySession(data: RecoverySession | null) {
   }
 }
 
+function recoveryErrorText(
+  err: unknown,
+  t: (key: string, fallback: string) => string,
+  fallback: string
+) {
+  const axiosErr = err as {
+    message?: string;
+    response?: { status?: number; data?: { error?: string; message?: string } };
+  };
+  const status = axiosErr.response?.status;
+  const code = axiosErr.response?.data?.error || '';
+
+  if (code === 'EMAIL_NOT_REGISTERED' || status === 404) {
+    return t('recovery.errUnknownEmail', "Aucun compte n'est associé à cet email.");
+  }
+  if (code === 'EMAIL_REQUIRED') {
+    return t('recovery.errEmail', 'Veuillez entrer votre adresse email');
+  }
+  if (code === 'EMAIL_SEND_FAILED') {
+    return t('recovery.errSend', "Impossible d'envoyer le code pour le moment. Réessayez dans un instant.");
+  }
+  if (!axiosErr.response || axiosErr.message === 'Network Error' || (status != null && status >= 500)) {
+    return t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.');
+  }
+  return fallback;
+}
+
 function stepFromSearch(param: string | null, session: RecoverySession | null): RecoveryStep {
   if (param && RECOVERY_STEPS.includes(param as RecoveryStep)) return param as RecoveryStep;
   if (session?.step) return session.step;
@@ -45,9 +73,11 @@ function stepFromSearch(param: string | null, session: RecoverySession | null): 
 
 interface PasswordRecoveryDialogProps {
   onBack: () => void;
+  onGetStarted?: () => void;
+  onNavigateToSection?: (sectionId: string) => void;
 }
 
-export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialogProps) {
+export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigateToSection }: PasswordRecoveryDialogProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const saved = readRecoverySession();
@@ -115,8 +145,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           const verificationCode = await auth.generateVerificationCode(formData.email);
           await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
           pushStep('verification', { email: formData.email });
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Failed to send verification code'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
 
@@ -140,8 +170,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           } else {
             setError(t('recovery.errNoToken', 'Verification failed: No token received'));
           }
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Verification failed'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errUnexpected', 'Verification failed')));
         }
         break;
 
@@ -163,8 +193,8 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
           await auth.changePassword(formData.email, formData.confirmPassword, recoveryToken);
           clearRecoveryFlow();
           pushStep('success');
-        } catch (err: any) {
-          setError(err.message || t('recovery.errUnexpected', 'Failed to reset password'));
+        } catch (err: unknown) {
+          setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
 
@@ -175,155 +205,136 @@ export default function PasswordRecoveryDialog({ onBack }: PasswordRecoveryDialo
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-premium-gradient">
-      <div className="bg-white rounded-3xl w-full max-w-xl p-6 md:p-8 relative shadow-2xl border border-harx-100">
-        <div className="space-y-6">
-          <div className="text-center">
-            <div className="flex flex-col items-center mb-4">
-              <div className="relative w-full max-w-[140px] mx-auto mb-3">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain"
-                  loading="eager"
+    <div className="min-h-screen w-full flex flex-col bg-space-dark-950 text-white animate-fade-in relative overflow-auto">
+      <Header
+        onSignIn={onBack}
+        onGetStarted={onGetStarted || onBack}
+        onNavigateToSection={onNavigateToSection}
+      />
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+        <div className="absolute top-[8%] left-[15%] w-[42%] h-[42%] bg-rose-500/30 blur-[120px] rounded-full animate-float" />
+        <div className="absolute bottom-[8%] right-[8%] w-[48%] h-[48%] bg-fuchsia-600/25 blur-[140px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
+      </div>
+      <div className="flex min-h-screen items-center justify-center px-4 pb-10 pt-24 relative z-10">
+        <div className="w-full max-w-md glass-card-premium rounded-3xl p-8 text-center relative z-10">
+          {step !== 'success' && (
+            <button
+              type="button"
+              onClick={step === 'email' ? handleBackToSignIn : () => pushStep(step === 'new-password' ? 'verification' : 'email')}
+              className="mb-6 mx-auto flex items-center text-sm text-rose-200 transition-colors hover:text-white"
+            >
+              <ArrowLeft className="mr-1.5 h-4 w-4" />
+              {step === 'email' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnPrevious', 'Back')}
+            </button>
+          )}
+
+          {step === 'email' && (
+            <>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.resetTitle', 'Reset Your Password')}</h2>
+              <p className="text-rose-100/80 text-sm mb-8">{t('recovery.resetDesc', 'Enter your registered email to reset your password.')}</p>
+              <div className="relative group">
+                <Mail className="absolute left-4 top-3.5 h-5 w-5 text-rose-200 group-focus-within:text-white transition-colors" />
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-rose-200/30 rounded-xl text-white placeholder:text-rose-100/45 outline-none focus:ring-2 focus:ring-rose-300/40 focus:border-rose-200 transition-all"
+                  placeholder={t('recovery.emailPlaceholder', 'Enter your email')}
                 />
-                <div className="absolute -inset-2 bg-gradient-to-r from-harx-400/15 to-harx-alt-400/15 rounded-lg blur-lg -z-10" />
               </div>
-              <h1 className="text-3xl font-bold bg-gradient-harx bg-clip-text text-transparent">HARX</h1>
-              <p className="text-gray-500 font-medium tracking-wide">{t('recovery.inspireGrowth', 'We inspire growth')}</p>
-            </div>
-          </div>
+            </>
+          )}
 
-          <div className="bg-gradient-to-br from-harx-50 to-harx-100/80 border border-harx-200 rounded-2xl p-6 mb-4">
-            {step === 'email' && (
+          {step === 'verification' && (
+            <>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.verifyTitle', 'Verify Your Identity')}</h2>
+              <p className="text-rose-100/80 text-sm mb-8">
+                {t('recovery.verifyDesc', 'We sent a 6-digit code to {{email}}. Please enter it below.', { email: formData.email })}
+              </p>
+              <div className="relative group">
+                <KeyRound className="absolute left-4 top-3.5 h-5 w-5 text-rose-200 group-focus-within:text-white transition-colors" />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={6}
+                  value={formData.verificationCode}
+                  onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value.replace(/\D/g, '') })}
+                  className="w-full pl-12 pr-4 py-3.5 bg-white/10 border border-rose-200/30 rounded-xl text-white placeholder:text-rose-100/45 outline-none focus:ring-2 focus:ring-rose-300/40 focus:border-rose-200 transition-all text-center tracking-[0.4em] text-lg font-bold"
+                  placeholder="000000"
+                />
+              </div>
+            </>
+          )}
+
+          {step === 'new-password' && (
+            <>
+              <h2 className="text-3xl font-extrabold text-gradient-harx mb-2 text-balance">{t('recovery.newPasswordTitle', 'Create New Password')}</h2>
+              <p className="text-rose-100/80 text-sm mb-8">{t('recovery.newPasswordDesc', 'Set a strong password for your account.')}</p>
               <div className="space-y-4">
-                <div className="text-left">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.resetTitle', 'Reset Your Password')}</h2>
-                  <p className="text-gray-600">{t('recovery.resetDesc', 'Enter your registered email to reset your password.')}</p>
-                </div>
-
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-3.5 h-5 w-5 text-rose-200 group-focus-within:text-white transition-colors" />
                   <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all placeholder:text-gray-400"
-                    placeholder={t('recovery.emailPlaceholder', 'Enter your email')}
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={formData.newPassword}
+                    onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
+                    className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-rose-200/30 rounded-xl text-white placeholder:text-rose-100/45 outline-none focus:ring-2 focus:ring-rose-300/40 focus:border-rose-200 transition-all"
+                    placeholder={t('recovery.newPasswordPlaceholder', 'New password')}
                   />
+                  {formData.newPassword.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-4 top-3.5 text-rose-200 hover:text-white transition-colors focus:outline-none"
+                    >
+                      {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  )}
                 </div>
-              </div>
-            )}
-
-            {step === 'verification' && (
-              <div className="space-y-4 text-left">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.verifyTitle', 'Verify Your Identity')}</h2>
-                <p className="text-gray-600 leading-relaxed">
-                  {t('recovery.verifyDesc', 'We sent a 6-digit code to {{email}}. Please enter it below.', { email: formData.email })}
-                </p>
-
-                <div className="relative">
-                  <KeyRound className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-3.5 h-5 w-5 text-rose-200 group-focus-within:text-white transition-colors" />
                   <input
-                    type="text"
-                    maxLength={6}
-                    value={formData.verificationCode}
-                    onChange={(e) => setFormData({ ...formData, verificationCode: e.target.value })}
-                    className="w-full pl-12 pr-4 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all tracking-[0.5em] text-center font-bold text-lg"
-                    placeholder="000000"
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={formData.confirmPassword}
+                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                    className="w-full pl-12 pr-12 py-3.5 bg-white/10 border border-rose-200/30 rounded-xl text-white placeholder:text-rose-100/45 outline-none focus:ring-2 focus:ring-rose-300/40 focus:border-rose-200 transition-all"
+                    placeholder={t('recovery.confirmPasswordPlaceholder', 'Confirm new password')}
                   />
+                  {formData.confirmPassword.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      className="absolute right-4 top-3.5 text-rose-200 hover:text-white transition-colors focus:outline-none"
+                    >
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </button>
+                  )}
                 </div>
               </div>
-            )}
+            </>
+          )}
 
-            {step === 'new-password' && (
-              <div className="space-y-4 text-left">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('recovery.newPasswordTitle', 'Create New Password')}</h2>
-                <p className="text-gray-600 mb-4">{t('recovery.newPasswordDesc', 'Set a strong password for your account.')}</p>
-                <div className="space-y-3">
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
-                    <input
-                      type={showNewPassword ? 'text' : 'password'}
-                      value={formData.newPassword}
-                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
-                      placeholder={t('recovery.newPasswordPlaceholder', 'New password')}
-                    />
-                    {formData.newPassword.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                      >
-                        {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-harx-500" />
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={formData.confirmPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                      className="w-full pl-12 pr-12 py-3 bg-white border border-harx-200 rounded-xl focus:ring-2 focus:ring-harx-500 focus:border-harx-400 outline-none transition-all"
-                      placeholder={t('recovery.confirmPasswordPlaceholder', 'Confirm new password')}
-                    />
-                    {formData.confirmPassword.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none"
-                      >
-                        {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                      </button>
-                    )}
-                  </div>
+          {step === 'success' && (
+            <div className="text-center py-4">
+              <div className="flex justify-center mb-4">
+                <div className="p-4 bg-rose-400/20 rounded-full">
+                  <CheckCircle className="h-12 w-12 text-rose-200" />
                 </div>
               </div>
-            )}
-
-            {step === 'success' && (
-              <div className="text-center py-4">
-                <div className="flex justify-center mb-4">
-                  <div className="p-4 bg-green-100 rounded-full">
-                    <CheckCircle className="h-12 w-12 text-green-500" />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <h2 className="text-2xl font-bold text-gray-900">{t('recovery.successTitle', 'Success!')}</h2>
-                  <p className="text-gray-600">{t('recovery.successDesc', 'Your password has been reset. You can now log in.')}</p>
-                </div>
-              </div>
-            )}
-          </div>
+              <h2 className="text-2xl font-bold text-gradient-harx mb-2">{t('recovery.successTitle', 'Success!')}</h2>
+              <p className="text-rose-100/80 text-sm">{t('recovery.successDesc', 'Your password has been reset. You can now log in.')}</p>
+            </div>
+          )}
 
           {error && (
-            <div className="flex items-center space-x-3 text-red-600 bg-red-50 p-4 rounded-xl border border-red-100 animate-in fade-in slide-in-from-top-2">
+            <div className="flex items-center justify-center gap-3 text-rose-50 bg-rose-950/50 border border-rose-300/40 p-3.5 rounded-xl mt-4">
               <AlertCircle className="h-5 w-5 shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
 
-          <div className="flex flex-col space-y-3 pt-2">
-            <button
-              onClick={handleContinue}
-              className="btn-primary w-full group"
-            >
-              {step === 'success' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnContinue', 'Continue')}
-              {step !== 'success' && <KeyRound className="ml-2 h-4 w-4 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0" />}
-            </button>
-
-            {step === 'email' && (
-              <button
-                onClick={handleBackToSignIn}
-                className="w-full text-gray-500 py-2 font-medium hover:text-gray-700 transition-colors"
-              >
-                {t('recovery.btnBack', 'Back to Sign In')}
-              </button>
-            )}
-          </div>
+          <button type="button" onClick={handleContinue} className="btn-primary mt-6">
+            {step === 'success' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnContinue', 'Continue')}
+          </button>
         </div>
       </div>
     </div>
