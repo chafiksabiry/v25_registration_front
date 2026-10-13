@@ -59,11 +59,6 @@ export function Pricing({ onGetStarted }: PricingProps) {
     navigate('/auth/register-rep', { state: { returnTo: '/', scrollTo: 'pricing' } });
   }, [navigate]);
 
-  const handleCompanyRegister = useCallback(() => {
-    localStorage.setItem('pendingUserType', 'company');
-    navigate('/auth/register-company', { state: { returnTo: '/', scrollTo: 'pricing' } });
-  }, [navigate]);
-
   const bookDemo = () => {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
   };
@@ -173,6 +168,8 @@ export function Pricing({ onGetStarted }: PricingProps) {
                 <div className="pricing-panel-banner rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-1.5 text-center text-xs text-harx-800 md:text-sm">
                   <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
                   <span dangerouslySetInnerHTML={{ __html: t('pricing.companyBanner', '<strong>For companies</strong> — subscribe to post gigs on HARX.') }} />
+                  {' · '}
+                  <strong>{t('choicePage.comingSoon', 'Coming soon')}</strong>
                 </div>
                 <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
                   {companyPlans.length === 0 ? (
@@ -180,11 +177,11 @@ export function Pricing({ onGetStarted }: PricingProps) {
                       {t('pricing.empty', 'No plans available yet.')}
                     </p>
                   ) : (
+                    // AUTH-14: company registration is "Coming soon" platform-wide
+                    // (same gating as the public ChoicePage cards) — no CTA here.
                     <PricingPlansGrid
                       plans={companyPlans}
                       columns={3}
-                      showCta
-                      onCtaClick={handleCompanyRegister}
                     />
                   )}
                 </div>
