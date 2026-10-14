@@ -71,6 +71,12 @@ export function mapSignInError(
 
   // Login: email unknown vs wrong password (before generic / 2FA mappings)
   if (context === 'login') {
+    if (code === 'ACCOUNT_NOT_VERIFIED') {
+      return t(
+        'signIn.errAccountNotVerified',
+        "Ce compte n'est pas encore vérifié. Vérifiez votre email et votre téléphone pour obtenir les codes."
+      );
+    }
     if (
       code === 'INVALID_EMAIL' ||
       lower === 'invalid email' ||
