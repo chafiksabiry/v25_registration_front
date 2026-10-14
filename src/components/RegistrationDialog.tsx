@@ -65,6 +65,8 @@ export default function RegistrationDialog({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
+  const [emailNotice, setEmailNotice] = useState<string | null>(null);
+  const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
   const { t } = useTranslation();
@@ -158,6 +160,9 @@ export default function RegistrationDialog({
     setIsLoading(true);
     setErrors({});
     setSmsNotice(null);
+    // A resend invalidates whatever code is stored server-side — clear the
+    // field so a stale, already-typed code can't be resubmitted by mistake.
+    setFormData((current) => ({ ...current, phoneOTP: '' }));
     try {
       await auth.sendOTP(registeredUserId, formData.phone);
       setSmsOtpAvailable(true);
@@ -167,6 +172,24 @@ export default function RegistrationDialog({
       setSmsNotice(t('register.smsNoticeUnavailable', 'SMS unavailable. Continue with email verification only.'));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendEmailOtp = async () => {
+    if (!formData.email) return;
+
+    setIsResendingEmail(true);
+    setErrors({});
+    setEmailNotice(null);
+    // Same reasoning as the SMS resend: the old code is invalidated server-side.
+    setFormData((current) => ({ ...current, emailOTP: '' }));
+    try {
+      await auth.resendVerification(formData.email);
+      setEmailNotice(t('register.emailNoticeSent', 'Email code resent. Check your inbox.'));
+    } catch {
+      setEmailNotice(t('register.emailNoticeUnavailable', 'Could not resend the email code. Please try again.'));
+    } finally {
+      setIsResendingEmail(false);
     }
   };
 
@@ -640,6 +663,11 @@ export default function RegistrationDialog({
                         {smsNotice}
                       </div>
                     )}
+                    {emailNotice && (
+                      <div className="p-4 rounded-xl bg-amber-950/30 border border-amber-900/50 text-sm text-amber-400">
+                        {emailNotice}
+                      </div>
+                    )}
                     <div className="space-y-4">
                       <label className="block text-sm font-medium text-slate-300">{t('register.emailCodeLabel', 'Email Code (sent to {{email}})', { email: formData.email })}</label>
                       <input
@@ -650,6 +678,14 @@ export default function RegistrationDialog({
                         className="input-premium-glow text-center tracking-widest text-lg font-bold"
                         placeholder="000000"
                       />
+                      <button
+                        type="button"
+                        onClick={handleResendEmailOtp}
+                        disabled={isResendingEmail}
+                        className="text-sm text-harx-400 hover:text-harx-300 font-medium hover:underline disabled:opacity-50 transition-colors"
+                      >
+                        {t('register.resendEmailCode', 'Resend email code')}
+                      </button>
                     </div>
                     {smsOtpAvailable ? (
                       <div className="space-y-4">
@@ -662,6 +698,14 @@ export default function RegistrationDialog({
                           className="input-premium-glow text-center tracking-widest text-lg font-bold"
                           placeholder="000000"
                         />
+                        <button
+                          type="button"
+                          onClick={handleSendSmsOtp}
+                          disabled={isLoading}
+                          className="text-sm text-harx-400 hover:text-harx-300 font-medium hover:underline disabled:opacity-50 transition-colors"
+                        >
+                          {t('register.resendSmsCode', 'Resend SMS code')}
+                        </button>
                       </div>
                     ) : (
                       <button
