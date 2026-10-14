@@ -365,7 +365,7 @@ export const publicPlansApi = {
     const companyBack = (
       import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
       import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
-      'https://v25comporchestratorback-production.up.railway.app'
+      'https://v25comporchestratorback-recette.up.railway.app'
     ).replace(/\/$/, '');
     try {
       const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {

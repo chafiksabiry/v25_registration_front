@@ -15,7 +15,7 @@ export interface Gig {
   location?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-production.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-recette.up.railway.app/api';
 
 export const gigsApi = {
   fetchFeaturedGigs: async (): Promise<Gig[]> => {
