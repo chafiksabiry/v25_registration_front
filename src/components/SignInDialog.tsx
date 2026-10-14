@@ -140,7 +140,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           return;
         }
 
-        let result: { data: { userId: string; phone?: string; code: string } };
+        let result: { data: { userId: string; phone?: string } };
         try {
           result = await auth.login({ email: formData.email, password: formData.password });
         } catch (err) {
@@ -148,7 +148,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           return;
         }
 
-        if (!result?.data?.userId || !result?.data?.code) {
+        if (!result?.data?.userId) {
           setError(
             t(
               'signIn.errServer',
@@ -158,22 +158,14 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           return;
         }
 
+        // login() already emails the 2FA code server-side (AUTH-07: the code
+        // is never returned in the response, so it can't be re-sent from
+        // here) — just move on to the 2FA step.
         setFormData((prev) => ({
           ...prev,
           userId: result.data.userId,
           phone: result.data.phone || '',
         }));
-
-        try {
-          await auth.sendVerificationEmail(formData.email, result.data.code);
-        } catch (err) {
-          // Credentials were valid — still open 2FA so the user can resend.
-          setStep('2fa');
-          setVerificationMethod('email');
-          setResendTimeout(0);
-          setError(mapSignInError(err, t, 'sendCode'));
-          return;
-        }
 
         setStep('2fa');
         setVerificationMethod('email');
