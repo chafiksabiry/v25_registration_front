@@ -110,6 +110,33 @@ export default function RegistrationDialog({
     }
   }, []);
 
+  // The verification step (email/SMS resend, "Vérifier et terminer") needs
+  // registeredUserId + email/phone, which only ever lived in component
+  // state — a reload or direct navigation to ?step=verification wiped them,
+  // leaving a blank form where neither resend button could do anything.
+  // Persist them right after a successful register() and restore on mount.
+  useEffect(() => {
+    if (step !== 'verification') return;
+    if (registeredUserId && formData.email) return;
+    try {
+      const raw = sessionStorage.getItem('pendingRegistration');
+      if (!raw) return;
+      const saved = JSON.parse(raw) as { userId: string; email: string; phone: string };
+      if (saved.userId) setRegisteredUserId(saved.userId);
+      if (saved.email || saved.phone) {
+        setFormData((current) => ({
+          ...current,
+          email: current.email || saved.email || '',
+          phone: current.phone || saved.phone || '',
+        }));
+      }
+    } catch {
+      /* ignore */
+    }
+    // Only on mount into the verification step — not on every formData change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
+
   /** Push a new history entry via React Router (not raw pushState). */
   const pushStep = (next: RegisterFormStep) => {
     navigate(
@@ -158,6 +185,11 @@ export default function RegistrationDialog({
         }
       }
 
+      try {
+        sessionStorage.removeItem('pendingRegistration');
+      } catch {
+        /* ignore */
+      }
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       setTimeout(() => onSignIn(), 1500);
@@ -309,6 +341,18 @@ export default function RegistrationDialog({
 
               if (RegisterResult?.data?._id) {
                 setRegisteredUserId(RegisterResult.data._id as string);
+                try {
+                  sessionStorage.setItem(
+                    'pendingRegistration',
+                    JSON.stringify({
+                      userId: RegisterResult.data._id,
+                      email: formData.email,
+                      phone: formData.phone,
+                    })
+                  );
+                } catch {
+                  /* ignore */
+                }
               }
             } catch (error) {
               const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
