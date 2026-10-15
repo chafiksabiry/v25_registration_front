@@ -1,0 +1,1401 @@
+{
+  "cover": {
+    "company": "HARX Technologies Inc.",
+    "title": "Platform Legal Pack",
+    "subtitle": "Terms of use and personal data protection",
+    "documentsLabel": "Documents",
+    "documents": [
+      "1. Terms of Use",
+      "2. REP Terms",
+      "3. Company Terms",
+      "4. Privacy Policy",
+      "5. Data Processing Agreement"
+    ],
+    "version": "Version 1.4 — common base — effective October 1, 2026",
+    "address": "16192 Coastal Highway, Lewes, Delaware 19958, USA"
+  },
+  "parts": [
+    {
+      "title": "Terms of Use",
+      "blocks": [
+        {
+          "type": "meta",
+          "text": "Version 1.4 — effective as of October 1, 2026"
+        },
+        {
+          "type": "heading",
+          "text": "Article 1 — Purpose and Contractual Documents"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.1. These Terms of Use (the \"Terms of Use\") govern access to and use of the HARX platform, available at harx.ai and through its applications (the \"Platform\"), operated by HARX Technologies Inc., a company incorporated under the laws of the State of Delaware (United States), whose registered office is located at 16192 Coastal Highway, Lewes, Delaware 19958, United States (\"HARX\")."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.2. The Platform connects companies that wish to entrust missions involving interaction with their customers or prospects (each a \"Company\", together the \"Companies\") with independent workers who perform those missions (the \"REPs\"). Companies and REPs are together the \"Users\"."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.3. The applicable contractual documents are, in descending order of priority:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "the REP Terms or the Company Terms, depending on the User's role;",
+            "these Terms of Use;",
+            "the Privacy Policy;",
+            "for Companies, the Data Processing Agreement;",
+            "the description sheet of each Gig and the Mission Agreement arising from it. These documents together form the \"Terms\". In the event of a conflict, the higher-ranking document prevails."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "1.4. By creating an account, the User declares that they have read and accepted the Terms. If acting on behalf of a company, the User declares that they have the authority to bind it."
+        },
+        {
+          "type": "heading",
+          "text": "Article 2 — Definitions"
+        },
+        {
+          "type": "definitions",
+          "rows": [
+            {
+              "term": "Qualified Call",
+              "definition": "A call made by a REP that meets the qualification criteria set in the Gig (duration, party reached, script compliance, etc.) and that entitles the REP to the Floor Payment."
+            },
+            {
+              "term": "Cockpit",
+              "definition": "The Platform's working interface in which the REP makes and receives calls, consults the script and enters information."
+            },
+            {
+              "term": "Mission Agreement",
+              "definition": "A services agreement entered into directly between a Company and a REP when the REP is selected for a Gig."
+            },
+            {
+              "term": "Gig",
+              "definition": "A mission published by a Company on the Platform: activity (for example sales, appointment setting, amicable debt collection, welcome call, support, survey), channel, script, criteria, compensation, duration and requirements."
+            },
+            {
+              "term": "Wallet",
+              "definition": "An account for tracking the amounts owed to the REP, maintained on the Platform and backed by the Escrow Account."
+            },
+            {
+              "term": "Escrow Account",
+              "definition": "An account opened with the Payment Provider, into which the Company deposits the budget of a Gig before it starts."
+            },
+            {
+              "term": "Payment Provider",
+              "definition": "An institution licensed to provide payment services, such as Stripe, PayPal or an equivalent provider, designated in Article 7."
+            },
+            {
+              "term": "Compensation",
+              "definition": "Amounts owed by the Company to the REP for a Gig: Floor Payment per Qualified Call, Transaction Commission and Performance Bonus."
+            },
+            {
+              "term": "Transaction",
+              "definition": "An outcome defined by the Gig (sale concluded, appointment scheduled, payment obtained, etc.) and validated according to the Gig's rules."
+            },
+            {
+              "term": "HARX Commission",
+              "definition": "HARX's fee deducted from the REP's Compensation, provided for in Article 6."
+            },
+            {
+              "term": "Prospect Data",
+              "definition": "Personal data of the Company's customers and prospects processed during Gigs."
+            }
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Article 3 — Role of HARX"
+        },
+        {
+          "type": "paragraph",
+          "text": "3.1. HARX provides a technical infrastructure: publication of Gigs, selection and matching, training, calling tools, quality monitoring, and payment management through the Payment Provider."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.2. HARX is not a party to the Mission Agreement. HARX does not employ the REPs, does not give them orders on how to perform their work, and is not the employer, agent or legal representative of any User."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.3. HARX does not guarantee the volume of Gigs available, the commercial results of Gigs, or the income that the REP will derive from them."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4. Where a Gig relates to an activity subject to particular regulation, it is performed under the responsibility of the Company, which sets the applicable requirements in the Gig in accordance with Article 4 of the Company Terms."
+        },
+        {
+          "type": "heading",
+          "text": "Article 4 — User Account"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1. Registration is reserved for adults and legal entities. Each User may hold only one account, unless HARX authorizes otherwise in writing."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2. The User provides accurate, complete and up-to-date information and updates it without delay. HARX may request any proof of identity, registration or qualification."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.3. Login credentials are personal. The User shall not disclose them to anyone and shall not allow any third party to work on their account. Any activity carried out with their credentials is attributed to them. The User shall inform HARX without delay of any unauthorized use."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.4. HARX may refuse a registration if the information provided is inaccurate, if the User has previously been excluded from the Platform, or if the registration would expose HARX to legal risk. The refusal is accompanied by a statement of reasons."
+        },
+        {
+          "type": "heading",
+          "text": "Article 5 — Rules of Use"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1. The User is in particular prohibited from:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "using the Platform for any unlawful or deceptive activity, or any activity contrary to the rules on canvassing, consumer protection or data protection;",
+            "impersonating another person or providing false documents;",
+            "manipulating the Platform's ratings, scores or indicators;",
+            "extracting, copying or reusing Prospect Data outside the relevant Gig;",
+            "circumventing security measures, analyzing the Platform's code or introducing malicious software into it;",
+            "collecting data of other Users by automated means;",
+            "publishing content that is unlawful, defamatory, discriminatory or infringes the rights of third parties."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2. Reporting of unlawful content. Any person may report content or conduct that they consider unlawful at abuse-support@harx.ai or via the Platform's reporting form, stating the reasons, the exact location of the content and their contact details. HARX acknowledges receipt, handles the report diligently and informs its author of the decision taken."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. Points of contact. HARX may be contacted at the following addresses:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "general information and public authorities: contact@harx.ai;",
+            "general support: support@harx.ai;",
+            "REP support: reps-support@harx.ai;",
+            "Company support: comp-support@harx.ai;",
+            "sales inquiries and Company subscriptions: sales@harx.ai;",
+            "reporting of unlawful content or conduct: abuse-support@harx.ai. HARX responds in French and English. Where the law of a country requires HARX to appoint a local representative, its identity and contact details are indicated on the Platform."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Article 6 — Pricing and HARX Commission"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. Subscriptions. Access to certain features is subject to a subscription, the price and content of which are set out in the REP Terms and the Company Terms and on the Platform's pricing page."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. HARX Commission. HARX charges a commission on each component of the Compensation paid to the REP: Floor Payment, Transaction Commission and Performance Bonus. The rate of the HARX Commission is set by HARX and indicated on the Platform; it is displayed to the REP before they accept a Gig. The rate applicable to a Gig is the one in force at the time of its acceptance. HARX may change this rate at any time; the new rate applies to Gigs accepted after its publication on the Platform. The HARX Commission is deducted at the time the Compensation is credited to the REP's Wallet. It is not calculated on the revenue generated by the Company through the Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.3. REP subscription prices are stated inclusive of taxes. Prices applicable to Companies are stated exclusive of taxes; applicable taxes are added according to the Company's country."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.4. HARX may change its prices subject to the notice period in Article 15. The new price applies to the next subscription period and to Gigs published after it takes effect."
+        },
+        {
+          "type": "heading",
+          "text": "Article 7 — Payments and Escrow"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1. Gig funds are collected, held and remitted by one or more institutions licensed to provide payment services, such as Stripe, PayPal or an equivalent provider (the \"Payment Provider\"). The Payment Provider used is indicated on the Platform upon activation of payments. HARX never holds these funds in its own accounts. The User accepts the Payment Provider's terms of use, which are presented upon activation of payments."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.2. Before a Gig starts, the Company deposits the Gig budget into the Escrow Account. An unfunded Gig cannot start."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.3. The Compensation is calculated by the Platform according to the Gig's rules and credited to the REP's Wallet, net of the HARX Commission, as soon as it is validated by the Company or according to the automatic validation rules provided for by the Gig. Before this validation, the Company may dispute a Qualified Call or a Transaction on stated grounds. A Company that does not respond within the period set by the Gig is deemed to have validated. Where the Transaction gives the end customer a withdrawal period, the Transaction Commission and Performance Bonus attached to it are validated only upon expiry of that period without withdrawal."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.4. The REP may request a transfer of the available balance of their Wallet to the PayPal account registered in their name. The processing time is indicated on the Platform."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.5. HARX may ask the Payment Provider to suspend a payout in the event of a pending dispute, incomplete identity verification, suspected fraud or legal obligation. The REP is informed of the reason."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.6. Upon closure of a Gig, the unused budget is, at the Company's choice, returned to the Company or allocated to another Gig of the same Company, subject to disputed amounts pending resolution."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.7. Clawback. A Gig may provide that the Transaction Commission and Performance Bonus are clawed back, in whole or in part, if the contract entered into by the end customer is terminated within three (3) or six (6) months following the Transaction. The period and the proportion of the clawback are indicated in the Gig before the REP accepts it. Amounts clawed back, including the corresponding HARX Commission, are returned to the Company in accordance with Article 7 of the REP Terms."
+        },
+        {
+          "type": "heading",
+          "text": "Article 8 — Non-Circumvention"
+        },
+        {
+          "type": "paragraph",
+          "text": "8.1. For twenty-four (24) months from their first introduction on the Platform, a Company and a REP shall not enter into, directly or through an intermediary, an agreement for services of the same nature as those offered on the Platform without going through the Platform, and shall not pay or receive outside the Platform any remuneration for such services."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.2. Users may terminate this obligation by paying a conversion fee equal to 13.5% of the REP's estimated annual Compensation for that Company, with a minimum of €1,000 and a maximum of €50,000, payable by the Company. The estimated annual Compensation is calculated on the basis of the Compensation paid to the REP by that Company over the last twelve (12) months or, if the relationship is more recent, the average monthly Compensation multiplied by twelve."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.3. Breach of this Article results in the Company's payment of the conversion fee, without prejudice to the suspension of the accounts concerned."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.4. This Article does not prevent the REP from working for other clients or other platforms, nor the Company from using other service providers, for relationships that did not originate on the Platform."
+        },
+        {
+          "type": "heading",
+          "text": "Article 9 — Artificial Intelligence Tools"
+        },
+        {
+          "type": "paragraph",
+          "text": "9.1. The Platform uses artificial intelligence systems to:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "analyze REPs' résumés and profiles;",
+            "assess language proficiency (CEFR scale) from voice recordings;",
+            "analyze introduction videos and verify identity;",
+            "suggest Gigs suited to the profile (matching);",
+            "generate training content;",
+            "transcribe and evaluate calls (script compliance, quality of argumentation, compliance, Transaction detection, fraud detection)."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "9.2. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a Qualified Call, may be taken automatically on the basis of the scores produced by these systems. The User concerned may request that an automated decision affecting them be reviewed by a member of the HARX team."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.3. The User may request an explanation of a score concerning them, submit their observations and challenge the decision under Article 12. The complaint is then reviewed by a person."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.4. The Platform does not infer REPs' emotions from their voice, image or any other biometric data. Any tone analysis performed on a call relates solely to the written transcript of the exchange."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.5. The main rules that determine the ranking of Gigs proposed to the REP and of REPs proposed to the Company are: the match between declared and validated skills and the Gig's requirements, language, availability, quality scores of past calls, performance history and subscription plan. HARX receives no payment for improving a User's ranking, other than the priority benefits described in the subscription plans."
+        },
+        {
+          "type": "heading",
+          "text": "Article 10 — Ratings"
+        },
+        {
+          "type": "paragraph",
+          "text": "10.1. At the end of a Gig, the Company may rate the REP and the REP may rate the Company. Ratings must be sincere and relate to the performance of the Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.2. It is prohibited to offer or receive consideration in exchange for a rating, to rate oneself, or to threaten a bad rating in order to obtain an advantage."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.3. HARX may remove a rating that is contrary to the Terms or to law. It does not alter a rating for commercial reasons."
+        },
+        {
+          "type": "heading",
+          "text": "Article 11 — Intellectual Property"
+        },
+        {
+          "type": "paragraph",
+          "text": "11.1. The Platform, its software, its trademarks (including HARX and Cockpit), its databases and its content belong to HARX or its licensors. HARX grants the User a personal, non-exclusive and non-transferable right to use the Platform for the duration of their account, in accordance with the Terms."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.2. Scripts, sales pitches, training materials and other content provided by the Company remain its property. The Company grants HARX and the selected REPs the right to use them for the performance of the Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.3. Recordings, transcripts and data produced during a Gig are made available to the Company. HARX uses them only to provide the Platform to that Company, unless the Company authorizes otherwise in writing and subject to the Data Processing Agreement."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.4. The User grants HARX a royalty-free, worldwide, non-exclusive license over the content they publish on their profile, for the duration of their account, solely for the purposes of operating and promoting the Platform."
+        },
+        {
+          "type": "heading",
+          "text": "Article 12 — Suspension, Exclusion and Complaints"
+        },
+        {
+          "type": "paragraph",
+          "text": "12.1. HARX may restrict, suspend or close an account, remove content or remove a REP from a Gig:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "in the event of a breach of the Terms;",
+            "in the event of false information or falsified documents;",
+            "in the event of fraud or serious suspicion of fraud;",
+            "in the event of repeated failure to meet a Gig's quality or compliance requirements;",
+            "where required by law or by an authority."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "12.2. Any measure is notified to the User with a statement of reasons: facts and rules at issue, scope and duration of the measure, and available remedies. Except in cases of urgency or legal obligation, the permanent closure of an account is preceded by thirty (30) days' notice allowing the User to submit their observations."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.3. The User may challenge a decision through the Platform's internal complaint system or at repssupport@harx.ai for REPs and comp-support@harx.ai for Companies, within six (6) months. The complaint is reviewed by a person who did not take the initial decision. HARX responds with a statement of reasons within thirty (30) days."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.4. Amounts owed for services actually performed remain due after suspension or closure, except in cases of established fraud."
+        },
+        {
+          "type": "heading",
+          "text": "Article 13 — Liability"
+        },
+        {
+          "type": "paragraph",
+          "text": "13.1. HARX uses reasonable means to ensure access to the Platform. It does not guarantee uninterrupted availability. Interruptions may occur for maintenance or in the event of an external event."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.2. HARX is not responsible for the performance of the Mission Agreement, the quality of the REP's services, the Company's compliance with its regulatory obligations, or content published by Users."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.3. To the extent permitted by applicable law, HARX's total liability to a User, for all causes combined, is limited to the total amount paid by that User to HARX (subscriptions and HARX Commission) during the twelve (12) months preceding the event giving rise to liability. HARX is not liable for indirect damages: loss of revenue, customers, data or reputation."
+        },
+        {
+          "type": "paragraph",
+          "text": "13.4. These limitations do not apply in cases of gross or intentional misconduct, personal injury, or where mandatory law prohibits them."
+        },
+        {
+          "type": "heading",
+          "text": "Article 14 — Indemnification"
+        },
+        {
+          "type": "paragraph",
+          "text": "The User shall indemnify HARX against any claim, fine or judgment resulting from their breach of the Terms or of law, from their content, from the performance of the Mission Agreement or from the infringement of a third party's rights, and shall bear HARX's reasonable defense costs."
+        },
+        {
+          "type": "heading",
+          "text": "Article 15 — Changes to the Terms"
+        },
+        {
+          "type": "paragraph",
+          "text": "15.1. HARX may modify the Terms. It informs Users by email and on the Platform at least thirty (30) days before the modification takes effect. This period does not apply where the modification is required by law or necessary to address an unforeseen fraud or security risk."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.2. A User who rejects the modification may close their account before it takes effect, at no cost. Ongoing Gigs remain governed by the version applicable when they started."
+        },
+        {
+          "type": "heading",
+          "text": "Article 16 — Term and Termination"
+        },
+        {
+          "type": "paragraph",
+          "text": "16.1. The Terms apply for as long as the User has an account."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.2. The User may close their account at any time from their settings, provided they have completed or transferred ongoing Gigs and paid any amounts due. The current subscription ends at the end of the paid period."
+        },
+        {
+          "type": "paragraph",
+          "text": "16.3. Articles 8, 11, 13, 14 and 17 and confidentiality obligations survive closure."
+        },
+        {
+          "type": "heading",
+          "text": "Article 17 — Governing Law and Disputes"
+        },
+        {
+          "type": "paragraph",
+          "text": "17.1. The Terms are governed by the law of the State of Delaware, United States, without regard to its conflict-of-laws rules. This choice does not deprive the User of the protection afforded by the mandatory provisions of the law of their country."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.2. Before any action, the parties shall attempt to resolve the dispute amicably for sixty (60) days from the written claim."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.3. Failing agreement, the courts of the State of Delaware and the federal courts located in Delaware have jurisdiction, except where the mandatory law of the User's country grants jurisdiction to its own courts."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.4. Disputes between a Company and a REP relating to the Mission Agreement concern them alone. HARX may offer internal mediation, without any obligation as to result."
+        },
+        {
+          "type": "heading",
+          "text": "Article 18 — Miscellaneous"
+        },
+        {
+          "type": "paragraph",
+          "text": "18.1. If any provision is declared void, the others remain applicable. The void provision is replaced by the one that most closely approximates the parties' intent."
+        },
+        {
+          "type": "paragraph",
+          "text": "18.2. HARX's failure to rely on a breach does not constitute a waiver."
+        },
+        {
+          "type": "paragraph",
+          "text": "18.3. HARX may assign the Terms to a company within its group or to the acquirer of all or part of its business. The User may not assign their rights without HARX's written consent."
+        },
+        {
+          "type": "paragraph",
+          "text": "18.4. The Terms are drafted in French and English. In the event of a discrepancy, the French version prevails for Users established in a French-speaking country, and the English version for all others."
+        },
+        {
+          "type": "paragraph",
+          "text": "18.5. Contact: contact@harx.ai — HARX Technologies Inc., 16192 Coastal Highway, Lewes, Delaware 19958, United States."
+        }
+      ]
+    },
+    {
+      "title": "REP Terms",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Special terms applicable to REPs — supplement the Terms of Use"
+        },
+        {
+          "type": "heading",
+          "text": "Article 1 — Purpose"
+        },
+        {
+          "type": "paragraph",
+          "text": "These REP Terms apply to any person registered on the Platform to perform Gigs (the \"REP\"). They supplement the Terms of Use, whose definitions they adopt."
+        },
+        {
+          "type": "heading",
+          "text": "Article 2 — Independent Status"
+        },
+        {
+          "type": "paragraph",
+          "text": "2.1. The REP carries out their activity independently. The REP represents that they hold a status enabling them to invoice services in their country and shall provide their registration number upon request."
+        },
+        {
+          "type": "paragraph",
+          "text": "2.2. The REP is free to:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "apply or not apply for a Gig, and accept or decline an offer, without any penalty for declining;",
+            "choose their working slots from among those offered by the Gig;",
+            "work for other clients and on other platforms, subject to Article 8 of the Terms of Use;",
+            "stop using the Platform at any time."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "2.3. Neither HARX nor the Company has any power of direction or disciplinary authority over the REP. The scripts, quality criteria and compliance rules of a Gig are performance and compliance requirements set by the Company for the service ordered. They do not constitute instructions on how the REP organizes their work."
+        },
+        {
+          "type": "paragraph",
+          "text": "2.4. The REP is solely responsible for their tax and social security filings, for the payment of their contributions and taxes, and for taking out the insurance necessary for their activity."
+        },
+        {
+          "type": "paragraph",
+          "text": "2.5. The REP uses their own equipment (computer, headset, internet connection) and organizes their own workplace."
+        },
+        {
+          "type": "heading",
+          "text": "Article 3 — Registration and Access to the Marketplace"
+        },
+        {
+          "type": "paragraph",
+          "text": "3.1. Access to the marketplace takes place in four steps:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Registration and verification: account creation, verification of the e-mail address and telephone number;",
+            "Profile creation: submission of the résumé, personal information, experience with a short introductory video for each experience, languages, skills, time zone and availability;",
+            "Selection of the subscription plan;",
+            "Access to the marketplace."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "3.2. The profile is analyzed by artificial intelligence tools: résumé extraction, language level on the CEFR scale, professional and behavioral skills, and consistency of the information. On the basis of these results, access to the marketplace may be granted or refused automatically. The REP may request that an unfavorable decision be reviewed by a member of the HARX team."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.3. Identity verification. To combat fraud, HARX verifies that the person appearing in the videos matches the identity document provided, by means of a biometric comparison carried out with the REP's explicit consent. This verification is a condition of access to the marketplace. A REP who does not consent to the verification, or who withdraws their consent before it is carried out, cannot access the marketplace."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4. The REP may view the results of their assessment, request explanations, submit their comments and request a review at reps-support@harx.ai."
+        },
+        {
+          "type": "heading",
+          "text": "Article 4 — Subscription Plans"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1. The REP chooses one of the subscription plans presented on the Platform's pricing page. Each plan is described there: price, monthly Compensation cap, number of accessible Gigs, slot booking priority, features and level of support. HARX may change the plans, their content and their prices. The REP is informed of any price change before it applies to their subscription; it takes effect in the following period."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2. Compensation cap. Where the plan provides for a cap and the Compensation credited during a calendar month reaches it, the REP can no longer be assigned to new paid slots until the following month, unless they upgrade to a higher plan. Amounts due for services already performed remain fully due and shall be paid."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.3. Free trial. Certain paid plans may include a free trial, the duration of which is indicated on the pricing page, available once per REP. The REP may cancel during the trial at no charge. Otherwise, the subscription begins at the end of the trial."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.4. Payment and renewal. The subscription is payable monthly in advance by automatic direct debit, via the Payment Provider, from the payment method registered by the REP. The REP authorizes this direct debit by subscribing. The subscription renews automatically each month. The REP is informed by e-mail before each renewal."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.5. Change of plan. An upgrade to a higher plan takes effect immediately, pro rata for the current period. A downgrade to a lower plan takes effect at the end of the paid period."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.6. Cancellation. The REP may cancel their subscription at any time from their settings. Cancellation takes effect at the end of the paid period. No refund is due for the period already begun, unless otherwise required by law."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.7. Wallet management fees. Depending on the plan subscribed, Wallet management fees may apply. Their amount is indicated on the pricing page. They are due with each request to transfer the Wallet balance and are displayed to the REP before they confirm it."
+        },
+        {
+          "type": "heading",
+          "text": "Article 5 — Performance of Gigs"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1. Application and selection. The REP browses the Gigs compatible with their profile and plan and applies to them. The Company or the Platform, depending on the rules of the Gig, selects the REPs. Selection concludes the Mission Agreement between the Company and the REP, on the Standard Terms attached to the Company Terms and on the terms of the Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2. Training. Certain Gigs require completing an online training module and passing a test before the first call."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. Slots. The REP books their working slots according to the priority rules of their plan. The REP undertakes to honor the booked slots or to cancel them at least three (3) hours before the slot starts."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.4. Tools. The REP makes calls exclusively from the Cockpit. Calls are recorded and transcribed, and the REP and the person called are informed of this at the start of the call. The REP shall not use a personal telephone or private messaging to contact the Company's prospects."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.5. Quality. Calls are assessed against the criteria of the Gig, in part by artificial intelligence tools. The REP may view the scores of their calls according to their plan and request a review. An insufficient result may lead to the REP no longer being assigned to the Gig. The REP may request that this decision be reviewed by a member of the HARX team."
+        },
+        {
+          "type": "heading",
+          "text": "Article 6 — Regulatory Obligations of the REP"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. The REP complies with the rules applicable to the activity of the Gig, and in particular:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "the calling hours and frequency permitted by law and by the Gig;",
+            "the obligation to contact only the persons appearing on the lists provided by the Company via the Cockpit;",
+            "the announcement, at the start of the call, of their identity, the Company on whose behalf they are calling, the commercial purpose of the call and the fact that it is recorded;",
+            "the immediate termination of the call and the recording of the objection when the person called so requests;",
+            "the prohibition of any misleading or aggressive commercial practice, of any pressure and of any promise not provided for by the script."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. Required qualifications. Where a Gig requires a particular qualification, registration, certification or authorization, the REP holds it and provides proof of it before the first call. Otherwise, the REP cannot be assigned to that Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.3. The REP complies with the law of their country and that of the countries of the persons they contact, as well as the specific rules indicated in the Gig."
+        },
+        {
+          "type": "heading",
+          "text": "Article 7 — Compensation and Payment"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1. The REP's Compensation is set by the Company in each Gig and consists, depending on the Gig, of:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "a Floor Payment for each Qualified Call;",
+            "a validated Transaction Commission ;",
+            "a Performance Bonus based on the objectives of the Gig."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "7.2. The Compensation is credited to the Wallet as soon as it is validated by the Company or according to the validation rules of the Gig, after deduction of the HARX Commission, the rate of which is displayed before the Gig is accepted, in accordance with Articles 6 and 7 of the Terms of Use."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.3. Withdrawal period. Where the Transaction gives the end customer a withdrawal period, the Transaction Commission and Performance Bonus attached to it are validated and credited only upon expiry of that period, if the end customer has not withdrawn. In the event of withdrawal, they are not due. The Floor Payment for the Qualified Call is not affected."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.4. Clawback. A Gig may provide for the full or partial clawback of the Transaction Commission and Performance Bonus where the contract entered into by the end customer is terminated within three (3) or six (6) months following the Transaction. The period and the proportion of the clawback are indicated in the Gig before it is accepted. Amounts to be clawed back are deducted from the REP's Wallet balance and, if that balance is insufficient, from subsequent Compensation. The clawback applies to the amount credited to the REP; the corresponding HARX Commission is returned to the Company in the same proportion."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.5. The REP authorizes HARX to issue, in the REP's name and on their behalf, the invoices for their services addressed to the Company (self-billing). The REP retains the right to dispute an invoice within fifteen (15) days. The REP remains responsible for the tax information that concerns them (VAT, exemption, etc.)."
+        },
+        {
+          "type": "heading",
+          "text": "Article 8 — Tax Obligations and Reporting"
+        },
+        {
+          "type": "paragraph",
+          "text": "8.1. HARX informs the REP, with each payment, of the tax and social security obligations relating to the income received through the Platform and sends them each year a summary of the amounts received."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.2. Where required by applicable law, HARX collects the REP's identification information (name, address, date of birth, tax identification number, VAT number where applicable, bank details) and reports each year to the competent tax authorities the amount of Compensation paid. The REP is informed of this before the report is made. If the required information is not provided after reminders, HARX may suspend payments until it is obtained."
+        },
+        {
+          "type": "heading",
+          "text": "Article 9 — Confidentiality and Data"
+        },
+        {
+          "type": "paragraph",
+          "text": "9.1. The REP keeps strictly confidential the information of the Company and of prospects to which they have access: scripts, offers, pricing, contact lists, personal data."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.2. The REP processes Prospect Data solely to perform the Gig, from the Cockpit, and shall not copy, photograph, export or retain it by any other means."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.3. The REP shall immediately notify HARX of any loss, leak or unauthorized access to data of which they become aware."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.4. These obligations apply for the entire duration of the account and for five (5) years after its closure, and without limit in time for personal data."
+        },
+        {
+          "type": "heading",
+          "text": "Article 10 — Sanctions and Remedies"
+        },
+        {
+          "type": "paragraph",
+          "text": "10.1. In the event of a breach by the REP, HARX may take the measures provided for in Article 12 of the Terms of Use, depending on severity: warning, removal from a Gig, temporary suspension, account closure."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.2. Each measure is notified to the REP with the reasons. The REP may submit their comments and request a review, in accordance with Article 12 of the Terms of Use."
+        }
+      ]
+    },
+    {
+      "title": "Company Terms",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Special terms applicable to client Companies — supplement the Terms of Use"
+        },
+        {
+          "type": "heading",
+          "text": "Article 1 — Purpose"
+        },
+        {
+          "type": "paragraph",
+          "text": "These Company Terms apply to any legal entity or professional registered on the Platform to publish Gigs and have missions performed by REPs (the \"Company\"). They supplement the Terms of Use, whose definitions they adopt. The Company acts for professional purposes."
+        },
+        {
+          "type": "heading",
+          "text": "Article 2 — Company Subscription"
+        },
+        {
+          "type": "paragraph",
+          "text": "2.1. Access to Company features is subject to a subscription, the price and content of which are set out on the Platform's pricing page. Any commercial inquiry may be sent to sales@harx.ai."
+        },
+        {
+          "type": "paragraph",
+          "text": "2.2. The subscription is payable in advance by bank card or direct debit via the Payment Provider and renews automatically on its due date, unless cancelled from the account settings before that date."
+        },
+        {
+          "type": "paragraph",
+          "text": "2.3. In the event of non-payment on the due date, HARX may, after a reminder that has remained without effect for eight (8) days, suspend the publication of new Gigs. Any unpaid sum bears interest and gives rise to the indemnities provided for by applicable law."
+        },
+        {
+          "type": "heading",
+          "text": "Article 3 — Publication of Gigs"
+        },
+        {
+          "type": "paragraph",
+          "text": "3.1. The Company creates its Gigs, where applicable with the assistance of the Platform's artificial intelligence tools. The Company reviews and approves the final content of each Gig, for which it is solely responsible."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.2. Each Gig specifies at a minimum:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "the activity and the channel (outbound or inbound call, e-mail, chat, social media);",
+            "the target audience (businesses or consumers) and the origin of the contacts;",
+            "the script and the training materials;",
+            "the criteria for a Qualified Call and a Transaction, and the terms of their validation;",
+            "the Floor Payment, the Transaction Commission and the Performance Bonus;",
+            "the slots, the duration of the Gig and the number of REPs sought;",
+            "the required qualifications, in particular regulatory ones."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "3.3. The Compensation offered to REPs is freely set by the Company. It must enable the independent REP to cover their costs and may not be lower than any minimums provided for by the law of the REP's country."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4. HARX may refuse or withdraw a Gig that is contrary to the Terms or to the law, stating the reasons for its decision."
+        },
+        {
+          "type": "heading",
+          "text": "Article 4 — Regulatory Responsibility of the Company"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1. The Company is responsible for the compliance of each Gig with the regulations applicable to its activity and to the audience contacted. In particular, it warrants:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "that the persons contacted have validly consented to being solicited where the law so requires, or that they fall within a statutory exception (for example, an existing contract where the call concerns its performance); the Company retains proof of such consent and provides it to HARX upon request;",
+            "that its files have been lawfully collected and have been checked against the applicable opt-out lists;",
+            "that the scripts and offers are fair, accurate and compliant with consumer protection rules;",
+            "for a Gig involving a regulated activity: that it holds the necessary authorizations, registrations or mandates, that it states in the Gig the qualifications required of REPs and the mandatory information to be delivered, and that it assumes responsibility for it toward its clients and authorities."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2. HARX may request any proof of compliance and suspend a Gig in the absence of a satisfactory response."
+        },
+        {
+          "type": "heading",
+          "text": "Article 5 — Relationship with REPs"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1. The selection of a REP for a Gig concludes a Mission Agreement between the Company and the REP, governed by the standard terms set out in the annex and by the terms of the Gig."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2. The Company acknowledges that REPs are independent workers. The Company refrains from any conduct liable to create a relationship of subordination: imposing hours outside the slots freely booked, requiring exclusivity, giving orders on the organization of work, exercising disciplinary authority. The Company is solely responsible for the characterization of the relationship with the REPs it chooses to engage and for the consequences of any reclassification."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. Where required by law, the Company carries out the checks relating to the regularity of the REP's social security situation. HARX makes available to it the supporting documents that the REP has uploaded to the Platform."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.4. The Company shall not hire as an employee a REP met on the Platform during the period provided for in Article 8 of the Terms of Use without paying the conversion fee."
+        },
+        {
+          "type": "heading",
+          "text": "Article 6 — Funding and Validation"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. Before the Gig starts, the Company deposits the Gig budget into the Escrow Account, in accordance with Article 7 of the Terms of Use. The Company may top it up at any time. The Gig is interrupted when the balance no longer covers the Compensation for the following slots."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. The Company validates or disputes the Qualified Calls and Transactions reported within the period set by the Gig. Validation triggers the crediting of the Compensation to the REP's Wallet. Any dispute must state its reasons, concern specific facts and be accompanied by the relevant evidence (recording, non-compliant result, cancellation by the end customer within the statutory withdrawal period). In the absence of a dispute within the period, the Compensation is deemed validated."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.3. Where the Transaction gives the end customer a withdrawal period, the Transaction Commission and Performance Bonus attached to it are validated only upon expiry of that period without withdrawal. A Transaction that is withdrawn does not give rise to these components. The Floor Payment for the Qualified Call remains due."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.4. The Company may provide in the Gig for the full or partial clawback of the Transaction Commission and Performance Bonus if the contract entered into by the end customer is terminated within three (3) or six (6) months following the Transaction. It sets the period and the proportion in the Gig. It reports the termination on the Platform within that period, with the relevant supporting documents; the amounts clawed back, including the corresponding HARX Commission, are returned to it or allocated to another of its Gigs."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.5. Unresolved disputes between the Company and the REP may be submitted to mediation by HARX. HARX rules on the basis of the elements recorded on the Platform. Its decision is binding on the Escrow Account, without prejudice to the parties' right to bring the matter before a court."
+        },
+        {
+          "type": "heading",
+          "text": "Article 7 — Personal Data"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1. The Company is the controller of the Prospect Data. HARX and the REPs act on its behalf."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.2. The Data Processing Agreement forms part of the Company Terms and applies from the first import of Prospect Data."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.3. The Company informs the persons contacted of the recording of calls and of their rights. The Company may use for this purpose the information message played by the Cockpit at the start of the call."
+        },
+        {
+          "type": "heading",
+          "text": "Article 8 — Confidentiality"
+        },
+        {
+          "type": "paragraph",
+          "text": "Each party keeps confidential the non-public information of the other party of which it becomes aware: commercial, technical and financial data, scripts, results. This obligation applies for the duration of the account and for five (5) years after its closure."
+        },
+        {
+          "type": "heading",
+          "text": "Article 9 — Commercial References"
+        },
+        {
+          "type": "paragraph",
+          "text": "Unless the Company objects in writing, HARX may cite its name and logo as a client reference, without disclosing any confidential information."
+        },
+        {
+          "type": "subheading",
+          "text": "Standard Terms of the Mission Agreement"
+        },
+        {
+          "type": "paragraph",
+          "text": "These terms apply to the Mission Agreement concluded between a Company and a REP via the Platform, unless the Gig contains specific terms more favorable to the REP."
+        },
+        {
+          "type": "heading",
+          "text": "1. Parties and Purpose"
+        },
+        {
+          "type": "paragraph",
+          "text": "The Mission Agreement is concluded between the Company and the REP for the performance of the Gig described on the Platform. HARX is not a party to it. It takes effect upon the REP's selection and ends upon the closure of the Gig or upon termination by either party."
+        },
+        {
+          "type": "heading",
+          "text": "2. Independence"
+        },
+        {
+          "type": "paragraph",
+          "text": "The REP performs the service entirely independently, with their own resources, in the slots they have booked. The REP is not subject to any exclusivity. The Company sets the performance, quality and compliance requirements for the service; it gives no instructions on the organization of the REP's work."
+        },
+        {
+          "type": "heading",
+          "text": "3. Price"
+        },
+        {
+          "type": "paragraph",
+          "text": "The price of the service corresponds to the Compensation defined in the Gig. It is paid via the Escrow Account, in accordance with the Terms of Use. The REP accepts that the HARX Commission will be deducted from this price."
+        },
+        {
+          "type": "heading",
+          "text": "4. Obligations of the REP"
+        },
+        {
+          "type": "paragraph",
+          "text": "The REP performs the service with care, in accordance with the script, the quality criteria and the regulatory rules of the Gig. The REP reports to the Company any difficulty encountered."
+        },
+        {
+          "type": "heading",
+          "text": "5. Obligations of the Company"
+        },
+        {
+          "type": "paragraph",
+          "text": "The Company provides the REP with the necessary information, documents and training, lawful contact files and a compliant regulatory framework. The Company approves or disputes the service within the periods provided."
+        },
+        {
+          "type": "heading",
+          "text": "6. Personal Data"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. The REP acts as processor for the Company with respect to the Prospect Data, within the meaning of Article 28 of Regulation (EU) 2016/679 (GDPR). The REP undertakes to:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "process the data only on the Company's documented instructions, as embodied in the Gig and the Cockpit;",
+            "guarantee their confidentiality;",
+            "process them only from the Cockpit, without copying or retaining them;",
+            "assist the Company in responding to requests to exercise data subject rights and inform it without delay of any data breach;",
+            "retain no data at the end of the Gig;",
+            "allow the Company's verifications, carried out through HARX."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. The Company authorizes HARX to act as processor for the provision of the Platform, in accordance with the Data Processing Agreement."
+        },
+        {
+          "type": "heading",
+          "text": "7. Intellectual Property"
+        },
+        {
+          "type": "paragraph",
+          "text": "The results of the service (appointments, sales, information gathered) belong to the Company upon payment. The REP retains no rights in the Company's scripts and documents."
+        },
+        {
+          "type": "heading",
+          "text": "8. Termination"
+        },
+        {
+          "type": "paragraph",
+          "text": "Either party may terminate the Mission Agreement at any time via the Platform. Services performed before termination remain due. The REP completes or cancels their booked slots in accordance with the rules of the Gig."
+        },
+        {
+          "type": "heading",
+          "text": "9. Liability"
+        },
+        {
+          "type": "paragraph",
+          "text": "Each party is liable for its own breaches. The REP's liability toward the Company is limited to the amount of the Compensation received for the Gig concerned, except in the case of intentional misconduct or gross negligence."
+        },
+        {
+          "type": "heading",
+          "text": "10. Governing Law"
+        },
+        {
+          "type": "paragraph",
+          "text": "The Mission Agreement is governed by the law designated in Article 17 of the Terms of Use, subject to the mandatory provisions of the law of the REP's country."
+        }
+      ]
+    },
+    {
+      "title": "Privacy Policy",
+      "blocks": [
+        {
+          "type": "meta",
+          "text": "Version 1.4 — effective as of October 1, 2026"
+        },
+        {
+          "type": "heading",
+          "text": "1. Who is HARX?"
+        },
+        {
+          "type": "paragraph",
+          "text": "This policy applies in all countries where the Platform is accessible. It follows the principles common to the main data protection laws, including Regulation (EU) 2016/679 (\"GDPR\") where it applies. Where the law of your country grants you additional rights, those rights apply."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.1. This policy explains how HARX Technologies Inc., a Delaware corporation, 16192 Coastal Highway, Lewes, Delaware 19958, United States (\"HARX\"), processes the personal data of individuals who use the HARX platform (the \"Platform\") or come into contact with it."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.2. Controller. HARX is the controller of the data of REPs, representatives of client Companies, candidates and website visitors."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.3. Processor. For the data of customers and prospects that Companies entrust to HARX (the \"Prospect Data\"), the Company is the controller and HARX acts on its behalf. If you were contacted in connection with a Gig, please consult the privacy policy of the Company named during the call; you may also write to HARX, which will forward your request."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.4. Contact. For any question relating to your personal data, write to contact@harx.ai. Where the law of a country requires HARX to appoint a local representative, its identity is indicated on the Platform."
+        },
+        {
+          "type": "heading",
+          "text": "2. Data processed, purposes and legal bases"
+        },
+        {
+          "type": "paragraph",
+          "text": "Purpose Data Legal basis Retention period Create and manage Identity, contact details, login Performance of the Duration of the account, then 3 the account credentials, language, time contract years after last activity zone Assess the REP's CV, experience, introduction Performance of the Duration of the account; test profile and grant videos, voice recordings, test contract; HARX's videos and recordings are access to Gigs results, CEFR level, skills, legitimate interest in deleted twelve (12) months after scores offering qualified REPs to their evaluation Companies Verify identity by Facial image extracted from Explicit consent Biometric template deleted as biometric the videos, identity document soon as the verification is comparison complete; result retained for the duration of the account Offer suitable Gigs Profile, availability, scores, Performance of the Duration of the account (matching) history contract Provide the Cockpit Call recordings and Performance of the 6 months for recordings, unless and perform Gigs transcripts, data entered, call contract; on behalf of the a different period is required by logs Company with respect to law or set by the Company for Prospect Data its activity Assess call quality Transcripts, quality scores, Legitimate interest of 1 year for evaluation reports script compliance HARX and the Company in monitoring quality and compliance Train REPs Progress, test results Performance of the Duration of the account contract Purpose Data Legal basis Retention period Pay REPs and Bank details, invoices, Performance of the Applicable accounting and tax invoice transactions, subscriptions contract; legal obligation limitation period, up to 10 years Mandatory tax Name, address, date of birth, Legal obligation Period required by tax law (up to reporting tax number, VAT number, 10 years) IBAN, amounts paid Prevent fraud and IP addresses, connection Legitimate interest; legal 12 months for logs; longer in the secure the Platform logs, device, fraud signals obligation event of proceedings Handle reports, Exchanges, documents Legitimate interest; legal Duration of the proceedings, complaints and provided, decisions obligation then applicable limitation period disputes Send information Email, telephone, preferences Legitimate interest 3 years after last contact about HARX's (customers); consent services (prospects) Measure website Cookies, technical identifiers Consent Period stated in the list of audience cookies"
+        },
+        {
+          "type": "heading",
+          "text": "3. Automated decisions and artificial intelligence"
+        },
+        {
+          "type": "paragraph",
+          "text": "3.1. The Platform uses artificial intelligence systems to analyze CVs, assess language level, analyze videos, suggest Gigs, and transcribe and evaluate calls."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.2. Logic used. Scores are calculated on the basis of predefined criteria: clarity and command of the language, relevance of experience, adherence to the script, quality of argumentation, regulatory compliance, and call outcome. Several models analyze the same elements in parallel to reduce errors."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.3. Automated decisions and human review. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a call, may be taken automatically on the basis of these scores, where this is necessary for the performance of the contract. You may request the intervention of a member of the HARX team, express your point of view and contest the decision at contact@harx.ai, or at repssupport@harx.ai if you are a REP."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4. What HARX does not do. HARX does not infer REPs' emotions from their voice, image or any biometric data. Any tone analysis relates solely to the written transcript of the exchange. HARX does not process REPs' private conversations."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.5. Model training. HARX does not use recordings and Prospect Data to train artificial intelligence models, except with the Company's written authorization and after anonymization. HARX's artificial intelligence providers are required not to use your data to train their own models."
+        },
+        {
+          "type": "heading",
+          "text": "4. Call recording"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1. Calls made from the Cockpit are recorded and transcribed. The REP and the person called are informed of this at the start of the call."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2. Recordings are used to perform the Gig, to verify Qualified Calls and Transactions, to monitor quality and compliance, to train REPs and to handle disputes."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.3. Access to recordings is limited to the Company concerned, the REP who made the call according to their subscription plan, and authorized members of the HARX team."
+        },
+        {
+          "type": "heading",
+          "text": "5. Recipients"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1. Your data is accessible to authorized HARX teams and, as applicable:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "to the Companies for which the REP applies or works (profile, scores, recordings of their calls for those Companies' Gigs);",
+            "to REPs, for the Company information necessary for Gigs;",
+            "to HARX's technical processors;",
+            "to administrative or judicial authorities where required by law."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2. The list of HARX's processors is set out in Annex 1. It is updated regularly."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. HARX does not sell your personal data."
+        },
+        {
+          "type": "heading",
+          "text": "6. Transfers outside your country"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. HARX is established in the United States and some of its processors process data outside your country."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. These transfers are governed by:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "the recipient's participation in the EU–U.S. Data Privacy Framework, where it has self-certified;",
+            "failing that, the Standard Contractual Clauses adopted by the European Commission (Decision (EU) 2021/914), supplemented where necessary by additional measures;",
+            "for data collected in a country whose law specifically governs transfers, the authorizations or safeguards required by that law."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "6.3. You may obtain a copy of the applicable safeguards by writing to contact@harx.ai."
+        },
+        {
+          "type": "heading",
+          "text": "7. Security"
+        },
+        {
+          "type": "paragraph",
+          "text": "HARX protects your data with appropriate technical and organizational measures: encryption of data in transit and at rest, need-to-know access control, strong authentication for administrator accounts, access logging, backups, and team awareness training. In the event of a personal data breach that presents a risk to you, HARX will inform you under the conditions provided by law."
+        },
+        {
+          "type": "heading",
+          "text": "8. Your rights"
+        },
+        {
+          "type": "paragraph",
+          "text": "8.1. You have the following rights with respect to your data:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "access and copy;",
+            "rectification;",
+            "erasure;",
+            "restriction of processing;",
+            "objection, in particular to processing based on HARX's legitimate interest and, without needing to give any reason, to direct marketing;",
+            "portability of the data you have provided to HARX;",
+            "withdrawal of your consent at any time, without affecting prior processing;",
+            "human intervention and the right to contest an automated decision;",
+            "any other right provided by the law of your country."
+          ]
+        },
+        {
+          "type": "paragraph",
+          "text": "8.2. To exercise your rights, write to contact@harx.ai or use your account settings. HARX may ask you to prove your identity in case of doubt. HARX responds within one month, extendable by two months for complex requests."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.3. You may lodge a complaint with the data protection authority of your country of residence or work."
+        },
+        {
+          "type": "heading",
+          "text": "9. Cookies"
+        },
+        {
+          "type": "paragraph",
+          "text": "9.1. The Platform uses cookies necessary for its operation (session, security, language preferences), which do not require consent."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.2. Non-exempt audience measurement cookies and advertising cookies are set only with your consent, collected through the banner displayed on your first visit. You may change your choices at any time using the \"Manage cookies\" link at the bottom of the page. Your choice and the cookies are retained for a limited period, stated in the list of cookies."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.3. The list of cookies used can be consulted from the \"Manage cookies\" link."
+        },
+        {
+          "type": "heading",
+          "text": "10. Updates"
+        },
+        {
+          "type": "paragraph",
+          "text": "HARX may modify this policy. In the event of a material change, HARX will inform you by email or on the Platform before it takes effect."
+        },
+        {
+          "type": "subheading",
+          "text": "Annex 1 — Sub-processors"
+        },
+        {
+          "type": "paragraph",
+          "text": "List updated regularly. Last updated: October 1, 2026."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Provider",
+            "Service",
+            "Country of processing"
+          ],
+          "rows": [
+            [
+              "Twilio Inc.",
+              "Telephony, call recording",
+              "United States; European Union where possible"
+            ],
+            [
+              "Lynk",
+              "Telephony",
+              "United States; European Union where possible"
+            ],
+            [
+              "Google LLC (Vertex AI)",
+              "Artificial intelligence analysis",
+              "United States; European Union where possible"
+            ],
+            [
+              "OpenAI, L.L.C.",
+              "Artificial intelligence analysis",
+              "United States; European Union where possible"
+            ],
+            [
+              "Anthropic, PBC",
+              "Artificial intelligence analysis",
+              "United States; European Union where possible"
+            ],
+            [
+              "Stripe, PayPal or an equivalent payment provider",
+              "Payments, subscriptions, escrow",
+              "United States; European Union where possible"
+            ],
+            [
+              "Zoho Corporation",
+              "Customer relationship management",
+              "United States; European Union where possible"
+            ],
+            [
+              "Railway Corporation",
+              "Hosting",
+              "United States; European Union where possible"
+            ],
+            [
+              "Netlify, Inc.",
+              "Hosting",
+              "United States; European Union where possible"
+            ],
+            [
+              "PayPal",
+              "Transfers to REPs",
+              "United States; European Union where possible"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Data Processing Agreement",
+      "blocks": [
+        {
+          "type": "paragraph",
+          "text": "Entered into pursuant to Article 28 of Regulation (EU) 2016/679 — forms part of the Company Terms"
+        },
+        {
+          "type": "heading",
+          "text": "Article 1 — Parties and subject matter"
+        },
+        {
+          "type": "paragraph",
+          "text": "1.1. This agreement is entered into between the Company, as controller, and HARX Technologies Inc. (\"HARX\"), as processor. It applies to all personal data that HARX processes on behalf of the Company in connection with the use of the Platform (the \"Prospect Data\")."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.2. It is accepted at the same time as the Company Terms and prevails over them in all matters concerning the protection of personal data."
+        },
+        {
+          "type": "paragraph",
+          "text": "1.3. The terms \"personal data,\" \"processing,\" \"controller,\" \"processor\" and \"personal data breach\" have the meaning given to them in Regulation (EU) 2016/679 (\"GDPR\"). Where the GDPR does not apply, these terms shall be understood within the meaning of the applicable data protection law, and this agreement applies to the equivalent obligations that it provides for."
+        },
+        {
+          "type": "heading",
+          "text": "Article 2 — Description of the processing"
+        },
+        {
+          "type": "paragraph",
+          "text": "The nature, purpose, duration, categories of data and categories of data subjects are described in Annex A."
+        },
+        {
+          "type": "heading",
+          "text": "Article 3 — HARX's obligations"
+        },
+        {
+          "type": "paragraph",
+          "text": "HARX undertakes to:"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "process the Prospect Data only on the documented instructions of the Company, including with regard to transfers outside the European Union; the Terms, the configuration of Gigs and the Company's actions on the Platform constitute such instructions; HARX shall immediately inform the Company if, in its opinion, an instruction infringes the law;",
+            "ensure that persons authorized to process the data within HARX are bound by a duty of confidentiality;",
+            "implement the security measures described in Annex B;",
+            "comply with the conditions of Article 4 for engaging another processor;",
+            "assist the Company, insofar as possible, in responding to requests to exercise data subjects' rights, in particular by enabling it to extract, rectify and delete data from the Platform; HARX shall forward to the Company any request it receives directly;",
+            "assist the Company in ensuring the security of the data, in notifying breaches and in carrying out data protection impact assessments (DPIAs) and prior consultations, taking into account the information available to HARX;",
+            "at the end of the services, delete or return the Prospect Data at the Company's choice, then delete existing copies, unless a legal retention obligation applies;",
+            "make available to the Company the information necessary to demonstrate compliance with its obligations and allow audits to be carried out under the conditions of Article 7."
+          ]
+        },
+        {
+          "type": "heading",
+          "text": "Article 4 — Sub-processors"
+        },
+        {
+          "type": "paragraph",
+          "text": "4.1. The Company grants HARX general authorization to engage the sub-processors listed in Annex C."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.2. HARX shall inform the Company of any addition or replacement of a sub-processor at least thirty (30) days in advance. The Company may object on reasonable grounds relating to data protection. Failing a resolution, the Company may terminate the affected services without penalty."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.3. HARX shall impose on each sub-processor, by contract, data protection obligations equivalent to those of this agreement. HARX remains liable to the Company for their performance."
+        },
+        {
+          "type": "heading",
+          "text": "Article 5 — REPs"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.1. REPs are not sub-processors of HARX. They are engaged directly by the Company under the Mission Agreement, which contains the undertakings required by Article 28 of the GDPR."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2. HARX contributes to compliance with these undertakings through the technical means of the Platform: access to Prospect Data limited to the Cockpit and the Gig concerned, no export function for REPs, access logging, and immediate removal of access at the end of the Gig or in the event of a breach."
+        },
+        {
+          "type": "heading",
+          "text": "Article 6 — Personal data breach"
+        },
+        {
+          "type": "paragraph",
+          "text": "HARX shall notify the Company of any personal data breach affecting the Prospect Data without undue delay and no later than forty-eight (48) hours after becoming aware of it. The notification shall describe the nature of the breach, the categories and approximate number of data subjects and records concerned, the likely consequences and the measures taken or proposed. HARX shall supplement this information as it becomes available."
+        },
+        {
+          "type": "heading",
+          "text": "Article 7 — Audits"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1. HARX shall provide the Company, upon request and no more than once a year, with an up-to-date description of its security measures and any available certification or audit report."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.2. If these materials are not sufficient, the Company may have a document-based or on-site audit carried out by an independent auditor bound by confidentiality, with thirty (30) days' notice, during business hours and without disrupting HARX's activities. The costs of the audit shall be borne by the Company, unless a serious breach is found."
+        },
+        {
+          "type": "heading",
+          "text": "Article 8 — International transfers"
+        },
+        {
+          "type": "paragraph",
+          "text": "8.1. The Company is informed that HARX is established in the United States and that certain sub-processors process data outside the European Union."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.2. Where the transfer is not covered by an adequacy decision, including the EU–U.S. Data Privacy Framework for recipients that have self-certified under it, the parties shall enter into the Standard Contractual Clauses of the European Commission (Decision (EU) 2021/914), Module 2 (controller to processor), which are deemed incorporated into this agreement. HARX shall enter into Module 3 with its relevant sub- processors."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.3. HARX shall make available to the Company the transfer impact assessment it has carried out."
+        },
+        {
+          "type": "heading",
+          "text": "Article 9 — Use of data by HARX"
+        },
+        {
+          "type": "paragraph",
+          "text": "9.1. HARX does not use the Prospect Data for its own purposes."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.2. By way of derogation, HARX may produce aggregated and anonymized statistics on use of the Platform and call performance, which do not make it possible to identify either a data subject or the Company."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.3. HARX uses recordings and transcripts to improve its artificial intelligence models only with the Company's prior written consent, and on anonymized data."
+        },
+        {
+          "type": "heading",
+          "text": "Article 10 — Term"
+        },
+        {
+          "type": "paragraph",
+          "text": "This agreement applies for as long as HARX processes Prospect Data on behalf of the Company."
+        },
+        {
+          "type": "subheading",
+          "text": "Annex A — Description of the processing"
+        },
+        {
+          "type": "paragraph",
+          "text": "Item Description Nature of the processing Hosting, making data available to REPs in the Cockpit, placing and receiving calls, recording, transcription, artificial intelligence analysis of quality and compliance, calculation of results, reporting back to the Company Purpose Performance of the Gigs ordered by the Company, whatever their activity (for example sales, appointment setting, amicable debt collection, welcome calls, support, surveys) Data subjects The Company's customers, prospects and debtors; where applicable, its employees who use the Platform Categories of data Identity, contact details, data relating to the contract or the debt, information gathered during the call, voice recordings, transcripts, call results, evidence of consent Sensitive data None, unless the Gig requires it and the Company specifies so in writing (for example, health data); enhanced measures are then defined by mutual agreement Retention period Recordings: 6 months, unless a different period is required by law or set by the Company; evaluation reports: 1 year; other Prospect Data: according to the Company's instructions and at the latest 3 years after last contact"
+        },
+        {
+          "type": "subheading",
+          "text": "Annex B — Security measures"
+        },
+        {
+          "type": "bullets",
+          "items": [
+            "Encryption of data in transit (TLS) and at rest.",
+            "Access to data limited on a need-to-know basis; named accounts; strong authentication for administrator accounts.",
+            "REPs' access to Prospect Data limited to the Cockpit, the Gig and the current time slots; no export function.",
+            "Logging of access and actions, retained for twelve (12) months.",
+            "Logical separation of each Company's data.",
+            "Regular backups and a tested restoration procedure.",
+            "Management of security patches and vulnerabilities.",
+            "Incident and data breach management procedure.",
+            "Confidentiality undertaking and awareness training for HARX's teams."
+          ]
+        },
+        {
+          "type": "subheading",
+          "text": "Annex C — Sub-processors"
+        },
+        {
+          "type": "paragraph",
+          "text": "The list of sub-processors appears in Annex 1 to the Privacy Policy, which is updated regularly and can be consulted on the Platform."
+        }
+      ]
+    }
+  ]
+}
