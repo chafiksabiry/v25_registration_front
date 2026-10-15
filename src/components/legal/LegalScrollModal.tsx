@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getLegalDocument, type LegalDocId } from '../../content/legal';
+import { Logo } from '../LandingPage/Logo';
 
 export type SignupLegalDocId = Extract<LegalDocId, 'terms' | 'privacy'>;
 
@@ -89,6 +90,7 @@ export function LegalScrollModal({
       >
         <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4">
           <div className="min-w-0">
+            <Logo className="mb-3 h-8 w-auto" />
             <p className="text-[11px] uppercase tracking-wide text-slate-400">
               {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
             </p>
