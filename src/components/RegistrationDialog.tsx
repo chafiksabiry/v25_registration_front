@@ -253,7 +253,7 @@ export default function RegistrationDialog({
           if (!legalDocsRead) {
             newErrors.terms = t(
               'register.errLegalScroll',
-              'Open both legal documents and scroll each to the bottom.'
+              'You must read the Terms of Service and the Privacy Policy.'
             );
           }
           if (!formData.termsAccepted) {
@@ -613,7 +613,7 @@ export default function RegistrationDialog({
                           <p className="text-xs text-slate-400">
                             {t(
                               'register.legalIntro',
-                              'Open both documents and scroll each to the bottom before you accept.'
+                              'You must read the Terms of Service and the Privacy Policy before you accept.'
                             )}
                           </p>
                           {legalDocsRead ? (
