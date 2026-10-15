@@ -15,10 +15,10 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { useTranslation } from 'react-i18next';
 import {
-  allLegalPacksRead,
-  RepLegalPackReview,
-  type RepLegalPackId,
-} from './legal/RepLegalPackReview';
+  bothSignupDocsRead,
+  LegalScrollModal,
+  type SignupLegalDocId,
+} from './legal/LegalScrollModal';
 
 type Step = RegisterFormStep | 'success';
 
@@ -66,11 +66,10 @@ export default function RegistrationDialog({
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
   const [smsNotice, setSmsNotice] = useState<string | null>(null);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
-  const [readLegalPacks, setReadLegalPacks] = useState<RepLegalPackId[]>([]);
+  const [readLegalDocs, setReadLegalDocs] = useState<SignupLegalDocId[]>([]);
+  const [openLegalDoc, setOpenLegalDoc] = useState<SignupLegalDocId | null>(null);
   const { t } = useTranslation();
-  const isRepSignup = defaultUserType === 'rep' || registerPath === '/auth/register-rep';
-  // Both FR + EN legal PDFs must be opened and scrolled to the end.
-  const legalPackRead = allLegalPacksRead(readLegalPacks);
+  const legalDocsRead = bothSignupDocsRead(readLegalDocs);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -83,9 +82,9 @@ export default function RegistrationDialog({
   }, [step]);
 
   useEffect(() => {
-    if (!isRepSignup || legalPackRead || !formData.termsAccepted) return;
+    if (legalDocsRead || !formData.termsAccepted) return;
     setFormData((current) => ({ ...current, termsAccepted: false }));
-  }, [isRepSignup, legalPackRead, formData.termsAccepted]);
+  }, [legalDocsRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -236,7 +235,7 @@ export default function RegistrationDialog({
           break;
 
         case 'terms':
-          if (isRepSignup && !legalPackRead) {
+          if (!legalDocsRead) {
             newErrors.terms = t(
               'register.errLegalScroll',
               'Open both legal documents and scroll each to the bottom.'
@@ -563,36 +562,71 @@ export default function RegistrationDialog({
 
                 {step === 'terms' && (
                   <div className="space-y-6">
-                    {isRepSignup ? (
-                      <RepLegalPackReview
-                        hasError={Boolean(errors.terms) && !legalPackRead}
-                        readIds={readLegalPacks}
-                        onRead={(id) => {
-                          setReadLegalPacks((current) =>
-                            current.includes(id) ? current : [...current, id]
-                          );
-                          setErrors((current) => {
-                            if (!current.terms) return current;
-                            const next = { ...current };
-                            delete next.terms;
-                            return next;
-                          });
-                        }}
-                      />
-                    ) : (
-                      <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
-                        <div className="flex items-start space-x-3">
-                          <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
+                    <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
+                      <div className="flex items-start space-x-3">
+                        <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
+                        <div className="space-y-3">
                           <p className="text-sm text-slate-300 leading-relaxed">
                             {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                            <a href="/terms" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.termsLink', 'Terms of Service')}</a>{' '}
+                            <button
+                              type="button"
+                              onClick={() => setOpenLegalDoc('terms')}
+                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
+                            >
+                              {t('register.termsLink', 'Terms of Service')}
+                            </button>
+                            {readLegalDocs.includes('terms') ? (
+                              <span className="ml-1 text-xs font-semibold text-emerald-300">
+                                ({t('register.legalRead', 'Read')})
+                              </span>
+                            ) : null}{' '}
                             {t('register.termsAnd', 'and acknowledge our')}{' '}
-                            <a href="/privacy" target="_blank" rel="noopener noreferrer" className="text-harx-400 font-medium hover:text-harx-300 transition-colors">{t('register.privacyLink', 'Privacy Policy')}</a>.
-                            {t('register.termsSecurity', 'We prioritize your data security.')}
+                            <button
+                              type="button"
+                              onClick={() => setOpenLegalDoc('privacy')}
+                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
+                            >
+                              {t('register.privacyLink', 'Privacy Policy')}
+                            </button>
+                            {readLegalDocs.includes('privacy') ? (
+                              <span className="ml-1 text-xs font-semibold text-emerald-300">
+                                ({t('register.legalRead', 'Read')})
+                              </span>
+                            ) : null}
+                            . {t('register.termsSecurity', 'We prioritize your data security.')}
                           </p>
+                          <p className="text-xs text-slate-400">
+                            {t(
+                              'register.legalIntro',
+                              'Open both documents and scroll each to the bottom before you accept.'
+                            )}
+                          </p>
+                          {legalDocsRead ? (
+                            <p className="text-xs font-medium text-emerald-300">
+                              {t(
+                                'register.legalBothReached',
+                                'Both documents have been read. You can accept the terms.'
+                              )}
+                            </p>
+                          ) : null}
                         </div>
                       </div>
-                    )}
+                    </div>
+                    <LegalScrollModal
+                      docId={openLegalDoc}
+                      onClose={() => setOpenLegalDoc(null)}
+                      onReachedEnd={(id) => {
+                        setReadLegalDocs((current) =>
+                          current.includes(id) ? current : [...current, id]
+                        );
+                        setErrors((current) => {
+                          if (!current.terms) return current;
+                          const next = { ...current };
+                          delete next.terms;
+                          return next;
+                        });
+                      }}
+                    />
 
                     <label
                       className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors ${
@@ -600,7 +634,7 @@ export default function RegistrationDialog({
                           ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
                           : 'border-white/[0.08]'
                       } ${
-                        isRepSignup && !legalPackRead
+                        !legalDocsRead
                           ? 'cursor-not-allowed opacity-60'
                           : 'cursor-pointer hover:bg-slate-800/40'
                       }`}
@@ -608,7 +642,7 @@ export default function RegistrationDialog({
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
-                        disabled={isRepSignup && !legalPackRead}
+                        disabled={!legalDocsRead}
                         onChange={(e) => {
                           const checked = e.target.checked;
                           setFormData({ ...formData, termsAccepted: checked });
