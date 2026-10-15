@@ -2,8 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getLegalDocument, type LegalDocId } from '../../content/legal';
+import type { LegalDocId } from '../../content/legal';
+import { signupLegalPack, type SignupAudience } from '../../content/legal/pack';
 import logoPink from '../LandingPage/assets/logo-pink.png';
+import { LegalPackView } from './LegalPackView';
 
 export type SignupLegalDocId = Extract<LegalDocId, 'terms' | 'privacy'>;
 
@@ -17,10 +19,12 @@ export function bothSignupDocsRead(readIds: SignupLegalDocId[]): boolean {
  */
 export function LegalScrollModal({
   docId,
+  audience,
   onClose,
   onReachedEnd,
 }: {
   docId: SignupLegalDocId | null;
+  audience: SignupAudience;
   onClose: () => void;
   onReachedEnd: (id: SignupLegalDocId) => void;
 }) {
@@ -29,7 +33,7 @@ export function LegalScrollModal({
   const reachedRef = useRef(false);
   const [reached, setReached] = useState(false);
 
-  const doc = docId ? getLegalDocument(docId, i18n.language) : null;
+  const pack = docId ? signupLegalPack(i18n.language, docId, audience) : null;
 
   const markReached = () => {
     if (!docId || reachedRef.current) return;
@@ -62,7 +66,7 @@ export function LegalScrollModal({
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', onKey);
     };
-  }, [docId, i18n.language]);
+  }, [docId, audience, i18n.language]);
 
   const onScroll = () => {
     const el = scrollerRef.current;
@@ -70,7 +74,7 @@ export function LegalScrollModal({
     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 48) markReached();
   };
 
-  if (!docId || !doc) return null;
+  if (!docId || !pack) return null;
 
   return createPortal(
     <div
@@ -111,32 +115,9 @@ export function LegalScrollModal({
             }}
             className="block h-auto w-full"
           />
-          <div className="px-5 py-6 sm:px-7">
-            <h2 id="legal-scroll-title" className="text-2xl font-semibold leading-tight text-[#0f172a]">
-              {doc.title}
-            </h2>
-            <p className="mt-2 text-sm text-[#64748b]">
-              {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}
-            </p>
-            <p className="mb-6 mt-6 text-[15px] leading-relaxed text-[#64748b]">{doc.intro}</p>
-            <div className="space-y-4">
-              {doc.sections.map((section) => (
-                <section key={section.title} className="rounded-2xl border border-[#ffe4e6] bg-[#fff7f8] px-5 py-4">
-                  <h3 className="mb-2 text-base font-semibold text-[#0f172a]">{section.title}</h3>
-                  <div className="space-y-3">
-                    {section.paragraphs.map((paragraph, index) => (
-                      <p key={index} className="text-sm leading-relaxed text-[#475569]">
-                        {paragraph}
-                      </p>
-                    ))}
-                  </div>
-                </section>
-              ))}
-            </div>
-            <p className="mt-6 text-xs leading-relaxed text-[#9f1239]">
-              {doc.contactNote}
-            </p>
-            <div className="mt-6 border-t border-[#ffe4e6] pt-4 text-sm">
+          <LegalPackView pack={pack} />
+          <div className="px-5 pb-6 sm:px-8">
+            <div className="border-t border-[#e5e7eb] pt-4 text-sm">
               {reached ? (
                 <p className="font-semibold text-[#047857]">
                   {t('register.legalReached', 'You reached the end of this document.')}
