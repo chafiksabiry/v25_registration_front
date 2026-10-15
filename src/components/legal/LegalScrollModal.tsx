@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { getLegalDocument, type LegalDocId } from '../../content/legal';
-import { Logo } from '../LandingPage/Logo';
+import logoPink from '../LandingPage/assets/logo-pink.png';
 
 export type SignupLegalDocId = Extract<LegalDocId, 'terms' | 'privacy'>;
 
@@ -88,27 +88,27 @@ export function LegalScrollModal({
         aria-labelledby="legal-scroll-title"
         className="relative flex max-h-[min(860px,90vh)] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-white/10 bg-slate-900 shadow-2xl"
       >
-        <div className="flex items-start justify-between gap-4 border-b border-white/10 px-5 py-4">
-          <div className="min-w-0">
-            <Logo className="mb-3 h-8 w-auto" />
-            <p className="text-[11px] uppercase tracking-wide text-slate-400">
-              {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
-            </p>
-            <h2 id="legal-scroll-title" className="mt-1 text-lg font-semibold text-white">
-              {doc.title}
-            </h2>
-            <p className="mt-1 text-xs text-slate-500">
-              {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}
-            </p>
-          </div>
+        <div className="relative shrink-0">
+          <img src={logoPink} alt="HARX" className="block h-auto w-full" />
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-slate-300 hover:bg-white/10 hover:text-white"
+            className="absolute right-3 top-3 rounded-full bg-black/35 p-2 text-white hover:bg-black/50"
           >
             <X className="h-4 w-4" />
             <span className="sr-only">{t('register.legalClose', 'Close')}</span>
           </button>
+        </div>
+        <div className="border-b border-white/10 px-5 py-4">
+          <p className="text-[11px] uppercase tracking-wide text-slate-400">
+            {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
+          </p>
+          <h2 id="legal-scroll-title" className="mt-1 text-lg font-semibold text-white">
+            {doc.title}
+          </h2>
+          <p className="mt-1 text-xs text-slate-500">
+            {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}
+          </p>
         </div>
 
         <div
