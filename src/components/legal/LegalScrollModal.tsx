@@ -52,8 +52,9 @@ export function LegalScrollModal({
 
     const frame = requestAnimationFrame(() => {
       const el = scrollerRef.current;
-      if (el) el.scrollTop = 0;
-      if (el && el.scrollHeight <= el.clientHeight + 8) markReached();
+      if (!el) return;
+      el.scrollTop = 0;
+      if (el.scrollHeight <= el.clientHeight + 8) markReached();
     });
 
     return () => {
@@ -86,10 +87,18 @@ export function LegalScrollModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="legal-scroll-title"
-        className="relative flex max-h-[min(860px,90vh)] w-full max-w-2xl flex-col overflow-hidden rounded-[22px] border border-[#fecdd3] bg-white"
+        className="relative flex h-[min(860px,90vh)] w-full max-w-2xl flex-col overflow-hidden rounded-[22px] border border-[#fecdd3] bg-white"
       >
-        <div className="relative shrink-0 bg-[#ec4899]">
-          <img src={logoPink} alt="HARX" className="block h-auto w-full" />
+        <div className="relative h-36 shrink-0 overflow-hidden bg-[#ec4899] sm:h-40">
+          <img
+            src={logoPink}
+            alt="HARX"
+            onLoad={() => {
+              const el = scrollerRef.current;
+              if (el) el.scrollTop = 0;
+            }}
+            className="h-full w-full origin-center scale-[1.9] object-cover object-center"
+          />
           <button
             type="button"
             onClick={onClose}
@@ -114,7 +123,7 @@ export function LegalScrollModal({
         <div
           ref={scrollerRef}
           onScroll={onScroll}
-          className="min-h-0 flex-1 overflow-y-auto bg-white px-7 py-6"
+          className="min-h-0 flex-1 overflow-y-auto bg-white px-7 py-6 [overflow-anchor:none]"
         >
           <p className="mb-6 text-[15px] leading-relaxed text-[#64748b]">{doc.intro}</p>
           <div className="space-y-4">
