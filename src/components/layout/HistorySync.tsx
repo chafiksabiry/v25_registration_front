@@ -27,6 +27,12 @@ export default function HistorySync() {
   locationRef.current = location;
 
   useLayoutEffect(() => {
+    const windowPath = getWindowRouterPath();
+    const routerPath = `${locationRef.current.pathname}${locationRef.current.search}${locationRef.current.hash}`;
+    if (windowPath !== routerPath) {
+      navigate(windowPath, { replace: true });
+    }
+
     const onPopState = () => {
       // Let React Router handle popstate first; only fix if still out of sync.
       requestAnimationFrame(() => {
