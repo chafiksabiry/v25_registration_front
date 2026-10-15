@@ -696,6 +696,7 @@ export default function RegistrationDialog({
                     </div>
                     <LegalScrollModal
                       docId={openLegalDoc}
+                      audience={defaultUserType === 'rep' ? 'rep' : 'company'}
                       onClose={() => setOpenLegalDoc(null)}
                       onReachedEnd={(id) => {
                         setReadLegalDocs((current) =>
