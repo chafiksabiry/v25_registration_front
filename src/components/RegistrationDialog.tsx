@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { auth } from '../lib/api';
@@ -8,6 +8,7 @@ import {
   REGISTER_FORM_STEPS,
   type RegisterFormStep,
   type RegisterNavState,
+  readBrowserSearchStep,
   registerStepSearch,
   resolveRegisterPath,
 } from '../lib/registerNavigation';
@@ -49,7 +50,7 @@ export default function RegistrationDialog({
   const registerPath = useMemo(() => resolveRegisterPath(location.pathname), [location.pathname]);
   const historyBack = useHistoryBack(navState?.returnTo ?? '/auth/choice');
   const [searchParams] = useSearchParams();
-  const step = stepFromSearch(searchParams.get('step'));
+  const step = stepFromSearch(readBrowserSearchStep() || searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -70,6 +71,7 @@ export default function RegistrationDialog({
   const [openLegalDoc, setOpenLegalDoc] = useState<SignupLegalDocId | null>(null);
   const { t } = useTranslation();
   const legalDocsRead = bothSignupDocsRead(readLegalDocs);
+  const syncedBrowserStep = useRef(false);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -80,6 +82,19 @@ export default function RegistrationDialog({
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [step]);
+
+  useLayoutEffect(() => {
+    if (syncedBrowserStep.current) return;
+    const browserStep = readBrowserSearchStep();
+    const routerStep = searchParams.get('step');
+    if (!browserStep || browserStep === routerStep) return;
+    if (!REG_STEPS.includes(browserStep as Step) || browserStep === 'success') return;
+    syncedBrowserStep.current = true;
+    navigate(
+      { pathname: registerPath, search: registerStepSearch(browserStep as RegisterFormStep) },
+      { replace: true, state: navState }
+    );
+  }, [navigate, navState, registerPath, searchParams]);
 
   useEffect(() => {
     if (legalDocsRead || !formData.termsAccepted) return;

@@ -13,6 +13,35 @@ export function registerStepSearch(step: RegisterFormStep): string {
   return step === 'name' ? '' : `?step=${step}`;
 }
 
+/**
+ * Step from the real browser URL. Inside qiankun the React Router location
+ * can miss `window`/`document` search on a direct visit, so the address bar
+ * says `?step=terms` while the form still shows the first step.
+ */
+export function readBrowserSearchStep(): string | null {
+  const searches: string[] = [];
+  try {
+    searches.push(window.location.search);
+  } catch {
+    /* ignore */
+  }
+  try {
+    if (window.top) searches.push(window.top.location.search);
+  } catch {
+    /* ignore cross-origin */
+  }
+  try {
+    searches.push(new URL(document.URL).search);
+  } catch {
+    /* ignore */
+  }
+  for (const search of searches) {
+    const step = new URLSearchParams(search).get('step');
+    if (step) return step;
+  }
+  return null;
+}
+
 export const REGISTER_ROUTE_PATHS = [
   '/auth/register',
   '/auth/register-company',
