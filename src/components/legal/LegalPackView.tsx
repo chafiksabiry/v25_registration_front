@@ -88,14 +88,6 @@ export function LegalPackView({ pack }: { pack: LegalPack }) {
           {pack.cover.title}
         </h2>
         <p className="mt-2 text-base leading-6 text-[#475569]">{pack.cover.subtitle}</p>
-        <p className="mt-6 text-[11px] font-bold uppercase tracking-[0.14em] text-[#64748b]">
-          {pack.cover.documentsLabel}
-        </p>
-        <ul className="mx-auto mt-3 max-w-md space-y-1 text-left text-sm leading-6 text-[#0f172a]">
-          {pack.cover.documents.map((document) => (
-            <li key={document}>{document}</li>
-          ))}
-        </ul>
         <p className="mt-5 text-sm text-[#64748b]">{pack.cover.version}</p>
         <p className="mt-1 text-sm text-[#64748b]">{pack.cover.address}</p>
       </header>
