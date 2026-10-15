@@ -112,10 +112,7 @@ export function LegalScrollModal({
             className="block h-auto w-full"
           />
           <div className="px-5 py-6 sm:px-7">
-            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#e11d48]">
-              {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
-            </p>
-            <h2 id="legal-scroll-title" className="mt-2 text-2xl font-semibold leading-tight text-[#0f172a]">
+            <h2 id="legal-scroll-title" className="text-2xl font-semibold leading-tight text-[#0f172a]">
               {doc.title}
             </h2>
             <p className="mt-2 text-sm text-[#64748b]">
@@ -146,10 +143,7 @@ export function LegalScrollModal({
                 </p>
               ) : (
                 <p className="text-[#9f1239]">
-                  {t(
-                    'register.legalDocHint',
-                    'Scroll this document to the bottom to mark it as read.'
-                  )}
+                  {t('register.legalMustRead', 'You must read this document.')}
                 </p>
               )}
             </div>
