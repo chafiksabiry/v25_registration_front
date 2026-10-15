@@ -87,9 +87,21 @@ export function LegalScrollModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="legal-scroll-title"
-        className="relative flex h-[min(860px,90vh)] w-full max-w-2xl flex-col overflow-hidden rounded-[22px] border border-[#fecdd3] bg-white"
+        className="relative w-full max-w-2xl"
       >
-        <div className="relative h-36 shrink-0 overflow-hidden bg-[#ec4899] sm:h-40">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-10 rounded-full bg-white/90 p-2 text-[#e11d48] hover:bg-white"
+        >
+          <X className="h-4 w-4" />
+          <span className="sr-only">{t('register.legalClose', 'Close')}</span>
+        </button>
+        <div
+          ref={scrollerRef}
+          onScroll={onScroll}
+          className="max-h-[min(860px,92vh)] overflow-y-auto overscroll-contain rounded-[22px] border border-[#fecdd3] bg-white [overflow-anchor:none]"
+        >
           <img
             src={logoPink}
             alt="HARX"
@@ -97,67 +109,51 @@ export function LegalScrollModal({
               const el = scrollerRef.current;
               if (el) el.scrollTop = 0;
             }}
-            className="h-full w-full origin-center scale-[1.9] object-cover object-center"
+            className="block h-auto w-full"
           />
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute right-3 top-3 rounded-full bg-white/90 p-2 text-[#e11d48] hover:bg-white"
-          >
-            <X className="h-4 w-4" />
-            <span className="sr-only">{t('register.legalClose', 'Close')}</span>
-          </button>
-        </div>
-        <div className="border-b border-[#ffe4e6] bg-white px-7 py-6">
-          <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#e11d48]">
-            {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
-          </p>
-          <h2 id="legal-scroll-title" className="mt-2 text-2xl font-semibold leading-tight text-[#0f172a]">
-            {doc.title}
-          </h2>
-          <p className="mt-2 text-sm text-[#64748b]">
-            {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}
-          </p>
-        </div>
-
-        <div
-          ref={scrollerRef}
-          onScroll={onScroll}
-          className="min-h-0 flex-1 overflow-y-auto bg-white px-7 py-6 [overflow-anchor:none]"
-        >
-          <p className="mb-6 text-[15px] leading-relaxed text-[#64748b]">{doc.intro}</p>
-          <div className="space-y-4">
-            {doc.sections.map((section) => (
-              <section key={section.title} className="rounded-2xl border border-[#ffe4e6] bg-[#fff7f8] px-5 py-4">
-                <h3 className="mb-2 text-base font-semibold text-[#0f172a]">{section.title}</h3>
-                <div className="space-y-3">
-                  {section.paragraphs.map((paragraph, index) => (
-                    <p key={index} className="text-sm leading-relaxed text-[#475569]">
-                      {paragraph}
-                    </p>
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-          <p className="mt-6 text-xs leading-relaxed text-[#9f1239]">
-            {doc.contactNote}
-          </p>
-        </div>
-
-        <div className="border-t border-[#ffe4e6] bg-[#fff7f8] px-7 py-4 text-sm">
-          {reached ? (
-            <p className="font-semibold text-[#047857]">
-              {t('register.legalReached', 'You reached the end of this document.')}
+          <div className="px-5 py-6 sm:px-7">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-[#e11d48]">
+              {t('register.legalScrollHint', 'Scroll to the bottom to confirm you have read this document.')}
             </p>
-          ) : (
-            <p className="text-[#9f1239]">
-              {t(
-                'register.legalDocHint',
-                'Scroll this document to the bottom to mark it as read.'
+            <h2 id="legal-scroll-title" className="mt-2 text-2xl font-semibold leading-tight text-[#0f172a]">
+              {doc.title}
+            </h2>
+            <p className="mt-2 text-sm text-[#64748b]">
+              {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}
+            </p>
+            <p className="mb-6 mt-6 text-[15px] leading-relaxed text-[#64748b]">{doc.intro}</p>
+            <div className="space-y-4">
+              {doc.sections.map((section) => (
+                <section key={section.title} className="rounded-2xl border border-[#ffe4e6] bg-[#fff7f8] px-5 py-4">
+                  <h3 className="mb-2 text-base font-semibold text-[#0f172a]">{section.title}</h3>
+                  <div className="space-y-3">
+                    {section.paragraphs.map((paragraph, index) => (
+                      <p key={index} className="text-sm leading-relaxed text-[#475569]">
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </section>
+              ))}
+            </div>
+            <p className="mt-6 text-xs leading-relaxed text-[#9f1239]">
+              {doc.contactNote}
+            </p>
+            <div className="mt-6 border-t border-[#ffe4e6] pt-4 text-sm">
+              {reached ? (
+                <p className="font-semibold text-[#047857]">
+                  {t('register.legalReached', 'You reached the end of this document.')}
+                </p>
+              ) : (
+                <p className="text-[#9f1239]">
+                  {t(
+                    'register.legalDocHint',
+                    'Scroll this document to the bottom to mark it as read.'
+                  )}
+                </p>
               )}
-            </p>
-          )}
+            </div>
+          </div>
         </div>
       </div>
     </div>,
