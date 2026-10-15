@@ -630,6 +630,30 @@ export default function RegistrationDialog({
                     <LegalScrollModal
                       docId={openLegalDoc}
                       audience={defaultUserType === 'rep' ? 'rep' : 'company'}
+                      accepted={formData.termsAccepted}
+                      onAcceptedChange={(checked) => {
+                        setFormData((current) => ({ ...current, termsAccepted: checked }));
+                        if (!checked) return;
+                        setErrors((current) => {
+                          if (!current.terms) return current;
+                          const next = { ...current };
+                          delete next.terms;
+                          return next;
+                        });
+                      }}
+                      onContinue={() => {
+                        if (!openLegalDoc || !formData.termsAccepted) return;
+                        const other: SignupLegalDocId = openLegalDoc === 'terms' ? 'privacy' : 'terms';
+                        const read = readLegalDocs.includes(openLegalDoc)
+                          ? readLegalDocs
+                          : [...readLegalDocs, openLegalDoc];
+                        if (!read.includes(other)) {
+                          setOpenLegalDoc(other);
+                          return;
+                        }
+                        setOpenLegalDoc(null);
+                        handleNext();
+                      }}
                       onClose={() => setOpenLegalDoc(null)}
                       onReachedEnd={(id) => {
                         setReadLegalDocs((current) =>

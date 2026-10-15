@@ -20,11 +20,17 @@ export function bothSignupDocsRead(readIds: SignupLegalDocId[]): boolean {
 export function LegalScrollModal({
   docId,
   audience,
+  accepted,
+  onAcceptedChange,
+  onContinue,
   onClose,
   onReachedEnd,
 }: {
   docId: SignupLegalDocId | null;
   audience: SignupAudience;
+  accepted: boolean;
+  onAcceptedChange: (checked: boolean) => void;
+  onContinue: () => void;
   onClose: () => void;
   onReachedEnd: (id: SignupLegalDocId) => void;
 }) {
@@ -117,13 +123,31 @@ export function LegalScrollModal({
           />
           <LegalPackView pack={pack} />
           <div className="px-5 pb-6 sm:px-8">
-            <div className="border-t border-[#e5e7eb] pt-4 text-sm">
+            <div className="border-t border-[#e5e7eb] pt-4">
               {reached ? (
-                <p className="font-semibold text-[#047857]">
-                  {t('register.legalReached', 'You reached the end of this document.')}
-                </p>
+                <div className="space-y-4">
+                  <label className="flex cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={accepted}
+                      onChange={(event) => onAcceptedChange(event.target.checked)}
+                      className="mt-0.5 h-5 w-5 rounded border-[#fecdd3] text-[#e11d48] focus:ring-[#e11d48]"
+                    />
+                    <span className="text-sm font-medium text-[#0f172a]">
+                      {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    onClick={onContinue}
+                    disabled={!accepted}
+                    className="inline-flex w-full items-center justify-center rounded-xl bg-[#e11d48] px-4 py-3 text-sm font-semibold text-white hover:bg-[#be123c] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {t('register.btnContinue', 'Continue')}
+                  </button>
+                </div>
               ) : (
-                <p className="text-[#9f1239]">
+                <p className="text-sm text-[#9f1239]">
                   {t('register.legalMustRead', 'You must read this document.')}
                 </p>
               )}
