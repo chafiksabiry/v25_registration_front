@@ -125,6 +125,7 @@ export const legalFr: Record<string, LegalDocument> = {
           'Vous n’utiliserez pas la plateforme de façon abusive : pas de spam illégal, fraude, harcèlement, atteinte aux droits de tiers, malware, scraping excessif, ni tentative de contourner la sécurité ou la facturation.',
           'Vous êtes responsable de la légalité de vos campagnes, scripts, listes de prospects et du consentement aux communications (y compris les lois téléphonie/messaging applicables).',
           'Les appels et messages assistés par l’IA doivent être déclarés et utilisés conformément à la loi et aux paramètres de la plateforme.',
+          'Les contenus réglementaires, de conformité ou de formation générés ou proposés par l’IA sur la plateforme sont des aides à la rédaction, établies à partir d’éléments génériques ou des documents que vous avez vous-même déposés. Ils ne constituent pas un conseil juridique et doivent être relus, corrigés et validés par vous avant toute diffusion à vos agents, prospects ou clients, au regard du pays, du secteur d’activité et de la réglementation locale qui vous est applicable.',
         ],
       },
       {
@@ -152,6 +153,7 @@ export const legalFr: Record<string, LegalDocument> = {
         paragraphs: [
           'LE SERVICE EST FOURNI « EN L’ÉTAT » ET « SELON DISPONIBILITÉ ». DANS LA LIMITE AUTORISÉE PAR LA LOI, HARX EXCLUT LES GARANTIES DE QUALITÉ MARCHANDE, D’ADÉQUATION À UN USAGE PARTICULIER ET D’ABSENCE DE CONTREFAÇON.',
           'Nous ne garantissons pas de résultats business spécifiques, de taux de connexion d’appels, ni une disponibilité ininterrompue.',
+          'HARX agit en tant que facilitateur technique de la chaîne de valeur (mise en relation, outils, assistance IA) et non en tant que conseil juridique, assureur, courtier ou organisme de conformité. La validation finale de tout contenu réglementaire, commercial ou de formation — y compris celui proposé par l’IA — relève de votre responsabilité exclusive avant toute diffusion à vos agents, prospects ou clients.',
         ],
       },
       {

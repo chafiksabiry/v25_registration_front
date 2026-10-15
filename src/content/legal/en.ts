@@ -125,6 +125,7 @@ export const legalEn: Record<string, LegalDocument> = {
           'You will not misuse the platform: no unlawful spam, fraud, harassment, infringement of third-party rights, malware, scraping that burdens the service, or attempts to bypass security or billing.',
           'You are responsible for the legality of your campaigns, scripts, lead lists, and consent for communications (including telephony and messaging laws such as TCPA where applicable).',
           'AI-assisted calling and messaging must be disclosed and used in accordance with applicable law and platform settings.',
+          'Regulatory, compliance, or training content generated or proposed by AI on the platform is drafting assistance, built from generic material or from documents you have uploaded yourself. It does not constitute legal advice and must be reviewed, corrected, and validated by you before any use with your agents, prospects, or customers, in light of the country, industry, and local regulation applicable to you.',
         ],
       },
       {
@@ -152,6 +153,7 @@ export const legalEn: Record<string, LegalDocument> = {
         paragraphs: [
           'THE SERVICE IS PROVIDED “AS IS” AND “AS AVAILABLE”. TO THE MAXIMUM EXTENT PERMITTED BY LAW, HARX DISCLAIMS WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.',
           'We do not guarantee specific business results, call connect rates, or uninterrupted availability.',
+          'HARX acts as a technical facilitator of the value chain (matching, tooling, AI assistance) and not as legal counsel, an insurer, a broker, or a compliance body. Final validation of any regulatory, commercial, or training content — including content proposed by AI — is your sole responsibility before it is used with your agents, prospects, or customers.',
         ],
       },
       {
