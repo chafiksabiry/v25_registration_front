@@ -21,6 +21,7 @@ export function LegalScrollModal({
   docId,
   audience,
   accepted,
+  readIds,
   onAcceptedChange,
   onContinue,
   onClose,
@@ -29,6 +30,7 @@ export function LegalScrollModal({
   docId: SignupLegalDocId | null;
   audience: SignupAudience;
   accepted: boolean;
+  readIds: SignupLegalDocId[];
   onAcceptedChange: (checked: boolean) => void;
   onContinue: () => void;
   onClose: () => void;
@@ -40,6 +42,11 @@ export function LegalScrollModal({
   const [reached, setReached] = useState(false);
 
   const pack = docId ? signupLegalPack(i18n.language, docId, audience) : null;
+  const bothRead = Boolean(
+    docId &&
+      reached &&
+      bothSignupDocsRead(readIds.includes(docId) ? readIds : [...readIds, docId])
+  );
 
   const markReached = () => {
     if (!docId || reachedRef.current) return;
@@ -124,7 +131,7 @@ export function LegalScrollModal({
           <LegalPackView pack={pack} />
           <div className="px-5 pb-6 sm:px-8">
             <div className="border-t border-[#e5e7eb] pt-4">
-              {reached ? (
+              {bothRead ? (
                 <div className="space-y-4">
                   <label className="flex cursor-pointer items-start gap-3">
                     <input
@@ -148,7 +155,12 @@ export function LegalScrollModal({
                 </div>
               ) : (
                 <p className="text-sm text-[#9f1239]">
-                  {t('register.legalMustRead', 'You must read this document.')}
+                  {reached
+                    ? t(
+                        'register.legalReadOther',
+                        'Read the other document as well before you can accept.'
+                      )
+                    : t('register.legalMustRead', 'You must read this document.')}
                 </p>
               )}
             </div>
