@@ -631,6 +631,7 @@ export default function RegistrationDialog({
                       docId={openLegalDoc}
                       audience={defaultUserType === 'rep' ? 'rep' : 'company'}
                       accepted={formData.termsAccepted}
+                      readIds={readLegalDocs}
                       onAcceptedChange={(checked) => {
                         setFormData((current) => ({ ...current, termsAccepted: checked }));
                         if (!checked) return;
