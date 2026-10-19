@@ -78,6 +78,13 @@ function InlinePdfScroller({
         if (!host || cancelled) return;
         host.replaceChildren();
 
+        // A PDF that failed to fetch/parse into any pages must never be
+        // treated as "short enough to not need scrolling" — that silently
+        // auto-marked the document as read with nothing ever shown.
+        if (pdf.numPages < 1) {
+          throw new Error('PDF has no pages');
+        }
+
         const scrollerWidth = scrollerRef.current?.clientWidth || 360;
         const displayWidth = Math.max(280, scrollerWidth - 16);
         const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
@@ -103,12 +110,27 @@ function InlinePdfScroller({
         }
 
         if (cancelled) return;
+        // Every page actually rendered into the DOM — this is the one case
+        // where "no scrolling needed" is allowed to auto-confirm reading.
+        if (host.childElementCount < pdf.numPages) {
+          throw new Error('Not all PDF pages rendered');
+        }
         setLoading(false);
+        // Wait two frames so layout/paint has settled before measuring —
+        // a single rAF right after a batch of canvases were appended can
+        // still read a stale (pre-layout) scrollHeight in some browsers.
         requestAnimationFrame(() => {
-          const scroller = scrollerRef.current;
-          if (scroller && scroller.scrollHeight <= scroller.clientHeight + 8) {
-            markReached();
-          }
+          requestAnimationFrame(() => {
+            if (cancelled) return;
+            const scroller = scrollerRef.current;
+            if (
+              scroller &&
+              host.childElementCount >= pdf.numPages &&
+              scroller.scrollHeight <= scroller.clientHeight + 8
+            ) {
+              markReached();
+            }
+          });
         });
       } catch {
         if (!cancelled) {
