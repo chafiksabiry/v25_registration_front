@@ -142,8 +142,9 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           return;
         }
         try {
-          const verificationCode = await auth.generateVerificationCode(formData.email);
-          await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
+          // Backend sends the reset code by email itself now — it no longer
+          // echoes it back, so there's nothing left to forward here.
+          await auth.generateVerificationCode(formData.email);
           pushStep('verification', { email: formData.email });
         } catch (err: unknown) {
           setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
