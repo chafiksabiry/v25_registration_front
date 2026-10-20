@@ -664,5 +664,13 @@
     "rep": "REP",
     "call-center": "Centre d'appels",
     "admin": "Admin"
+  },
+  "reactivate": {
+    "loading": "Ouverture de votre espace HARX...",
+    "expiredTitle": "Ce lien a expiré",
+    "invalidTitle": "Ce lien n’est pas valide",
+    "help": "Connectez-vous avec votre e-mail pour continuer. Si vous n’avez pas encore de mot de passe, utilisez « Mot de passe oublié ».",
+    "signIn": "Se connecter",
+    "forgot": "Mot de passe oublié"
   }
 }
