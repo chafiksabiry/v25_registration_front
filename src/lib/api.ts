@@ -50,6 +50,11 @@ export const auth = {
     return response.data;
   },
 
+  reengageLogin: async (token: string) => {
+    const response = await api.post('/auth/reengage-login', { token });
+    return response.data as { token: string };
+  },
+
   resendVerification: async (email: string) => {
     const response = await api.post('/auth/resend-verification', { email });
     return response.data;

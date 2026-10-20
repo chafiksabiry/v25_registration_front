@@ -3,6 +3,7 @@ import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LinkedInCallback from './components/LinkedInCallback';
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
+import ReactivateAccount from './components/ReactivateAccount';
 import { getRouterBasename } from './utils/routerBasename';
 import { PrivateRoute, GuestOnly } from './components/layout/guards';
 import HistorySync from './components/layout/HistorySync';
@@ -66,6 +67,7 @@ export const appRouter = createBrowserRouter(
         </AuthProviders>
       ),
       children: [
+        { path: 'auth/reactivate', element: <ReactivateAccount /> },
         { path: 'linkedin/callback', element: <LinkedInCallback /> },
         { path: 'linkedin/signin/callback', element: <LinkedInSignInCallback /> },
         { path: 'app2', element: <Navigate to="/" replace /> },
