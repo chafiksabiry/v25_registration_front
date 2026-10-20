@@ -30,15 +30,6 @@ export default function ReactivateAccount() {
 
     const params = new URLSearchParams(window.location.search);
     const linkToken = params.get('t') ?? '';
-    // Campaign promo code carried by the link, prefilled later on the plan selection step.
-    const campaignCode = (params.get('code') ?? '').trim().toUpperCase();
-    if (campaignCode) {
-      try {
-        localStorage.setItem('harx_campaign_code', campaignCode);
-      } catch {
-        /* storage unavailable */
-      }
-    }
     // Keep the secret out of the address bar, history and Referer headers.
     window.history.replaceState(null, '', window.location.pathname);
 
