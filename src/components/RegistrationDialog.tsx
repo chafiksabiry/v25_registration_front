@@ -286,21 +286,7 @@ export default function RegistrationDialog({
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
           } else {
-            setIsLoading(true);
-            try {
-              await auth.checkPhone(formData.phone.trim());
-              pushStep('terms');
-            } catch (error) {
-              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
-              if (apiMessage === 'Phone already registered') {
-                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
-              } else {
-                newErrors.phone =
-                  apiMessage || t('register.errPhone', 'Please enter a valid phone number');
-              }
-            } finally {
-              setIsLoading(false);
-            }
+            pushStep('terms');
           }
           break;
 
@@ -359,12 +345,6 @@ export default function RegistrationDialog({
               if (apiMessage === 'Email already registered') {
                 newErrors.email = t('register.errEmailTaken', 'This email is already registered');
                 pushStep('email');
-                setErrors(newErrors);
-                return;
-              }
-              if (apiMessage === 'Phone already registered') {
-                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
-                pushStep('phone');
                 setErrors(newErrors);
                 return;
               }
