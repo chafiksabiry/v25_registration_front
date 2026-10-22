@@ -1,6 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
+import { captureProductFromUrl } from '../../lib/product';
 
 /**
  * Shared shell for the auth screens (landing + choice + signin + register +
@@ -23,6 +24,8 @@ export function useAuthContext() {
 export default function AuthShell() {
   const navigate = useNavigate();
   const location = useLocation();
+  // During render so it lands before any child effect redirects a signed-in visitor.
+  captureProductFromUrl(location.search || window.location.search);
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   useLayoutEffect(() => {
