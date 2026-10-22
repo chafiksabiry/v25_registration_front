@@ -4,6 +4,7 @@ import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
+import { CALLCENTRE_PATH, clearProduct, isCallcentreProduct } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -38,6 +39,7 @@ export function clearAuthSession(): void {
   localStorage.removeItem('callCenterStaff');
   localStorage.removeItem('employerCompanyId');
   localStorage.removeItem('mustChangePassword');
+  clearProduct();
 }
 
 /** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
@@ -279,8 +281,12 @@ export async function getPostLoginRedirectUrl(
       checkUserType.userType === "company" ||
       checkUserType.userType === "call-center"
     ) {
-      const dest =
-        checkUserType.userType === "call-center" ? "/call-center" : "/company";
+      // Accounts that came from the standalone Call Centre product land there.
+      const dest = isCallcentreProduct()
+        ? CALLCENTRE_PATH
+        : checkUserType.userType === "call-center"
+          ? "/call-center"
+          : "/company";
       try {
         localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
