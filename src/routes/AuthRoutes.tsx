@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LandingPage } from '../components/LandingPage';
 import ChoicePage from '../components/ChoicePage';
+import { hardNavigate } from '../lib/appNavigation';
 import SignInDialog from '../components/SignInDialog';
 import RegistrationDialog from '../components/RegistrationDialog';
 import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
@@ -38,6 +39,7 @@ export function ChoiceScreen() {
     <AuthScreen title="Choix du profil">
       <ChoicePage
         onSelectRole={handleSelectRole}
+        onOpenCallCentre={() => hardNavigate('/callcentre')}
         onSignIn={() => navigate('/auth/signin')}
         onNavigateToSection={handleNavigateToSection}
       />

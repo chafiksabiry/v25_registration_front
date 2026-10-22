@@ -24,6 +24,8 @@ export type SignupUserType = 'company' | 'rep' | 'call-center';
 interface ChoicePageProps {
   onSelectRole: (role: SignupUserType) => void;
   onSignIn: () => void;
+  /** Open the standalone HARX Call Centre product (its own landing page). */
+  onOpenCallCentre?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
 
@@ -135,7 +137,7 @@ function ChoiceCard({
   );
 }
 
-export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
+export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, onNavigateToSection }: ChoicePageProps) {
   const { t } = useTranslation();
 
   return (
@@ -183,16 +185,17 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
             cta={t('choicePage.companyTitle', 'Post a Gig')}
           />
           <ChoiceCard
-            disabled
+            disabled={!onOpenCallCentre}
             icon={HeadphonesIcon}
             image={companyBanner}
             imageAlt="Centre d'appels"
             title={t('choicePage.callCenterTitle', 'Call Center')}
             description={t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
-            badge={t('choicePage.comingSoon', 'Coming soon')}
-            badgeTone="muted"
+            badge={onOpenCallCentre ? t('choicePage.available', 'Available') : t('choicePage.comingSoon', 'Coming soon')}
+            badgeTone={onOpenCallCentre ? 'live' : 'muted'}
             features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.callCenterCta', 'Join as Call Center')}
+            onClick={onOpenCallCentre}
           />
           <ChoiceCard
             icon={Headphones}
