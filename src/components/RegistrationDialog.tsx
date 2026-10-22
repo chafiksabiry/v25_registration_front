@@ -677,20 +677,61 @@ export default function RegistrationDialog({
                             ) : null}
                             . {t('register.termsSecurity', 'We prioritize your data security.')}
                           </p>
-                          <p className="text-xs text-slate-400">
-                            {t(
-                              'register.legalIntro',
-                              'You must read the Terms of Service and the Privacy Policy before you accept.'
+                          <div
+                            role="note"
+                            className={`rounded-lg border p-3 ${
+                              legalDocsRead
+                                ? 'border-emerald-500/40 bg-emerald-950/30'
+                                : 'border-amber-400/50 bg-amber-950/30'
+                            }`}
+                          >
+                            {legalDocsRead ? (
+                              <p className="text-sm font-semibold text-emerald-300">
+                                {t(
+                                  'register.legalBothReached',
+                                  'Both documents have been read. You can accept the terms.'
+                                )}
+                              </p>
+                            ) : (
+                              <>
+                                <p className="text-sm font-bold text-amber-300">
+                                  {t('register.legalRequiredTitle', 'Reading required to continue')}
+                                </p>
+                                <p className="mt-1 text-xs text-amber-100/90">
+                                  {t(
+                                    'register.legalRequiredText',
+                                    'To create your account, open both documents below and scroll each one to the bottom. You can then accept and continue.'
+                                  )}
+                                </p>
+                              </>
                             )}
-                          </p>
-                          {legalDocsRead ? (
-                            <p className="text-xs font-medium text-emerald-300">
-                              {t(
-                                'register.legalBothReached',
-                                'Both documents have been read. You can accept the terms.'
-                              )}
-                            </p>
-                          ) : null}
+                            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                              {(['terms', 'privacy'] as const).map((id) => {
+                                const done = readLegalDocs.includes(id);
+                                return (
+                                  <button
+                                    key={id}
+                                    type="button"
+                                    onClick={() => setOpenLegalDoc(id)}
+                                    className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition-colors ${
+                                      done
+                                        ? 'border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/40'
+                                        : 'border-amber-400/60 text-white hover:bg-white/5'
+                                    }`}
+                                  >
+                                    <span>
+                                      {id === 'terms'
+                                        ? t('register.termsLink', 'Terms of Service')
+                                        : t('register.privacyLink', 'Privacy Policy')}
+                                    </span>
+                                    <span className={`text-xs ${done ? 'text-emerald-300' : 'text-amber-300'}`}>
+                                      {done ? `✓ ${t('register.legalRead', 'Read')}` : t('register.legalToRead', 'To read')}
+                                    </span>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -771,6 +812,11 @@ export default function RegistrationDialog({
                         {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
                       </span>
                     </label>
+                    {!legalDocsRead && (
+                      <p className="text-xs text-slate-400 pl-2">
+                        {t('register.legalCheckboxLocked', 'Available once both documents have been read.')}
+                      </p>
+                    )}
                     {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
                   </div>
                 )}
