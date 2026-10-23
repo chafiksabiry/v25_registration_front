@@ -391,8 +391,8 @@ export default function RegistrationDialog({
               }
             }
 
-            await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
-
+            // Backend sends the verification email itself now (register()
+            // no longer echoes the code back for us to re-send).
             setSmsOtpAvailable(false);
             setSmsNotice(null);
             try {
