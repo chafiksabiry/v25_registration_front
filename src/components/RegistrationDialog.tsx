@@ -14,6 +14,8 @@ import {
 } from '../lib/registerNavigation';
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
+import { hardNavigate } from '../lib/appNavigation';
+import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
 import { useTranslation } from 'react-i18next';
 import {
   bothSignupDocsRead,
@@ -192,7 +194,12 @@ export default function RegistrationDialog({
       }
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
-      setTimeout(() => onSignIn(), 1500);
+      // Call Centre product: the account is already signed in, go straight to its onboarding.
+      if (isCallcentreProduct()) {
+        setTimeout(() => hardNavigate(CALLCENTRE_PATH), 1500);
+      } else {
+        setTimeout(() => onSignIn(), 1500);
+      }
       return true;
     } catch (err) {
       newErrors.general = err instanceof Error ? err.message : t('register.errGeneralFailed', 'Account verification failed');
