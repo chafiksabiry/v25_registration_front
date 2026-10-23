@@ -171,16 +171,16 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-12">
         <div className="mx-auto grid w-full max-w-6xl items-stretch gap-6 lg:grid-cols-3">
           <ChoiceCard
-            disabled
             icon={Building2}
             image={companyBanner}
             imageAlt="Équipe en entreprise"
             title={t('choicePage.companyTitle', 'Post a Gig')}
             description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
-            badge={t('choicePage.comingSoon', 'Coming soon')}
-            badgeTone="muted"
+            badge={t('choicePage.available', 'Available')}
+            badgeTone="live"
             features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.companyTitle', 'Post a Gig')}
+            onClick={() => onSelectRole('company')}
           />
           <ChoiceCard
             disabled
