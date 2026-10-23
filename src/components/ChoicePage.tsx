@@ -183,16 +183,16 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
             onClick={() => onSelectRole('company')}
           />
           <ChoiceCard
-            disabled
             icon={HeadphonesIcon}
             image={companyBanner}
             imageAlt="Centre d'appels"
             title={t('choicePage.callCenterTitle', 'Call Center')}
             description={t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
-            badge={t('choicePage.comingSoon', 'Coming soon')}
-            badgeTone="muted"
+            badge={t('choicePage.available', 'Available')}
+            badgeTone="live"
             features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.callCenterCta', 'Join as Call Center')}
+            onClick={() => onSelectRole('call-center')}
           />
           <ChoiceCard
             icon={Headphones}
