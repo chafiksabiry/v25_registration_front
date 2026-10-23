@@ -678,5 +678,13 @@
     "rep": "REP",
     "call-center": "Call Center",
     "admin": "Admin"
+  },
+  "reactivate": {
+    "loading": "Opening your HARX space...",
+    "expiredTitle": "This link has expired",
+    "invalidTitle": "This link is not valid",
+    "help": "Sign in with your email to continue. If you have no password yet, use “Forgot password”.",
+    "signIn": "Sign in",
+    "forgot": "Forgot password"
   }
 }
