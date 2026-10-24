@@ -289,6 +289,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           type="email"
                           value={formData.email}
                           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                          onKeyDown={(e) => { if (e.key === 'Enter' && !isLoading) { e.preventDefault(); handleSignIn(); } }}
                           className="input-premium-glow"
                           placeholder={t('signIn.emailPlaceholder', 'Enter your email')}
                         />
@@ -299,6 +300,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                           type={showPassword ? "text" : "password"}
                           value={formData.password}
                           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                          onKeyDown={(e) => { if (e.key === 'Enter' && !isLoading) { e.preventDefault(); handleSignIn(); } }}
                           className="input-premium-glow pr-12"
                           placeholder={t('signIn.passwordPlaceholder', 'Enter your password')}
                         />
