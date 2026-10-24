@@ -618,6 +618,8 @@
     "btnCreateAccount": "Create Account",
     "btnVerifyComplete": "Verify & Complete",
     "btnContinue": "Continue",
+    "legalReadOther": "Read the other document as well before you can accept.",
+    "legalMustRead": "You must read this document.",
     "successTitle": "Registration Successful!",
     "redirectingLogin": "Redirecting to login...",
     "alreadyHaveAccount": "Already have an account?",
