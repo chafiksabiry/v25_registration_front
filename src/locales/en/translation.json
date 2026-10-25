@@ -695,5 +695,14 @@
     "help": "Sign in with your email to continue. If you have no password yet, use “Forgot password”.",
     "signIn": "Sign in",
     "forgot": "Forgot password"
+  },
+  "invitations": {
+    "title": "You have been invited",
+    "intro": "These call centres invited you to join their team. Accept the ones you know.",
+    "unnamed": "A call centre",
+    "accept": "Accept",
+    "decline": "Decline",
+    "later": "Decide later",
+    "error": "This did not work. Please try again."
   }
 }

@@ -695,5 +695,14 @@
     "help": "Connectez-vous avec votre e-mail pour continuer. Si vous n’avez pas encore de mot de passe, utilisez « Mot de passe oublié ».",
     "signIn": "Se connecter",
     "forgot": "Mot de passe oublié"
+  },
+  "invitations": {
+    "title": "Vous avez été invité",
+    "intro": "Ces centres d’appels vous invitent à rejoindre leur équipe. Acceptez ceux que vous connaissez.",
+    "unnamed": "Un centre d’appels",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "later": "Décider plus tard",
+    "error": "Cela n’a pas fonctionné. Veuillez réessayer."
   }
 }

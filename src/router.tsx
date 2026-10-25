@@ -34,6 +34,7 @@ import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
 import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
+import InvitationsPage from './components/InvitationsPage';
 import { LegalPage } from './components/legal/LegalPage';
 
 function RootLayout() {
@@ -68,6 +69,14 @@ export const appRouter = createBrowserRouter(
       ),
       children: [
         { path: 'auth/reactivate', element: <ReactivateAccount /> },
+        {
+          path: 'auth/invitations',
+          element: (
+            <PrivateRoute>
+              <InvitationsPage onSignIn={() => { window.location.assign('/auth/signin'); }} />
+            </PrivateRoute>
+          ),
+        },
         { path: 'linkedin/callback', element: <LinkedInCallback /> },
         { path: 'linkedin/signin/callback', element: <LinkedInSignInCallback /> },
         { path: 'app2', element: <Navigate to="/" replace /> },

@@ -2,6 +2,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
+import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
 import { CALLCENTRE_PATH, clearProduct, isCallcentreProduct } from "./product";
@@ -265,6 +266,24 @@ function getRepRedirectFromLocalStorage(userId: string): string | null {
  * Never returns `/app2` (deprecated blank page).
  */
 export async function getPostLoginRedirectUrl(
+  userId: string,
+  token: string
+): Promise<string | null> {
+  const dest = await computePostLoginRedirectUrl(userId, token);
+  if (!dest) return dest;
+  // A person invited by a call centre accepts or declines right after signing in.
+  try {
+    if (sessionStorage.getItem(INVITATIONS_SEEN_KEY) !== "1") {
+      const pending = await fetchPendingInvitations(token);
+      if (pending.length > 0) return `/auth/invitations?next=${encodeURIComponent(dest)}`;
+    }
+  } catch {
+    /* storage unavailable: go straight to the destination */
+  }
+  return dest;
+}
+
+async function computePostLoginRedirectUrl(
   userId: string,
   token: string
 ): Promise<string | null> {
