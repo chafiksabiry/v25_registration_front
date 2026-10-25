@@ -74,9 +74,9 @@ function BlockView({ block, termLabel, definitionLabel }: {
   );
 }
 
-export function LegalPackView({ pack }: { pack: LegalPack }) {
+export function LegalPackView({ pack, language, partIdPrefix }: { pack: LegalPack; language?: string; partIdPrefix?: string }) {
   const { i18n } = useTranslation();
-  const french = i18n.language.toLowerCase().startsWith('fr');
+  const french = (language ?? i18n.language).toLowerCase().startsWith('fr');
   const termLabel = french ? 'Terme' : 'Term';
   const definitionLabel = french ? 'Définition' : 'Definition';
 
@@ -92,8 +92,8 @@ export function LegalPackView({ pack }: { pack: LegalPack }) {
         <p className="mt-1 text-sm text-[#64748b]">{pack.cover.address}</p>
       </header>
 
-      {pack.parts.map((part) => (
-        <section key={part.title} className="mt-8">
+      {pack.parts.map((part, partIndex) => (
+        <section key={part.title} id={partIdPrefix ? `${partIdPrefix}${partIndex}` : undefined} className="mt-8 scroll-mt-20">
           <h3 className="border-b border-[#e5e7eb] pb-2 text-xl font-semibold text-[#0f172a]">{part.title}</h3>
           {part.blocks.map((block, index) => (
             <BlockView

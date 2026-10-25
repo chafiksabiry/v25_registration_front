@@ -16,12 +16,8 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
-import { useTranslation } from 'react-i18next';
-import {
-  bothSignupDocsRead,
-  LegalScrollModal,
-  type SignupLegalDocId,
-} from './legal/LegalScrollModal';
+import { Trans, useTranslation } from 'react-i18next';
+import { LegalViewerModal } from './legal/LegalViewerModal';
 
 type Step = RegisterFormStep | 'success';
 
@@ -71,10 +67,9 @@ export default function RegistrationDialog({
   const [emailNotice, setEmailNotice] = useState<string | null>(null);
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
-  const [readLegalDocs, setReadLegalDocs] = useState<SignupLegalDocId[]>([]);
-  const [openLegalDoc, setOpenLegalDoc] = useState<SignupLegalDocId | null>(null);
+  const [legalPart, setLegalPart] = useState<number | null>(null);
   const { t } = useTranslation();
-  const legalDocsRead = bothSignupDocsRead(readLegalDocs);
+  const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
 
   useEffect(() => {
@@ -99,11 +94,6 @@ export default function RegistrationDialog({
       { replace: true, state: navState }
     );
   }, [navigate, navState, registerPath, searchParams]);
-
-  useEffect(() => {
-    if (legalDocsRead || !formData.termsAccepted) return;
-    setFormData((current) => ({ ...current, termsAccepted: false }));
-  }, [legalDocsRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -312,16 +302,8 @@ export default function RegistrationDialog({
           break;
 
         case 'terms':
-          if (!legalDocsRead) {
-            newErrors.terms = t(
-              'register.errLegalScroll',
-              'You must read the Terms of Service and the Privacy Policy.'
-            );
-          }
           if (!formData.termsAccepted) {
-            newErrors.terms =
-              newErrors.terms ||
-              t('register.errTerms', 'Please accept the terms and conditions');
+            newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
           }
           if (newErrors.terms) {
             break;
@@ -650,155 +632,30 @@ export default function RegistrationDialog({
                 )}
 
                 {step === 'terms' && (
-                  <div className="space-y-6">
-                    <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
+                  <div className="space-y-4">
+                    <div className="bg-slate-950/40 p-5 rounded-xl border border-white/[0.06]">
                       <div className="flex items-start space-x-3">
                         <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
-                        <div className="space-y-3">
-                          <p className="text-sm text-slate-300 leading-relaxed">
-                            {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                            <button
-                              type="button"
-                              onClick={() => setOpenLegalDoc('terms')}
-                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
-                            >
-                              {t('register.termsLink', 'Terms of Service')}
-                            </button>
-                            {readLegalDocs.includes('terms') ? (
-                              <span className="ml-1 text-xs font-semibold text-emerald-300">
-                                ({t('register.legalRead', 'Read')})
-                              </span>
-                            ) : null}{' '}
-                            {t('register.termsAnd', 'and acknowledge our')}{' '}
-                            <button
-                              type="button"
-                              onClick={() => setOpenLegalDoc('privacy')}
-                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
-                            >
-                              {t('register.privacyLink', 'Privacy Policy')}
-                            </button>
-                            {readLegalDocs.includes('privacy') ? (
-                              <span className="ml-1 text-xs font-semibold text-emerald-300">
-                                ({t('register.legalRead', 'Read')})
-                              </span>
-                            ) : null}
-                            . {t('register.termsSecurity', 'We prioritize your data security.')}
-                          </p>
-                          <div
-                            role="note"
-                            className={`rounded-lg border p-3 ${
-                              legalDocsRead
-                                ? 'border-emerald-500/40 bg-emerald-950/30'
-                                : 'border-amber-400/50 bg-amber-950/30'
-                            }`}
-                          >
-                            {legalDocsRead ? (
-                              <p className="text-sm font-semibold text-emerald-300">
-                                {t(
-                                  'register.legalBothReached',
-                                  'Both documents have been read. You can accept the terms.'
-                                )}
-                              </p>
-                            ) : (
-                              <>
-                                <p className="text-sm font-bold text-amber-300">
-                                  {t('register.legalRequiredTitle', 'Reading required to continue')}
-                                </p>
-                                <p className="mt-1 text-xs text-amber-100/90">
-                                  {t(
-                                    'register.legalRequiredText',
-                                    'To create your account, open both documents below and scroll each one to the bottom. You can then accept and continue.'
-                                  )}
-                                </p>
-                              </>
-                            )}
-                            <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                              {(['terms', 'privacy'] as const).map((id) => {
-                                const done = readLegalDocs.includes(id);
-                                return (
-                                  <button
-                                    key={id}
-                                    type="button"
-                                    onClick={() => setOpenLegalDoc(id)}
-                                    className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2 text-left text-sm font-semibold transition-colors ${
-                                      done
-                                        ? 'border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/40'
-                                        : 'border-amber-400/60 text-white hover:bg-white/5'
-                                    }`}
-                                  >
-                                    <span>
-                                      {id === 'terms'
-                                        ? t('register.termsLink', 'Terms of Service')
-                                        : t('register.privacyLink', 'Privacy Policy')}
-                                    </span>
-                                    <span className={`text-xs ${done ? 'text-emerald-300' : 'text-amber-300'}`}>
-                                      {done ? `✓ ${t('register.legalRead', 'Read')}` : t('register.legalToRead', 'To read')}
-                                    </span>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        </div>
+                        <p className="text-sm text-slate-300 leading-relaxed">
+                          {t(
+                            `register.termsIncludes.${legalAudience}`,
+                            'These terms include the conditions that apply to your role on HARX.'
+                          )}{' '}
+                          {t('register.termsSecurity', 'We prioritize your data security.')}
+                        </p>
                       </div>
                     </div>
-                    <LegalScrollModal
-                      docId={openLegalDoc}
-                      audience={defaultUserType === 'rep' ? 'rep' : 'company'}
-                      accepted={formData.termsAccepted}
-                      readIds={readLegalDocs}
-                      onAcceptedChange={(checked) => {
-                        setFormData((current) => ({ ...current, termsAccepted: checked }));
-                        if (!checked) return;
-                        setErrors((current) => {
-                          if (!current.terms) return current;
-                          const next = { ...current };
-                          delete next.terms;
-                          return next;
-                        });
-                      }}
-                      onContinue={() => {
-                        if (!openLegalDoc || !formData.termsAccepted) return;
-                        const other: SignupLegalDocId = openLegalDoc === 'terms' ? 'privacy' : 'terms';
-                        const read = readLegalDocs.includes(openLegalDoc)
-                          ? readLegalDocs
-                          : [...readLegalDocs, openLegalDoc];
-                        if (!read.includes(other)) {
-                          setOpenLegalDoc(other);
-                          return;
-                        }
-                        setOpenLegalDoc(null);
-                        handleNext();
-                      }}
-                      onClose={() => setOpenLegalDoc(null)}
-                      onReachedEnd={(id) => {
-                        setReadLegalDocs((current) =>
-                          current.includes(id) ? current : [...current, id]
-                        );
-                        setErrors((current) => {
-                          if (!current.terms) return current;
-                          const next = { ...current };
-                          delete next.terms;
-                          return next;
-                        });
-                      }}
-                    />
 
                     <label
-                      className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors ${
+                      className={`flex items-start space-x-3 p-4 rounded-xl border transition-colors cursor-pointer hover:bg-slate-800/40 ${
                         errors.terms
                           ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
                           : 'border-white/[0.08]'
-                      } ${
-                        !legalDocsRead
-                          ? 'cursor-not-allowed opacity-60'
-                          : 'cursor-pointer hover:bg-slate-800/40'
                       }`}
                     >
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
-                        disabled={!legalDocsRead}
                         onChange={(e) => {
                           const checked = e.target.checked;
                           setFormData({ ...formData, termsAccepted: checked });
@@ -811,20 +668,43 @@ export default function RegistrationDialog({
                             });
                           }
                         }}
-                        className={`rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all ${
+                        className={`mt-0.5 rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 shrink-0 transition-all ${
                           errors.terms ? 'border-red-500' : 'border-slate-700'
                         }`}
                       />
-                      <span className={`font-medium ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
-                        {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
+                      <span className={`font-medium leading-snug ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
+                        <Trans
+                          i18nKey="register.termsAccept"
+                          defaults="I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>."
+                          components={{
+                            terms: (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); setLegalPart(0); }}
+                                className="text-harx-400 underline underline-offset-2 hover:text-harx-300"
+                              />
+                            ),
+                            privacy: (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); setLegalPart(2); }}
+                                className="text-harx-400 underline underline-offset-2 hover:text-harx-300"
+                              />
+                            ),
+                          }}
+                        />
                       </span>
                     </label>
-                    {!legalDocsRead && (
-                      <p className="text-xs text-slate-400 pl-2">
-                        {t('register.legalCheckboxLocked', 'Available once both documents have been read.')}
-                      </p>
-                    )}
                     {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
+                    <p className="text-xs text-slate-400 pl-2">
+                      {t('register.termsOpenHint', 'The documents open in a window, in French or English.')}
+                    </p>
+                    <LegalViewerModal
+                      open={legalPart !== null}
+                      audience={legalAudience}
+                      initialPart={legalPart ?? 0}
+                      onClose={() => setLegalPart(null)}
+                    />
                   </div>
                 )}
 
