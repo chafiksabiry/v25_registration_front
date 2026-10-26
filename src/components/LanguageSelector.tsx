@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { persistHarxLanguage, applyHarxLanguage } from '../lib/i18n';
+import { hardNavigate } from '../lib/appNavigation';
+import { isPrefixablePath, stripLangPrefix, withLangPrefix } from '../lib/langRoutes';
 
 const FrenchFlag = () => (
   <svg width="20" height="14" viewBox="0 0 3 2" className="rounded-sm overflow-hidden shrink-0">
@@ -40,8 +42,14 @@ export function LanguageSelector() {
 
   const selectLanguage = (lang: 'fr' | 'en') => {
     persistHarxLanguage(lang, { explicit: true });
-    void i18n.changeLanguage(lang);
     setIsOpen(false);
+    const { pathname, search, hash } = window.location;
+    if (isPrefixablePath(pathname)) {
+      // Page publique : une URL par langue (/fr/…, /en/…), rechargement complet.
+      hardNavigate(`${withLangPrefix(stripLangPrefix(pathname), lang)}${search}${hash}`);
+      return;
+    }
+    void i18n.changeLanguage(lang);
   };
 
   useEffect(() => {

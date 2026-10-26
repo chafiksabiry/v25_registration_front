@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, type RouteObject } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LinkedInCallback from './components/LinkedInCallback';
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
@@ -59,8 +59,7 @@ function AuthProviders({ children }: { children: React.ReactNode }) {
   return <AuthProvider>{children}</AuthProvider>;
 }
 
-export const appRouter = createBrowserRouter(
-  [
+const routes: RouteObject[] = [
     {
       element: (
         <AuthProviders>
@@ -147,6 +146,15 @@ export const appRouter = createBrowserRouter(
         },
       ],
     },
-  ],
-  { basename: getRouterBasename() }
-);
+];
+
+let cachedRouter: { basename: string; router: ReturnType<typeof createBrowserRouter> } | null = null;
+
+/** Router lié au préfixe de langue de l'URL courante (recréé si le préfixe change). */
+export function getAppRouter() {
+  const basename = getRouterBasename();
+  if (!cachedRouter || cachedRouter.basename !== basename) {
+    cachedRouter = { basename, router: createBrowserRouter(routes, { basename }) };
+  }
+  return cachedRouter.router;
+}

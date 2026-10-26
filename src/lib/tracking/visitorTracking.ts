@@ -34,6 +34,17 @@ function upsertCanonical(href: string) {
   link.href = href;
 }
 
+function upsertAlternates(alternates: Array<{ hreflang: string; href: string }>) {
+  document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach((el) => el.remove());
+  for (const { hreflang, href } of alternates) {
+    const link = document.createElement('link');
+    link.rel = 'alternate';
+    link.hreflang = hreflang;
+    link.href = href;
+    document.head.appendChild(link);
+  }
+}
+
 export function updatePageHead(meta: PageMeta): void {
   let title = (meta.title || 'HARX').trim();
   title = title.replace(/^(HARX\s*[—\-–|:]\s*)+/i, 'HARX — ');
@@ -45,6 +56,9 @@ export function updatePageHead(meta: PageMeta): void {
     upsertMeta('og:url', meta.canonical, 'property');
     upsertCanonical(meta.canonical);
   }
+  if (meta.lang) document.documentElement.lang = meta.lang;
+  if (meta.alternates) upsertAlternates(meta.alternates);
+  else if (meta.canonical) upsertAlternates([]);
 }
 
 /** Update document title + meta tags only (safe in qiankun child MFEs). */

@@ -23,6 +23,16 @@ export function isAuthPortalPath(pathname: string): boolean {
   return AUTH_ROUTE_TITLES.some(({ test }) => test(path));
 }
 
-export function buildAuthPageTitle(label: string): string {
+const AUTH_LABELS_EN: Record<string, string> = {
+  'Choix du profil': 'Choose your profile',
+  Connexion: 'Sign in',
+  Inscription: 'Sign up',
+  'Inscription entreprise': 'Company sign-up',
+  'Inscription rep': 'Rep sign-up',
+  'Récupération de compte': 'Account recovery',
+};
+
+export function buildAuthPageTitle(label: string, lang: 'fr' | 'en' = 'fr'): string {
+  if (lang === 'en') return `HARX — Account · ${AUTH_LABELS_EN[label] ?? label}`;
   return `HARX — Compte · ${label}`;
 }
