@@ -19,7 +19,19 @@ export function landingSectionTitle(sectionId: string): string {
   return LANDING_SECTION_TITLES[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES.top;
 }
 
-export function landingPageTabTitle(sectionId: string): string {
+const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
+  top: 'Home',
+  'how-it-works': 'How it works',
+  pricing: 'Pricing',
+  clients: 'For companies',
+  reps: 'For reps',
+};
+
+export function landingPageTabTitle(sectionId: string, lang: 'fr' | 'en' = 'fr'): string {
+  if (lang === 'en') {
+    const label = LANDING_SECTION_TITLES_EN[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES_EN.top;
+    return sectionId === 'top' ? `${BASE_TITLE} — ${label}` : `${BASE_TITLE} — Home · ${label}`;
+  }
   const label = landingSectionTitle(sectionId);
   return sectionId === 'top' ? `${BASE_TITLE} — ${label}` : `${BASE_TITLE} — Accueil · ${label}`;
 }

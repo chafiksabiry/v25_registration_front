@@ -9,6 +9,7 @@ import { FeaturedGigs } from './FeaturedGigs';
 import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
+import { useTranslation } from 'react-i18next';
 
 interface LandingPageProps {
   onSignIn: () => void;
@@ -48,7 +49,8 @@ export function LandingPage({
     onSectionAppliedRef.current = onSectionApplied;
   }, [onSectionApplied]);
 
-  usePageTitle(landingPageTabTitle(activeSection));
+  const { i18n } = useTranslation();
+  usePageTitle(landingPageTabTitle(activeSection, i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
 
   useEffect(() => {
     if (initialSection) {

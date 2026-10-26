@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageSelector } from '../LanguageSelector';
 import { persistHarxLanguage } from '../../lib/i18n';
+import { withLangPrefix } from '../../lib/langRoutes';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   getPostLoginRedirectUrl,
@@ -41,6 +42,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
   const [sessionTick, setSessionTick] = React.useState(0);
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
+  const homeHref = withLangPrefix('/', (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr');
 
   React.useEffect(() => {
     return subscribeAuthChanged(() => {
@@ -192,7 +194,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
       <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-16 flex items-center justify-between">
         <div className="flex items-center space-x-6 lg:space-x-8">
           <a
-            href="/"
+            href={homeHref}
             className="flex items-center transition-transform hover:scale-[1.02]"
             onClick={(e) => handleNavClick(e, 'top')}
           >
@@ -203,7 +205,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection }: HeaderPr
             {navLinks.map((link) => (
               <a
                 key={link.id}
-                href={`/#${link.id}`}
+                href={`${homeHref}#${link.id}`}
                 className={linkClass(link.variant)}
                 onClick={(e) => handleNavClick(e, link.id)}
               >

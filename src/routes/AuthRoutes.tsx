@@ -11,7 +11,8 @@ import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
-  usePageTitle(buildAuthPageTitle(title));
+  const { i18n } = useTranslation();
+  usePageTitle(buildAuthPageTitle(title, i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
   return <>{children}</>;
 }
 

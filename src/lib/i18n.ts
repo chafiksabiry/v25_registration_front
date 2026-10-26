@@ -1,6 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
+import { getLangFromPath } from './langRoutes';
 import translationEN from '../locales/en/translation.json';
 import translationFR from '../locales/fr/translation.json';
 
@@ -46,6 +47,16 @@ export function applyHarxLanguage(): Promise<string> {
   return i18n.changeLanguage(desired).then(() => desired);
 }
 
+/** La langue de l'URL (/fr, /en) prime : le préfixe anglais vaut choix explicite. */
+export function syncLanguageFromPath(pathname: string): void {
+  const lang = getLangFromPath(pathname);
+  if (!lang) return;
+  persistHarxLanguage(lang, lang === 'en' ? { explicit: true } : undefined);
+  if (!i18n.language?.toLowerCase().startsWith(lang)) {
+    void i18n.changeLanguage(lang);
+  }
+}
+
 const resources = {
   en: {
     translation: translationEN,
@@ -54,6 +65,11 @@ const resources = {
     translation: translationFR,
   },
 };
+
+if (typeof window !== 'undefined') {
+  const urlLang = getLangFromPath(window.location.pathname);
+  if (urlLang) persistHarxLanguage(urlLang, urlLang === 'en' ? { explicit: true } : undefined);
+}
 
 void i18n.use(initReactI18next).init({
   resources,
