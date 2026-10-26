@@ -61,6 +61,7 @@ export function persistHarxLanguage(lang: string, opts?: { explicit?: boolean })
 export function applyHarxLanguage(): Promise<string> {
   const desired = readHarxLanguage();
   persistHarxLanguage(desired, { explicit: desired === 'en' });
+  if (typeof document !== 'undefined') document.documentElement.lang = desired;
   if (i18n.language?.toLowerCase().startsWith(desired)) {
     return Promise.resolve(desired);
   }
@@ -103,6 +104,7 @@ void i18n.use(initReactI18next).init({
 
 i18n.on('languageChanged', (lng) => {
   persistHarxLanguage(lng);
+  if (typeof document !== 'undefined') document.documentElement.lang = lng.toLowerCase().startsWith('en') ? 'en' : 'fr';
 });
 
 export default i18n;
