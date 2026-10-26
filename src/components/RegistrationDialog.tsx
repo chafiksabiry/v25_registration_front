@@ -18,6 +18,7 @@ import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
+import { trackSignUpConversion } from '../lib/tracking/conversions';
 
 type Step = RegisterFormStep | 'success';
 
@@ -182,6 +183,7 @@ export default function RegistrationDialog({
       } catch {
         /* ignore */
       }
+      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown');
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
