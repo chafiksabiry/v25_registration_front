@@ -155,6 +155,15 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new Event('harx:open-consent'))}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
+                  {t('footer.manageCookies', 'Manage cookies')}
+                </button>
+              </li>
             </ul>
           </div>
 
