@@ -122,7 +122,7 @@ export function resolvePageMeta(rawPath: string): PageMeta {
     alternates: [
       { hreflang: 'fr', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'fr')}` },
       { hreflang: 'en', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'en')}` },
-      ...(pathname === '/' ? [{ hreflang: 'x-default', href: `${HARX_SITE_URL}/` }] : []),
+      ...(pathname === '/' ? [{ hreflang: 'x-default', href: `${HARX_SITE_URL}/fr` }] : []),
     ],
   };
 }
