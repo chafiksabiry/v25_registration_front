@@ -16,6 +16,7 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
+import { BrandText } from './BrandText';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion } from '../lib/tracking/conversions';
@@ -486,13 +487,7 @@ export default function RegistrationDialog({
                 />
                 <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
               </div>
-              <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                {t('signIn.brandTitle1', 'Start Your')} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
-              </h1>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
-              </p>
+              <BrandText callCentre={defaultUserType === 'call-center' || isCallcentreProduct()} />
             </div>
           </div>
 

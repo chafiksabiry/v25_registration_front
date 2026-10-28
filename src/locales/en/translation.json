@@ -1,4 +1,13 @@
 {
+  "callcentreBrand": {
+    "title1": "Your call centre,",
+    "title2": "up and running in 10 minutes",
+    "desc": "Create your account, buy your French number, invite your agents and launch inbound or outbound operations, with AI to assist you.",
+    "point1": "A French number, tested before your first operation",
+    "point2": "Agents invited by email and trained before their first calls",
+    "point3": "AI-assisted scripts, knowledge base and call analysis",
+    "point4": "One subscription, then pay for what you use"
+  },
   "header": {
     "howItWorks": "How It Works",
     "pricing": "Pricing",
