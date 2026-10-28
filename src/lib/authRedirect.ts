@@ -301,7 +301,13 @@ async function computePostLoginRedirectUrl(
       checkUserType.userType === "call-center"
     ) {
       // Accounts that came from the standalone Call Centre product land there.
-      const dest = isCallcentreProduct()
+      // Le produit est porté par le compte (il survit à la déconnexion), avec repli sur le lien d'arrivée.
+      const callcentre = checkUserType.product === "callcentre" || isCallcentreProduct();
+      if (isCallcentreProduct() && checkUserType.product !== "callcentre") {
+        // Compte créé avant que le produit soit porté par le compte : on le rattache pour les prochaines connexions.
+        auth.setProduct("callcentre", token).catch(() => undefined);
+      }
+      const dest = callcentre
         ? CALLCENTRE_PATH
         : checkUserType.userType === "call-center"
           ? "/call-center"

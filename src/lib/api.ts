@@ -117,6 +117,11 @@ export const auth = {
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
   },
+  /** Rattache le compte connecté à un produit HARX (« callcentre »). */
+  setProduct: async (product: 'callcentre', token: string) => {
+    const response = await api.post('/auth/product', { product }, { headers: { Authorization: `Bearer ${token}` } });
+    return response.data;
+  },
   changeUserType: async (
     userId: string,
     newType: 'company' | 'rep' | 'call-center'
