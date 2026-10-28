@@ -8,6 +8,8 @@ import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
 import { Header } from './LandingPage/Header';
 import { useTranslation } from 'react-i18next';
+import { BrandText } from './BrandText';
+import { isCallcentreProduct } from '../lib/product';
 import { mapSignInError } from '../lib/authErrors';
 import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
 
@@ -255,13 +257,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                 />
                 <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
               </div>
-              <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                {t('signIn.brandTitle1', 'Start Your')} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
-              </h1>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
-              </p>
+              <BrandText callCentre={isCallcentreProduct()} />
             </div>
           </div>
 

@@ -1,4 +1,13 @@
 {
+  "callcentreBrand": {
+    "title1": "Votre centre d'appels,",
+    "title2": "opérationnel en 10 minutes",
+    "desc": "Créez votre compte, achetez votre numéro français, invitez vos agents et lancez vos opérations entrantes ou sortantes, avec l'IA pour vous assister.",
+    "point1": "Un numéro français testé avant votre première opération",
+    "point2": "Vos agents invités par e-mail, formés avant leurs premiers appels",
+    "point3": "Scripts, base de connaissance et analyse des appels par l'IA",
+    "point4": "Un abonnement, puis vous payez ce que vous consommez"
+  },
   "header": {
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
