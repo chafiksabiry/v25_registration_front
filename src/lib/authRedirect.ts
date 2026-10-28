@@ -350,7 +350,7 @@ async function computePostLoginRedirectUrl(
         return "/company/#/dashboard/account-settings?changePassword=1";
       }
       localStorage.removeItem("mustChangePassword");
-      return "/company/#/dashboard/main";
+      return checkUserType.product === "callcentre" ? CALLCENTRE_PATH : "/company/#/dashboard/main";
     }
 
     // Always prefer live profile so login resumes the real onboarding step
