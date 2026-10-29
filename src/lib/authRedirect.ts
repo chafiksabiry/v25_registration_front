@@ -370,7 +370,7 @@ async function computePostLoginRedirectUrl(
           localStorage.setItem('mustChangePassword', '1');
           return toRepAbsoluteUrl('/account-settings?changePassword=1');
         }
-        return toRepAbsoluteUrl('/dashboard');
+        return checkUserType.product === 'callcentre' ? CALLCENTRE_PATH : toRepAbsoluteUrl('/dashboard');
       }
 
       const { data: profileData } = await axios.get(
