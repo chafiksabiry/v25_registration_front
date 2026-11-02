@@ -605,7 +605,7 @@
     "legalToRead": "À lire",
     "legalCheckboxLocked": "Disponible après la lecture des deux documents.",
     "termsAccept": "J’ai lu et j’accepte les <terms>Conditions d’utilisation</terms> et la <privacy>Politique de confidentialité</privacy>.",
-    "termsIncludes": {"rep": "Les Conditions d’utilisation comprennent les conditions propres aux REPs : réalisation des missions, rémunération, obligations réglementaires.", "company": "Les Conditions d’utilisation comprennent les conditions propres aux Companies : publication des missions, relation avec les REPs, accord de traitement des données.", "callcenter": "Les Conditions d’utilisation comprennent les conditions propres aux centres d’appels : abonnement, numéros, minutes prépayées, conformité des appels, accord de traitement des données."},
+    "termsIncludes": {"rep": "Les Conditions d’utilisation comprennent les conditions propres aux REPs : réalisation des missions, rémunération, obligations réglementaires.", "company": "Les Conditions d’utilisation comprennent les conditions propres aux Companies : publication des missions, relation avec les REPs, accord de traitement des données.", "callcenter": "Les Conditions d’utilisation comprennent les conditions propres aux centres d’appels : offres et abonnement, offre de lancement et période d’essai, numéros, minutes prépayées, intégrations, portail client, conformité des appels, accord de traitement des données."},
     "termsOpenHint": "Les documents s’ouvrent dans une fenêtre, en français ou en anglais.",
     "legalViewerTitle": "Conditions et politique de confidentialité",
     "legalLanguage": "Langue",

@@ -605,7 +605,7 @@
     "legalToRead": "To read",
     "legalCheckboxLocked": "Available once both documents have been read.",
     "termsAccept": "I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>.",
-    "termsIncludes": {"rep": "The Terms of Use include the terms specific to REPs: carrying out missions, pay, regulatory obligations.", "company": "The Terms of Use include the terms specific to Companies: publishing missions, working with REPs, the data processing agreement.", "callcenter": "The Terms of Use include the terms specific to contact centers: subscription, numbers, prepaid minutes, call compliance, the data processing agreement."},
+    "termsIncludes": {"rep": "The Terms of Use include the terms specific to REPs: carrying out missions, pay, regulatory obligations.", "company": "The Terms of Use include the terms specific to Companies: publishing missions, working with REPs, the data processing agreement.", "callcenter": "The Terms of Use include the terms specific to contact centers: plans and subscription, launch offer and trial period, numbers, prepaid minutes, integrations, client portal, call compliance, the data processing agreement."},
     "termsOpenHint": "The documents open in a window, in French or English.",
     "legalViewerTitle": "Terms and privacy policy",
     "legalLanguage": "Language",
