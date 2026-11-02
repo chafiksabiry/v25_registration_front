@@ -12,7 +12,7 @@
       "5. Politique de confidentialité",
       "6. Accord de traitement des données"
     ],
-    "version": "Version 1.4 — base commune — en vigueur au 1er octobre 2026",
+    "version": "Version 1.5 — base commune — en vigueur au [À CONFIRMER — date de mise en production] (projet de recette du 2 novembre 2026)",
     "address": "16192 Coastal Highway, Lewes, Delaware 19958, USA"
   },
   "parts": [
@@ -966,12 +966,16 @@
       "title": "Conditions Centre d'appels",
       "blocks": [
         {
+          "type": "meta",
+          "text": "Version 1.5 — en vigueur à compter du [À CONFIRMER — date de mise en production]. Dernière mise à jour : 2 novembre 2026 (projet soumis à la recette)."
+        },
+        {
           "type": "heading",
           "text": "Article 1 — Objet et champ d'application"
         },
         {
           "type": "paragraph",
-          "text": "1.1. Les présentes Conditions Centre d'appels s'appliquent à toute personne morale ou professionnel inscrit sur la Plateforme pour utiliser le service HARX Call Centre, c'est-à-dire l'infrastructure d'un centre d'appels (téléphonie, files d'attente, scripts, planning, suivi de la qualité) destinée à ses propres équipes ou à celles de ses clients (le « Client »). Elles complètent les CGU, dont elles reprennent les définitions."
+          "text": "1.1. Les présentes Conditions Centre d'appels s'appliquent à toute personne morale ou professionnel inscrit sur la Plateforme pour utiliser le service HARX Call Centre, c'est-à-dire l'infrastructure d'un centre d'appels (téléphonie, files d'attente, scripts, planning, suivi de la qualité, messagerie, agenda, visioconférence, intégrations) destinée à ses propres équipes ou à celles de ses clients (le « Client »). Elles complètent les CGU, dont elles reprennent les définitions."
         },
         {
           "type": "paragraph",
@@ -1003,47 +1007,123 @@
         },
         {
           "type": "heading",
-          "text": "Article 3 — Abonnement"
+          "text": "Article 3 — Offres et abonnement"
         },
         {
           "type": "paragraph",
-          "text": "3.1. L'accès aux fonctionnalités est soumis à un abonnement. Son contenu, qui varie selon les fonctionnalités et l'accès à l'intelligence artificielle, et son prix sont affichés dans l'application avant tout paiement. L'abonnement comprend une ligne téléphonique ; chaque ligne supplémentaire est facturée comme une licence utilisateur."
+          "text": "3.1. Le service est proposé en quatre offres : « Nomad Solo » (usage par un seul utilisateur), « Accueil / Secrétariat », « Company Full Scope In & Out » et « Contact Centre Multi-clients ». Le contenu de chaque offre (fonctionnalités, accès à l'intelligence artificielle) et son prix sont affichés dans l'application avant tout paiement ; seul le contenu affiché au moment de la souscription fait foi."
         },
         {
           "type": "paragraph",
-          "text": "3.2. L'abonnement et les lignes sont payables d'avance par carte bancaire, par l'intermédiaire du Prestataire de Paiement, à chaque période. Ils se renouvellent automatiquement à leur échéance, sauf résiliation depuis les paramètres du compte avant cette échéance."
+          "text": "3.2. Chaque abonnement comprend un (1) siège, c'est-à-dire un utilisateur et une ligne téléphonique. Chaque siège supplémentaire est facturé mensuellement, au prix affiché avant paiement. Le Client peut en ajouter ou en retirer depuis l'application ; la modification s'applique à la période suivante, sauf indication contraire affichée."
         },
         {
           "type": "paragraph",
-          "text": "3.3. Un code promotionnel, lorsqu'il est proposé, ne s'applique qu'à l'abonnement. Aucune minute d'appel n'est incluse dans l'abonnement."
+          "text": "3.3. L'abonnement et les sièges sont payables d'avance par carte bancaire, par l'intermédiaire du Prestataire de Paiement, à chaque période. Ils se renouvellent automatiquement à leur échéance, sauf résiliation depuis les paramètres du compte avant cette échéance, et sous réserve de l'article 6 si le Client a choisi un engagement."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.4. Aucune minute d'appel ni aucun jeton d'intelligence artificielle n'est inclus dans l'abonnement ; ils sont régis par l'article 8."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.5. HARX peut modifier le prix d'une offre pour les périodes futures, avec un préavis de [À CONFIRMER — durée du préavis, par exemple 30 jours] ; le Client peut résilier avant l'entrée en vigueur du nouveau prix."
         },
         {
           "type": "heading",
-          "text": "Article 4 — Numéros de téléphone et lignes"
+          "text": "Article 4 — Offre de lancement"
         },
         {
           "type": "paragraph",
-          "text": "4.1. Les numéros sont loués au mois et acquis au moment où le Client en a besoin. HARX les acquiert auprès de ses opérateurs et les met à la disposition du Client, qui n'a aucun dossier à déposer auprès de l'opérateur ; HARX conserve les documents du Client conformément à l'article 2.1."
+          "text": "4.1. HARX peut proposer une offre de lancement sous la forme d'un code promotionnel. Le code est réservé aux nouveaux clients, c'est-à-dire aux personnes qui n'ont jamais souscrit d'abonnement à ce service, et n'est utilisable qu'une fois par Client (une société, un numéro d'immatriculation, un représentant légal)."
         },
         {
           "type": "paragraph",
-          "text": "4.2. Le prix d'un numéro et celui d'une ligne sont affichés avant l'achat. À défaut de paiement à l'échéance, HARX peut suspendre la ligne puis, après relance, libérer le numéro. Un numéro libéré peut ne plus pouvoir être récupéré."
+          "text": "4.2. Le code est valable douze (12) mois et s'applique à l'abonnement uniquement. Il ne s'applique jamais aux minutes d'appel, aux jetons d'intelligence artificielle ni aux sièges supplémentaires."
         },
         {
           "type": "paragraph",
-          "text": "4.3. Le Client n'acquiert aucun droit de propriété sur les numéros mis à sa disposition."
+          "text": "4.3. À l'issue des douze (12) mois, le prix affiché de l'abonnement s'applique, sans démarche du Client, sous réserve de l'article 6. HARX en informe le Client avant la fin de la période promotionnelle."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.4. Point de départ des douze (12) mois : [À CONFIRMER — date de la première souscription payante ou de l'activation du code ; la période d'essai de l'article 5 compte-t-elle ou non]."
+        },
+        {
+          "type": "paragraph",
+          "text": "4.5. HARX peut refuser ou retirer le code en cas de fraude, de création de comptes multiples ou de détournement."
         },
         {
           "type": "heading",
-          "text": "Article 5 — Minutes d'appel et intelligence artificielle"
+          "text": "Article 5 — Période d'essai de 7 jours"
         },
         {
           "type": "paragraph",
-          "text": "5.1. Les minutes d'appel et l'usage de l'intelligence artificielle se paient à la consommation, depuis un solde prépayé que le Client alimente par carte bancaire. Les tarifs en vigueur sont affichés dans l'application avant chaque achat."
+          "text": "5.1. Lorsque l'application la propose, le Client bénéficie d'une période d'essai de sept (7) jours pour découvrir l'offre qu'il a choisie. L'essai est réservé aux nouveaux clients, à raison d'un seul essai par Client. [À CONFIRMER — conditions d'éligibilité exactes et contrôles anti-abus.]"
         },
         {
           "type": "paragraph",
-          "text": "5.2. Toute minute commencée est facturée :"
+          "text": "5.2. Pendant l'essai, les fonctionnalités de l'offre sont accessibles. Les minutes d'appel, les jetons d'intelligence artificielle, les numéros et les sièges supplémentaires restent payants selon les prix affichés. [À CONFIRMER — limites éventuelles de l'essai.]"
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. Le Client doit effectuer le paiement de l'abonnement avant la fin de l'essai pour continuer à utiliser le service. À défaut, l'accès aux fonctionnalités de l'abonnement est suspendu à la fin de l'essai et aucun abonnement n'est facturé. Les données du Client sont conservées pendant [À CONFIRMER — durée] afin de lui permettre de souscrire, puis supprimées, sous réserve des obligations légales de conservation."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.4. Lorsque le Client paie pendant l'essai, l'abonnement prend effet [À CONFIRMER — immédiatement, ou à la fin de l'essai] et les articles 3, 4 et 6 s'appliquent."
+        },
+        {
+          "type": "heading",
+          "text": "Article 6 — Engagement et tarif de fidélité [À CONFIRMER]"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.1. [À CONFIRMER — cette clause ne s'applique que si HARX propose effectivement un engagement ; elle ne doit pas être publiée en production tant que l'offre n'est pas disponible.] Le Client peut choisir, à la souscription, un engagement de douze (12) ou vingt-quatre (24) mois, en échange d'un tarif de fidélité affiché avant paiement."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.2. Pendant l'engagement, l'abonnement ne peut pas être résilié avant son terme, sauf manquement grave de HARX ou cas prévu par la loi. Les sommes dues pour la période restante restent exigibles. [À CONFIRMER — modalités de paiement (mensuel ou annuel) et de sortie anticipée.]"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.3. Le tarif de fidélité ne descend jamais sous le prix de lancement de l'article 4. Il ne s'applique qu'à l'abonnement."
+        },
+        {
+          "type": "paragraph",
+          "text": "6.4. À la fin de l'engagement, l'abonnement se poursuit sans engagement, au prix affiché à ce moment-là, sauf résiliation selon l'article 17 des présentes Conditions. [À CONFIRMER — reconduction éventuelle de l'engagement.]"
+        },
+        {
+          "type": "paragraph",
+          "text": "6.5. Sans engagement choisi, l'article 17.1 s'applique : l'abonnement se poursuit jusqu'à sa résiliation."
+        },
+        {
+          "type": "heading",
+          "text": "Article 7 — Numéros de téléphone et lignes"
+        },
+        {
+          "type": "paragraph",
+          "text": "7.1. Les numéros sont loués au mois et acquis au moment où le Client en a besoin. HARX les acquiert auprès de ses opérateurs et les met à la disposition du Client, qui n'a aucun dossier à déposer auprès de l'opérateur ; HARX conserve les documents du Client conformément à l'article 2.1."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.2. Le prix d'un numéro et celui d'une ligne sont affichés avant l'achat. À défaut de paiement à l'échéance, HARX peut suspendre la ligne puis, après relance, libérer le numéro. Un numéro libéré peut ne plus pouvoir être récupéré."
+        },
+        {
+          "type": "paragraph",
+          "text": "7.3. Le Client n'acquiert aucun droit de propriété sur les numéros mis à sa disposition."
+        },
+        {
+          "type": "heading",
+          "text": "Article 8 — Minutes d'appel, intelligence artificielle, renvoi d'appel et messagerie vocale"
+        },
+        {
+          "type": "paragraph",
+          "text": "8.1. Les minutes d'appel et l'usage de l'intelligence artificielle (les « jetons ») se paient à la consommation, depuis un solde prépayé que le Client alimente par carte bancaire. Les tarifs en vigueur sont affichés dans l'application avant chaque achat."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.2. Toute minute commencée est facturée :"
         },
         {
           "type": "bullets",
@@ -1055,15 +1135,115 @@
         },
         {
           "type": "paragraph",
-          "text": "5.3. Lorsque le solde est épuisé, les nouveaux appels sont bloqués jusqu'à la recharge suivante."
-        },
-        {
-          "type": "heading",
-          "text": "Article 6 — Utilisation et conformité"
+          "text": "8.3. Lorsque le solde est épuisé, les nouveaux appels sont bloqués jusqu'à la recharge suivante."
         },
         {
           "type": "paragraph",
-          "text": "6.1. Le Client est seul responsable de la conformité de son activité d'appels à la réglementation applicable à son activité et aux personnes contactées. Il garantit notamment :"
+          "text": "8.4. Renvoi d'appel vers un mobile. Le Client peut renvoyer les appels reçus vers un téléphone mobile. Le renvoi crée une seconde communication, facturée en plus de l'appel entrant. Le Client garantit que le titulaire du numéro de renvoi a donné son consentement préalable, libre et éclairé, et qu'il peut le retirer à tout moment. Le Client supporte les frais d'itinérance ou de réseau facturés par l'opérateur du mobile."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.5. Répondeur et messagerie vocale. Lorsque personne ne décroche, l'appelant peut laisser un message vocal, enregistré et transcrit. Le Client informe les appelants de l'enregistrement par le message d'accueil. Les messages sont conservés dans les conditions de l'article 14."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.6. Analyse par intelligence artificielle des messages et plan d'action. L'intelligence artificielle peut analyser les messages vocaux et les échanges et proposer un plan d'action (par exemple un rappel, une réponse ou une tâche). Cette analyse consomme des jetons. Le plan n'est qu'une suggestion : aucune action (envoi de message, appel, modification d'un dossier) n'est exécutée sans la validation d'un utilisateur du Client. L'intelligence artificielle peut se tromper ; le Client vérifie les suggestions avant de les valider et en reste responsable."
+        },
+        {
+          "type": "paragraph",
+          "text": "8.7. Notifications. Le Client et ses Agents peuvent recevoir des notifications (notifications push sur leur appareil, e-mails) relatives aux appels, messages et rendez-vous. Chaque utilisateur peut les désactiver depuis son appareil ou les paramètres de l'application."
+        },
+        {
+          "type": "heading",
+          "text": "Article 9 — Agents travaillant pour plusieurs centres"
+        },
+        {
+          "type": "paragraph",
+          "text": "9.1. Un Agent peut être invité par plusieurs centres d'appels clients de HARX et travailler pour chacun avec le même compte."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.2. Les données de chaque centre sont strictement séparées : un centre n'a accès ni aux appels, enregistrements, contacts, messages ou paramètres d'un autre centre, ni à l'activité de l'Agent pour un autre centre. L'Agent passe d'un centre à l'autre depuis l'application et il n'est rattaché à un centre qu'après avoir accepté son invitation."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.3. Le Client est responsable du traitement des données qu'il traite avec le service pour son centre (article 14.1). HARX est responsable du traitement des données de compte de l'Agent (identité, coordonnées, identifiants, liste des centres auxquels il est rattaché), qu'il soit rattaché à un ou plusieurs centres, dans les conditions de la Politique de confidentialité. Le Client n'utilise pas ces données de compte pour d'autres finalités que la gestion de son équipe."
+        },
+        {
+          "type": "paragraph",
+          "text": "9.4. Le retrait d'un Agent par un centre met fin à son accès aux données de ce centre uniquement."
+        },
+        {
+          "type": "heading",
+          "text": "Article 10 — Portail client à marque blanche"
+        },
+        {
+          "type": "paragraph",
+          "text": "10.1. Le Client peut mettre à la disposition de ses propres clients un portail à sa marque, où le client du centre consulte, en lecture seule, ses informations (par exemple ses appels, messages et rendez-vous) ; il ne peut ni les modifier ni accéder à celles d'un autre client."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.2. Le portail peut afficher le nom, le logo et la couleur du Client. Le Client garantit qu'il détient tous les droits nécessaires sur ces éléments (marques, droits d'auteur, droit à l'image) et en garantit HARX contre toute réclamation d'un tiers. HARX peut retirer un élément manifestement illicite ou trompeur."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.3. Si le portail permet d'écouter des enregistrements, cette écoute a lieu sous la responsabilité du Client : il décide quels enregistrements sont accessibles à son client, informe les personnes enregistrées, et s'assure de la base légale et du consentement requis."
+        },
+        {
+          "type": "paragraph",
+          "text": "10.4. Le Client informe ses clients de l'usage du portail et de la façon dont leurs données sont traitées. Il est seul responsable de la gestion de leurs accès."
+        },
+        {
+          "type": "heading",
+          "text": "Article 11 — Intégrations CRM, API et webhooks"
+        },
+        {
+          "type": "paragraph",
+          "text": "11.1. Le Client peut relier le service à un logiciel de gestion de la relation client tiers qu'il a choisi (HubSpot, Zoho CRM ou Microsoft Dynamics) ainsi qu'à ses propres outils par API et webhooks."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.2. Le Client est responsable de ses identifiants et clés d'accès (jetons, clés d'API, secrets de webhook). Il les garde confidentiels, les renouvelle en cas de doute et informe HARX sans délai de toute compromission. Les actions faites avec ses identifiants sont réputées faites par lui."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.3. En activant une intégration, le Client demande à HARX de transmettre à l'outil tiers qu'il a choisi les données nécessaires (par exemple contacts, appels, notes, enregistrements ou transcriptions, selon le paramétrage). Cet outil tiers n'est pas un sous-traitant de HARX mais un prestataire du Client : ses conditions et sa politique de confidentialité s'appliquent, et HARX n'est pas responsable de son fonctionnement ni de ce qu'il fait des données une fois reçues. Le Client s'assure de disposer de la base légale pour ce transfert et de la conformité de celui-ci, y compris pour les transferts hors de son pays."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.4. Les sous-traitants ultérieurs de HARX qui participent à ces transferts figurent à l'Annexe 1 de la Politique de confidentialité."
+        },
+        {
+          "type": "paragraph",
+          "text": "11.5. HARX peut limiter, suspendre ou modifier une intégration, notamment si l'éditeur tiers change son interface ou en cas d'usage abusif. Les services tiers peuvent évoluer ou être interrompus sans que HARX en soit responsable."
+        },
+        {
+          "type": "heading",
+          "text": "Article 12 — Écran client intégré, messagerie, agenda et visioconférence"
+        },
+        {
+          "type": "paragraph",
+          "text": "12.1. Écran client intégré. Le Client peut afficher dans le script d'appel de l'Agent un site tiers qui lui appartient ou qu'il utilise (par exemple son logiciel métier). Le Client est seul responsable du contenu de ce site, de son accès, de sa sécurité et des droits d'utilisation nécessaires. HARX n'en contrôle pas le contenu. Le Client ne doit pas y faire apparaître de contenu illicite et reste responsable des données personnelles qui y figurent."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.2. Messagerie. Les e-mails sont envoyés depuis le service au nom du centre. Le Client est responsable de leur contenu, de l'identité de l'expéditeur qui apparaît, des destinataires et du respect de la réglementation sur la prospection par voie électronique et sur le spam. HARX n'envoie pas de message de sa propre initiative au nom du Client."
+        },
+        {
+          "type": "paragraph",
+          "text": "12.3. Agenda. Le service propose un agenda pour planifier rendez-vous et rappels. [À CONFIRMER — connexions aux agendas Google et Microsoft : fonction à venir, non disponible à la date de rédaction. Lorsqu'elles seront ouvertes, le Client autorisera cette connexion, pourra la retirer à tout moment, et HARX n'accédera qu'aux données nécessaires.]"
+        },
+        {
+          "type": "paragraph",
+          "text": "12.4. Visioconférence. Le service peut générer des liens de visioconférence via Jitsi. Ces liens sont publics : toute personne qui possède le lien peut rejoindre la réunion. Le Client ne les transmet qu'aux personnes concernées, n'y échange pas d'informations confidentielles sans les mesures adaptées, et informe les participants de tout enregistrement. Jitsi est un service tiers soumis à ses propres conditions. [À CONFIRMER — connexion à Zoom, Google Meet ou Microsoft Teams : fonction à venir, non disponible à la date de rédaction.]"
+        },
+        {
+          "type": "heading",
+          "text": "Article 13 — Utilisation et conformité"
+        },
+        {
+          "type": "paragraph",
+          "text": "13.1. Le Client est seul responsable de la conformité de son activité d'appels à la réglementation applicable à son activité et aux personnes contactées. Il garantit notamment :"
         },
         {
           "type": "bullets",
@@ -1076,51 +1256,71 @@
         },
         {
           "type": "paragraph",
-          "text": "6.2. Le Client s'interdit d'utiliser le service pour des appels frauduleux, trompeurs ou abusifs, ou pour usurper l'identité d'un tiers."
+          "text": "13.2. Le Client s'interdit d'utiliser le service pour des appels frauduleux, trompeurs ou abusifs, ou pour usurper l'identité d'un tiers."
         },
         {
           "type": "paragraph",
-          "text": "6.3. HARX peut demander tout justificatif de conformité et suspendre tout ou partie du service en l'absence de réponse satisfaisante."
+          "text": "13.3. HARX peut demander tout justificatif de conformité et suspendre tout ou partie du service en l'absence de réponse satisfaisante."
         },
         {
           "type": "heading",
-          "text": "Article 7 — Données personnelles"
+          "text": "Article 14 — Données personnelles"
         },
         {
           "type": "paragraph",
-          "text": "7.1. Le Client est responsable du traitement des données de ses clients et prospects qu'il traite avec le service (les « Données Prospects »). HARX agit pour son compte. L'Accord de traitement des données fait partie des présentes Conditions ; le terme « Company » s'y lit « Client » et les dispositions relatives aux REPs ne s'appliquent pas."
+          "text": "14.1. Le Client est responsable du traitement des données de ses clients et prospects qu'il traite avec le service (les « Données Prospects »), y compris les contacts importés depuis un CRM, les messages vocaux, les e-mails, les enregistrements et les transcriptions. HARX agit pour son compte. L'Accord de traitement des données fait partie des présentes Conditions ; le terme « Company » s'y lit « Client » et les dispositions relatives aux REPs ne s'appliquent pas."
         },
         {
           "type": "paragraph",
-          "text": "7.2. HARX est responsable du traitement des données de compte du Client, de ses représentants et de ses Agents, dans les conditions de la Politique de confidentialité."
+          "text": "14.2. HARX est responsable du traitement des données de compte du Client, de ses représentants et de ses Agents, dans les conditions de la Politique de confidentialité et de l'article 9."
         },
         {
           "type": "heading",
-          "text": "Article 8 — Disponibilité et responsabilité"
+          "text": "Article 15 — Droit de rétractation et remboursement"
         },
         {
           "type": "paragraph",
-          "text": "8.1. HARX fournit une infrastructure technique. Elle ne garantit ni les résultats commerciaux du Client, ni une disponibilité ininterrompue du service ou des réseaux des opérateurs de téléphonie tiers."
+          "text": "15.1. Le Client déclare agir à des fins professionnelles. Il ne bénéficie donc pas du droit de rétractation de quatorze (14) jours reconnu aux consommateurs, sauf disposition légale impérative contraire applicable à sa situation. [À CONFIRMER — avis d'un juriste : certains droits nationaux étendent la protection des consommateurs à de très petites entreprises hors de leur activité principale.]"
         },
         {
           "type": "paragraph",
-          "text": "8.2. La responsabilité de HARX est limitée dans les conditions de l'article 13 des CGU."
+          "text": "15.2. Les minutes d'appel, les jetons d'intelligence artificielle et les numéros consommés ou acquis ne sont pas remboursables. Une période d'abonnement commencée est due."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.3. Remboursement. [À CONFIRMER — décision commerciale : remboursement ou non de l'abonnement dans un délai donné après la première souscription, remboursement du solde prépayé non consommé à la clôture du compte, et conditions.] En l'absence de décision publiée, aucun remboursement n'est promis, sauf en cas de double facturation, d'erreur de facturation de HARX ou lorsque la loi l'exige."
+        },
+        {
+          "type": "paragraph",
+          "text": "15.4. Les demandes se font à contact@harx.ai. Les sommes dues sont remboursées par le même moyen de paiement."
         },
         {
           "type": "heading",
-          "text": "Article 9 — Durée, suspension et résiliation"
+          "text": "Article 16 — Disponibilité et responsabilité"
         },
         {
           "type": "paragraph",
-          "text": "9.1. L'abonnement se poursuit jusqu'à sa résiliation. Le Client peut le résilier depuis les paramètres du compte avant l'échéance suivante."
+          "text": "16.1. HARX fournit une infrastructure technique. Elle ne garantit ni les résultats commerciaux du Client, ni une disponibilité ininterrompue du service, des réseaux des opérateurs de téléphonie tiers ou des services tiers (CRM, e-mail, visioconférence, notifications)."
         },
         {
           "type": "paragraph",
-          "text": "9.2. HARX peut suspendre ou résilier l'accès au service en cas de manquement du Client aux présentes Conditions, notamment en cas de défaut de paiement ou de non-conformité, dans les conditions de l'article 12 des CGU."
+          "text": "16.2. La responsabilité de HARX est limitée dans les conditions de l'article 13 des CGU."
+        },
+        {
+          "type": "heading",
+          "text": "Article 17 — Durée, suspension et résiliation"
         },
         {
           "type": "paragraph",
-          "text": "9.3. Les articles 15 (modification des Conditions) et 17 (droit applicable et litiges) des CGU s'appliquent aux présentes Conditions."
+          "text": "17.1. Sauf engagement choisi au titre de l'article 6, l'abonnement se poursuit jusqu'à sa résiliation, sans durée minimale. Le Client peut le résilier depuis les paramètres du compte avant l'échéance suivante ; il reste valable jusqu'à la fin de la période payée. Si un engagement a été choisi, l'abonnement dure jusqu'à son terme dans les conditions de l'article 6."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.2. HARX peut suspendre ou résilier l'accès au service en cas de manquement du Client aux présentes Conditions, notamment en cas de défaut de paiement ou de non-conformité, dans les conditions de l'article 12 des CGU."
+        },
+        {
+          "type": "paragraph",
+          "text": "17.3. Les articles 15 (modification des Conditions) et 17 (droit applicable et litiges) des CGU s'appliquent aux présentes Conditions."
         }
       ]
     },
@@ -1129,7 +1329,7 @@
       "blocks": [
         {
           "type": "meta",
-          "text": "Version 1.4 — en vigueur à compter du 1er octobre 2026"
+          "text": "Version 1.5 — en vigueur à compter du [À CONFIRMER — date de mise en production]. Dernière mise à jour : 2 novembre 2026 (projet de recette)."
         },
         {
           "type": "heading",
@@ -1145,11 +1345,11 @@
         },
         {
           "type": "paragraph",
-          "text": "1.2. Responsable du traitement. HARX est responsable du traitement des données des REPs, des représentants des Companies clientes, des candidats et des visiteurs du site."
+          "text": "1.2. Responsable du traitement. HARX est responsable du traitement des données des REPs, des représentants des Companies et des centres d'appels clients, des Agents des centres d'appels (y compris lorsqu'un Agent travaille pour plusieurs centres : ses données de compte), des candidats et des visiteurs du site."
         },
         {
           "type": "paragraph",
-          "text": "1.3. Sous-traitant. Pour les données des clients et prospects que les Companies confient à HARX (les « Données Prospects »), la Company est responsable du traitement et HARX agit pour son compte. Si vous avez été contacté dans le cadre d'un Gig, consultez la politique de confidentialité de la Company mentionnée lors de l'appel ; vous pouvez aussi écrire à HARX, qui transmettra votre demande."
+          "text": "1.3. Sous-traitant. Pour les données des clients et prospects que les Companies et les centres d'appels clients confient à HARX (les « Données Prospects »), la Company ou le centre d'appels est responsable du traitement et HARX agit pour son compte. Si vous avez été contacté dans le cadre d'un Gig, consultez la politique de confidentialité de la Company ou du centre mentionnée lors de l'appel ; vous pouvez aussi écrire à HARX, qui transmettra votre demande."
         },
         {
           "type": "paragraph",
@@ -1173,6 +1373,63 @@
         },
         {
           "type": "paragraph",
+          "text": "Traitements supplémentaires liés au service Centre d'appels (version 1.5). Les durées marquées [À CONFIRMER] dépendent d'une décision de HARX."
+        },
+        {
+          "type": "table",
+          "headers": [
+            "Finalité",
+            "Données",
+            "Base légale",
+            "Durée de conservation"
+          ],
+          "rows": [
+            [
+              "Rattacher un Agent à un ou plusieurs centres, avec séparation des données par centre",
+              "Identité, e-mail, identifiants, liste des centres, invitations acceptées",
+              "Exécution du contrat",
+              "Durée du compte, puis 3 ans après la dernière activité"
+            ],
+            [
+              "Répondeur et messagerie vocale",
+              "Messages vocaux, transcriptions, numéro de l'appelant",
+              "Exécution du contrat avec le centre (HARX agit pour le compte du centre)",
+              "Selon les instructions du centre ; 6 mois par défaut [À CONFIRMER]"
+            ],
+            [
+              "Analyse par intelligence artificielle des messages et plan d'action proposé",
+              "Transcriptions, messages, suggestions de l'IA",
+              "Exécution du contrat avec le centre",
+              "Selon les instructions du centre ; 1 an [À CONFIRMER]"
+            ],
+            [
+              "Intégrations CRM choisies par le client (HubSpot, Zoho CRM, Microsoft Dynamics), API et webhooks",
+              "Contacts, appels, notes, enregistrements, transcriptions, selon le paramétrage du centre",
+              "Instruction du centre (HARX agit pour son compte)",
+              "Selon le paramétrage du centre"
+            ],
+            [
+              "Messagerie, agenda et visioconférence",
+              "Adresses e-mail, contenu des messages, rendez-vous, liens de réunion",
+              "Exécution du contrat avec le centre",
+              "Selon les instructions du centre [À CONFIRMER]"
+            ],
+            [
+              "Notifications push et e-mails de service",
+              "Identifiant d'appareil, adresse e-mail, contenu de la notification",
+              "Exécution du contrat ; intérêt légitime (sécurité et information de service)",
+              "Durée du compte"
+            ],
+            [
+              "Portail client à marque blanche",
+              "Informations du client du centre, enregistrements accessibles, journaux d'accès",
+              "Instruction du centre (HARX agit pour son compte)",
+              "Selon les instructions du centre"
+            ]
+          ]
+        },
+        {
+          "type": "paragraph",
           "text": "3.2. Logique utilisée. Les scores sont calculés à partir de critères définis à l'avance : clarté et maîtrise de la langue, pertinence de l'expérience, respect du script, qualité de l'argumentation, conformité réglementaire, résultat de l'appel. Plusieurs modèles analysent les mêmes éléments en parallèle pour réduire les erreurs."
         },
         {
@@ -1186,6 +1443,10 @@
         {
           "type": "paragraph",
           "text": "3.5. Entraînement des modèles. HARX n'utilise pas les enregistrements et Données Prospects pour entraîner des modèles d'intelligence artificielle, sauf autorisation écrite de la Company et après anonymisation. Les fournisseurs d'intelligence artificielle de HARX sont tenus de ne pas utiliser vos données pour entraîner leurs propres modèles."
+        },
+        {
+          "type": "paragraph",
+          "text": "3.6. Analyse des messages et plan d'action. À la demande du centre, l'intelligence artificielle peut analyser les messages vocaux et les échanges et proposer un plan d'action. Il s'agit d'une suggestion : aucune action n'est exécutée sans la validation d'un utilisateur du centre, et aucune décision produisant des effets juridiques sur une personne n'est prise de cette manière."
         },
         {
           "type": "heading",
@@ -1223,6 +1484,10 @@
         {
           "type": "paragraph",
           "text": "5.2. La liste des sous-traitants de HARX figure en Annexe 1. Elle est mise à jour régulièrement."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.2 bis. Outils choisis par le client. Lorsqu'un centre d'appels active une intégration avec un CRM tiers (HubSpot, Zoho CRM ou Microsoft Dynamics) ou des webhooks, HARX transmet à cet outil, sur instruction du centre, les données paramétrées. Cet outil est un prestataire du centre et non un sous-traitant de HARX : il relève de sa propre politique de confidentialité. HARX n'utilise pas ces outils pour ses propres besoins."
         },
         {
           "type": "paragraph",
@@ -1320,7 +1585,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Liste mise à jour régulièrement. Dernière mise à jour : 1er octobre 2026."
+          "text": "Liste mise à jour régulièrement. Dernière mise à jour : 2 novembre 2026 (projet de recette)."
         },
         {
           "type": "table",
@@ -1374,8 +1639,27 @@
               "Netlify, Inc.",
               "Hébergement",
               "États-Unis ; Union européenne lorsque c'est possible"
+            ],
+            [
+              "[À CONFIRMER — prestataire d'envoi d'e-mails]",
+              "Envoi des e-mails au nom des centres et e-mails de service",
+              "[À CONFIRMER]"
+            ],
+            [
+              "[À CONFIRMER — prestataire de notifications push]",
+              "Notifications push sur les appareils",
+              "[À CONFIRMER]"
+            ],
+            [
+              "Jitsi (service de visioconférence)",
+              "Liens de visioconférence publics générés à la demande du centre",
+              "[À CONFIRMER]"
             ]
           ]
+        },
+        {
+          "type": "paragraph",
+          "text": "Les outils CRM choisis par les clients (HubSpot, Zoho CRM, Microsoft Dynamics) ne sont pas des sous-traitants de HARX : ce sont les prestataires du client, auxquels HARX transmet des données sur instruction du client (voir 5.2 bis). Aucun fournisseur n'est ajouté à cette liste tant que son usage n'est pas confirmé."
         }
       ]
     },
@@ -1383,8 +1667,12 @@
       "title": "Accord de traitement des données",
       "blocks": [
         {
+          "type": "meta",
+          "text": "Version 1.5 — en vigueur à compter du [À CONFIRMER — date de mise en production]. Dernière mise à jour : 2 novembre 2026 (projet de recette)."
+        },
+        {
           "type": "paragraph",
-          "text": "Conclu en application de l'article 28 du règlement (UE) 2016/679 — fait partie des Conditions Company"
+          "text": "Conclu en application de l'article 28 du règlement (UE) 2016/679 — fait partie des Conditions Company et des Conditions Centre d'appels"
         },
         {
           "type": "heading",
@@ -1448,6 +1736,10 @@
           "text": "4.3. HARX impose à chaque sous-traitant ultérieur, par contrat, des obligations de protection des données équivalentes à celles du présent accord. HARX reste responsable envers la Company de leur exécution."
         },
         {
+          "type": "paragraph",
+          "text": "4.4. Outils choisis par la Company ou le centre d'appels. Les logiciels tiers que la Company choisit de relier à la Plateforme (HubSpot, Zoho CRM, Microsoft Dynamics, webhooks, API) ne sont pas des sous-traitants ultérieurs de HARX. En activant l'intégration, la Company donne instruction à HARX de leur transmettre les Données Prospects paramétrées et assume seule la conformité de ce transfert et la relation avec l'outil tiers. L'Annexe C n'inclut que les sous-traitants de HARX, parmi lesquels les services d'envoi d'e-mails, de notifications push et de visioconférence lorsqu'ils sont utilisés [À CONFIRMER — prestataires]."
+        },
+        {
           "type": "heading",
           "text": "Article 5 — Les REPs"
         },
@@ -1458,6 +1750,10 @@
         {
           "type": "paragraph",
           "text": "5.2. HARX contribue au respect de ces engagements par les moyens techniques de la Plateforme : accès aux Données Prospects limité au Cockpit et au Gig concerné, absence de fonction d'export pour les REPs, journalisation des accès, retrait immédiat des accès à la fin du Gig ou en cas de manquement."
+        },
+        {
+          "type": "paragraph",
+          "text": "5.3. Pour les centres d'appels, les Agents invités par le Client restent sous son autorité. Lorsqu'un Agent travaille pour plusieurs centres, HARX sépare les données de chaque centre et n'en communique aucune à un autre centre. Les données de compte de l'Agent relèvent de la responsabilité de HARX (Politique de confidentialité)."
         },
         {
           "type": "heading",
@@ -1526,6 +1822,10 @@
         {
           "type": "paragraph",
           "text": "Élément Description Nature du traitement Hébergement, mise à disposition des REPs dans le Cockpit, émission et réception d'appels, enregistrement, transcription, analyse de la qualité et de la conformité par intelligence artificielle, calcul des résultats, restitution à la Company Finalité Exécution des Gigs commandés par la Company, quelle que soit leur activité (par exemple vente, prise de rendez-vous, recouvrement amiable, welcome call, support, enquête) Personnes concernées Clients, prospects et débiteurs de la Company ; le cas échéant, ses salariés utilisateurs de la Plateforme Catégories de données Identité, coordonnées, données relatives au contrat ou à la créance, informations recueillies lors de l'appel, enregistrements vocaux, transcriptions, résultats d'appel, preuves de consentement Données sensibles Aucune, sauf si le Gig l'exige et que la Company le précise par écrit (par exemple des données de santé) ; des mesures renforcées sont alors définies d'un commun accord Durée de conservation Enregistrements : 6 mois, sauf durée différente imposée par la loi ou fixée par la Company ; rapports d'évaluation : 1 an ; autres Données Prospects : selon les instructions de la Company et au plus tard 3 ans après le dernier contact"
+        },
+        {
+          "type": "paragraph",
+          "text": "Compléments pour le service Centre d'appels. Nature du traitement : en plus de ce qui précède, répondeur et messagerie vocale, analyse par intelligence artificielle des messages et plan d'action proposé (sans action automatique), synchronisation avec les CRM, API et webhooks choisis par le Client, envoi d'e-mails au nom du centre, notifications, liens de visioconférence, portail client à marque blanche (lecture seule). Catégories de données supplémentaires : messages vocaux, contenu des e-mails, contacts et notes issus du CRM, rendez-vous. Personnes concernées supplémentaires : clients du centre accédant au portail. Durées : messages vocaux 6 mois [À CONFIRMER] ; autres données selon les instructions du Client."
         },
         {
           "type": "subheading",
