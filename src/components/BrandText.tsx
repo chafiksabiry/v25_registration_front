@@ -2,7 +2,15 @@ import React from 'react';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
-/** Texte du panneau de gauche des écrans de connexion et d'inscription. Propre au Call Centre quand le visiteur vient de ce produit. */
+/**
+ * Profil d'entrée mémorisé par l'application Téléphonie (même origine que ce site) : « solo » = Nomad Solo, un poste d'appel pour
+ * une seule personne. Lecture seule, tolérante : sans stockage ou sans valeur, c'est le texte d'entreprise.
+ */
+function isSoloVisitor(): boolean {
+  try { return localStorage.getItem('harx_cc_pending_profile') === 'solo'; } catch { return false; }
+}
+
+/** Texte du panneau de gauche des écrans de connexion et d'inscription. Propre à HARX Téléphonie quand le visiteur vient de ce produit (variante Nomad Solo si c'est son profil). */
 export function BrandText({ callCentre = false }: { callCentre?: boolean }) {
   const { t } = useTranslation();
   if (!callCentre) {
@@ -18,19 +26,20 @@ export function BrandText({ callCentre = false }: { callCentre?: boolean }) {
       </>
     );
   }
+  const ns = isSoloVisitor() ? 'callcentreBrandSolo' : 'callcentreBrand';
   const points = ['point1', 'point2', 'point3', 'point4'];
   return (
     <>
       <h1 className="text-3xl font-extrabold leading-tight mb-4">
-        {t('callcentreBrand.title1', 'Your call centre,')} <br />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('callcentreBrand.title2', 'up and running in 10 minutes')}</span>
+        {t(`${ns}.title1`, 'Your telephony,')} <br />
+        <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t(`${ns}.title2`, 'up and running in 10 minutes')}</span>
       </h1>
-      <p className="text-slate-400 text-sm leading-relaxed mb-5">{t('callcentreBrand.desc')}</p>
+      <p className="text-slate-400 text-sm leading-relaxed mb-5">{t(`${ns}.desc`)}</p>
       <ul className="space-y-2.5 text-left">
         {points.map((k) => (
           <li key={k} className="flex items-start gap-2.5 text-sm text-slate-200">
             <Check className="mt-0.5 h-4 w-4 shrink-0 text-harx-400" />
-            <span>{t(`callcentreBrand.${k}`)}</span>
+            <span>{t(`${ns}.${k}`)}</span>
           </li>
         ))}
       </ul>

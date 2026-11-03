@@ -30,10 +30,10 @@ interface ChoicePageProps {
 }
 
 const callCenterFeatures = [
-  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'Manage call-center operations' },
-  { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Run outbound & inbound campaigns' },
-  { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Staff agents and supervisors' },
-  { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'Track performance & quality' },
+  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'A French number and your calls in the browser' },
+  { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Inbound and outbound calls, greeting and voicemail' },
+  { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Call log, transcription and AI analysis' },
+  { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'From freelancer to multi-client centre' },
 ];
 
 const companyFeatures = [
@@ -188,13 +188,13 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
             disabled={!onOpenCallCentre}
             icon={HeadphonesIcon}
             image={companyBanner}
-            imageAlt="Centre d'appels"
-            title={t('choicePage.callCenterTitle', 'Call Center')}
-            description={t('choicePage.callCenterDesc', 'For call centers running campaigns and agents')}
+            imageAlt="Téléphonie"
+            title={t('choicePage.callCenterTitle', 'Telephony')}
+            description={t('choicePage.callCenterDesc', 'For freelancers and businesses that want to make calls: number, calls and AI')}
             badge={onOpenCallCentre ? t('choicePage.available', 'Available') : t('choicePage.comingSoon', 'Coming soon')}
             badgeTone={onOpenCallCentre ? 'live' : 'muted'}
             features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
-            cta={t('choicePage.callCenterCta', 'Join as Call Center')}
+            cta={t('choicePage.callCenterCta', 'Open HARX Telephony')}
             onClick={onOpenCallCentre}
           />
           <ChoiceCard
