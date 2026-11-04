@@ -1,3 +1,4 @@
+import { isCallcentreProduct } from '../lib/product';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
@@ -211,6 +212,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
         onSignIn={onBack}
         onGetStarted={onGetStarted || onBack}
         onNavigateToSection={onNavigateToSection}
+        telephony={isCallcentreProduct()}
       />
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
         <div className="absolute top-[8%] left-[15%] w-[42%] h-[42%] bg-rose-500/30 blur-[120px] rounded-full animate-float" />

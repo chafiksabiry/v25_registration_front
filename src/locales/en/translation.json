@@ -17,6 +17,37 @@
     "point3": "Your call log, transcription and AI analysis",
     "point4": "One subscription, then pay for what you use"
   },
+  "callcentreBrandAccueil": {
+    "title1": "Your company's phone reception,",
+    "title2": "up and running in minutes",
+    "desc": "Create your account, choose Reception / Secretarial, buy your French number: callers hear your greeting, and the messages they leave are sorted and ready to handle.",
+    "point1": "A French number tested before your first call",
+    "point2": "A greeting and voicemail in your company's image",
+    "point3": "Several secretaries, each with their own schedule",
+    "point4": "A subscription, then you pay for what you use"
+  },
+  "callcentreBrandFullScope": {
+    "title1": "Telephony for all your services,",
+    "title2": "up and running in 10 minutes",
+    "desc": "Sales, customer relations, collections, recruitment: create your account, choose Company Full Scope, buy your French number, invite your colleagues and start your inbound or outbound calls, with AI to assist you.",
+    "point1": "A French number tested before your first call",
+    "point2": "Colleagues invited by e-mail and trained before their first calls",
+    "point3": "Contacts, AI-written scripts and a knowledge base for each activity",
+    "point4": "A subscription, then you pay for what you use"
+  },
+  "callcentreBrandMulti": {
+    "title1": "Your contact centre,",
+    "title2": "one control room for all your clients",
+    "desc": "Create your account, choose Contact Centre Multi-clients, attach each operation to a client with its numbers, indicators and reports, and launch your agents' calls, on-site or remote.",
+    "point1": "Operations, numbers and reports per client",
+    "point2": "On-site or remote agents, shared between clients",
+    "point3": "A client portal under your brand, read-only",
+    "point4": "A subscription, then you pay for what you use"
+  },
+  "telephonyHeader": {
+    "signIn": "Sign in",
+    "signUp": "Create my account"
+  },
   "header": {
     "howItWorks": "How It Works",
     "pricing": "Pricing",
