@@ -6,7 +6,7 @@
 const PRODUCT_KEY = 'harx_product';
 
 export const CALLCENTRE_PRODUCT = 'callcentre';
-export const CALLCENTRE_PATH = '/callcentre';
+export const CALLCENTRE_PATH = '/telephony';
 
 /** Remember the product named in the address bar, if any. */
 export function captureProductFromUrl(search: string = window.location.search): void {

@@ -40,7 +40,7 @@ export function ChoiceScreen() {
     <AuthScreen title="Choix du profil">
       <ChoicePage
         onSelectRole={handleSelectRole}
-        onOpenCallCentre={() => hardNavigate('/callcentre')}
+        onOpenCallCentre={() => hardNavigate('/telephony')}
         onSignIn={() => navigate('/auth/signin')}
         onNavigateToSection={handleNavigateToSection}
       />
