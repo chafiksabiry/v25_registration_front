@@ -463,6 +463,7 @@ export default function RegistrationDialog({
         onSignIn={onSignIn}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
+        telephony={defaultUserType === 'call-center' || isCallcentreProduct()}
       />
 
       {/* Immersive background decoration */}

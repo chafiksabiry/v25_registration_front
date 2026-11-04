@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { readPendingPlan } from '../lib/product';
 
 /**
  * Profil d'entrée mémorisé par l'application Téléphonie (même origine que ce site) : « solo » = Nomad Solo, un poste d'appel pour
@@ -26,7 +27,13 @@ export function BrandText({ callCentre = false }: { callCentre?: boolean }) {
       </>
     );
   }
-  const ns = isSoloVisitor() ? 'callcentreBrandSolo' : 'callcentreBrand';
+  // Texte propre à l'offre choisie sur la page d'accueil ; sans offre connue, Nomad Solo (profil mémorisé) ou le texte d'entreprise.
+  const plan = readPendingPlan();
+  const ns = plan === 'nomad_solo' || (!plan && isSoloVisitor()) ? 'callcentreBrandSolo'
+    : plan === 'accueil' ? 'callcentreBrandAccueil'
+    : plan === 'full_scope' ? 'callcentreBrandFullScope'
+    : plan === 'multi_clients' ? 'callcentreBrandMulti'
+    : 'callcentreBrand';
   const points = ['point1', 'point2', 'point3', 'point4'];
   return (
     <>

@@ -33,3 +33,16 @@ export function clearProduct(): void {
     /* ignore storage errors */
   }
 }
+
+/** Offre choisie sur la page d'accueil Téléphonie (mémorisée par l'application, même origine), si elle est connue. */
+export type TelephonyPlan = 'nomad_solo' | 'accueil' | 'full_scope' | 'multi_clients';
+const PLANS: TelephonyPlan[] = ['nomad_solo', 'accueil', 'full_scope', 'multi_clients'];
+
+export function readPendingPlan(): TelephonyPlan | null {
+  try {
+    const v = localStorage.getItem('harx_cc_pending_plan');
+    return PLANS.find((p) => p === v) ?? null;
+  } catch {
+    return null;
+  }
+}

@@ -234,6 +234,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         onSignIn={() => {}}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
+        telephony={isCallcentreProduct()}
       />
       
       {/* Immersive background decoration */}

@@ -17,6 +17,37 @@
     "point3": "Journal de vos appels, transcription et analyse par l'IA",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
+  "callcentreBrandAccueil": {
+    "title1": "L'accueil téléphonique de votre entreprise,",
+    "title2": "assuré en quelques minutes",
+    "desc": "Créez votre compte, choisissez Accueil / Secrétariat, achetez votre numéro français : vos appelants entendent votre message d'accueil, les messages laissés sont classés et à traiter.",
+    "point1": "Un numéro français testé avant votre premier appel",
+    "point2": "Message d'accueil et répondeur à l'image de votre entreprise",
+    "point3": "Plusieurs secrétaires, chacune avec son planning",
+    "point4": "Un abonnement, puis vous payez ce que vous consommez"
+  },
+  "callcentreBrandFullScope": {
+    "title1": "La téléphonie de tous vos services,",
+    "title2": "opérationnelle en 10 minutes",
+    "desc": "Ventes, relation client, recouvrement, recrutement : créez votre compte, choisissez Company Full Scope, achetez votre numéro français, invitez vos collaborateurs et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
+    "point1": "Un numéro français testé avant votre premier appel",
+    "point2": "Vos collaborateurs invités par e-mail, formés avant leurs premiers appels",
+    "point3": "Contacts, scripts rédigés par l'IA et base de connaissance de chaque activité",
+    "point4": "Un abonnement, puis vous payez ce que vous consommez"
+  },
+  "callcentreBrandMulti": {
+    "title1": "Votre centre d'appels,",
+    "title2": "un seul poste de pilotage pour tous vos clients",
+    "desc": "Créez votre compte, choisissez Contact Centre Multi-clients, rattachez chaque opération à un client avec ses numéros, ses indicateurs et ses rapports, et lancez les appels de vos agents, sur plateau ou à distance.",
+    "point1": "Une opération, des numéros et des rapports par client",
+    "point2": "Agents sur plateau ou à distance, partagés entre clients",
+    "point3": "Portail client à votre marque, en lecture",
+    "point4": "Un abonnement, puis vous payez ce que vous consommez"
+  },
+  "telephonyHeader": {
+    "signIn": "Se connecter",
+    "signUp": "Créer mon compte"
+  },
   "header": {
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
