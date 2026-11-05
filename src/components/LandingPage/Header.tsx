@@ -196,10 +196,10 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
         className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 shadow-[0_1px_0_0_rgba(0,0,0,0.08)]"
         data-testid="telephony-header"
       >
-        <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-16 flex items-center justify-between gap-3">
+        <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-20 md:h-24 flex items-center justify-between gap-3">
           <a href="/telephony" className="flex items-center gap-3 transition-transform hover:scale-[1.02]" aria-label="HARX Telephony">
-            <Logo className="h-12 w-auto md:h-14" />
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-[13px] font-black tracking-[0.18em] shadow">
+            <Logo className="h-14 w-auto md:h-20 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]" />
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-[13px] md:px-5 md:py-2.5 md:text-sm font-black tracking-[0.18em] shadow">
               <Phone className="h-3.5 w-3.5 text-[#E01070]" aria-hidden="true" />
               <span className="bg-gradient-to-r from-[#f59e0b] via-[#ec4899] to-[#a855f7] bg-clip-text text-transparent">TELEPHONY</span>
             </span>
