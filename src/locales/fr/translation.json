@@ -2,8 +2,8 @@
   "callcentreBrand": {
     "title1": "Votre téléphonie d'entreprise,",
     "title2": "opérationnelle en 10 minutes",
-    "desc": "Créez votre compte, choisissez votre offre, achetez votre numéro français, invitez vos équipes et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
-    "point1": "Un numéro français testé avant votre premier appel",
+    "desc": "Créez votre compte, choisissez votre offre, achetez un numéro de votre pays, invitez vos équipes et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
+    "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Vos agents invités par e-mail, formés avant leurs premiers appels",
     "point3": "Scripts, base de connaissance et analyse des appels par l'IA",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
@@ -11,8 +11,8 @@
   "callcentreBrandSolo": {
     "title1": "Votre poste d'appel,",
     "title2": "ouvert en quelques minutes",
-    "desc": "Créez votre compte, choisissez Nomad Solo, achetez votre numéro français et passez ou recevez vos appels, avec l'IA pour vous assister.",
-    "point1": "Un numéro français testé avant votre premier appel",
+    "desc": "Créez votre compte, choisissez Nomad Solo, achetez un numéro de votre pays et passez ou recevez vos appels, avec l'IA pour vous assister.",
+    "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Vos appels dans le navigateur, application installable sur ordinateur et mobile",
     "point3": "Journal de vos appels, transcription et analyse par l'IA",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
@@ -20,8 +20,8 @@
   "callcentreBrandAccueil": {
     "title1": "L'accueil téléphonique de votre entreprise,",
     "title2": "assuré en quelques minutes",
-    "desc": "Créez votre compte, choisissez Accueil / Secrétariat, achetez votre numéro français : vos appelants entendent votre message d'accueil, les messages laissés sont classés et à traiter.",
-    "point1": "Un numéro français testé avant votre premier appel",
+    "desc": "Créez votre compte, choisissez Accueil / Secrétariat, achetez un numéro de votre pays : vos appelants entendent votre message d'accueil, les messages laissés sont classés et à traiter.",
+    "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Message d'accueil et répondeur à l'image de votre entreprise",
     "point3": "Plusieurs secrétaires, chacune avec son planning",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
@@ -29,8 +29,8 @@
   "callcentreBrandFullScope": {
     "title1": "La téléphonie de tous vos services,",
     "title2": "opérationnelle en 10 minutes",
-    "desc": "Ventes, relation client, recouvrement, recrutement : créez votre compte, choisissez Company Full Scope, achetez votre numéro français, invitez vos collaborateurs et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
-    "point1": "Un numéro français testé avant votre premier appel",
+    "desc": "Ventes, relation client, recouvrement, recrutement : créez votre compte, choisissez Company Full Scope, achetez un numéro de votre pays, invitez vos collaborateurs et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
+    "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Vos collaborateurs invités par e-mail, formés avant leurs premiers appels",
     "point3": "Contacts, scripts rédigés par l'IA et base de connaissance de chaque activité",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
@@ -698,7 +698,7 @@
     "callCenterTitle": "Téléphonie",
     "callCenterDesc": "Pour les indépendants et les entreprises qui veulent téléphoner : numéro, appels et IA",
     "callCenterCta": "Ouvrir HARX Téléphonie",
-    "ccFeat1": "Un numéro français et vos appels dans le navigateur",
+    "ccFeat1": "Un numéro de votre pays et vos appels dans le navigateur",
     "ccFeat2": "Appels entrants et sortants, accueil et répondeur",
     "ccFeat3": "Journal d'appels, transcription et analyse par l'IA",
     "ccFeat4": "De l'indépendant au centre multi-clients",
