@@ -5,9 +5,12 @@ import { Building2, Check, X } from 'lucide-react';
 import { Header } from './LandingPage/Header';
 import { useAuth } from '../contexts/AuthContext';
 import { hardNavigate } from '../lib/appNavigation';
+import { auth } from '../lib/api';
+import { CALLCENTRE_PATH } from '../lib/product';
 import {
   INVITATIONS_SEEN_KEY,
   fetchPendingInvitations,
+  rememberInvitedCompany,
   respondToInvitation,
   type PendingInvitation,
 } from '../lib/agentInvitations';
@@ -17,7 +20,7 @@ function safeNext(value: string | null): string {
   return value && value.startsWith('/') && !value.startsWith('//') ? value : '/';
 }
 
-/** Shown right after signing in when call centres have invited this e-mail address. */
+/** Shown right after signing in when companies have invited this e-mail address to their team. */
 export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) {
   const { t } = useTranslation();
   const { token } = useAuth();
@@ -26,12 +29,19 @@ export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) 
   const [items, setItems] = useState<PendingInvitation[] | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  // Dernière entreprise dont l'invitation vient d'être acceptée : la personne arrive chez elle, pas dans son espace habituel.
+  const [accepted, setAccepted] = useState<string | null>(null);
 
-  const leave = () => {
+  const leave = (joined: string | null = accepted) => {
     try {
       sessionStorage.setItem(INVITATIONS_SEEN_KEY, '1');
     } catch {
       /* ignore */
+    }
+    if (joined) {
+      rememberInvitedCompany(joined);
+      hardNavigate(CALLCENTRE_PATH);
+      return;
     }
     hardNavigate(next);
   };
@@ -50,10 +60,16 @@ export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) 
     setBusyId(item.id);
     setError(null);
     try {
-      await respondToInvitation(token, item.id, accept);
+      const reply = await respondToInvitation(token, item.id, accept);
+      const joined = accept ? (reply?.companyId || item.companyId || null) : accepted;
+      if (accept) {
+        setAccepted(joined);
+        // Le compte est rattaché à Téléphonie : les prochaines connexions arrivent aussi chez l'entreprise qui a invité, pas dans l'espace habituel.
+        await auth.setProduct('callcentre', token).catch(() => undefined);
+      }
       const rest = (items ?? []).filter((i) => i.id !== item.id);
       setItems(rest);
-      if (rest.length === 0) leave();
+      if (rest.length === 0) leave(joined);
     } catch {
       setError(t('invitations.error', 'This did not work. Please try again.'));
     } finally {
@@ -68,7 +84,7 @@ export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) 
         <div className="w-full max-w-xl rounded-3xl border border-white/10 bg-slate-900/60 p-8 shadow-2xl">
           <h1 className="text-2xl font-black">{t('invitations.title', 'You have been invited')}</h1>
           <p className="mt-2 text-sm font-medium text-slate-400">
-            {t('invitations.intro', 'These call centres invited you to join their team. Accept the ones you know.')}
+            {t('invitations.intro', 'These companies invited you to join their team. Accept the ones you know.')}
           </p>
 
           {items === null ? (
@@ -83,7 +99,7 @@ export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) 
                     <Building2 className="h-5 w-5" />
                   </span>
                   <span className="min-w-0 flex-1 font-bold">
-                    {item.companyName || t('invitations.unnamed', 'A call centre')}
+                    {item.companyName || t('invitations.unnamed', 'A company')}
                   </span>
                   <button
                     type="button"
@@ -109,7 +125,7 @@ export default function InvitationsPage({ onSignIn }: { onSignIn: () => void }) 
           {error ? <p role="alert" className="mt-4 text-sm font-medium text-red-300">{error}</p> : null}
 
           <div className="mt-6 border-t border-white/10 pt-4 text-right">
-            <button type="button" onClick={leave} className="text-sm font-bold text-slate-300 underline-offset-2 hover:text-white hover:underline">
+            <button type="button" onClick={() => leave()} className="text-sm font-bold text-slate-300 underline-offset-2 hover:text-white hover:underline">
               {t('invitations.later', 'Decide later')}
             </button>
           </div>

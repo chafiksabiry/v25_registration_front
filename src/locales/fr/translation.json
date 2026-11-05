@@ -748,8 +748,8 @@
   },
   "invitations": {
     "title": "Vous avez été invité",
-    "intro": "Ces centres d’appels vous invitent à rejoindre leur équipe. Acceptez ceux que vous connaissez.",
-    "unnamed": "Un centre d’appels",
+    "intro": "Ces entreprises vous invitent à rejoindre leur équipe. Acceptez celles que vous connaissez.",
+    "unnamed": "Une entreprise",
     "accept": "Accepter",
     "decline": "Refuser",
     "later": "Décider plus tard",
