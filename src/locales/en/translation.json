@@ -2,8 +2,8 @@
   "callcentreBrand": {
     "title1": "Your business telephony,",
     "title2": "up and running in 10 minutes",
-    "desc": "Create your account, choose your plan, buy your French number, invite your teams and launch inbound or outbound calls, with AI to assist you.",
-    "point1": "A French number, tested before your first call",
+    "desc": "Create your account, choose your plan, buy a number from your country, invite your teams and launch inbound or outbound calls, with AI to assist you.",
+    "point1": "A number from your country, tested before your first call",
     "point2": "Agents invited by email and trained before their first calls",
     "point3": "AI-assisted scripts, knowledge base and call analysis",
     "point4": "One subscription, then pay for what you use"
@@ -11,8 +11,8 @@
   "callcentreBrandSolo": {
     "title1": "Your call station,",
     "title2": "open in a few minutes",
-    "desc": "Create your account, choose Nomad Solo, buy your French number and make or receive calls, with AI to assist you.",
-    "point1": "A French number, tested before your first call",
+    "desc": "Create your account, choose Nomad Solo, buy a number from your country and make or receive calls, with AI to assist you.",
+    "point1": "A number from your country, tested before your first call",
     "point2": "Your calls in the browser, installable on computer and mobile",
     "point3": "Your call log, transcription and AI analysis",
     "point4": "One subscription, then pay for what you use"
@@ -20,8 +20,8 @@
   "callcentreBrandAccueil": {
     "title1": "Your company's phone reception,",
     "title2": "up and running in minutes",
-    "desc": "Create your account, choose Reception / Secretarial, buy your French number: callers hear your greeting, and the messages they leave are sorted and ready to handle.",
-    "point1": "A French number tested before your first call",
+    "desc": "Create your account, choose Reception / Secretarial, buy a number from your country: callers hear your greeting, and the messages they leave are sorted and ready to handle.",
+    "point1": "A number from your country, tested before your first call",
     "point2": "A greeting and voicemail in your company's image",
     "point3": "Several secretaries, each with their own schedule",
     "point4": "A subscription, then you pay for what you use"
@@ -29,8 +29,8 @@
   "callcentreBrandFullScope": {
     "title1": "Telephony for all your services,",
     "title2": "up and running in 10 minutes",
-    "desc": "Sales, customer relations, collections, recruitment: create your account, choose Company Full Scope, buy your French number, invite your colleagues and start your inbound or outbound calls, with AI to assist you.",
-    "point1": "A French number tested before your first call",
+    "desc": "Sales, customer relations, collections, recruitment: create your account, choose Company Full Scope, buy a number from your country, invite your colleagues and start your inbound or outbound calls, with AI to assist you.",
+    "point1": "A number from your country, tested before your first call",
     "point2": "Colleagues invited by e-mail and trained before their first calls",
     "point3": "Contacts, AI-written scripts and a knowledge base for each activity",
     "point4": "A subscription, then you pay for what you use"
@@ -698,7 +698,7 @@
     "callCenterTitle": "Telephony",
     "callCenterDesc": "For freelancers and businesses that want to make calls: number, calls and AI",
     "callCenterCta": "Open HARX Telephony",
-    "ccFeat1": "A French number and your calls in the browser",
+    "ccFeat1": "A number from your country and your calls in the browser",
     "ccFeat2": "Inbound and outbound calls, greeting and voicemail",
     "ccFeat3": "Call log, transcription and AI analysis",
     "ccFeat4": "From freelancer to multi-client centre",

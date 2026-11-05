@@ -30,7 +30,7 @@ interface ChoicePageProps {
 }
 
 const callCenterFeatures = [
-  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'A French number and your calls in the browser' },
+  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'A number from your country and your calls in the browser' },
   { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Inbound and outbound calls, greeting and voicemail' },
   { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Call log, transcription and AI analysis' },
   { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'From freelancer to multi-client centre' },
