@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, Building2, Users } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { BrandText } from './BrandText';
 import { isCallcentreProduct } from '../lib/product';
 import { mapSignInError } from '../lib/authErrors';
+import { audienceMismatchKey, readAudience, saveAudience, type Audience } from '../lib/signInAudience';
 import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
@@ -37,6 +38,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       phone: '',
     };
   });
+  const [audience, setAudience] = useState<Audience>(() => readAudience());
+  const telephony = isCallcentreProduct();
   const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
@@ -160,6 +163,24 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           return;
         }
 
+        // Téléphonie : une entreprise n'est pas une équipe. Le choix de l'écran doit correspondre au compte, sinon on s'arrête ici avec un message clair.
+        if (telephony) {
+          try {
+            const info = await auth.checkUserType(result.data.userId);
+            const mismatch = audienceMismatchKey(audience, info?.userType);
+            if (mismatch) {
+              setError(
+                mismatch === 'accountIsCompany'
+                  ? t('signIn.accountIsCompany', 'Ce compte est un compte entreprise. Choisissez « Entreprise » pour vous connecter.')
+                  : t('signIn.accountIsTeam', 'Ce compte appartient à une équipe (secrétaire ou responsable). Choisissez « Équipe » pour vous connecter.')
+              );
+              return;
+            }
+          } catch {
+            /* type de compte illisible : on laisse la connexion suivre son cours */
+          }
+        }
+
         // login() already emails the 2FA code server-side (AUTH-07: the code
         // is never returned in the response, so it can't be re-sent from
         // here) — just move on to the 2FA step.
@@ -277,6 +298,30 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                     <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
                     <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
                   </div>
+
+                  {step === 'credentials' && telephony && (
+                    <div className="mb-6" data-testid="signin-audience">
+                      <div role="tablist" aria-label={t('signIn.audienceLabel', 'Type de compte')} className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-800/70 p-1 border border-white/10">
+                        {([
+                          { id: 'company' as const, icon: Building2, label: t('signIn.audienceCompany', 'Entreprise'), hint: t('signIn.audienceCompanyHint', 'Je gère une entreprise') },
+                          { id: 'team' as const, icon: Users, label: t('signIn.audienceTeam', 'Équipe'), hint: t('signIn.audienceTeamHint', 'Secrétaire, responsable') },
+                        ]).map(({ id, icon: Icon, label, hint }) => (
+                          <button
+                            key={id}
+                            type="button"
+                            role="tab"
+                            aria-selected={audience === id}
+                            data-testid={`signin-audience-${id}`}
+                            onClick={() => { setAudience(id); saveAudience(id); setError(null); }}
+                            className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-2.5 text-center transition ${audience === id ? 'bg-white text-slate-900 shadow-lg' : 'text-slate-300 hover:bg-white/10'}`}
+                          >
+                            <span className="flex items-center gap-2 text-sm font-black"><Icon className="h-4 w-4" aria-hidden /> {label}</span>
+                            <span className={`text-[11px] font-medium ${audience === id ? 'text-slate-600' : 'text-slate-400'}`}>{hint}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {step === 'credentials' && (
                     <div className="space-y-4">
