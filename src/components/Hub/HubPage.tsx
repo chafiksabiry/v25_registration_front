@@ -105,11 +105,12 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
       data-testid={`hub-panel-${offer.id}`}
       data-active={active}
       className="hub-panel"
+      data-offer={offer.id}
       style={b}
     >
       <div className="hub-cell hub-cell--kicker hub-rise" style={{ ['--i' as string]: 0 }}>
         <span className="hub-kicker" data-row="kicker">
-          <Icon className="h-4 w-4" aria-hidden="true" />
+          <span className="hub-kicker__badge"><Icon className="h-4 w-4" aria-hidden="true" /></span>
           {t(offer.titleKey)}
         </span>
       </div>
