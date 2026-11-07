@@ -1,7 +1,7 @@
 /**
  * Offres HARX présentées sur l'accueil de l'ensemble (hub, `/`).
  *
- * Ajouter une offre = ajouter UNE entrée à `OFFERS` (et ses textes fr/en dans
+ * Ajouter une offre = ajouter UNE entrée (`status: 'soon'` : offre annoncée, sans lien, non affichée tant qu'aucune section ne l'utilise) à `OFFERS` (et ses textes fr/en dans
  * `src/locales/*\/translation.json`, sous `hub.offers.<id>`). La carte du hub
  * et le lien de l'en-tête sont générés depuis cette liste.
  *
@@ -92,22 +92,6 @@ export const OFFERS: readonly OfferConfig[] = [
       { id: 'multi_clients', labelKey: 'hub.offers.telephony.multiClients', descKey: 'hub.offers.telephony.multiClientsDesc', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
     ],
     signIn: { route: '/auth/signin?product=callcentre', langPrefixed: false },
-  },
-  {
-    id: 'more',
-    route: null,
-    langPrefixed: false,
-    status: 'soon',
-    icon: 'sparkles',
-    titleKey: 'hub.offers.more.title',
-    navKey: 'hub.offers.more.title',
-    taglineKey: 'hub.offers.more.tagline',
-    bulletKeys: [],
-    ctaKey: 'hub.offers.more.title',
-    forWhoKey: 'hub.offers.more.tagline',
-    pitchKey: 'hub.offers.more.tagline',
-    children: [],
-    signIn: null,
   },
 ];
 
