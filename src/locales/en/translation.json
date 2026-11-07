@@ -751,7 +751,17 @@
     "invalidTitle": "This link is not valid",
     "help": "Sign in with your email to continue. If you have no password yet, use “Forgot password”.",
     "signIn": "Sign in",
-    "forgot": "Forgot password"
+    "forgot": "Forgot password",
+    "requestTitle": "Get your personal link",
+    "requestIntro": "Enter the email address where you received our message. We will send you a one-click link to your HARX space.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "send": "Send me my link",
+    "sending": "Sending...",
+    "sentTitle": "Check your mailbox",
+    "sentText": "If this address is registered, you will receive your personal link in a few minutes. Look in your spam folder if you do not see it.",
+    "sendAgain": "Use another address",
+    "requestError": "This did not work. Please check the address and try again."
   },
   "invitations": {
     "title": "You have been invited",
