@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { LandingPage } from '../components/LandingPage';
 import ChoicePage from '../components/ChoicePage';
-import { hardNavigate } from '../lib/appNavigation';
+import { HubPage } from '../components/Hub/HubPage';
 import SignInDialog from '../components/SignInDialog';
 import RegistrationDialog from '../components/RegistrationDialog';
 import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
@@ -21,7 +21,14 @@ function AuthScreen({ title, children }: { title: string; children: React.ReactN
  * Each screen is a real route so Back/Forward mounts the correct page.
  */
 
-export function LandingScreen() {
+/** `/` : accueil de l'ensemble HARX (une carte par offre, voir src/config/offers.ts). */
+export function HubScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return <HubPage onSignIn={() => navigate('/auth/signin')} onNavigateToSection={handleNavigateToSection} />;
+}
+
+/** `/taas` : offre TAAS (Transaction-as-a-Service), ancienne page d'accueil. */
+export function TaasScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
   return (
     <LandingPage
@@ -40,7 +47,6 @@ export function ChoiceScreen() {
     <AuthScreen title="Choix du profil">
       <ChoicePage
         onSelectRole={handleSelectRole}
-        onOpenCallCentre={() => hardNavigate('/telephony')}
         onSignIn={() => navigate('/auth/signin')}
         onNavigateToSection={handleNavigateToSection}
       />

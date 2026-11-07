@@ -44,6 +44,38 @@
     "point3": "Portail client à votre marque, en lecture",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
+  "hub": {
+    "badge": "HARX.ai",
+    "title1": "HARX : une plateforme,",
+    "title2": "plusieurs offres",
+    "subtitle": "Choisissez l'offre qui correspond à votre besoin. Chaque offre a son propre parcours ; d'autres viendront enrichir HARX.",
+    "offersAria": "Les offres HARX",
+    "signIn": "Se connecter",
+    "offers": {
+      "taas": {
+        "title": "Transaction-as-a-Service",
+        "nav": "TAAS",
+        "tagline": "Payez pour des résultats, pas pour des postes",
+        "b1": "Publiez un gig et trouvez des agents certifiés, humains ou IA",
+        "b2": "Vous ne payez que lorsque le résultat défini est atteint",
+        "b3": "Vous êtes agent ? Trouvez des gigs auprès d'entreprises",
+        "cta": "Découvrir TAAS"
+      },
+      "telephony": {
+        "title": "HARX Téléphonie",
+        "nav": "Téléphonie",
+        "tagline": "Un numéro de votre pays, vos appels entrants et sortants, accueil / secrétariat et IA",
+        "b1": "Pour les entreprises et les indépendants",
+        "b2": "Appels entrants et sortants depuis votre navigateur",
+        "b3": "Accueil / secrétariat, journal d'appels et analyse par l'IA",
+        "cta": "Ouvrir HARX Téléphonie"
+      },
+      "more": {
+        "title": "D'autres offres arrivent bientôt",
+        "tagline": "HARX s'enrichit : de nouvelles offres rejoindront cette page."
+      }
+    }
+  },
   "telephonyHeader": {
     "signIn": "Se connecter",
     "signUp": "Créer mon compte"
@@ -57,6 +89,7 @@
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
+    "allOffers": "Toutes les offres HARX",
     "loading": "Chargement…"
   },
   "hero": {
@@ -543,6 +576,7 @@
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
+    "allOffers": "Toutes les offres HARX",
     "loading": "Chargement…"
   },
   "signIn": {
@@ -690,7 +724,7 @@
     "signIn": "Se connecter"
   },
   "choicePage": {
-    "marketplace": "Marketplace HARX",
+    "marketplace": "TAAS",
     "title1": "Transformez Votre",
     "title2": "Centre de Contact",
     "subtitle": "Connectez-vous à des opportunités ou trouvez le talent idéal pour vos besoins en service client.",

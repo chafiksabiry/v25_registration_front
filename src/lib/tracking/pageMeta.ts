@@ -1,6 +1,7 @@
 import { resolveAdminTabTitle } from '../../components/admin/adminSections';
 import { DEFAULT_PAGE_DESCRIPTION, HARX_SITE_URL } from './constants';
 import { isAuthPortalPath, resolveAuthTabTitle } from './registrationSections';
+import { HUB_DESCRIPTION_EN, HUB_DESCRIPTION_FR, hubPageTitle } from './hubMeta';
 import { getLangFromPath, stripLangPrefix, withLangPrefix, type SiteLang } from '../langRoutes';
 
 export type PageMeta = {
@@ -17,11 +18,21 @@ const BASE_TITLE = 'HARX';
 
 const ROUTE_META: Array<{ test: (path: string) => boolean; meta: PageMeta }> = [
   {
+    // Accueil de l'ensemble HARX (hub des offres).
     test: (p) => p === '/' || p === '',
     meta: {
-      title: `${BASE_TITLE} — Accueil`,
-      description: DEFAULT_PAGE_DESCRIPTION,
+      title: hubPageTitle('fr'),
+      description: HUB_DESCRIPTION_FR,
       canonical: `${HARX_SITE_URL}/`,
+    },
+  },
+  {
+    // Offre TAAS : ancienne page d'accueil.
+    test: (p) => p === '/taas',
+    meta: {
+      title: `${BASE_TITLE} — TAAS : Transaction-as-a-Service`,
+      description: DEFAULT_PAGE_DESCRIPTION,
+      canonical: `${HARX_SITE_URL}/taas`,
     },
   },
   {
@@ -74,6 +85,7 @@ const LEGAL_PATHS = ['/privacy', '/terms', '/cookies', '/gdpr'];
 function isLocalizedIndexablePath(pathname: string): boolean {
   return (
     pathname === '/' ||
+    pathname === '/taas' ||
     pathname === '/auth/choice' ||
     pathname === '/auth/register-company' ||
     pathname === '/auth/register-rep' ||
@@ -83,8 +95,12 @@ function isLocalizedIndexablePath(pathname: string): boolean {
 
 const EN_META: Record<string, { title: string; description: string }> = {
   '/': {
-    title: `${BASE_TITLE} — Home`,
-    description: 'HARX — Transaction as a Service. Marketplace of AI-certified reps for companies and independents.',
+    title: hubPageTitle('en'),
+    description: HUB_DESCRIPTION_EN,
+  },
+  '/taas': {
+    title: `${BASE_TITLE} — TAAS: Transaction-as-a-Service`,
+    description: 'HARX TAAS — Transaction as a Service. Marketplace of AI-certified reps for companies and independents.',
   },
   '/auth/choice': {
     title: `${BASE_TITLE} — Choose your profile`,

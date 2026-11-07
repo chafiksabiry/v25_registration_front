@@ -24,17 +24,8 @@ export type SignupUserType = 'company' | 'rep' | 'call-center';
 interface ChoicePageProps {
   onSelectRole: (role: SignupUserType) => void;
   onSignIn: () => void;
-  /** Open the standalone HARX Call Centre product (its own landing page). */
-  onOpenCallCentre?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
-
-const callCenterFeatures = [
-  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'A number from your country and your calls in the browser' },
-  { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Inbound and outbound calls, greeting and voicemail' },
-  { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Call log, transcription and AI analysis' },
-  { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'From freelancer to multi-client centre' },
-];
 
 const companyFeatures = [
   { icon: HeadphonesIcon, labelKey: 'choicePage.companyFeat1', defaultLabel: 'Customer Service Representatives' },
@@ -137,7 +128,7 @@ function ChoiceCard({
   );
 }
 
-export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, onNavigateToSection }: ChoicePageProps) {
+export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
   const { t } = useTranslation();
 
   return (
@@ -171,7 +162,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
 
       {/* Cards */}
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-12">
-        <div className="mx-auto grid w-full max-w-6xl items-stretch gap-6 lg:grid-cols-3">
+        <div className="mx-auto grid w-full max-w-4xl items-stretch gap-6 md:grid-cols-2">
           <ChoiceCard
             icon={Building2}
             image={companyBanner}
@@ -183,19 +174,6 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
             features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.companyTitle', 'Post a Gig')}
             onClick={() => onSelectRole('company')}
-          />
-          <ChoiceCard
-            disabled={!onOpenCallCentre}
-            icon={HeadphonesIcon}
-            image={companyBanner}
-            imageAlt="Téléphonie"
-            title={t('choicePage.callCenterTitle', 'Telephony')}
-            description={t('choicePage.callCenterDesc', 'For freelancers and businesses that want to make calls: number, calls and AI')}
-            badge={onOpenCallCentre ? t('choicePage.available', 'Available') : t('choicePage.comingSoon', 'Coming soon')}
-            badgeTone={onOpenCallCentre ? 'live' : 'muted'}
-            features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
-            cta={t('choicePage.callCenterCta', 'Open HARX Telephony')}
-            onClick={onOpenCallCentre}
           />
           <ChoiceCard
             icon={Headphones}

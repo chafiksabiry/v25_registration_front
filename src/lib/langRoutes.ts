@@ -23,8 +23,8 @@ export function withLangPrefix(path: string, lang: SiteLang): string {
 
 const LEGAL_PATHS = ['/privacy', '/terms', '/cookies', '/gdpr'];
 
-/** Pages publiques qui existent en version préfixée (landing, auth, légal). */
+/** Pages publiques qui existent en version préfixée (accueil, TAAS, auth, légal). */
 export function isPrefixablePath(pathname: string): boolean {
   const path = stripLangPrefix(pathname).replace(/\/+$/, '') || '/';
-  return path === '/' || path.startsWith('/auth') || LEGAL_PATHS.includes(path);
+  return path === '/' || path === '/taas' || path.startsWith('/auth') || LEGAL_PATHS.includes(path);
 }
