@@ -21,15 +21,17 @@ export type OfferIcon = 'layers' | 'phone' | 'sparkles';
 /** Icônes des étapes du flux animé ; `mascot` = la mascotte HARX. */
 export type FlowIcon = 'building' | 'mascot' | 'target' | 'wallet' | 'phone' | 'calls' | 'voicemail' | 'sparkles';
 
-/** Présentation d'une offre sur l'écran d'accueil : accroche en révélation + flux de 4 étapes. */
+/** Présentation d'une offre sur l'écran d'accueil (chaque clé = une rangée alignée d'un panneau à l'autre). */
 export interface OfferHero {
-  /** Lignes d'accroche (texte courant). */
-  lineKeys: string[];
-  /** Dernière ligne, mise en valeur (dégradé). */
-  accentKey: string;
-  /** Phrase d'appui facultative. */
-  subKey?: string;
-  /** Étapes du flux animé. */
+  /** « C'est quoi, pour quoi faire ? » en une phrase. */
+  defKey: string;
+  /** Phrase d'illustration sous la définition. */
+  supportKey: string;
+  /** `true` : l'illustration est une citation (italique). */
+  supportQuote: boolean;
+  /** Petite note de vocabulaire. */
+  noteKey: string;
+  /** Étapes du flux animé (4). */
   flow: Array<{ key: string; icon: FlowIcon }>;
 }
 
@@ -37,8 +39,8 @@ export type OfferLang = 'fr' | 'en';
 
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =
-  | { id: string; labelKey: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
-  | { id: string; labelKey: string; kind: 'route'; route: string; langPrefixed: boolean };
+  | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
+  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean };
 
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
 
@@ -77,9 +79,10 @@ export const OFFERS: readonly OfferConfig[] = [
     navKey: 'hub.offers.taas.nav',
     ctaKey: 'hub.offers.taas.cta',
     hero: {
-      lineKeys: ['hub.offers.taas.hero.l1', 'hub.offers.taas.hero.l2', 'hub.offers.taas.hero.l3'],
-      accentKey: 'hub.offers.taas.hero.accent',
-      subKey: 'hub.offers.taas.hero.sub',
+      defKey: 'hub.offers.taas.hero.def',
+      supportKey: 'hub.offers.taas.hero.support',
+      supportQuote: true,
+      noteKey: 'hub.offers.taas.hero.note',
       flow: [
         { key: 'hub.offers.taas.hero.flow1', icon: 'building' },
         { key: 'hub.offers.taas.hero.flow2', icon: 'mascot' },
@@ -88,8 +91,8 @@ export const OFFERS: readonly OfferConfig[] = [
       ],
     },
     children: [
-      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'role', role: 'company' },
-      { id: 'reps', labelKey: 'hub.offers.taas.reps', kind: 'role', role: 'rep' },
+      { id: 'company', labelKey: 'hub.offers.taas.company', hintKey: 'hub.offers.taas.companyHint', kind: 'role', role: 'company' },
+      { id: 'reps', labelKey: 'hub.offers.taas.reps', hintKey: 'hub.offers.taas.repsHint', kind: 'role', role: 'rep' },
     ],
     signIn: { route: '/auth/signin', langPrefixed: true },
   },
@@ -104,9 +107,10 @@ export const OFFERS: readonly OfferConfig[] = [
     ctaKey: 'hub.offers.telephony.cta',
     // Accroche et étapes tirées de la vitrine /telephony (Landing.tsx, landingStories.ts, landingProfiles.ts).
     hero: {
-      lineKeys: ['hub.offers.telephony.hero.l1'],
-      accentKey: 'hub.offers.telephony.hero.accent',
-      subKey: 'hub.offers.telephony.hero.sub',
+      defKey: 'hub.offers.telephony.hero.def',
+      supportKey: 'hub.offers.telephony.hero.support',
+      supportQuote: false,
+      noteKey: 'hub.offers.telephony.hero.note',
       flow: [
         { key: 'hub.offers.telephony.hero.flow1', icon: 'phone' },
         { key: 'hub.offers.telephony.hero.flow2', icon: 'calls' },

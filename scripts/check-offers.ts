@@ -46,12 +46,21 @@ const lookup = (obj: any, path: string) => path.split('.').reduce((acc, k) => (a
 for (const lang of ['fr', 'en']) {
   const json = JSON.parse(readFileSync(new URL(`../src/locales/${lang}/translation.json`, import.meta.url), 'utf8'));
   for (const o of OFFERS) {
-    for (const key of [o.titleKey, o.navKey, o.ctaKey, o.hero.accentKey, ...o.hero.lineKeys, ...(o.hero.subKey ? [o.hero.subKey] : []), ...o.hero.flow.map((f) => f.key), ...o.children.map((c) => c.labelKey)]) {
+    for (const key of [o.titleKey, o.navKey, o.ctaKey, o.hero.defKey, o.hero.supportKey, o.hero.noteKey, ...o.hero.flow.map((f) => f.key), ...o.children.flatMap((c) => [c.labelKey, ...(c.hintKey ? [c.hintKey] : [])])]) {
       const v = lookup(json, key);
       assert.ok(typeof v === 'string' && v.trim(), `${lang} : clé manquante ${key}`);
       assert.ok(!/centre d.appels|call cent(re|er)/i.test(v), `${lang} : vocabulaire interdit dans ${key}`);
     }
   }
+}
+// Le mot « agent(s) » ne doit pas apparaître dans les textes TAAS destinés au visiteur (fr et en)
+for (const lang of ['fr', 'en']) {
+  const json = JSON.parse(readFileSync(new URL(`../src/locales/${lang}/translation.json`, import.meta.url), 'utf8'));
+  assert.ok(lookup(json, 'hub.definition'), `${lang} : hub.definition`);
+  const texts: string[] = [lookup(json, 'hub.definition')];
+  const walk = (v: any) => (typeof v === 'string' ? texts.push(v) : v && Object.values(v).forEach(walk));
+  walk(lookup(json, 'hub.offers.taas'));
+  for (const v of texts) assert.ok(!/\bagents?\b/i.test(v), `${lang} : mot interdit (agent) dans « ${v} »`);
 }
 const fr = JSON.parse(readFileSync(new URL('../src/locales/fr/translation.json', import.meta.url), 'utf8'));
 assert.deepEqual(
