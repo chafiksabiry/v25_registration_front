@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, LayoutDashboard, LayoutGrid, LogOut, Menu, Phone, X } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, LayoutDashboard, LayoutGrid, Layers, LogOut, Menu, Phone, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
@@ -272,17 +272,22 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
 
           <div className="hidden md:flex items-center gap-1">
             {hub
-              ? offerLinks.map((offer) => (
-                  <a
-                    key={offer.id}
-                    href={resolveOfferHref(offer, siteLang) ?? '#'}
-                    className="nav-link-default"
-                    data-testid={`nav-offer-${offer.id}`}
-                    onClick={(e) => openOffer(e, offer)}
-                  >
-                    <span>{t(offer.navKey)}</span>
-                  </a>
-                ))
+              ? (
+                <div className="hub-navseg">
+                  {offerLinks.map((offer) => (
+                    <a
+                      key={offer.id}
+                      href={resolveOfferHref(offer, siteLang) ?? '#'}
+                      className="hub-navbtn"
+                      data-testid={`nav-offer-${offer.id}`}
+                      onClick={(e) => openOffer(e, offer)}
+                    >
+                      {offer.icon === 'phone' ? <Phone className="h-4 w-4" aria-hidden="true" /> : <Layers className="h-4 w-4" aria-hidden="true" />}
+                      <span>{t(offer.navKey)}</span>
+                    </a>
+                  ))}
+                </div>
+              )
               : (
                 <>
                   <a
