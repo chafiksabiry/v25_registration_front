@@ -1,7 +1,7 @@
 // Vérification de la configuration des offres : node --experimental-strip-types scripts/check-offers.ts
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { OFFERS, getAvailableOffers, getSoonOffers, resolveChildTarget, resolveOfferHref, resolveOfferSignInHref } from '../src/config/offers.ts';
+import { OFFERS, getAvailableOffers, getSoonOffers, NEEDS, resolveChildTarget, resolveNeed, resolveOfferHref, resolveOfferSignInHref } from '../src/config/offers.ts';
 
 const ids = OFFERS.map((o) => o.id);
 assert.equal(new Set(ids).size, ids.length, 'identifiants uniques');
@@ -43,12 +43,24 @@ const lookup = (obj: any, path: string) => path.split('.').reduce((acc, k) => (a
 for (const lang of ['fr', 'en']) {
   const json = JSON.parse(readFileSync(new URL(`../src/locales/${lang}/translation.json`, import.meta.url), 'utf8'));
   for (const o of OFFERS) {
-    for (const key of [o.titleKey, o.navKey, o.taglineKey, o.ctaKey, ...o.bulletKeys, ...o.children.map((c) => c.labelKey)]) {
+    for (const key of [o.titleKey, o.navKey, o.taglineKey, o.ctaKey, o.forWhoKey, o.pitchKey, ...o.bulletKeys, ...o.children.flatMap((c) => [c.labelKey, c.descKey])]) {
       const v = lookup(json, key);
       assert.ok(typeof v === 'string' && v.trim(), `${lang} : clé manquante ${key}`);
       assert.ok(!/centre d.appels|call cent(re|er)/i.test(v), `${lang} : vocabulaire interdit dans ${key}`);
     }
   }
+}
+// « Quelle offre est faite pour vous ? » : chaque besoin renvoie vers une sous-entrée existante
+assert.equal(new Set(NEEDS.map((n) => n.id)).size, NEEDS.length);
+for (const n of NEEDS) assert.ok(resolveNeed(n), `besoin ${n.id} : cible introuvable`);
+for (const lang of ['fr', 'en']) {
+  const json = JSON.parse(readFileSync(new URL(`../src/locales/${lang}/translation.json`, import.meta.url), 'utf8'));
+  for (const n of NEEDS) {
+    const v = lookup(json, n.questionKey);
+    assert.ok(typeof v === 'string' && v.trim(), `${lang} : clé manquante ${n.questionKey}`);
+    assert.ok(!/centre d.appels|call cent(re|er)/i.test(v));
+  }
+  for (const k of ['hub.needsTitle', 'hub.needsSub', 'hub.detailTitle', 'hub.ctaTitle', 'hub.ctaText', 'hub.open', 'hub.subtitle']) assert.ok(lookup(json, k), `${lang} : ${k}`);
 }
 const fr = JSON.parse(readFileSync(new URL('../src/locales/fr/translation.json', import.meta.url), 'utf8'));
 assert.deepEqual(
