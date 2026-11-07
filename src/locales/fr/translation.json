@@ -58,16 +58,16 @@
         "company": "Company : Publier un gig",
         "reps": "REPS : Trouver des gigs",
         "hero": {
-          "l1": "Uber vous connecte aux chauffeurs.",
-          "l2": "Airbnb, aux logements.",
-          "l3": "HARX vous connecte aux agents,",
-          "accent": "et ne vous facture que lorsqu'ils livrent un résultat.",
-          "sub": "Arrêtez de payer pour des postes. Commencez à payer pour des résultats.",
+          "def": "Des professionnels du service client, de la télévente et du support, humains ou IA, travaillent pour vous : vous ne payez que le résultat que vous avez défini.",
+          "support": "« Uber vous connecte aux chauffeurs. Airbnb, aux logements. HARX vous connecte à des professionnels du service client, et ne vous facture que lorsqu'ils livrent un résultat. »",
+          "note": "TAAS = Transaction-as-a-Service : vous payez à la transaction réussie. Un gig est une mission.",
           "flow1": "Votre entreprise",
-          "flow2": "Agents experts, humains ou IA",
-          "flow3": "Un résultat",
-          "flow4": "Vous payez"
-        }
+          "flow2": "Des professionnels du service client (humains ou IA)",
+          "flow3": "Un résultat que vous avez défini",
+          "flow4": "Vous payez ce résultat"
+        },
+        "companyHint": "Vous cherchez des professionnels du service client",
+        "repsHint": "Vous êtes professionnel du service client et cherchez des missions"
       },
       "telephony": {
         "title": "HARX Téléphonie",
@@ -78,16 +78,17 @@
         "fullScope": "Company Full Scope In & Out",
         "multiClients": "Contact Centre Multi-clients",
         "hero": {
-          "l1": "Votre téléphonie,",
-          "accent": "opérationnelle en 5 minutes.",
-          "sub": "Un numéro de votre pays, vos appels entrants et sortants, l'IA pour vous assister.",
+          "def": "Un numéro de votre pays, vos appels entrants et sortants, un accueil / secrétariat et une IA pour vous assister.",
+          "support": "Votre téléphonie, opérationnelle en 5 minutes.",
+          "note": "Quatre offres selon votre situation, une ligne incluse dans chacune.",
           "flow1": "Un numéro de votre pays",
           "flow2": "Appels entrants et sortants",
           "flow3": "Accueil / secrétariat et répondeur",
           "flow4": "L'IA vous assiste"
         }
       }
-    }
+    },
+    "definition": "HARX vous aide à gérer votre relation client : des professionnels qui livrent des résultats, et une téléphonie opérationnelle en 5 minutes."
   },
   "telephonyHeader": {
     "signIn": "Se connecter",

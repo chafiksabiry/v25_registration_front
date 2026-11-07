@@ -55,27 +55,25 @@ export function openOffer(offer: OfferConfig, lang: OfferLang) {
   hardNavigate(href);
 }
 
-function Flow({ offer, base }: { offer: OfferConfig; base: number }) {
+function Flow({ offer }: { offer: OfferConfig }) {
   const { t } = useTranslation();
   const steps = offer.hero.flow;
   return (
-    <ol className="hub-flow hub-rise" style={{ ['--b' as string]: base, ['--i' as string]: 4 }} data-testid={`hub-flow-${offer.id}`}>
+    <ol className="hub-flow" data-testid={`hub-flow-${offer.id}`}>
       {steps.map((step, i) => {
         const Icon = step.icon === 'mascot' ? null : FLOW_ICONS[step.icon];
         return (
-          <React.Fragment key={step.key}>
-            <li className="hub-flow__node">
-              <span className={`hub-flow__circle${Icon ? '' : ' hub-flow__circle--mascot'}`}>
-                {Icon ? <Icon className="h-5 w-5" aria-hidden="true" /> : <img src={harxMascotte} alt="" className="hub-flow__mascot" />}
-              </span>
-              <span className="hub-flow__label">{t(step.key)}</span>
-            </li>
+          <li key={step.key} className="hub-flow__node">
+            <span className="hub-flow__circle">
+              {Icon ? <Icon className="h-5 w-5" aria-hidden="true" /> : <img src={harxMascotte} alt="" className="hub-flow__mascot" />}
+            </span>
             {i < steps.length - 1 && (
-              <li className="hub-flow__link" aria-hidden="true">
+              <span className="hub-flow__link" aria-hidden="true">
                 <span className="hub-flow__dot" style={{ ['--d' as string]: `${i * 0.55}s` }} />
-              </li>
+              </span>
             )}
-          </React.Fragment>
+            <span className="hub-flow__label">{t(step.key)}</span>
+          </li>
         );
       })}
     </ol>
@@ -87,7 +85,6 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
   const Icon = OFFER_ICONS[offer.icon];
   const href = resolveOfferHref(offer, lang) ?? '#';
   const signInHref = resolveOfferSignInHref(offer, lang);
-  const lines = offer.hero.lineKeys;
   const b = { ['--b' as string]: index };
 
   const openChild = (e: React.MouseEvent, child: OfferChild) => {
@@ -108,23 +105,20 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
       data-testid={`hub-panel-${offer.id}`}
       data-active={active}
       className="hub-panel"
+      style={b}
     >
-      <span className="hub-kicker hub-rise" style={{ ...b, ['--i' as string]: 0 }}>
-        <Icon className="h-4 w-4" aria-hidden="true" />
-        {t(offer.titleKey)}
-      </span>
-      <h2 className="hub-h2 mt-3">
-        {lines.map((k, i) => (
-          <span key={k} className="hub-rise block" style={{ ...b, ['--i' as string]: i + 1 }}>{t(k)}</span>
-        ))}
-        <span className="hub-rise hub-title-grad block" style={{ ...b, ['--i' as string]: lines.length + 1 }}>{t(offer.hero.accentKey)}</span>
-      </h2>
-      {offer.hero.subKey && (
-        <p className="hub-rise hub-sub mt-2 max-w-md text-sm leading-snug text-slate-200" style={{ ...b, ['--i' as string]: lines.length + 2 }}>{t(offer.hero.subKey)}</p>
-      )}
-      <div className="mt-4"><Flow offer={offer} base={index} /></div>
-
-      <div className="hub-rise mt-4 flex flex-col items-start gap-2.5" style={{ ...b, ['--i' as string]: 6 }}>
+      <div className="hub-cell hub-cell--kicker hub-rise" style={{ ['--i' as string]: 0 }}>
+        <span className="hub-kicker" data-row="kicker">
+          <Icon className="h-4 w-4" aria-hidden="true" />
+          {t(offer.titleKey)}
+        </span>
+      </div>
+      <h2 className="hub-cell hub-h2 hub-rise" style={{ ['--i' as string]: 1 }} data-row="title">{t(offer.hero.defKey)}</h2>
+      <p className={`hub-cell hub-support hub-rise${offer.hero.supportQuote ? ' hub-support--quote' : ''}`} style={{ ['--i' as string]: 2 }} data-row="support">
+        {t(offer.hero.supportKey)}
+      </p>
+      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 3 }} data-row="flow"><Flow offer={offer} /></div>
+      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 4 }} data-row="cta">
         <a
           href={href}
           data-testid={`panel-cta-${offer.id}`}
@@ -132,18 +126,20 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
             e.preventDefault();
             openOffer(offer, lang);
           }}
-          className="hub-cta inline-flex h-12 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#ff4d4d] to-[#ec4899] px-7 text-base font-bold text-white shadow-lg shadow-rose-500/30 transition-transform active:scale-[0.98]"
+          className="hub-cta"
         >
           {t(offer.ctaKey)}
           <ArrowRight className="h-5 w-5" aria-hidden="true" />
         </a>
+      </div>
+      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 5 }} data-row="links">
         {offer.children.length > 0 && (
-          <ul className="flex flex-wrap items-center gap-x-4 gap-y-1.5" data-testid={`offer-children-${offer.id}`}>
+          <ul className="hub-links" data-testid={`offer-children-${offer.id}`}>
             {offer.children.map((child) => {
               const target = resolveChildTarget(child, lang);
-              const mini = offer.children.length > 2;
+              const mini = !child.hintKey;
               return (
-                <li key={child.id}>
+                <li key={child.id} className={mini ? '' : 'hub-links__item'}>
                   <a
                     href={target.type === 'href' ? target.href : '#'}
                     data-testid={`offer-child-${offer.id}-${child.id}`}
@@ -152,13 +148,17 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
                   >
                     {t(child.labelKey)}
                   </a>
+                  {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
                 </li>
               );
             })}
           </ul>
         )}
+      </div>
+      <p className="hub-cell hub-note hub-rise" style={{ ['--i' as string]: 6 }} data-row="note">{t(offer.hero.noteKey)}</p>
+      <p className="hub-cell hub-signin hub-rise" style={{ ['--i' as string]: 7 }} data-row="signin">
         {signInHref && (
-          <p className="text-sm text-slate-300">
+          <>
             {t('hub.alreadyClient')}{' '}
             <a
               href={signInHref}
@@ -168,13 +168,12 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
                 persistLang(lang);
                 hardNavigate(signInHref);
               }}
-              className="font-bold text-rose-300 underline-offset-4 hover:underline"
             >
               {t('hub.signIn')}
             </a>
-          </p>
+          </>
         )}
-      </div>
+      </p>
     </section>
   );
 }
@@ -216,6 +215,8 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
         </div>
         <div className="hub-grain" aria-hidden="true" />
 
+        <p className="hub-defline hub-rise" style={{ ['--i' as string]: 0 }} data-testid="hub-definition">{t('hub.definition')}</p>
+
         {/* Mobile : un panneau à la fois */}
         <div className="hub-tabs" role="tablist" aria-label={t('hub.tabsAria')}>
           <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] p-1.5">
@@ -236,7 +237,7 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
           </div>
         </div>
 
-        <div className="hub-panels" data-count={offers.length}>
+        <div className="hub-panels" data-count={offers.length} style={{ ['--n' as string]: offers.length }}>
           {offers.map((o, i) => (
             <Panel key={o.id} offer={o} index={i} active={activeId === o.id} lang={lang} onSelectRole={onSelectRole} />
           ))}

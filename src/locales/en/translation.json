@@ -58,16 +58,16 @@
         "company": "Company: Post a gig",
         "reps": "REPS: Find gigs",
         "hero": {
-          "l1": "Uber connects you to drivers.",
-          "l2": "Airbnb, to places to stay.",
-          "l3": "HARX connects you to agents,",
-          "accent": "and only charges you when they deliver a result.",
-          "sub": "Stop paying for seats. Start paying for results.",
+          "def": "Customer service, telesales and support professionals, human or AI, work for you: you only pay for the result you defined.",
+          "support": "“Uber connects you to drivers. Airbnb, to places to stay. HARX connects you to customer service professionals, and only charges you when they deliver a result.”",
+          "note": "TAAS = Transaction-as-a-Service: you pay per successful transaction. A gig is a mission.",
           "flow1": "Your company",
-          "flow2": "Expert agents, human or AI",
-          "flow3": "A result",
-          "flow4": "You pay"
-        }
+          "flow2": "Customer service professionals (human or AI)",
+          "flow3": "A result you defined",
+          "flow4": "You pay for that result"
+        },
+        "companyHint": "You are looking for customer service professionals",
+        "repsHint": "You are a customer service professional looking for missions"
       },
       "telephony": {
         "title": "HARX Telephony",
@@ -78,16 +78,17 @@
         "fullScope": "Company Full Scope In & Out",
         "multiClients": "Contact Centre Multi-clients",
         "hero": {
-          "l1": "Your telephony,",
-          "accent": "up and running in 5 minutes.",
-          "sub": "A number from your country, your inbound and outbound calls, an AI to assist you.",
+          "def": "A number from your country, your inbound and outbound calls, reception / secretarial and an AI to assist you.",
+          "support": "Your telephony, up and running in 5 minutes.",
+          "note": "Four offers depending on your situation, one line included in each.",
           "flow1": "A number from your country",
           "flow2": "Inbound and outbound calls",
           "flow3": "Reception / secretarial and voicemail",
           "flow4": "The AI assists you"
         }
       }
-    }
+    },
+    "definition": "HARX helps you manage your customer relationship: professionals who deliver results, and telephony up and running in 5 minutes."
   },
   "telephonyHeader": {
     "signIn": "Sign in",
