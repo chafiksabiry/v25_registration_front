@@ -22,10 +22,9 @@
   position: absolute; inset: 0; pointer-events: none; opacity: 0.07; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
 }
-.hub-fade-bottom { position: absolute; left: 0; right: 0; bottom: 0; height: 9rem; background: linear-gradient(to bottom, transparent, var(--hub-bg)); pointer-events: none; }
 
 /* Mascotte : halo en anneau + flottement */
-.hub-mascot { position: relative; width: clamp(150px, 20vw, 230px); margin-inline: auto; }
+.hub-mascot { position: relative; flex: none; width: clamp(56px, 11vh, 104px); }
 .hub-mascot__halo { position: absolute; inset: -18%; border-radius: 9999px; background: conic-gradient(from 0deg, rgba(255,77,77,.0), rgba(255,77,77,.55), rgba(236,72,153,.55), rgba(245,158,11,.35), rgba(255,77,77,.0)); filter: blur(28px); opacity: .7; animation: hub-spin 16s linear infinite; }
 .hub-mascot__img { position: relative; z-index: 1; width: 100%; height: auto; animation: hub-float 6s ease-in-out infinite; filter: drop-shadow(0 18px 36px rgba(255, 77, 77, 0.28)); }
 @keyframes hub-spin { to { transform: rotate(360deg); } }
@@ -57,7 +56,6 @@
   box-shadow: 0 24px 60px -28px rgba(255, 60, 100, .45);
   transition: transform .35s cubic-bezier(.2,.7,.2,1), box-shadow .35s ease;
 }
-@media (min-width: 768px) { .hub-card { padding: 2.25rem; } }
 .hub-card::before {
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .3s ease;
   background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 90, 120, .22), transparent 60%);
@@ -105,3 +103,17 @@
   .hub-root *, .hub-root *::before, .hub-root *::after { animation: none !important; transition: none !important; }
   .hub-reveal { opacity: 1; transform: none; }
 }
+
+/* Premier écran piloté par la fenêtre */
+.hub-top { padding-top: 4.6rem; }
+.hub-hero { padding-top: clamp(.25rem, 1.2vh, 1rem); }
+.hub-h1 { font-size: clamp(1.7rem, 2.2vw + 2.6vh, 3.4rem); }
+.hub-aurora { bottom: 0; }
+.hub-card { padding: clamp(1rem, 2.2vh, 1.5rem) clamp(1rem, 1.6vw, 1.6rem); }
+.hub-icon { padding: .65rem; border-radius: .95rem; }
+.hub-child { padding: clamp(.4rem, .8vh, .6rem) .8rem; }
+.hub-bullets { display: none; }
+@media (min-height: 960px), (max-width: 767px) { .hub-bullets { display: block; } }
+.hub-need { transition: background .2s ease, border-color .2s ease, transform .25s ease; }
+.hub-need:hover { background: rgba(255,255,255,.08); border-color: rgba(255,120,150,.55); transform: translateY(-3px); }
+.hub-need:hover .hub-child__arrow, .hub-need:focus-visible .hub-child__arrow { transform: translateX(5px); }
