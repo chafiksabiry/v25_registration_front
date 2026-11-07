@@ -7,20 +7,20 @@ const ids = OFFERS.map((o) => o.id);
 assert.equal(new Set(ids).size, ids.length, 'identifiants uniques');
 
 assert.deepEqual(getAvailableOffers().map((o) => o.id), ['taas', 'telephony']);
-assert.deepEqual(getSoonOffers().map((o) => o.id), ['more']);
+assert.deepEqual(getSoonOffers().map((o) => o.id), []);
 
 const byId = Object.fromEntries(OFFERS.map((o) => [o.id, o]));
 assert.equal(resolveOfferHref(byId.taas, 'fr'), '/fr/taas');
 assert.equal(resolveOfferHref(byId.taas, 'en'), '/en/taas');
 assert.equal(resolveOfferHref(byId.telephony, 'fr'), '/telephony');
 assert.equal(resolveOfferHref(byId.telephony, 'en'), '/telephony');
-assert.equal(resolveOfferHref(byId.more, 'fr'), null);
+
 
 // Connexion propre à chaque offre
 assert.equal(resolveOfferSignInHref(byId.taas, 'fr'), '/fr/auth/signin');
 assert.equal(resolveOfferSignInHref(byId.taas, 'en'), '/en/auth/signin');
 assert.equal(resolveOfferSignInHref(byId.telephony, 'fr'), '/auth/signin?product=callcentre');
-assert.equal(resolveOfferSignInHref(byId.more, 'fr'), null);
+
 
 // Arborescence : TAAS (Company, REPS) et Téléphonie (4 offres, noms et ordre de la vitrine)
 assert.deepEqual(byId.taas.children.map((c) => c.id), ['company', 'reps']);
@@ -31,7 +31,7 @@ assert.deepEqual(
   byId.telephony.children.map((c) => (resolveChildTarget(c, 'en') as { href: string }).href),
   ['/telephony#nomade', '/telephony#accueil-secretariat', '/telephony#pme-equipes-distantes', '/telephony#centres-appels'],
 );
-assert.deepEqual(byId.more.children, []);
+
 
 for (const o of OFFERS) {
   if (o.status === 'available') assert.ok(o.route?.startsWith('/'), `${o.id} : route absolue`);
@@ -60,7 +60,7 @@ for (const lang of ['fr', 'en']) {
     assert.ok(typeof v === 'string' && v.trim(), `${lang} : clé manquante ${n.questionKey}`);
     assert.ok(!/centre d.appels|call cent(re|er)/i.test(v));
   }
-  for (const k of ['hub.needsTitle', 'hub.needsSub', 'hub.detailTitle', 'hub.ctaTitle', 'hub.ctaText', 'hub.open', 'hub.subtitle']) assert.ok(lookup(json, k), `${lang} : ${k}`);
+  for (const k of ['hub.needsTitle', 'hub.needsSub', 'hub.chooseTitle', 'hub.l1', 'hub.l4', 'hub.discover', 'hub.offersSub']) assert.ok(lookup(json, k), `${lang} : ${k}`);
 }
 const fr = JSON.parse(readFileSync(new URL('../src/locales/fr/translation.json', import.meta.url), 'utf8'));
 assert.deepEqual(
