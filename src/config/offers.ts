@@ -1,9 +1,13 @@
 /**
- * Offres HARX présentées sur l'accueil de l'ensemble (hub, `/`).
+ * Offres HARX présentées sur l'écran d'accueil de l'ensemble (hub, `/`).
  *
- * Ajouter une offre = ajouter UNE entrée (`status: 'soon'` : offre annoncée, sans lien, non affichée tant qu'aucune section ne l'utilise) à `OFFERS` (et ses textes fr/en dans
- * `src/locales/*\/translation.json`, sous `hub.offers.<id>`). La carte du hub
- * et le lien de l'en-tête sont générés depuis cette liste.
+ * Ajouter une offre = ajouter UNE entrée à `OFFERS` (puis ses textes fr/en dans
+ * `src/locales/*\/translation.json`, sous `hub.offers.<id>`). Le panneau de
+ * l'écran d'accueil, l'onglet mobile et le lien de l'en-tête sont générés depuis
+ * cette liste, dans l'ordre. Mise en page : voir « .hub-panels » dans
+ * src/components/Hub/hub.css (2 panneaux de largeur égale aujourd'hui ; au-delà,
+ * chaque panneau garde une largeur minimale et la rangée défile horizontalement).
+ * `status: 'soon'` = offre annoncée, sans lien, non affichée.
  *
  * Module volontairement sans dépendance (ni React, ni i18n) : il est vérifié
  * par `node --experimental-strip-types scripts/check-offers.ts`.
@@ -14,12 +18,27 @@ export type OfferStatus = 'available' | 'soon';
 /** Identifiants d'icônes ; la correspondance avec les icônes lucide est faite dans le composant. */
 export type OfferIcon = 'layers' | 'phone' | 'sparkles';
 
+/** Icônes des étapes du flux animé ; `mascot` = la mascotte HARX. */
+export type FlowIcon = 'building' | 'mascot' | 'target' | 'wallet' | 'phone' | 'calls' | 'voicemail' | 'sparkles';
+
+/** Présentation d'une offre sur l'écran d'accueil : accroche en révélation + flux de 4 étapes. */
+export interface OfferHero {
+  /** Lignes d'accroche (texte courant). */
+  lineKeys: string[];
+  /** Dernière ligne, mise en valeur (dégradé). */
+  accentKey: string;
+  /** Phrase d'appui facultative. */
+  subKey?: string;
+  /** Étapes du flux animé. */
+  flow: Array<{ key: string; icon: FlowIcon }>;
+}
+
 export type OfferLang = 'fr' | 'en';
 
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =
-  | { id: string; labelKey: string; descKey: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
-  | { id: string; labelKey: string; descKey: string; kind: 'route'; route: string; langPrefixed: boolean };
+  | { id: string; labelKey: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
+  | { id: string; labelKey: string; kind: 'route'; route: string; langPrefixed: boolean };
 
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
 
@@ -36,15 +55,11 @@ export interface OfferConfig {
   icon: OfferIcon;
   /** Clés i18n (namespace par défaut). */
   titleKey: string;
-  /** Libellé court pour l'en-tête. */
+  /** Libellé court pour l'en-tête et l'onglet mobile. */
   navKey: string;
-  taglineKey: string;
-  bulletKeys: string[];
   ctaKey: string;
-  /** « Pour qui ? » en une ligne. */
-  forWhoKey: string;
-  /** Proposition de valeur développée (section de détail). */
-  pitchKey: string;
+  /** Accroche et flux animé du panneau de l'offre. */
+  hero: OfferHero;
   /** Sous-entrées affichées sous la carte (arborescence de l'offre). */
   children: OfferChild[];
   /** Connexion propre à l'offre (« Déjà client ? Se connecter ») ; `null` si aucune. */
@@ -60,14 +75,21 @@ export const OFFERS: readonly OfferConfig[] = [
     icon: 'layers',
     titleKey: 'hub.offers.taas.title',
     navKey: 'hub.offers.taas.nav',
-    taglineKey: 'hub.offers.taas.tagline',
-    bulletKeys: ['hub.offers.taas.b1', 'hub.offers.taas.b2', 'hub.offers.taas.b3'],
     ctaKey: 'hub.offers.taas.cta',
-    forWhoKey: 'hub.offers.taas.forWho',
-    pitchKey: 'hub.offers.taas.pitch',
+    hero: {
+      lineKeys: ['hub.offers.taas.hero.l1', 'hub.offers.taas.hero.l2', 'hub.offers.taas.hero.l3'],
+      accentKey: 'hub.offers.taas.hero.accent',
+      subKey: 'hub.offers.taas.hero.sub',
+      flow: [
+        { key: 'hub.offers.taas.hero.flow1', icon: 'building' },
+        { key: 'hub.offers.taas.hero.flow2', icon: 'mascot' },
+        { key: 'hub.offers.taas.hero.flow3', icon: 'target' },
+        { key: 'hub.offers.taas.hero.flow4', icon: 'wallet' },
+      ],
+    },
     children: [
-      { id: 'company', labelKey: 'hub.offers.taas.company', descKey: 'hub.offers.taas.companyDesc', kind: 'role', role: 'company' },
-      { id: 'reps', labelKey: 'hub.offers.taas.reps', descKey: 'hub.offers.taas.repsDesc', kind: 'role', role: 'rep' },
+      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'role', role: 'company' },
+      { id: 'reps', labelKey: 'hub.offers.taas.reps', kind: 'role', role: 'rep' },
     ],
     signIn: { route: '/auth/signin', langPrefixed: true },
   },
@@ -79,17 +101,25 @@ export const OFFERS: readonly OfferConfig[] = [
     icon: 'phone',
     titleKey: 'hub.offers.telephony.title',
     navKey: 'hub.offers.telephony.nav',
-    taglineKey: 'hub.offers.telephony.tagline',
-    bulletKeys: ['hub.offers.telephony.b1', 'hub.offers.telephony.b2', 'hub.offers.telephony.b3'],
     ctaKey: 'hub.offers.telephony.cta',
-    forWhoKey: 'hub.offers.telephony.forWho',
-    pitchKey: 'hub.offers.telephony.pitch',
+    // Accroche et étapes tirées de la vitrine /telephony (Landing.tsx, landingStories.ts, landingProfiles.ts).
+    hero: {
+      lineKeys: ['hub.offers.telephony.hero.l1'],
+      accentKey: 'hub.offers.telephony.hero.accent',
+      subKey: 'hub.offers.telephony.hero.sub',
+      flow: [
+        { key: 'hub.offers.telephony.hero.flow1', icon: 'phone' },
+        { key: 'hub.offers.telephony.hero.flow2', icon: 'calls' },
+        { key: 'hub.offers.telephony.hero.flow3', icon: 'voicemail' },
+        { key: 'hub.offers.telephony.hero.flow4', icon: 'sparkles' },
+      ],
+    },
     // Noms et ordre de la vitrine /telephony ; ancres déjà présentes sur la vitrine (sections d'histoires).
     children: [
-      { id: 'nomad_solo', labelKey: 'hub.offers.telephony.nomadSolo', descKey: 'hub.offers.telephony.nomadSoloDesc', kind: 'route', route: '/telephony#nomade', langPrefixed: false },
-      { id: 'accueil', labelKey: 'hub.offers.telephony.accueil', descKey: 'hub.offers.telephony.accueilDesc', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
-      { id: 'full_scope', labelKey: 'hub.offers.telephony.fullScope', descKey: 'hub.offers.telephony.fullScopeDesc', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
-      { id: 'multi_clients', labelKey: 'hub.offers.telephony.multiClients', descKey: 'hub.offers.telephony.multiClientsDesc', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
+      { id: 'nomad_solo', labelKey: 'hub.offers.telephony.nomadSolo', kind: 'route', route: '/telephony#nomade', langPrefixed: false },
+      { id: 'accueil', labelKey: 'hub.offers.telephony.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.telephony.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
+      { id: 'multi_clients', labelKey: 'hub.offers.telephony.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
     ],
     signIn: { route: '/auth/signin?product=callcentre', langPrefixed: false },
   },
@@ -121,22 +151,4 @@ export function resolveOfferSignInHref(offer: OfferConfig, lang: OfferLang): str
 export function resolveChildTarget(child: OfferChild, lang: OfferLang): OfferChildTarget {
   if (child.kind === 'role') return { type: 'role', role: child.role };
   return { type: 'href', href: child.langPrefixed ? `/${lang}${child.route}` : child.route };
-}
-
-/** « Quelle offre est faite pour vous ? » : un besoin renvoie vers une sous-entrée existante (mêmes parcours). */
-export interface OfferNeed { id: string; questionKey: string; offerId: string; childId: string }
-
-export const NEEDS: readonly OfferNeed[] = [
-  { id: 'agents', questionKey: 'hub.needs.agents', offerId: 'taas', childId: 'company' },
-  { id: 'gigs', questionKey: 'hub.needs.gigs', offerId: 'taas', childId: 'reps' },
-  { id: 'number', questionKey: 'hub.needs.number', offerId: 'telephony', childId: 'nomad_solo' },
-  { id: 'reception', questionKey: 'hub.needs.reception', offerId: 'telephony', childId: 'accueil' },
-  { id: 'teams', questionKey: 'hub.needs.teams', offerId: 'telephony', childId: 'full_scope' },
-  { id: 'clients', questionKey: 'hub.needs.clients', offerId: 'telephony', childId: 'multi_clients' },
-];
-
-export function resolveNeed(need: OfferNeed, offers: readonly OfferConfig[] = OFFERS): { offer: OfferConfig; child: OfferChild } | null {
-  const offer = offers.find((o) => o.id === need.offerId);
-  const child = offer?.children.find((c) => c.id === need.childId);
-  return offer && child ? { offer, child } : null;
 }
