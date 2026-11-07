@@ -16,6 +16,13 @@ export type OfferIcon = 'layers' | 'phone' | 'sparkles';
 
 export type OfferLang = 'fr' | 'en';
 
+/** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
+export type OfferChild =
+  | { id: string; labelKey: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
+  | { id: string; labelKey: string; kind: 'route'; route: string; langPrefixed: boolean };
+
+export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
+
 export interface OfferConfig {
   id: string;
   /** Route de l'offre (sans préfixe de langue) ; `null` pour une offre à venir, sans lien. */
@@ -34,6 +41,10 @@ export interface OfferConfig {
   taglineKey: string;
   bulletKeys: string[];
   ctaKey: string;
+  /** Sous-entrées affichées sous la carte (arborescence de l'offre). */
+  children: OfferChild[];
+  /** Connexion propre à l'offre (« Déjà client ? Se connecter ») ; `null` si aucune. */
+  signIn: { route: string; langPrefixed: boolean } | null;
 }
 
 export const OFFERS: readonly OfferConfig[] = [
@@ -48,6 +59,11 @@ export const OFFERS: readonly OfferConfig[] = [
     taglineKey: 'hub.offers.taas.tagline',
     bulletKeys: ['hub.offers.taas.b1', 'hub.offers.taas.b2', 'hub.offers.taas.b3'],
     ctaKey: 'hub.offers.taas.cta',
+    children: [
+      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'role', role: 'company' },
+      { id: 'reps', labelKey: 'hub.offers.taas.reps', kind: 'role', role: 'rep' },
+    ],
+    signIn: { route: '/auth/signin', langPrefixed: true },
   },
   {
     id: 'telephony',
@@ -60,6 +76,14 @@ export const OFFERS: readonly OfferConfig[] = [
     taglineKey: 'hub.offers.telephony.tagline',
     bulletKeys: ['hub.offers.telephony.b1', 'hub.offers.telephony.b2', 'hub.offers.telephony.b3'],
     ctaKey: 'hub.offers.telephony.cta',
+    // Noms et ordre de la vitrine /telephony ; ancres déjà présentes sur la vitrine (sections d'histoires).
+    children: [
+      { id: 'nomad_solo', labelKey: 'hub.offers.telephony.nomadSolo', kind: 'route', route: '/telephony#nomade', langPrefixed: false },
+      { id: 'accueil', labelKey: 'hub.offers.telephony.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.telephony.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
+      { id: 'multi_clients', labelKey: 'hub.offers.telephony.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
+    ],
+    signIn: { route: '/auth/signin?product=callcentre', langPrefixed: false },
   },
   {
     id: 'more',
@@ -72,6 +96,8 @@ export const OFFERS: readonly OfferConfig[] = [
     taglineKey: 'hub.offers.more.tagline',
     bulletKeys: [],
     ctaKey: 'hub.offers.more.title',
+    children: [],
+    signIn: null,
   },
 ];
 
@@ -89,4 +115,16 @@ export function getSoonOffers(offers: readonly OfferConfig[] = OFFERS): OfferCon
 export function resolveOfferHref(offer: OfferConfig, lang: OfferLang): string | null {
   if (offer.status !== 'available' || offer.route === null) return null;
   return offer.langPrefixed ? `/${lang}${offer.route}` : offer.route;
+}
+
+/** URL de la connexion propre à l'offre pour la langue donnée ; `null` si l'offre n'en a pas. */
+export function resolveOfferSignInHref(offer: OfferConfig, lang: OfferLang): string | null {
+  if (offer.status !== 'available' || !offer.signIn) return null;
+  return offer.signIn.langPrefixed ? `/${lang}${offer.signIn.route}` : offer.signIn.route;
+}
+
+/** Destination d'une sous-entrée : rôle d'inscription (même mécanisme que /auth/choice) ou URL. */
+export function resolveChildTarget(child: OfferChild, lang: OfferLang): OfferChildTarget {
+  if (child.kind === 'role') return { type: 'role', role: child.role };
+  return { type: 'href', href: child.langPrefixed ? `/${lang}${child.route}` : child.route };
 }

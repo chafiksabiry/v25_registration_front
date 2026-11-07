@@ -177,9 +177,11 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     </>
   ) : (
     <>
-      <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
-        {t('header.signIn', 'Sign In')}
-      </button>
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
+          {t('header.signIn', 'Sign In')}
+        </button>
+      )}
       {!hub && (
         <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
           {t('header.getStarted', 'Get Started')}
@@ -209,9 +211,11 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     </>
   ) : (
     <>
-      <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
-        {t('header.signIn', 'Sign In')}
-      </button>
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
+          {t('header.signIn', 'Sign In')}
+        </button>
+      )}
       {!hub && (
         <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
           {t('header.getStarted', 'Get Started')}

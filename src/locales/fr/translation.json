@@ -51,6 +51,7 @@
     "subtitle": "Choisissez l'offre qui correspond à votre besoin. Chaque offre a son propre parcours ; d'autres viendront enrichir HARX.",
     "offersAria": "Les offres HARX",
     "signIn": "Se connecter",
+    "alreadyClient": "Déjà client ?",
     "offers": {
       "taas": {
         "title": "Transaction-as-a-Service",
@@ -59,7 +60,9 @@
         "b1": "Publiez un gig et trouvez des agents certifiés, humains ou IA",
         "b2": "Vous ne payez que lorsque le résultat défini est atteint",
         "b3": "Vous êtes agent ? Trouvez des gigs auprès d'entreprises",
-        "cta": "Découvrir TAAS"
+        "cta": "Découvrir TAAS",
+        "company": "Company : Publier un gig",
+        "reps": "REPS : Trouver des gigs"
       },
       "telephony": {
         "title": "HARX Téléphonie",
@@ -68,7 +71,11 @@
         "b1": "Pour les entreprises et les indépendants",
         "b2": "Appels entrants et sortants depuis votre navigateur",
         "b3": "Accueil / secrétariat, journal d'appels et analyse par l'IA",
-        "cta": "Ouvrir HARX Téléphonie"
+        "cta": "Ouvrir HARX Téléphonie",
+        "nomadSolo": "Nomad Solo",
+        "accueil": "Accueil / Secrétariat",
+        "fullScope": "Company Full Scope In & Out",
+        "multiClients": "Contact Centre Multi-clients"
       },
       "more": {
         "title": "D'autres offres arrivent bientôt",
@@ -732,6 +739,8 @@
     "companyDesc": "Pour les entreprises recherchant des talents en service client",
     "comingSoon": "Bientôt disponible",
     "available": "Disponible",
+    "companyTag": "COMPANY",
+    "repTag": "REPS",
     "companyFeat1": "Représentants du service client",
     "companyFeat2": "Professionnels de la télévente",
     "companyFeat3": "Agents de support par chat en direct",

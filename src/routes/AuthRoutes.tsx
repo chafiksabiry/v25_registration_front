@@ -23,8 +23,8 @@ function AuthScreen({ title, children }: { title: string; children: React.ReactN
 
 /** `/` : accueil de l'ensemble HARX (une carte par offre, voir src/config/offers.ts). */
 export function HubScreen() {
-  const { navigate, handleNavigateToSection } = useAuthContext();
-  return <HubPage onSignIn={() => navigate('/auth/signin')} onNavigateToSection={handleNavigateToSection} />;
+  const { handleSelectRole, handleNavigateToSection } = useAuthContext();
+  return <HubPage onSelectRole={handleSelectRole} onNavigateToSection={handleNavigateToSection} />;
 }
 
 /** `/taas` : offre TAAS (Transaction-as-a-Service), ancienne page d'accueil. */

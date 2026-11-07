@@ -49,6 +49,7 @@ function ChoiceCard({
   description,
   badge,
   badgeTone,
+  tag,
   icon: Icon,
   image,
   imageAlt,
@@ -61,6 +62,8 @@ function ChoiceCard({
   description: string;
   badge: string;
   badgeTone: 'muted' | 'live';
+  /** Repère du parcours (COMPANY / REPS), à côté de l'étiquette de disponibilité. */
+  tag?: string;
   icon: LucideIcon;
   image: string;
   imageAlt: string;
@@ -89,13 +92,20 @@ function ChoiceCard({
           </div>
           <h2 className="line-clamp-2 min-h-[3.5rem] text-2xl font-black leading-tight text-white">{title}</h2>
           <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-white/90">{description}</p>
-          <span
-            className={`mt-2 inline-flex h-6 w-fit items-center rounded-full px-3 text-[11px] font-bold uppercase tracking-wide ${
-              badgeTone === 'live' ? 'bg-white text-rose-600' : 'bg-white/20 text-white'
-            }`}
-          >
-            {badge}
-          </span>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex h-6 w-fit items-center rounded-full px-3 text-[11px] font-bold uppercase tracking-wide ${
+                badgeTone === 'live' ? 'bg-white text-rose-600' : 'bg-white/20 text-white'
+              }`}
+            >
+              {badge}
+            </span>
+            {tag && (
+              <span data-testid="choice-tag" className="inline-flex h-6 w-fit items-center rounded-full border border-white/70 px-3 text-[11px] font-bold uppercase tracking-wide text-white">
+                {tag}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -171,6 +181,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
             description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
             badge={t('choicePage.available', 'Available')}
             badgeTone="live"
+            tag={t('choicePage.companyTag', 'COMPANY')}
             features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.companyTitle', 'Post a Gig')}
             onClick={() => onSelectRole('company')}
@@ -183,6 +194,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
             description={t('choicePage.repDesc', 'For contact center professionals')}
             badge={t('choicePage.available', 'Available')}
             badgeTone="live"
+            tag={t('choicePage.repTag', 'REPS')}
             features={repFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.repTitle', 'Find Gigs')}
             onClick={() => onSelectRole('rep')}

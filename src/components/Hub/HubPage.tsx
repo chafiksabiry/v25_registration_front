@@ -2,13 +2,17 @@ import React from 'react';
 import { ArrowRight, Layers, Phone, Sparkles, CheckCircle2, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../LandingPage/Header';
+import type { SignupUserType } from '../ChoicePage';
 import harxMascotte from '../LandingPage/assets/harx-mascotte.webp';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { hardNavigate } from '../../lib/appNavigation';
 import {
   getAvailableOffers,
   getSoonOffers,
+  resolveChildTarget,
   resolveOfferHref,
+  resolveOfferSignInHref,
+  type OfferChild,
   type OfferConfig,
   type OfferIcon,
   type OfferLang,
@@ -23,7 +27,8 @@ const ICONS: Record<OfferIcon, LucideIcon> = {
 };
 
 interface HubPageProps {
-  onSignIn: () => void;
+  /** Même mécanisme que les cartes de /auth/choice (pendingUserType + retour). */
+  onSelectRole: (role: SignupUserType) => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
 
@@ -39,10 +44,31 @@ export function openOffer(offer: OfferConfig, lang: OfferLang) {
   hardNavigate(href);
 }
 
-function OfferCard({ offer, lang }: { offer: OfferConfig; lang: OfferLang }) {
+function persistLang(lang: OfferLang) {
+  try {
+    persistHarxLanguage(lang, lang === 'en' ? { explicit: true } : undefined);
+  } catch {
+    /* ignore */
+  }
+}
+
+function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: OfferLang; onSelectRole: (role: SignupUserType) => void }) {
   const { t } = useTranslation();
   const Icon = ICONS[offer.icon];
   const href = resolveOfferHref(offer, lang) ?? '#';
+  const signInHref = resolveOfferSignInHref(offer, lang);
+
+  const openChild = (e: React.MouseEvent, child: OfferChild) => {
+    e.preventDefault();
+    const target = resolveChildTarget(child, lang);
+    if (target.type === 'role') {
+      onSelectRole(target.role);
+    } else {
+      persistLang(lang);
+      hardNavigate(target.href);
+    }
+  };
+
   return (
     <article
       data-testid={`offer-card-${offer.id}`}
@@ -54,6 +80,26 @@ function OfferCard({ offer, lang }: { offer: OfferConfig; lang: OfferLang }) {
       </div>
       <h2 className="relative text-2xl md:text-3xl font-black leading-tight text-white">{t(offer.titleKey)}</h2>
       <p className="relative mt-2 text-base md:text-lg font-semibold leading-snug text-harx-300">{t(offer.taglineKey)}</p>
+      {offer.children.length > 0 && (
+        <ul className="relative mt-5 grid gap-2" data-testid={`offer-children-${offer.id}`}>
+          {offer.children.map((child) => {
+            const target = resolveChildTarget(child, lang);
+            return (
+              <li key={child.id}>
+                <a
+                  href={target.type === 'href' ? target.href : '#'}
+                  data-testid={`offer-child-${offer.id}-${child.id}`}
+                  onClick={(e) => openChild(e, child)}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm md:text-base font-bold text-white transition-colors hover:border-harx-400/60 hover:bg-white/10"
+                >
+                  <span>{t(child.labelKey)}</span>
+                  <ArrowRight className="h-4 w-4 shrink-0 text-harx-300" aria-hidden="true" />
+                </a>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       <ul className="relative mt-5 flex-1 space-y-3">
         {offer.bulletKeys.map((key) => (
           <li key={key} className="flex items-start gap-3 text-sm md:text-base text-slate-300">
@@ -73,6 +119,23 @@ function OfferCard({ offer, lang }: { offer: OfferConfig; lang: OfferLang }) {
         {t(offer.ctaKey)}
         <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
       </a>
+      {signInHref && (
+        <p className="relative mt-4 text-center text-sm text-slate-400">
+          {t('hub.alreadyClient')}{' '}
+          <a
+            href={signInHref}
+            data-testid={`offer-signin-${offer.id}`}
+            onClick={(e) => {
+              e.preventDefault();
+              persistLang(lang);
+              hardNavigate(signInHref);
+            }}
+            className="font-semibold text-harx-300 underline-offset-2 hover:underline"
+          >
+            {t('hub.signIn')}
+          </a>
+        </p>
+      )}
     </article>
   );
 }
@@ -96,7 +159,7 @@ function SoonCard({ offer }: { offer: OfferConfig }) {
   );
 }
 
-export function HubPage({ onSignIn, onNavigateToSection }: HubPageProps) {
+export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
   const { t, i18n } = useTranslation();
   const lang: OfferLang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
   usePageTitle(hubPageTitle(lang));
@@ -110,7 +173,7 @@ export function HubPage({ onSignIn, onNavigateToSection }: HubPageProps) {
         <div className="absolute bottom-[-10%] right-[-10%] h-[60%] w-[60%] rounded-full bg-harx-alt-500/10 blur-[150px] animate-pulse-slow" style={{ animationDelay: '3s' }} />
       </div>
 
-      <Header hub onSignIn={onSignIn} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
+      <Header hub onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       <main className="relative z-10 container mx-auto px-4 pt-28 md:pt-32 pb-16">
         <div className="mx-auto max-w-5xl text-center">
@@ -134,7 +197,7 @@ export function HubPage({ onSignIn, onNavigateToSection }: HubPageProps) {
         <section aria-label={t('hub.offersAria')} className="mx-auto mt-10 md:mt-14 max-w-5xl">
           <div className="grid items-stretch gap-6 md:grid-cols-2">
             {available.map((offer) => (
-              <OfferCard key={offer.id} offer={offer} lang={lang} />
+              <OfferCard key={offer.id} offer={offer} lang={lang} onSelectRole={onSelectRole} />
             ))}
           </div>
           {soon.length > 0 && (
