@@ -1,5 +1,6 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, LayoutDashboard, LogOut, Menu, Phone, X } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, LayoutDashboard, LayoutGrid, LogOut, Menu, Phone, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageSelector } from '../LanguageSelector';
@@ -14,6 +15,7 @@ import {
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
+import { getAvailableOffers, resolveOfferHref, type OfferConfig } from '../../config/offers';
 
 /** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
 const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
@@ -36,15 +38,42 @@ interface HeaderProps {
   onNavigateToSection?: (sectionId: string) => void;
   /** Écrans d'inscription et de connexion du produit Téléphonie : bandeau propre au produit (logo, pastille « Telephony »), sans le menu du site HARX. */
   telephony?: boolean;
+  /** Accueil de l'ensemble HARX (hub) : liens vers les offres, pas de menu de sections ni de « Démarrer ». */
+  hub?: boolean;
 }
 
-export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false }: HeaderProps) {
+export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false }: HeaderProps) {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
   const [sessionTick, setSessionTick] = React.useState(0);
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
-  const homeHref = withLangPrefix('/', (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr');
+  const siteLang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+  /** Accueil de l'ensemble (hub) et page de l'offre TAAS (sections « Comment ça marche », « Tarifs »…). */
+  const homeHref = withLangPrefix('/', siteLang);
+  const taasHref = withLangPrefix('/taas', siteLang);
+  const offerLinks = getAvailableOffers();
+
+  const openOffer = (e: React.MouseEvent<HTMLAnchorElement>, offer: OfferConfig) => {
+    e.preventDefault();
+    const href = resolveOfferHref(offer, siteLang);
+    if (!href) return;
+    setIsMenuOpen(false);
+    try {
+      persistHarxLanguage(siteLang, siteLang === 'en' ? { explicit: true } : undefined);
+    } catch {
+      /* ignore */
+    }
+    hardNavigate(href);
+  };
+
+  /** Retour à l'accueil de l'ensemble (logo, « Toutes les offres HARX »). */
+  const goToHub = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    navigate('/');
+  };
 
   React.useEffect(() => {
     return subscribeAuthChanged(() => {
@@ -148,13 +177,17 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     </>
   ) : (
     <>
-      <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
-        {t('header.signIn', 'Sign In')}
-      </button>
-      <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
-        {t('header.getStarted', 'Get Started')}
-        <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-      </button>
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
+          {t('header.signIn', 'Sign In')}
+        </button>
+      )}
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
+          {t('header.getStarted', 'Get Started')}
+          <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+        </button>
+      )}
     </>
   );
 
@@ -178,13 +211,17 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     </>
   ) : (
     <>
-      <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
-        {t('header.signIn', 'Sign In')}
-      </button>
-      <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
-        {t('header.getStarted', 'Get Started')}
-        <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-      </button>
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
+          {t('header.signIn', 'Sign In')}
+        </button>
+      )}
+      {!hub && (
+        <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
+          {t('header.getStarted', 'Get Started')}
+          <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+        </button>
+      )}
     </>
   );
 
@@ -226,24 +263,51 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
         <div className="flex items-center space-x-6 lg:space-x-8">
           <a
             href={homeHref}
-            className="flex items-center transition-transform hover:scale-[1.02]"
-            onClick={(e) => handleNavClick(e, 'top')}
+            className="flex shrink-0 items-center transition-transform hover:scale-[1.02]"
+            onClick={goToHub}
+            aria-label={t('header.allOffers', 'All HARX offers')}
           >
             <Logo className="h-14 w-auto md:h-16" />
           </a>
 
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={`${homeHref}#${link.id}`}
-                className={linkClass(link.variant)}
-                onClick={(e) => handleNavClick(e, link.id)}
-              >
-                {renderLinkIcon(link.variant)}
-                <span>{link.label}</span>
-              </a>
-            ))}
+            {hub
+              ? offerLinks.map((offer) => (
+                  <a
+                    key={offer.id}
+                    href={resolveOfferHref(offer, siteLang) ?? '#'}
+                    className="nav-link-default"
+                    data-testid={`nav-offer-${offer.id}`}
+                    onClick={(e) => openOffer(e, offer)}
+                  >
+                    <span>{t(offer.navKey)}</span>
+                  </a>
+                ))
+              : (
+                <>
+                  <a
+                    href={homeHref}
+                    className="nav-link-default hidden 2xl:inline-flex items-center gap-1.5 whitespace-nowrap"
+                    data-testid="nav-all-offers"
+                    title={t('header.allOffers', 'All HARX offers')}
+                    onClick={goToHub}
+                  >
+                    <LayoutGrid className="h-4 w-4 shrink-0" aria-hidden="true" />
+                    <span>{t('header.allOffers', 'All HARX offers')}</span>
+                  </a>
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.id}
+                      href={`${taasHref}#${link.id}`}
+                      className={linkClass(link.variant)}
+                      onClick={(e) => handleNavClick(e, link.id)}
+                    >
+                      {renderLinkIcon(link.variant)}
+                      <span>{link.label}</span>
+                    </a>
+                  ))}
+                </>
+              )}
           </div>
         </div>
 
@@ -267,21 +331,43 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
           className="md:hidden absolute top-full left-0 right-0 border-t border-white/15 p-6 shadow-xl animate-fade-in"
         >
           <div className="flex flex-col space-y-1">
-            {navLinks.map((link) => (
-              <a
-                key={link.id}
-                href={`#${link.id}`}
-                className={
-                  link.variant
-                    ? `${linkClass(link.variant)} my-1 w-full justify-center`
-                    : 'px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white'
-                }
-                onClick={(e) => handleNavClick(e, link.id)}
-              >
-                {renderLinkIcon(link.variant)}
-                <span>{link.label}</span>
-              </a>
-            ))}
+            {hub
+              ? offerLinks.map((offer) => (
+                  <a
+                    key={offer.id}
+                    href={resolveOfferHref(offer, siteLang) ?? '#'}
+                    className="px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                    onClick={(e) => openOffer(e, offer)}
+                  >
+                    <span>{t(offer.navKey)}</span>
+                  </a>
+                ))
+              : (
+                <>
+                  <a
+                    href={homeHref}
+                    className="px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
+                    onClick={goToHub}
+                  >
+                    {t('header.allOffers', 'All HARX offers')}
+                  </a>
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.id}
+                      href={`${taasHref}#${link.id}`}
+                      className={
+                        link.variant
+                          ? `${linkClass(link.variant)} my-1 w-full justify-center`
+                          : 'px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white'
+                      }
+                      onClick={(e) => handleNavClick(e, link.id)}
+                    >
+                      {renderLinkIcon(link.variant)}
+                      <span>{link.label}</span>
+                    </a>
+                  ))}
+                </>
+              )}
             <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
               <div className="flex justify-center mb-4">
                 <LanguageSelector />

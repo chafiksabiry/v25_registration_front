@@ -24,17 +24,8 @@ export type SignupUserType = 'company' | 'rep' | 'call-center';
 interface ChoicePageProps {
   onSelectRole: (role: SignupUserType) => void;
   onSignIn: () => void;
-  /** Open the standalone HARX Call Centre product (its own landing page). */
-  onOpenCallCentre?: () => void;
   onNavigateToSection?: (sectionId: string) => void;
 }
-
-const callCenterFeatures = [
-  { icon: HeadphonesIcon, labelKey: 'choicePage.ccFeat1', defaultLabel: 'A number from your country and your calls in the browser' },
-  { icon: PhoneCall, labelKey: 'choicePage.ccFeat2', defaultLabel: 'Inbound and outbound calls, greeting and voicemail' },
-  { icon: Users, labelKey: 'choicePage.ccFeat3', defaultLabel: 'Call log, transcription and AI analysis' },
-  { icon: Target, labelKey: 'choicePage.ccFeat4', defaultLabel: 'From freelancer to multi-client centre' },
-];
 
 const companyFeatures = [
   { icon: HeadphonesIcon, labelKey: 'choicePage.companyFeat1', defaultLabel: 'Customer Service Representatives' },
@@ -58,6 +49,7 @@ function ChoiceCard({
   description,
   badge,
   badgeTone,
+  tag,
   icon: Icon,
   image,
   imageAlt,
@@ -70,6 +62,8 @@ function ChoiceCard({
   description: string;
   badge: string;
   badgeTone: 'muted' | 'live';
+  /** Repère du parcours (COMPANY / REPS), à côté de l'étiquette de disponibilité. */
+  tag?: string;
   icon: LucideIcon;
   image: string;
   imageAlt: string;
@@ -98,13 +92,20 @@ function ChoiceCard({
           </div>
           <h2 className="line-clamp-2 min-h-[3.5rem] text-2xl font-black leading-tight text-white">{title}</h2>
           <p className="mt-1 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-snug text-white/90">{description}</p>
-          <span
-            className={`mt-2 inline-flex h-6 w-fit items-center rounded-full px-3 text-[11px] font-bold uppercase tracking-wide ${
-              badgeTone === 'live' ? 'bg-white text-rose-600' : 'bg-white/20 text-white'
-            }`}
-          >
-            {badge}
-          </span>
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span
+              className={`inline-flex h-6 w-fit items-center rounded-full px-3 text-[11px] font-bold uppercase tracking-wide ${
+                badgeTone === 'live' ? 'bg-white text-rose-600' : 'bg-white/20 text-white'
+              }`}
+            >
+              {badge}
+            </span>
+            {tag && (
+              <span data-testid="choice-tag" className="inline-flex h-6 w-fit items-center rounded-full border border-white/70 px-3 text-[11px] font-bold uppercase tracking-wide text-white">
+                {tag}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -137,7 +138,7 @@ function ChoiceCard({
   );
 }
 
-export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, onNavigateToSection }: ChoicePageProps) {
+export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
   const { t } = useTranslation();
 
   return (
@@ -171,7 +172,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
 
       {/* Cards */}
       <div className="relative z-10 flex-1 container mx-auto px-4 pb-12">
-        <div className="mx-auto grid w-full max-w-6xl items-stretch gap-6 lg:grid-cols-3">
+        <div className="mx-auto grid w-full max-w-4xl items-stretch gap-6 md:grid-cols-2">
           <ChoiceCard
             icon={Building2}
             image={companyBanner}
@@ -180,22 +181,10 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
             description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
             badge={t('choicePage.available', 'Available')}
             badgeTone="live"
+            tag={t('choicePage.companyTag', 'COMPANY')}
             features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.companyTitle', 'Post a Gig')}
             onClick={() => onSelectRole('company')}
-          />
-          <ChoiceCard
-            disabled={!onOpenCallCentre}
-            icon={HeadphonesIcon}
-            image={companyBanner}
-            imageAlt="Téléphonie"
-            title={t('choicePage.callCenterTitle', 'Telephony')}
-            description={t('choicePage.callCenterDesc', 'For freelancers and businesses that want to make calls: number, calls and AI')}
-            badge={onOpenCallCentre ? t('choicePage.available', 'Available') : t('choicePage.comingSoon', 'Coming soon')}
-            badgeTone={onOpenCallCentre ? 'live' : 'muted'}
-            features={callCenterFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
-            cta={t('choicePage.callCenterCta', 'Open HARX Telephony')}
-            onClick={onOpenCallCentre}
           />
           <ChoiceCard
             icon={Headphones}
@@ -205,6 +194,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onOpenCallCentre, o
             description={t('choicePage.repDesc', 'For contact center professionals')}
             badge={t('choicePage.available', 'Available')}
             badgeTone="live"
+            tag={t('choicePage.repTag', 'REPS')}
             features={repFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
             cta={t('choicePage.repTitle', 'Find Gigs')}
             onClick={() => onSelectRole('rep')}

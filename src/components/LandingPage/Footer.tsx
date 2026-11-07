@@ -39,7 +39,7 @@ export function Footer() {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       } else {
-        navigate('/' + href);
+        navigate('/taas' + href);
       }
     } else {
       navigate(href);

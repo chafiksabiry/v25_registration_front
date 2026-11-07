@@ -6,9 +6,9 @@ import { isSessionActive, redirectIfAuthenticated } from '../../lib/authRedirect
 const isPasswordRecoveryRoute = (pathname: string) =>
   pathname === '/auth/recovery' || pathname.endsWith('/auth/recovery');
 
-/** Landing home — stay here when logged in; user opens Dashboard from the header. */
+/** Hub (`/`) and TAAS landing (`/taas`) — stay here when logged in; user opens Dashboard from the header. */
 const isLandingHomeRoute = (pathname: string) =>
-  pathname === '/' || pathname === '';
+  pathname === '/' || pathname === '' || pathname === '/taas' || pathname === '/taas/';
 
 export function AuthSpinner() {
   return (

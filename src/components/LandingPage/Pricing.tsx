@@ -56,7 +56,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
   const handleRepRegister = useCallback(() => {
     localStorage.setItem('pendingUserType', 'rep');
-    navigate('/auth/register-rep', { state: { returnTo: '/', scrollTo: 'pricing' } });
+    navigate('/auth/register-rep', { state: { returnTo: '/taas', scrollTo: 'pricing' } });
   }, [navigate]);
 
   const bookDemo = () => {

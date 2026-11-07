@@ -7,8 +7,9 @@ export const LANDING_SECTION_IDS = ['top', 'how-it-works', 'pricing', 'clients',
 
 export type LandingSectionId = (typeof LANDING_SECTION_IDS)[number];
 
+// Cette page est l'offre TAAS (`/taas`) ; l'accueil de l'ensemble HARX est le hub (`/`).
 const LANDING_SECTION_TITLES: Record<LandingSectionId, string> = {
-  top: 'Accueil',
+  top: 'TAAS',
   'how-it-works': 'Comment ça marche',
   pricing: 'Tarification',
   clients: 'Pour les entreprises',
@@ -20,7 +21,7 @@ export function landingSectionTitle(sectionId: string): string {
 }
 
 const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
-  top: 'Home',
+  top: 'TAAS',
   'how-it-works': 'How it works',
   pricing: 'Pricing',
   clients: 'For companies',
@@ -30,10 +31,10 @@ const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
 export function landingPageTabTitle(sectionId: string, lang: 'fr' | 'en' = 'fr'): string {
   if (lang === 'en') {
     const label = LANDING_SECTION_TITLES_EN[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES_EN.top;
-    return sectionId === 'top' ? `${BASE_TITLE} — ${label}` : `${BASE_TITLE} — Home · ${label}`;
+    return sectionId === 'top' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS · ${label}`;
   }
   const label = landingSectionTitle(sectionId);
-  return sectionId === 'top' ? `${BASE_TITLE} — ${label}` : `${BASE_TITLE} — Accueil · ${label}`;
+  return sectionId === 'top' ? `${BASE_TITLE} — TAAS : Transaction-as-a-Service` : `${BASE_TITLE} — TAAS · ${label}`;
 }
 
 export function buildLandingSectionMeta(sectionId: string): PageMeta {
@@ -41,6 +42,6 @@ export function buildLandingSectionMeta(sectionId: string): PageMeta {
   return {
     title: landingPageTabTitle(sectionId),
     description: DEFAULT_PAGE_DESCRIPTION,
-    canonical: `${HARX_SITE_URL}/`,
+    canonical: `${HARX_SITE_URL}/taas`,
   };
 }

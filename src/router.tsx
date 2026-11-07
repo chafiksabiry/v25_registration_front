@@ -10,7 +10,8 @@ import HistorySync from './components/layout/HistorySync';
 import VisitorTracker from './lib/VisitorTracker';
 import AuthShell from './components/layout/AuthShell';
 import {
-  LandingScreen,
+  HubScreen,
+  TaasScreen,
   ChoiceScreen,
   SignInScreen,
   RegisterScreen,
@@ -134,7 +135,8 @@ const routes: RouteObject[] = [
         {
           element: <GuestAuthLayout />,
           children: [
-            { index: true, element: <LandingScreen /> },
+            { index: true, element: <HubScreen /> },
+            { path: 'taas', element: <TaasScreen /> },
             { path: 'auth/choice', element: <ChoiceScreen /> },
             { path: 'auth/signin', element: <SignInScreen /> },
             { path: 'auth/register', element: <RegisterScreen /> },

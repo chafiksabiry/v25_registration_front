@@ -44,6 +44,45 @@
     "point3": "A client portal under your brand, read-only",
     "point4": "A subscription, then you pay for what you use"
   },
+  "hub": {
+    "badge": "HARX.ai",
+    "title1": "HARX: one platform,",
+    "title2": "several offers",
+    "subtitle": "Pick the offer that fits your need. Each offer has its own journey; more will join HARX over time.",
+    "offersAria": "HARX offers",
+    "signIn": "Sign in",
+    "alreadyClient": "Already a client?",
+    "offers": {
+      "taas": {
+        "title": "Transaction-as-a-Service",
+        "nav": "TAAS",
+        "tagline": "Pay for results, not for seats",
+        "b1": "Post a gig and find certified agents, human or AI",
+        "b2": "You only pay when the result you defined is delivered",
+        "b3": "Are you an agent? Find gigs with companies",
+        "cta": "Discover TAAS",
+        "company": "Company: Post a gig",
+        "reps": "REPS: Find gigs"
+      },
+      "telephony": {
+        "title": "HARX Telephony",
+        "nav": "Telephony",
+        "tagline": "A number from your country, your inbound and outbound calls, reception / secretarial and AI",
+        "b1": "For businesses and independents",
+        "b2": "Inbound and outbound calls from your browser",
+        "b3": "Reception / secretarial, call log and AI analysis",
+        "cta": "Open HARX Telephony",
+        "nomadSolo": "Nomad Solo",
+        "accueil": "Accueil / Secrétariat",
+        "fullScope": "Company Full Scope In & Out",
+        "multiClients": "Contact Centre Multi-clients"
+      },
+      "more": {
+        "title": "More offers are coming soon",
+        "tagline": "HARX keeps growing: new offers will join this page."
+      }
+    }
+  },
   "telephonyHeader": {
     "signIn": "Sign in",
     "signUp": "Create my account"
@@ -57,6 +96,7 @@
     "getStarted": "Get Started",
     "dashboard": "Dashboard",
     "logout": "Log out",
+    "allOffers": "All HARX offers",
     "loading": "Loading…"
   },
   "hero": {
@@ -543,6 +583,7 @@
     "getStarted": "Get Started",
     "dashboard": "Dashboard",
     "logout": "Log out",
+    "allOffers": "All HARX offers",
     "loading": "Loading…"
   },
   "signIn": {
@@ -690,7 +731,7 @@
     "signIn": "Sign in"
   },
   "choicePage": {
-    "marketplace": "HARX Marketplace",
+    "marketplace": "TAAS",
     "title1": "Transform Your",
     "title2": "Contact Center",
     "subtitle": "Connect with opportunities or find the perfect talent for your customer service needs.",
@@ -698,6 +739,8 @@
     "companyDesc": "For companies seeking customer service talent",
     "comingSoon": "Coming soon",
     "available": "Available",
+    "companyTag": "COMPANY",
+    "repTag": "REPS",
     "companyFeat1": "Customer Service Representatives",
     "companyFeat2": "Telesales Professionals",
     "companyFeat3": "Live Chat Support Agents",

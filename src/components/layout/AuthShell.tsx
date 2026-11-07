@@ -4,7 +4,7 @@ import type { SignupUserType } from '../ChoicePage';
 import { captureProductFromUrl } from '../../lib/product';
 
 /**
- * Shared shell for the auth screens (landing + choice + signin + register +
+ * Shared shell for the auth screens (hub + TAAS landing + choice + signin + register +
  * recovery). Mirrors the rep orchestrator's `OnboardingShell`: a layout route
  * that renders child screens through <Outlet /> and shares navigation helpers
  * + cross-screen state (pending landing section) via the outlet context.
@@ -36,8 +36,9 @@ export default function AuthShell() {
   }, [location.pathname, location.search]);
 
   const handleNavigateToSection = (sectionId: string) => {
+    // Les sections (Comment ça marche, Tarifs…) sont celles de la page de l'offre TAAS.
     setPendingSection(sectionId);
-    navigate('/');
+    navigate('/taas');
   };
 
   const handleSelectRole = (role: SignupUserType) => {

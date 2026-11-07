@@ -10,6 +10,9 @@ import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
+import { withLangPrefix } from '../../lib/langRoutes';
 
 interface LandingPageProps {
   onSignIn: () => void;
@@ -49,7 +52,9 @@ export function LandingPage({
     onSectionAppliedRef.current = onSectionApplied;
   }, [onSectionApplied]);
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
+  const siteLang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
   usePageTitle(landingPageTabTitle(activeSection, i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
 
   useEffect(() => {
@@ -145,12 +150,26 @@ export function LandingPage({
   }, [initialSection]);
 
   return (
-    <div id="top" className="bg-space-dark-default text-white">
+    <div id="top" className="relative bg-space-dark-default text-white">
       <Header
         onSignIn={onSignIn}
         onGetStarted={onGetStarted}
         onNavigateToSection={onNavigateToSection}
       />
+
+      {/* Retour vers l'accueil de l'ensemble HARX (le logo de l'en-tête y mène aussi). */}
+      <a
+        href={withLangPrefix('/', siteLang)}
+        data-testid="back-to-hub"
+        onClick={(e) => {
+          e.preventDefault();
+          navigate('/');
+        }}
+        className="absolute left-4 top-[80px] z-20 inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.06] px-3.5 py-1.5 text-xs md:text-sm font-semibold text-slate-200 backdrop-blur-md transition-colors hover:border-harx-400/60 hover:text-white md:left-6"
+      >
+        <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+        {t('header.allOffers', 'All HARX offers')}
+      </a>
 
       <Hero onGetStarted={onGetStarted} />
 
