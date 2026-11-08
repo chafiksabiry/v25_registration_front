@@ -62,7 +62,7 @@ export function BrandText({ callCentre = false, kind }: { callCentre?: boolean; 
     <>
       <h1 className="text-3xl font-extrabold leading-tight mb-4">
         {t(`${ns}.title1`, 'Your telephony,')} <br />
-        <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t(`${ns}.title2`, 'up and running in 10 minutes')}</span>
+        <span className="taas-shine-text">{t(`${ns}.title2`, 'up and running in 10 minutes')}</span>
       </h1>
       <p className="text-slate-400 text-sm leading-relaxed mb-5">{t(`${ns}.desc`)}</p>
       <ul className="space-y-2.5 text-left">

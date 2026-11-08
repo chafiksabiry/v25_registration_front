@@ -1,4 +1,13 @@
 {
+  "telephonyVisual": {
+    "incoming": "مكالمة واردة",
+    "country": "رقم من بلدك"
+  },
+  "callcentreJourney": {
+    "name": "الاسم",
+    "account": "حساب HARX",
+    "setup": "الإعداد"
+  },
   "callcentreBrand": {
     "title1": "الاتصالات الهاتفية لشركتك،",
     "title2": "جاهزة للعمل في 10 دقائق",
