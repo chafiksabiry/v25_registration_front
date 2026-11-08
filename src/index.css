@@ -706,3 +706,23 @@
 .harx-bar-logo:hover img { transform: scale(1.04); filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.35)); }
 @keyframes harx-bar-sheen { 0% { background-position: 150% 0; } 55%, 100% { background-position: -50% 0; } }
 @media (prefers-reduced-motion: reduce) { .harx-bar::before { animation: none; } }
+
+/* Accueil TAAS : tout tient dans l'écran, les tailles suivent la hauteur disponible (en dessous de 768 px de large la page défile). */
+.taas-home { padding-top: 5.5rem; padding-bottom: 1rem; }
+.taas-home__stack { gap: clamp(.4rem, 1.5vh, 1rem); }
+.taas-home__mascot { height: clamp(3.25rem, 11vh, 8.5rem); }
+.taas-home__meets { font-size: clamp(.9rem, 2.8vh, 2rem); }
+.taas-home__brand { font-weight: 800; font-size: clamp(1.4rem, 5.4vh, 3.6rem); line-height: 1.1; }
+.taas-home__lines { font-size: clamp(.78rem, 1.9vh, 1.1rem); line-height: 1.35; }
+.taas-home__lines p + p { margin-top: .15rem; }
+.taas-home__doors { margin-top: clamp(.3rem, 1.4vh, 1rem); }
+.taas-home__door { min-height: clamp(11rem, 29vh, 19rem); }
+.taas-home__door-title { font-size: clamp(1rem, 2.6vh, 1.6rem); }
+@media (min-width: 768px) and (max-height: 820px) {
+  .taas-home__points { display: none; }
+  .taas-home__door { min-height: clamp(8rem, 24vh, 14rem); }
+}
+@media (max-width: 767px) {
+  .taas-home__mascot { height: 5rem; }
+  .taas-home__door { min-height: 14rem; }
+}

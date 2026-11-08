@@ -142,6 +142,8 @@
     "repsCta": "Enter the REPS space"
   },
   "taasPages": {
+    "finalCompanyTitle": "Ready to pay for results?",
+    "finalCompanyText": "Book a demo: we show you how to define a result and its price.",
     "statCountries": "countries covered",
     "payFixed": "Fixed amount per argued call",
     "payCommission": "Commission per transaction",
@@ -409,6 +411,15 @@
     "exploreAll": "Explore all opportunities"
   },
   "howItWorks": {
+    "kicker": "How it works",
+    "noInfra": "No infrastructure",
+    "noHiring": "No hiring",
+    "noUpfront": "No upfront cost",
+    "noComplexity": "No complexity",
+    "payRule": "A certified team, a live AI scoring every interaction, and a simple rule: you pay only when it works.",
+    "statPros": "professionals",
+    "statCountries": "countries",
+    "statScored": "of calls scored by AI",
     "title": "How HARX Works",
     "subtitle": "No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.",
     "aiResponseTime": "AI Response Time",

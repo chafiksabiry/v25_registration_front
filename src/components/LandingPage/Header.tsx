@@ -106,8 +106,8 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     hardNavigate('/');
   };
 
-  const taasLinks: Array<{ id: 'home' | 'company' | 'reps'; label: string; path: string; Icon: typeof Layers }> = [
-    { id: 'home', label: t('taasNav.home', 'TAAS'), path: TAAS_HOME, Icon: Layers },
+  // Le retour à l'accueil TAAS est la pastille TAAS elle-même : le segment ne propose que les deux espaces.
+  const taasLinks: Array<{ id: 'company' | 'reps'; label: string; path: string; Icon: typeof Layers }> = [
     { id: 'company', label: t('choicePage.companyTag', 'COMPANY'), path: TAAS_COMPANY, Icon: Building2 },
     { id: 'reps', label: t('choicePage.repTag', 'REPS'), path: TAAS_REPS, Icon: Headphones },
   ];

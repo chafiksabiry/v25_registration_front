@@ -3,31 +3,36 @@ import { HowItWorks } from '../LandingPage/HowItWorks';
 import { Pricing } from '../LandingPage/Pricing';
 import { ForClients } from '../LandingPage/ForClients';
 import { TaasBanner } from './TaasBanner';
+import { TaasFinalCta } from './TaasFinalCta';
 import { Aurora } from './Aurora';
 
-/** Espace COMPANY : même langage visuel que l'accueil HARX (fond quasi noir, halos, cartes en verre). */
-export function TaasCompanyPage({ onGetStarted }: { onGetStarted: () => void }) {
+/**
+ * Espace COMPANY, dans l'ordre du raisonnement d'un acheteur :
+ * la promesse → ce qu'on peut confier (cas d'usage) → comment ça marche → combien ça coûte (forfaits) → un seul appel final.
+ */
+export function TaasCompanyPage({ onGetStarted: _onGetStarted }: { onGetStarted?: () => void }) {
   return (
     <>
       <TaasBanner kind="company" />
-      <section id="how-it-works" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
-        <Aurora tone="company" />
-        <div className="relative">
-          <HowItWorks onGetStarted={onGetStarted} />
-        </div>
-      </section>
-      <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#0a0a18] px-4 py-16 text-white" data-testid="pricing-band">
-        <Aurora tone="pricing" />
-        <div className="relative">
-          <Pricing onGetStarted={onGetStarted} only="company" />
-        </div>
-      </section>
       <section id="clients" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
         <Aurora tone="company" />
         <div className="relative">
-          <ForClients onGetStarted={onGetStarted} />
+          <ForClients />
         </div>
       </section>
+      <section id="how-it-works" className="relative scroll-mt-28 overflow-hidden bg-[#0a0a18] text-white">
+        <Aurora tone="pricing" />
+        <div className="relative">
+          <HowItWorks />
+        </div>
+      </section>
+      <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#070711] px-4 py-16 text-white" data-testid="pricing-band">
+        <Aurora tone="company" />
+        <div className="relative">
+          <Pricing onGetStarted={() => undefined} only="company" />
+        </div>
+      </section>
+      <TaasFinalCta kind="company" />
     </>
   );
 }

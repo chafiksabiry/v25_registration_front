@@ -1,18 +1,14 @@
 import React from 'react';
-import { ArrowRight, BarChart, Shield, Phone, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
+import { BarChart, Shield, Phone, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Button } from './Button';
 
 interface ForClientsProps {
-  onGetStarted: () => void;
+  onGetStarted?: () => void;
 }
 
-export function ForClients({ onGetStarted }: ForClientsProps) {
+export function ForClients(_props: ForClientsProps) {
   const { t } = useTranslation();
 
-  const bookDemo = () => {
-    window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
-  };
 
   const useCases = [
     {
@@ -105,25 +101,6 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center">
-            <h2 className="text-3xl font-black mb-6 text-white">{t('forClients.ready', 'Ready to Get Started?')}</h2>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                size="lg"
-                onClick={onGetStarted}
-                className="group"
-              >
-                {t('forClients.getStarted', 'Get Started')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-              <button type="button" onClick={bookDemo} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-6 text-base font-bold text-white transition-colors hover:bg-white/10">
-                {t('forClients.bookDemo', 'Book a Demo')}
-                <ArrowRight className="h-5 w-5" />
-              </button>
             </div>
           </div>
         </div>

@@ -64,7 +64,7 @@ export function TaasCompanyScreen() {
       pendingSection={pendingSection}
       onSectionApplied={() => setPendingSection(null)}
     >
-      <TaasCompanyPage onGetStarted={() => navigate('/auth/choice')} />
+      <TaasCompanyPage />
     </TaasShell>
   );
 }
@@ -83,7 +83,7 @@ export function TaasRepsScreen() {
       pendingSection={pendingSection}
       onSectionApplied={() => setPendingSection(null)}
     >
-      <TaasRepsPage onGetStarted={() => navigate('/auth/choice')} onJoin={() => handleSelectRole('rep')} />
+      <TaasRepsPage onJoin={() => handleSelectRole('rep')} />
     </TaasShell>
   );
 }
