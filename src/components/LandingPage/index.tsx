@@ -6,7 +6,7 @@ import { Pricing } from './Pricing';
 import { ForClients } from './ForClients';
 import { ForReps } from './ForReps';
 import { FeaturedGigs } from './FeaturedGigs';
-import { BudgetSimulator, RepsJoinSection, RepsStatsStrip } from './TaasWidgets';
+import { BudgetSimulator, RepsJoinSection } from './TaasWidgets';
 import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
@@ -248,9 +248,7 @@ export function LandingPage({
         </div>
       ) : (
         <div role="tabpanel" data-testid="taas-panel-rep">
-          <RepsStatsStrip />
-
-          <FeaturedGigs />
+          <FeaturedGigs onJoin={onFindGigs} />
 
           <RepsJoinSection onJoin={onFindGigs} />
 

@@ -1,113 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowRight, Calculator, Coins, FileText, Layers, Languages, Rocket, Sparkles, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, Calculator, Coins, FileText, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { gigsApi, type Gig } from '../../services/gigsApi';
-
-/** Part de la commission affichée au professionnel : même coefficient que sur les cartes des missions. */
-export const REP_SHARE = 0.7;
-
-export interface GigStats {
-  count: number;
-  categories: number;
-  languages: number;
-  /** Commission moyenne par transaction (part du professionnel), 0 si aucune mission n'en déclare. */
-  avgTransaction: number;
-}
-
-/** Chiffres tirés uniquement des missions réellement renvoyées par le serveur. */
-export function gigStats(gigs: Gig[]): GigStats {
-  const tx = gigs.map((g) => g.commission?.commission_per_transaction ?? 0).filter((n) => n > 0);
-  const avg = tx.length ? (tx.reduce((a, b) => a + b, 0) / tx.length) * REP_SHARE : 0;
-  return {
-    count: gigs.length,
-    categories: new Set(gigs.map((g) => g.category).filter(Boolean)).size,
-    languages: new Set(gigs.map((g) => g.language).filter(Boolean)).size,
-    avgTransaction: avg,
-  };
-}
-
-function useActiveGigs(): Gig[] | null {
-  const [gigs, setGigs] = useState<Gig[] | null>(null);
-  useEffect(() => {
-    let alive = true;
-    gigsApi
-      .fetchActiveGigs()
-      .then((list) => alive && setGigs(list))
-      .catch(() => alive && setGigs([]));
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return gigs;
-}
-
-/** Compteur animé (désactivé avec prefers-reduced-motion) qui démarre quand il devient visible. */
-function CountUp({ to, decimals = 0 }: { to: number; decimals?: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const [value, setValue] = useState(0);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const reduce = typeof window.matchMedia === 'function' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduce || typeof IntersectionObserver === 'undefined') {
-      setValue(to);
-      return;
-    }
-    let raf = 0;
-    const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        obs.disconnect();
-        const start = performance.now();
-        const tick = (now: number) => {
-          const p = Math.min(1, (now - start) / 1100);
-          setValue(to * (1 - Math.pow(1 - p, 3)));
-          if (p < 1) raf = requestAnimationFrame(tick);
-        };
-        raf = requestAnimationFrame(tick);
-      },
-      { threshold: 0.4 },
-    );
-    obs.observe(el);
-    return () => {
-      obs.disconnect();
-      cancelAnimationFrame(raf);
-    };
-  }, [to]);
-  return <span ref={ref}>{value.toFixed(decimals)}</span>;
-}
-
-/** Bandeau de chiffres réels sous les onglets (onglet REPS). Masqué s'il n'y a aucune mission. */
-export function RepsStatsStrip() {
-  const { t } = useTranslation();
-  const gigs = useActiveGigs();
-  const stats = useMemo(() => (gigs ? gigStats(gigs) : null), [gigs]);
-  if (!stats || stats.count === 0) return null;
-  const tiles: Array<{ icon: LucideIcon; value: number; label: string }> = [
-    { icon: Rocket, value: stats.count, label: t('taasWidgets.statGigs', 'missions available') },
-    ...(stats.categories > 0 ? [{ icon: Layers, value: stats.categories, label: t('taasWidgets.statCategories', 'business areas') }] : []),
-    ...(stats.languages > 0 ? [{ icon: Languages, value: stats.languages, label: t('taasWidgets.statLanguages', 'languages requested') }] : []),
-  ];
-  return (
-    <div className="bg-space-dark-default px-4 pb-2 pt-10 text-white" data-testid="reps-stats">
-      <div className="mx-auto max-w-4xl text-center">
-        <p className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.05] px-4 py-1.5 text-sm font-semibold text-slate-200">
-          <Sparkles className="h-4 w-4 text-harx-400" aria-hidden="true" />
-          {t('taasWidgets.repsKicker', 'Real missions, open now')}
-        </p>
-        <div className={`mt-6 grid gap-4 ${tiles.length === 1 ? 'grid-cols-1' : tiles.length === 2 ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-3'}`}>
-          {tiles.map(({ icon: Icon, value, label }) => (
-            <div key={label} className="glass-card-premium rounded-2xl px-6 py-5">
-              <Icon className="mx-auto h-6 w-6 text-harx-400" aria-hidden="true" />
-              <p className="mt-2 text-4xl font-black tracking-tight"><CountUp to={value} /></p>
-              <p className="mt-1 text-sm font-semibold text-slate-300">{label}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+import { exampleAvgTransaction } from '../../config/exampleGigs';
 
 const REP_STEPS: Array<{ icon: LucideIcon; title: string; text: string }> = [
   { icon: UserPlus, title: 'taasWidgets.repStep1Title', text: 'taasWidgets.repStep1Text' },
@@ -134,7 +28,7 @@ function RepsSteps() {
   );
 }
 
-/** Estimation de gains : transactions confirmées par mois × commission moyenne des missions affichées. */
+/** Estimation de gains : transactions confirmées par mois × commission moyenne par transaction des missions types. */
 function EarningsSimulator({ avgTransaction }: { avgTransaction: number }) {
   const { t, i18n } = useTranslation();
   const [count, setCount] = useState(20);
@@ -173,14 +67,13 @@ function JoinBand({ onJoin }: { onJoin: () => void }) {
   );
 }
 
-/** Bloc d'adhésion REPS : étapes, estimation de gains (si les missions déclarent une commission) et bouton. */
+/** Bloc d'adhésion REPS : étapes, estimation de gains (sur les missions types) et bouton. */
 export function RepsJoinSection({ onJoin }: { onJoin: () => void }) {
-  const gigs = useActiveGigs();
-  const stats = useMemo(() => (gigs ? gigStats(gigs) : null), [gigs]);
+  const avgTransaction = exampleAvgTransaction();
   return (
     <section className="bg-white px-4 py-20 text-slate-900" data-testid="reps-join-section">
       <RepsSteps />
-      {stats && stats.avgTransaction > 0 ? <EarningsSimulator avgTransaction={stats.avgTransaction} /> : null}
+      {avgTransaction > 0 ? <EarningsSimulator avgTransaction={avgTransaction} /> : null}
       <JoinBand onJoin={onJoin} />
     </section>
   );
