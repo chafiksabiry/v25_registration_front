@@ -65,7 +65,7 @@ export function Pricing({ onGetStarted }: PricingProps) {
 
   return (
     <div className="pt-4 md:pt-6">
-      <div className="relative overflow-hidden bg-white py-6 md:py-8">
+      <div className="relative mx-auto max-w-[96rem] overflow-hidden rounded-3xl bg-white py-8 shadow-2xl shadow-black/40 ring-1 ring-white/20 md:py-10" data-testid="pricing-card">
         <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-harx-300/20 blur-3xl" />
         <div className="pointer-events-none absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-harx-alt-300/20 blur-3xl" />
 

@@ -142,6 +142,13 @@
     "repsCta": "Enter the REPS space"
   },
   "taasPages": {
+    "payFixed": "Fixed amount per argued call",
+    "payCommission": "Commission per transaction",
+    "payBonus": "Performance bonus",
+    "statPros": "customer service professionals",
+    "statAi": "AI response time",
+    "statResult": "paid on results",
+    "statGdpr": "compliant, encrypted data",
     "companyTitle": "Pay for results, not for seats",
     "companySub": "You define the result and its price. You only pay for what you approve.",
     "repsTitle": "Your expertise, paid for results",

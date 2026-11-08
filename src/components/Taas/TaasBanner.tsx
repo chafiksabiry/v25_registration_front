@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, Lock } from 'lucide-react';
+import { ArrowRight, Brain, Building2, Headphones, Lock, ShieldCheck, Target, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { isRoleComingSoon } from '../../config/offers';
@@ -76,6 +76,22 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
               </>
             )}
           </div>
+          {company ? (
+            <ul className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-4" data-testid="company-stats">
+              {[
+                { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
+                { icon: Brain, value: '0,3 s', label: t('taasPages.statAi', 'AI response time') },
+                { icon: Target, value: '100 %', label: t('taasPages.statResult', 'paid on results') },
+                { icon: ShieldCheck, value: 'RGPD', label: t('taasPages.statGdpr', 'compliant, encrypted data') },
+              ].map(({ icon: Icon, value, label }) => (
+                <li key={label} className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-4 backdrop-blur">
+                  <Icon className="mx-auto h-5 w-5 text-harx-400" aria-hidden="true" />
+                  <p className="mt-1.5 text-2xl font-black">{value}</p>
+                  <p className="mt-0.5 text-xs font-semibold leading-snug text-slate-300">{label}</p>
+                </li>
+              ))}
+            </ul>
+          ) : null}
           <p className="mt-6 text-sm font-semibold text-slate-400">
             {company ? t('taasPages.areRep', 'You are a professional?') : t('taasPages.areCompany', 'You are a company?')}{' '}
             <a

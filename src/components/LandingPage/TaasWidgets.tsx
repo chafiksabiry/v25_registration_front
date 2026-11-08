@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Calculator, Coins, FileText, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Calculator, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EXAMPLE_GIGS, estimateEarnings } from '../../config/exampleGigs';
 
@@ -96,39 +96,6 @@ export function RepsJoinSection({ onJoin }: { onJoin: () => void }) {
       <RepsSteps />
       <EarningsSimulator />
       <JoinBand onJoin={onJoin} />
-    </section>
-  );
-}
-
-/** Onglet COMPANY : budget maximum = résultats voulus × prix par résultat (calcul sur les saisies du visiteur). */
-export function BudgetSimulator() {
-  const { t, i18n } = useTranslation();
-  const [results, setResults] = useState(100);
-  const [price, setPrice] = useState(10);
-  const fmt = (n: number) => new Intl.NumberFormat(i18n.language?.startsWith('en') ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
-  return (
-    <section className="bg-slate-50 px-4 py-20 text-slate-900" data-testid="budget-simulator">
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-200 bg-white p-8 shadow-lg shadow-slate-200/60">
-        <div className="flex items-center gap-3">
-          <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-harx-50 text-harx-600"><Coins className="h-5 w-5" aria-hidden="true" /></span>
-          <h2 className="text-2xl font-black">{t('taasWidgets.budgetTitle', 'Simulate your budget')}</h2>
-        </div>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
-          <div>
-            <label className="block text-sm font-semibold text-slate-700" htmlFor="bud-results">
-              {t('taasWidgets.budgetResults', 'Results wanted per month')} : <strong className="text-harx-600">{results}</strong>
-            </label>
-            <input id="bud-results" type="range" min={10} max={1000} step={10} value={results} onChange={(e) => setResults(Number(e.target.value))} className="mt-2 w-full accent-harx-500" data-testid="bud-results" />
-          </div>
-          <div>
-            <label className="block text-sm font-semibold text-slate-700" htmlFor="bud-price">{t('taasWidgets.budgetPrice', 'Price you set per result (€)')}</label>
-            <input id="bud-price" type="number" min={1} max={10000} value={price} onChange={(e) => setPrice(Math.max(0, Number(e.target.value) || 0))} className="mt-2 h-11 w-full rounded-xl border border-slate-300 px-3 text-sm font-semibold focus:border-harx-500 focus:outline-none focus:ring-2 focus:ring-harx-200" data-testid="bud-price" />
-          </div>
-        </div>
-        <p className="mt-6 flex items-center gap-2 text-sm font-semibold text-slate-600"><FileText className="h-4 w-4" aria-hidden="true" />{t('taasWidgets.budgetMax', 'Maximum monthly budget')}</p>
-        <p className="mt-1 text-4xl font-black text-slate-900" data-testid="bud-total">{fmt(results * price)}</p>
-        <p className="mt-1 text-xs font-medium text-slate-500">{t('taasWidgets.budgetNote', 'You only pay for the results you approve.')}</p>
-      </div>
     </section>
   );
 }

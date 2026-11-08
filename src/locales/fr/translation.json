@@ -142,6 +142,13 @@
     "repsCta": "Entrer dans l'espace REPS"
   },
   "taasPages": {
+    "payFixed": "Fixe par appel argumenté",
+    "payCommission": "Commission par transaction",
+    "payBonus": "Bonus de performance",
+    "statPros": "professionnels du service client",
+    "statAi": "temps de réponse de l'IA",
+    "statResult": "payé au résultat",
+    "statGdpr": "conforme, données chiffrées",
     "companyTitle": "Payez des résultats, pas des postes",
     "companySub": "Vous définissez le résultat et son prix. Vous ne payez que ce que vous approuvez.",
     "repsTitle": "Votre expertise, payée au résultat",
