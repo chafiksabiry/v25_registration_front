@@ -42,6 +42,20 @@ export type OfferChild =
   | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
   | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean };
 
+/**
+ * Parcours d'inscription pas encore ouverts : « Publier un gig » (rôle company) est annoncé « Bientôt disponible » ;
+ * son entrée reste visible mais ne démarre aucune inscription. Les connexions existantes ne sont pas concernées.
+ */
+export const COMING_SOON_ROLES: ReadonlyArray<'company' | 'rep' | 'call-center'> = ['company'];
+
+export function isRoleComingSoon(role: 'company' | 'rep' | 'call-center'): boolean {
+  return COMING_SOON_ROLES.includes(role);
+}
+
+export function isChildComingSoon(child: OfferChild): boolean {
+  return child.kind === 'role' && isRoleComingSoon(child.role);
+}
+
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
 
 export interface OfferConfig {

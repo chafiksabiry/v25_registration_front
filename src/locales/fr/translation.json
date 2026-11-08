@@ -45,6 +45,7 @@
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
   "hub": {
+    "comingSoon": "Bientôt disponible",
     "alreadyClient": "Déjà client ?",
     "signIn": "Se connecter",
     "offersAria": "Les offres HARX",
@@ -746,6 +747,7 @@
     "companyDesc": "Pour les entreprises recherchant des talents en service client",
     "comingSoon": "Bientôt disponible",
     "available": "Disponible",
+    "comingSoon": "Bientôt disponible",
     "companyTag": "COMPANY",
     "repTag": "REPS",
     "companyFeat1": "Représentants du service client",

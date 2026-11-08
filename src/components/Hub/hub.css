@@ -85,6 +85,9 @@
 .hub-mini { display: inline-flex; align-items: center; height: 1.9rem; padding: 0 .75rem; border-radius: 9999px; font-size: .78rem; font-weight: 700; color: #ffe4ea; border: 1px solid rgba(255, 120, 150, .35); background: rgba(255, 77, 109, .08); transition: background .2s ease, border-color .2s ease; }
 .hub-mini:hover { background: rgba(255, 77, 109, .22); border-color: rgba(255, 150, 175, .8); }
 
+.hub-link--soon { display: inline-flex; flex-wrap: wrap; align-items: center; gap: .15rem .5rem; white-space: nowrap; cursor: not-allowed; text-decoration: none; color: #cbd5e1; font-weight: 700; }
+.hub-soon { display: inline-flex; align-items: center; height: 1.3rem; padding: 0 .55rem; border-radius: 9999px; font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; border: 1px solid rgba(255, 255, 255, .45); background: rgba(255, 255, 255, .12); }
+
 /* Focus clavier visible */
 .hub-root a:focus-visible, .hub-root button:focus-visible { outline: 3px solid #ffd0da; outline-offset: 3px; border-radius: .6rem; }
 

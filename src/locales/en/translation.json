@@ -45,6 +45,7 @@
     "point4": "A subscription, then you pay for what you use"
   },
   "hub": {
+    "comingSoon": "Coming soon",
     "alreadyClient": "Already a client?",
     "signIn": "Sign in",
     "offersAria": "HARX offers",
@@ -746,6 +747,7 @@
     "companyDesc": "For companies seeking customer service talent",
     "comingSoon": "Coming soon",
     "available": "Available",
+    "comingSoon": "Coming soon",
     "companyTag": "COMPANY",
     "repTag": "REPS",
     "companyFeat1": "Customer Service Representatives",
