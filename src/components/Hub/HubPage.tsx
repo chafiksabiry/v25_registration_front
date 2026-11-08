@@ -10,6 +10,7 @@ import { hardNavigate } from '../../lib/appNavigation';
 import {
   getAvailableOffers,
   resolveChildTarget,
+  isChildComingSoon,
   resolveOfferHref,
   resolveOfferSignInHref,
   type FlowIcon,
@@ -139,6 +140,17 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
             {offer.children.map((child) => {
               const target = resolveChildTarget(child, lang);
               const mini = !child.hintKey;
+              if (isChildComingSoon(child)) {
+                return (
+                  <li key={child.id} className={mini ? '' : 'hub-links__item'}>
+                    <span className="hub-link hub-link--soon" aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
+                      {t(child.labelKey)}
+                      <span className="hub-soon">{t('hub.comingSoon')}</span>
+                    </span>
+                    {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
+                  </li>
+                );
+              }
               return (
                 <li key={child.id} className={mini ? '' : 'hub-links__item'}>
                   <a

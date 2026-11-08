@@ -18,6 +18,7 @@ import { Header } from './LandingPage/Header';
 import companyBanner from './assets/choice-company.jpg';
 import repBanner from './assets/choice-rep.jpg';
 import { useTranslation } from 'react-i18next';
+import { isRoleComingSoon } from '../config/offers';
 
 export type SignupUserType = 'company' | 'rep' | 'call-center';
 
@@ -140,6 +141,7 @@ function ChoiceCard({
 
 export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection }: ChoicePageProps) {
   const { t } = useTranslation();
+  const companySoon = isRoleComingSoon('company');
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-harx-50 via-white to-harx-alt-50/60 flex flex-col animate-fade-in relative">
@@ -179,11 +181,12 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
             imageAlt="Équipe en entreprise"
             title={t('choicePage.companyTitle', 'Post a Gig')}
             description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
-            badge={t('choicePage.available', 'Available')}
-            badgeTone="live"
+            badge={companySoon ? t('choicePage.comingSoon', 'Coming soon') : t('choicePage.available', 'Available')}
+            badgeTone={companySoon ? 'muted' : 'live'}
             tag={t('choicePage.companyTag', 'COMPANY')}
             features={companyFeatures.map(({ icon, labelKey, defaultLabel }) => ({ icon, id: labelKey, label: t(labelKey, defaultLabel) }))}
-            cta={t('choicePage.companyTitle', 'Post a Gig')}
+            cta={companySoon ? t('choicePage.comingSoon', 'Coming soon') : t('choicePage.companyTitle', 'Post a Gig')}
+            disabled={companySoon}
             onClick={() => onSelectRole('company')}
           />
           <ChoiceCard

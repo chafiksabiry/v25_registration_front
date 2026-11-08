@@ -1,3 +1,4 @@
+import { isRoleComingSoon } from '../../config/offers';
 import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
@@ -42,6 +43,8 @@ export default function AuthShell() {
   };
 
   const handleSelectRole = (role: SignupUserType) => {
+    // Parcours pas encore ouvert (« Publier un gig ») : aucune inscription ne démarre.
+    if (isRoleComingSoon(role)) return;
     localStorage.setItem('pendingUserType', role);
     const pathByRole: Record<SignupUserType, string> = {
       company: '/auth/register-company',
