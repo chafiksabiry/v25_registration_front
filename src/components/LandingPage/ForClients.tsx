@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, BarChart, Globe, Rocket, Shield, Phone, Mail, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
+import { ArrowRight, BarChart, Shield, Phone, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 
@@ -13,42 +13,6 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
   const bookDemo = () => {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
   };
-
-  const solutions = [
-    {
-      title: t('forClients.solution1Title', "Startups Scaling Fast"),
-      description: t('forClients.solution1Desc', "Perfect for growing companies needing flexible, scalable customer service solutions without the overhead."),
-      features: [
-        t('forClients.sol1Feat1', "Rapid team scaling"),
-        t('forClients.sol1Feat2', "Pay-per-result model"),
-        t('forClients.sol1Feat3', "No long-term commitments")
-      ],
-      icon: Rocket,
-      color: "harx"
-    },
-    {
-      title: t('forClients.solution2Title', "Enterprise Solutions"),
-      description: t('forClients.solution2Desc', "Optimize your contact centre operations and expand service capabilities with our global network of agents."),
-      features: [
-        t('forClients.sol2Feat1', "Reduced operational costs"),
-        t('forClients.sol2Feat2', "Global coverage"),
-        t('forClients.sol2Feat3', "Enterprise-grade security")
-      ],
-      icon: BarChart,
-      color: "harx"
-    },
-    {
-      title: t('forClients.solution3Title', "Global Operations"),
-      description: t('forClients.solution3Desc', "Deliver 24/7 customer support worldwide with local expertise and cultural understanding."),
-      features: [
-        t('forClients.sol3Feat1', "Local market expertise"),
-        t('forClients.sol3Feat2', "Multi-language support"),
-        t('forClients.sol3Feat3', "24/7 global coverage")
-      ],
-      icon: Globe,
-      color: "harx"
-    }
-  ];
 
   const useCases = [
     {
@@ -101,62 +65,10 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
     }
   ];
 
-  const operationalCountries = [
-    { name: "USA", region: "North America" },
-    { name: "Canada", region: "North America" },
-    { name: "UK", region: "Europe" },
-    { name: "Germany", region: "Europe" },
-    { name: "France", region: "Europe" },
-    { name: "Belgium", region: "Europe" },
-    { name: "Italy", region: "Europe" },
-    { name: "Spain", region: "Europe" },
-    { name: "Morocco", region: "Middle East & Africa" },
-    { name: "UAE", region: "Middle East & Africa" }
-  ];
-
   return (
     <div className="pt-8 pb-12">
       <div className="relative overflow-hidden bg-white">
-        {/* Hero Section */}
         <div className="container mx-auto px-4 py-12 md:py-16">
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              {t('forClients.title', 'Transform Your Customer Experience')}
-            </h1>
-            <p className="text-xl text-gray-600 mb-8">
-              {t('forClients.subtitle', 'Unlock exceptional customer service with our Transaction-as-a-Service platform. Only pay for successful resolutions.')}
-            </p>
-            <Button
-              size="lg"
-              onClick={onGetStarted}
-              className="group"
-            >
-              {t('forClients.getStarted', 'Get Started')}
-              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-            </Button>
-          </div>
-
-          {/* Solutions Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-            {solutions.map((solution, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-lg">
-                <div className={`w-16 h-16 bg-${solution.color}-100 rounded-lg flex items-center justify-center mb-6`}>
-                  <solution.icon className={`h-8 w-8 text-${solution.color}-600`} />
-                </div>
-                <h3 className="text-2xl font-bold mb-4">{solution.title}</h3>
-                <p className="text-gray-600 mb-6">{solution.description}</p>
-                <ul className="space-y-3">
-                  {solution.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-center text-gray-700">
-                      <ArrowRight className="h-5 w-5 text-harx-600 mr-2" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
           {/* Use Cases */}
           <div className="max-w-6xl mx-auto mb-24">
             <h2 className="text-3xl font-bold text-center mb-4">{t('forClients.useCasesTitle', 'Resolution-Based Use Cases')}</h2>
@@ -194,39 +106,6 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
                 </div>
               ))}
             </div>
-          </div>
-
-          {/* Global Presence */}
-          <div className="max-w-5xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-8">{t('forClients.globalPresence', 'Our Global Presence')}</h2>
-            <p className="text-center text-gray-600 mb-12">
-              {t('forClients.globalDesc', 'Currently operating in major markets across North America, Europe, Africa, and the Middle East, with more regions coming soon.')}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[
-                { key: 'North America', label: t('forClients.na', 'North America') },
-                { key: 'Europe', label: t('forClients.eu', 'Europe') },
-                { key: 'Middle East & Africa', label: t('forClients.mea', 'Middle East & Africa') }
-              ].map((region) => (
-                <div key={region.key} className="bg-white p-6 rounded-xl shadow-lg">
-                  <h3 className="text-xl font-bold mb-4">{region.label}</h3>
-                  <ul className="space-y-2">
-                    {operationalCountries
-                      .filter(country => country.region === region.key)
-                      .map(country => (
-                        <li key={country.name} className="flex items-center text-gray-700">
-                          <ArrowRight className="h-4 w-4 text-harx-600 mr-2" />
-                          {country.name}
-                        </li>
-                      ))
-                    }
-                  </ul>
-                </div>
-              ))}
-            </div>
-            <p className="text-center text-gray-600 mt-8">
-              {t('forClients.additionalMarkets', 'Additional markets coming soon to serve you better.')}
-            </p>
           </div>
 
           {/* CTA Section */}

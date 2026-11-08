@@ -52,41 +52,6 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
     }
   ];
 
-  const repStories = [
-    {
-      name: "Fatima Al-Sayed",
-      location: "Kuwait City, Kuwait",
-      expertise: "Financial Services & Customer Success",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote1', "The AI-powered platform helps me provide exceptional support to global clients while maintaining a perfect work-life balance.")
-    },
-    {
-      name: "Kwame Osei",
-      location: "Accra, Ghana",
-      expertise: "Technical Support & Product Specialist",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1578496781985-452d4a934d50?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote2', "HARX's technology allows me to focus on what matters most - solving customer problems efficiently while continuously improving my skills.")
-    },
-    {
-      name: "Mei Zhang",
-      location: "Singapore",
-      expertise: "E-commerce & Digital Solutions",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote3', "The platform's multilingual capabilities and AI assistance make it possible to serve customers across Asia effectively.")
-    },
-    {
-      name: "Raj Patel",
-      location: "Mumbai, India",
-      expertise: "Enterprise Solutions & Integration",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote4', "HARX's flexible platform and continuous learning opportunities have helped me grow from a support agent to a solutions architect.")
-    }
-  ];
-
   return (
     <div className="pt-8 pb-12">
       {/* Hero Section with Inspiring Image */}
@@ -149,35 +114,6 @@ export function ForReps({ onGetStarted }: ForRepsProps) {
                 <p className="text-gray-600">{benefit.description}</p>
               </div>
             ))}
-          </div>
-
-          {/* Rep Stories */}
-          <div className="max-w-6xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-4">{t('forReps.storiesTitle', 'Meet Our Global Representatives')}</h2>
-            <p className="text-center text-gray-600 mb-12">
-              {t('forReps.storiesDesc', 'Discover how professionals worldwide are building successful careers with HARX')}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {repStories.map((story, index) => (
-                <div key={index} className="bg-white p-8 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center mb-6">
-                    <img
-                      src={story.image}
-                      alt={story.name}
-                      className="w-16 h-16 rounded-full mr-4 object-cover"
-                    />
-                    <div>
-                      <h3 className="font-bold text-lg">{story.name}</h3>
-                      <p className="text-harx-600">{story.expertise}</p>
-                      <p className="text-gray-600 text-sm">{story.location}</p>
-                    </div>
-                  </div>
-                  <blockquote className="text-gray-700 italic">
-                    "{story.quote}"
-                  </blockquote>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* Requirements Section */}

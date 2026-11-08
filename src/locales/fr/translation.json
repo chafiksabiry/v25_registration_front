@@ -95,6 +95,9 @@
     "signIn": "Se connecter",
     "signUp": "Créer mon compte"
   },
+  "landingTabs": {
+    "aria": "Choisissez votre parcours"
+  },
   "header": {
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",

@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 
 interface HeroProps {
   onGetStarted: () => void;
+  /** Affiche l'onglet Company puis fait défiler jusqu'à « Comment ça marche ». */
+  onSeeHow?: () => void;
 }
 
-export function Hero({ onGetStarted }: HeroProps) {
+export function Hero({ onGetStarted, onSeeHow }: HeroProps) {
   const { t } = useTranslation();
   const titleContainerRef = useRef<HTMLDivElement>(null);
   const titleTextRef = useRef<HTMLSpanElement>(null);
@@ -207,7 +209,7 @@ export function Hero({ onGetStarted }: HeroProps) {
                 </li>
               </ul>
               <div className="mt-8 pt-6 border-t border-harx-alt-500/20">
-                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => scrollToSection('how-it-works')}>
+                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => (onSeeHow ? onSeeHow() : scrollToSection('how-it-works'))}>
                   {t('hero.taas.cta', 'See How It Works')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
