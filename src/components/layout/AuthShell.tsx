@@ -3,7 +3,11 @@ import { taasPathForSection } from '../../lib/taasPaths';
 import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
-import { captureProductFromUrl } from '../../lib/product';
+import { captureProductFromUrl, clearProduct } from '../../lib/product';
+import { stripLangPrefix } from '../../lib/langRoutes';
+
+/** Parcours TAAS : l'accueil, les pages COMPANY / REPS, le choix de profil et les inscriptions REPS et entreprise. */
+const TAAS_PATH = /^\/(taas(\/|$)|auth\/choice$|auth\/register-(rep|company)$)/;
 
 /**
  * Shared shell for the auth screens (hub + TAAS landing + choice + signin + register +
@@ -27,7 +31,10 @@ export default function AuthShell() {
   const navigate = useNavigate();
   const location = useLocation();
   // During render so it lands before any child effect redirects a signed-in visitor.
-  captureProductFromUrl(location.search || window.location.search);
+  const search = location.search || window.location.search;
+  captureProductFromUrl(search);
+  // Dans un parcours TAAS sans lien produit explicite, un produit mémorisé plus tôt (Téléphonie) ne doit pas déteindre sur l'écran.
+  if (!new URLSearchParams(search).has('product') && TAAS_PATH.test(stripLangPrefix(location.pathname).replace(/\/+$/, '') || '/')) clearProduct();
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   useLayoutEffect(() => {
