@@ -177,7 +177,14 @@
     "step4": "Approuvé par vous",
     "step5": "Payé",
     "humanAi": "Humains ou IA",
-    "paidNote": "Vous ne payez qu'à l'approbation"
+    "paidNote": "Vous ne payez qu'à l'approbation",
+    "repsTitle": "Votre revenu",
+    "repsMonth": "Mois",
+    "evCall": "Appel argumenté",
+    "evSale": "Transaction confirmée",
+    "evGoal": "Objectif atteint",
+    "anywhere": "Où vous voulez",
+    "yourHours": "Vos horaires"
   },
   "header": {
     "howItWorks": "Comment ça marche",

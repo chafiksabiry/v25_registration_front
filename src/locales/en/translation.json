@@ -177,7 +177,14 @@
     "step4": "Approved by you",
     "step5": "Paid",
     "humanAi": "Humans or AI",
-    "paidNote": "You only pay on approval"
+    "paidNote": "You only pay on approval",
+    "repsTitle": "Your income",
+    "repsMonth": "Month",
+    "evCall": "Argued call",
+    "evSale": "Confirmed transaction",
+    "evGoal": "Target reached",
+    "anywhere": "From anywhere",
+    "yourHours": "Your own hours"
   },
   "header": {
     "howItWorks": "How It Works",

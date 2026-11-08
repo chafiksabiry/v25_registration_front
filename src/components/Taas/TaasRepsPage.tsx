@@ -5,6 +5,7 @@ import { RepsBenefits, RepsHero } from '../LandingPage/ForReps';
 import { RepsStartSection } from '../LandingPage/TaasWidgets';
 import { TaasFinalCta } from './TaasFinalCta';
 import { Aurora } from './Aurora';
+import { BenefitsMarquee } from './BenefitsMarquee';
 
 /**
  * Espace REPS, dans l'ordre du raisonnement d'un candidat :
@@ -15,6 +16,7 @@ export function TaasRepsPage({ onJoin }: { onGetStarted?: () => void; onJoin: ()
   return (
     <>
       <RepsHero onJoin={onJoin} />
+      <BenefitsMarquee />
       <RepsBenefits />
       <FeaturedGigs onJoin={onJoin} />
       <RepsStartSection />
