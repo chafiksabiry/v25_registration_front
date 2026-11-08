@@ -19,7 +19,7 @@ export function TaasCompanyPage({ onGetStarted }: { onGetStarted: () => void }) 
       <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#0a0a18] px-4 py-16 text-white" data-testid="pricing-band">
         <Aurora tone="pricing" />
         <div className="relative">
-          <Pricing onGetStarted={onGetStarted} />
+          <Pricing onGetStarted={onGetStarted} only="company" />
         </div>
       </section>
       <section id="clients" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
