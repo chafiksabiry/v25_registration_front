@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Brain, Building2, Headphones, Lock, ShieldCheck, Target, Users2 } from 'lucide-react';
+import { ArrowRight, Building2, Globe2, Headphones, Lock, ShieldCheck, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { isRoleComingSoon } from '../../config/offers';
@@ -25,7 +25,7 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
   const other = company ? TAAS_REPS : TAAS_COMPANY;
 
   return (
-    <section className="relative overflow-hidden bg-space-dark-default pb-16 pt-32 text-white" data-testid={`taas-banner-${kind}`}>
+    <section className="relative overflow-hidden bg-[#070711] pb-16 pt-32 text-white" data-testid={`taas-banner-${kind}`}>
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className={`absolute -left-24 top-0 h-96 w-96 rounded-full blur-[120px] ${company ? 'bg-harx-500/20' : 'bg-harx-alt-500/20'}`} />
         <div className="absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-amber-500/10 blur-[120px]" />
@@ -77,11 +77,10 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
             )}
           </div>
           {company ? (
-            <ul className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 md:grid-cols-4" data-testid="company-stats">
+            <ul className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3" data-testid="company-stats">
               {[
                 { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
-                { icon: Brain, value: '0,3 s', label: t('taasPages.statAi', 'AI response time') },
-                { icon: Target, value: '100 %', label: t('taasPages.statResult', 'paid on results') },
+                { icon: Globe2, value: '70+', label: t('taasPages.statCountries', 'countries covered') },
                 { icon: ShieldCheck, value: 'RGPD', label: t('taasPages.statGdpr', 'compliant, encrypted data') },
               ].map(({ icon: Icon, value, label }) => (
                 <li key={label} className="rounded-2xl border border-white/10 bg-white/[0.05] px-4 py-4 backdrop-blur">

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Users, Brain, FilePlus2, Sparkles, Tag, Wallet, ShieldCheck, ScanSearch, Globe2, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Users, FilePlus2, Sparkles, Tag, Wallet, ShieldCheck, ScanSearch, Globe2, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 
@@ -19,16 +19,16 @@ interface StepContent {
 /** Carte d'étape compacte : pastille numérotée en dégradé, icône, titre, texte. */
 function StepCard({ number, icon: Icon, tone, title, body }: StepContent) {
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 shadow-lg shadow-slate-200/60 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl" data-testid={`how-step-${number}`}>
+    <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-white/25" data-testid={`how-step-${number}`}>
       <div className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${tone}`} />
       <div className="flex items-center justify-between">
         <span className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} text-white shadow-md`}>
           <Icon className="h-6 w-6" aria-hidden="true" />
         </span>
-        <span className="text-5xl font-black leading-none text-slate-100 transition-colors group-hover:text-slate-200">{number}</span>
+        <span className="text-5xl font-black leading-none text-white/10 transition-colors group-hover:text-white/20">{number}</span>
       </div>
-      <h3 className="mt-4 text-lg font-extrabold leading-snug text-slate-900">{title}</h3>
-      <div className="mt-2 text-sm leading-relaxed text-slate-600">{body}</div>
+      <h3 className="mt-4 text-lg font-extrabold leading-snug text-white">{title}</h3>
+      <div className="mt-2 text-sm leading-relaxed text-slate-300">{body}</div>
     </div>
   );
 }
@@ -40,7 +40,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
     window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
   };
 
-  const chip = 'shrink-0 rounded-full bg-harx-100 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-harx-600';
+  const chip = 'shrink-0 rounded-full bg-harx-500/20 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-harx-200';
 
   const steps: StepContent[] = [
     {
@@ -114,10 +114,10 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
     <div className="pt-16 pb-12">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="max-w-3xl mx-auto text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
+          <h1 className="text-4xl md:text-5xl font-black mb-6 text-white">
             {t('howItWorks.title', 'How HARX Works')}
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-slate-300">
             {t('howItWorks.subtitle', 'No infrastructure. No hiring. No upfront cost. No complexity. Just a certified team, a live AI scoring every interaction, and a simple rule : you pay only when it works.')}
           </p>
         </div>
@@ -132,16 +132,6 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             />
 
             {/* Floating Stats Cards */}
-            <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <Brain className="h-6 w-6 text-harx-500" />
-                <div>
-                  <div className="font-semibold">{t('howItWorks.aiResponseTime', 'AI Response Time')}</div>
-                  <div className="text-2xl font-bold text-harx-500">0.3s</div>
-                </div>
-              </div>
-            </div>
-
             <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
               <div className="flex items-center gap-3">
                 <Users className="h-6 w-6 text-harx-500" />
@@ -165,7 +155,7 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
           </div>
 
           <div className="mt-16 text-center">
-            <h2 className="text-3xl font-bold mb-6 whitespace-pre-line">
+            <h2 className="text-3xl font-black mb-6 whitespace-pre-line text-white">
               {t('howItWorks.ctaTitle', 'You have leads. We have agents. You pay per result.\nHARX the Transaction as a Service™ Platform powered by AI')}
             </h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -178,15 +168,10 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
                 {t('howItWorks.getStarted', 'Get Started')}
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={bookDemo}
-                className="group"
-              >
+              <button type="button" onClick={bookDemo} className="inline-flex h-14 items-center justify-center gap-2 rounded-xl border border-white/30 px-6 text-base font-bold text-white transition-colors hover:bg-white/10">
                 {t('howItWorks.bookDemo', 'Book a Demo')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
+                <ArrowRight className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </div>

@@ -36,13 +36,15 @@ export function RepsHero({ onJoin }: RepsHeroProps) {
   ];
 
   return (
-    <section className="relative overflow-hidden bg-space-dark-default pt-20 text-white" data-testid="reps-hero">
+    <section className="relative overflow-hidden bg-[#070711] pt-20 text-white" data-testid="reps-hero">
       <img
         src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=80"
         alt=""
         className="absolute inset-0 h-full w-full object-cover opacity-40"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-harx-950/80 via-harx-950/70 to-space-dark-default" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#070711]/80 via-[#070711]/75 to-[#070711]" />
+      <div className="pointer-events-none absolute -left-32 top-10 h-[28rem] w-[28rem] rounded-full bg-fuchsia-600/25 blur-[120px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -right-32 top-1/3 h-[26rem] w-[26rem] rounded-full bg-rose-600/20 blur-[120px]" aria-hidden="true" />
       <div className="container relative z-10 mx-auto px-4 pb-20 pt-12">
         <div className="mx-auto max-w-4xl text-center">
           <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest backdrop-blur">
@@ -117,15 +119,15 @@ export function RepsBenefits() {
     { title: t('forReps.benefit4Title', 'Advanced Tools'), description: t('forReps.benefit4Desc', 'Use our AI-powered platform to maximize your success.'), icon: Laptop },
   ];
   return (
-    <section className="bg-gradient-to-b from-harx-50 to-white px-4 py-16 text-slate-900" data-testid="reps-benefits">
+    <section className="relative overflow-hidden bg-[#070711] px-4 py-16 text-white" data-testid="reps-benefits">
       <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {benefits.map(({ title, description, icon: Icon }) => (
-          <div key={title} className="rounded-2xl bg-white p-6 shadow-lg transition-transform duration-300 hover:-translate-y-1">
+          <div key={title} className="rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-transform duration-300 hover:-translate-y-1">
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-harx">
               <Icon className="h-6 w-6 text-white" aria-hidden="true" />
             </div>
-            <h3 className="mb-2 text-lg font-bold">{title}</h3>
-            <p className="text-sm text-gray-600">{description}</p>
+            <h3 className="mb-2 text-lg font-bold text-white">{title}</h3>
+            <p className="text-sm text-slate-300">{description}</p>
           </div>
         ))}
       </div>

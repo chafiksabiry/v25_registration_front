@@ -142,6 +142,7 @@
     "repsCta": "Entrer dans l'espace REPS"
   },
   "taasPages": {
+    "statCountries": "pays couverts",
     "payFixed": "Fixe par appel argumenté",
     "payCommission": "Commission par transaction",
     "payBonus": "Bonus de performance",
@@ -439,6 +440,7 @@
     "ctaTitle": "Vous avez des leads. Nous avons des agents. Vous payez au résultat. HARX la plateforme Transaction as a Service™ propulsée par l'IA"
   },
   "pricing": {
+    "promoPill": "−50 % pendant 3 mois",
     "limitedTime": "Offre à durée limitée",
     "discount": "Obtenez 50% de réduction sur les forfaits entreprise en vous abonnant aujourd'hui !",
     "validity": "*Offre valable pour les 3 premiers mois",
