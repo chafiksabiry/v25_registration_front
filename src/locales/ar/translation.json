@@ -165,6 +165,20 @@
   "taasNav": {
     "home": "TAAS"
   },
+  "taasVisual": {
+    "illustration": "توضيح",
+    "gigTitle": "مهمتك",
+    "resultLabel": "النتيجة المطلوبة",
+    "resultValue": "موعد مؤكد",
+    "priceLabel": "السعر الذي تحدده",
+    "step1": "تم التحديد",
+    "step2": "قيد التنفيذ",
+    "step3": "تقييم الذكاء الاصطناعي",
+    "step4": "موافقتك",
+    "step5": "تم الدفع",
+    "humanAi": "بشر أو ذكاء اصطناعي",
+    "paidNote": "لا تدفع إلا عند الموافقة"
+  },
   "header": {
     "howItWorks": "كيف يعمل",
     "pricing": "الأسعار",

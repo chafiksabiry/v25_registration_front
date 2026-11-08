@@ -165,6 +165,20 @@
   "taasNav": {
     "home": "TAAS"
   },
+  "taasVisual": {
+    "illustration": "Ilustración",
+    "gigTitle": "Su misión",
+    "resultLabel": "Resultado esperado",
+    "resultValue": "Cita confirmada",
+    "priceLabel": "Precio fijado por usted",
+    "step1": "Definido",
+    "step2": "En curso",
+    "step3": "Evaluado por la IA",
+    "step4": "Aprobado por usted",
+    "step5": "Pagado",
+    "humanAi": "Humanos o IA",
+    "paidNote": "Solo paga al aprobar"
+  },
   "header": {
     "howItWorks": "Cómo funciona",
     "pricing": "Precios",

@@ -16,9 +16,11 @@ interface StepContent {
 }
 
 /** Carte d'étape compacte : pastille numérotée en dégradé, icône, titre, texte. */
+import { spotMove } from '../Taas/spot';
+
 function StepCard({ number, icon: Icon, tone, title, body }: StepContent) {
   return (
-    <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-white/25" data-testid={`how-step-${number}`}>
+    <div onMouseMove={spotMove} className="taas-spot group relative flex h-full flex-col overflow-hidden rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-white/25" data-testid={`how-step-${number}`}>
       <div className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${tone}`} />
       <div className="flex items-center justify-between">
         <span className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} text-white shadow-md`}>

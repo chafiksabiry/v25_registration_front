@@ -726,3 +726,33 @@
   .taas-home__mascot { height: 5rem; }
   .taas-home__door { min-height: 14rem; }
 }
+
+/* ===== TAAS : commutateur COMPANY / REPS, animations d'ouverture, cartes à projecteur ===== */
+.taas-switch { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: .3rem; border-radius: 1.25rem; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .18); backdrop-filter: blur(10px); box-shadow: 0 18px 50px -20px rgba(0, 0, 0, .8); }
+.taas-switch__glider { position: absolute; top: .3rem; bottom: .3rem; left: .3rem; width: calc(50% - .3rem); border-radius: 1rem; background: linear-gradient(135deg, #ff4d4d, #ec4899 60%, #a855f7); box-shadow: 0 10px 30px -8px rgba(255, 77, 109, .8); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.taas-switch__glider[data-pos='reps'] { transform: translateX(100%); }
+.taas-switch__item { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: .65rem; min-width: 11.5rem; padding: .7rem 1.2rem; border-radius: 1rem; color: rgba(255, 255, 255, .75); transition: color .3s ease; }
+.taas-switch__item[aria-selected='true'] { color: #fff; }
+.taas-switch__item:hover { color: #fff; }
+.taas-switch__item:focus-visible { outline: 3px solid #ffd0da; outline-offset: 2px; }
+
+@keyframes taas-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes taas-marquee { to { transform: translateX(-50%); } }
+@keyframes taas-spin { to { transform: rotate(360deg); } }
+@keyframes taas-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, .55); } 100% { box-shadow: 0 0 0 18px rgba(236, 72, 153, 0); } }
+@keyframes taas-shine { to { background-position: 200% center; } }
+.taas-float { animation: taas-float 7s ease-in-out infinite; }
+.taas-float--slow { animation-duration: 9s; animation-delay: -3s; }
+.taas-marquee { display: flex; width: max-content; animation: taas-marquee 38s linear infinite; }
+.taas-marquee:hover { animation-play-state: paused; }
+.taas-shine-text { background: linear-gradient(100deg, #ff6b6b, #ff4d8d 35%, #f59e0b 60%, #ff4d8d 85%, #ff6b6b); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: taas-shine 8s linear infinite; }
+.taas-glow-border { position: relative; border-radius: 1.5rem; }
+.taas-glow-border::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: conic-gradient(from 0deg, #ff4d4d, #f59e0b, #ec4899, #a855f7, #ff4d4d); animation: taas-spin 6s linear infinite; filter: blur(6px); opacity: .85; }
+.taas-spot { position: relative; overflow: hidden; }
+.taas-spot::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s ease; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 110, 150, .22), transparent 60%); }
+.taas-spot:hover::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .taas-float, .taas-marquee, .taas-shine-text, .taas-glow-border::before { animation: none !important; }
+  .taas-switch__glider { transition: none; }
+}
+@media (max-width: 520px) { .taas-switch__item { min-width: 0; padding: .6rem .8rem; } }

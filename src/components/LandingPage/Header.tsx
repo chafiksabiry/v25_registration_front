@@ -1,12 +1,12 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, LayoutDashboard, Layers, LogOut, Menu, X } from 'lucide-react';
+import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { OfferMark, type OfferMarkId } from '../Brand/OfferMarks';
 import { LanguageIcons } from '../Brand/LanguageIcons';
 import { persistHarxLanguage } from '../../lib/i18n';
-import { TAAS_COMPANY, TAAS_HOME, TAAS_REPS } from '../../lib/taasPaths';
+import { TAAS_HOME } from '../../lib/taasPaths';
 import { normalizeSiteLang, withLangPrefix } from '../../lib/langRoutes';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -75,12 +75,6 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     hardNavigate('/telephony');
   };
 
-  const goTaas = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    e.preventDefault();
-    setIsMenuOpen(false);
-    navigate(path);
-  };
-
   const goToDashboard = async () => {
     setDashboardLoading(true);
     setIsMenuOpen(false);
@@ -105,12 +99,6 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     setToken(null);
     hardNavigate('/');
   };
-
-  // Le retour à l'accueil TAAS est la pastille TAAS elle-même : le segment ne propose que les deux espaces.
-  const taasLinks: Array<{ id: 'company' | 'reps'; label: string; path: string; Icon: typeof Layers }> = [
-    { id: 'company', label: t('choicePage.companyTag', 'COMPANY'), path: TAAS_COMPANY, Icon: Building2 },
-    { id: 'reps', label: t('choicePage.repTag', 'REPS'), path: TAAS_REPS, Icon: Headphones },
-  ];
 
   const signInTelephony = () => hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
   const signUpTelephony = () => hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
@@ -165,16 +153,6 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     </div>
   );
 
-  const taasSeg = taas ? (
-    <div className="hub-navseg" data-testid="taas-nav">
-      {taasLinks.map(({ id, label, path, Icon }) => (
-        <a key={id} href={withLangPrefix(path, siteLang)} className="hub-navbtn" aria-current={taas === id ? 'page' : undefined} data-testid={`taas-nav-${id}`} onClick={(e) => goTaas(e, path)}>
-          <Icon className="h-4 w-4" aria-hidden="true" />
-          <span>{label}</span>
-        </a>
-      ))}
-    </div>
-  ) : null;
 
   return (
     <header className="harx-bar fixed left-0 right-0 top-0 z-50" data-testid="harx-bar">
@@ -186,7 +164,6 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
           <span className="hidden h-9 w-px bg-white/25 md:block" aria-hidden="true" />
           <div className="hidden items-center gap-4 md:flex">
             {offerMarks()}
-            {taasSeg}
           </div>
         </div>
 
@@ -204,7 +181,6 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
         <div className="harx-bar absolute left-0 right-0 top-full border-t border-white/15 p-6 shadow-xl animate-fade-in md:hidden">
           <div className="flex flex-col gap-4">
             {offerMarks(true)}
-            {taasSeg}
             <div className="flex justify-center"><LanguageIcons /></div>
             <div className="space-y-3 border-t border-white/15 pt-4">{authActions(true)}</div>
           </div>
