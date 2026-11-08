@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Header } from './Header';
 import { Hero } from './Hero';
-import { HowItWorks } from './HowItWorks';
-import { Pricing } from './Pricing';
-import { ForClients } from './ForClients';
-import { ForReps } from './ForReps';
-import { FeaturedGigs } from './FeaturedGigs';
+import { TaasHow, TaasExamples, TaasForPros } from './TaasSections';
 import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
@@ -17,6 +13,8 @@ import { withLangPrefix } from '../../lib/langRoutes';
 interface LandingPageProps {
   onSignIn: () => void;
   onGetStarted: () => void;
+  /** « Trouver des gigs » : parcours professionnel (seul parcours ouvert de TAAS). */
+  onFindGigs: () => void;
   /**
    * If provided, the landing page will smoothly scroll to that section id
    * once it has mounted. Used when navigating back to the landing from
@@ -38,6 +36,7 @@ interface LandingPageProps {
 export function LandingPage({
   onSignIn,
   onGetStarted,
+  onFindGigs,
   initialSection,
   onSectionApplied,
   onNavigateToSection,
@@ -154,6 +153,7 @@ export function LandingPage({
       <Header
         onSignIn={onSignIn}
         onGetStarted={onGetStarted}
+        primaryCta={{ label: t('taasPage.notifyCta', 'Notify me'), sectionId: 'prevenu' }}
         onNavigateToSection={onNavigateToSection}
       />
 
@@ -171,24 +171,18 @@ export function LandingPage({
         {t('header.allOffers', 'All HARX offers')}
       </a>
 
-      <Hero onGetStarted={onGetStarted} />
-
-      <FeaturedGigs />
+      <Hero />
 
       <section id="how-it-works" className="scroll-mt-28 bg-white text-slate-900">
-        <HowItWorks onGetStarted={onGetStarted} />
+        <TaasHow />
       </section>
 
-      <section id="pricing" className="scroll-mt-28 bg-white text-slate-900">
-        <Pricing onGetStarted={onGetStarted} />
-      </section>
-
-      <section id="clients" className="scroll-mt-28 bg-white text-slate-900">
-        <ForClients onGetStarted={onGetStarted} />
+      <section id="examples" className="scroll-mt-28 bg-slate-50 text-slate-900">
+        <TaasExamples />
       </section>
 
       <section id="reps" className="scroll-mt-28 bg-white text-slate-900">
-        <ForReps onGetStarted={onGetStarted} />
+        <TaasForPros onFindGigs={onFindGigs} />
       </section>
 
       <Footer />
