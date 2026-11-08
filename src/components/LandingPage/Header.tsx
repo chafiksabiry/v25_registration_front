@@ -178,7 +178,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
 
   return (
     <header className="harx-bar fixed left-0 right-0 top-0 z-50" data-testid="harx-bar">
-      <nav className="relative mx-auto flex h-20 max-w-[1500px] items-center justify-between gap-4 pl-4 pr-4 md:pl-8 md:pr-8">
+      <nav className="relative flex h-20 w-full items-center justify-between gap-4 pl-4 pr-4 md:pl-6 md:pr-8">
         <div className="flex min-w-0 items-center gap-5 lg:gap-7">
           <a href={homeHref} onClick={goHome} className="harx-bar-logo flex shrink-0 items-center" aria-label={t('header.allOffers', 'All HARX offers')} data-testid="harx-logo">
             <Logo className="h-14 w-auto md:h-[4.25rem]" />
