@@ -29,12 +29,11 @@ export function HubScreen() {
 
 /** `/taas` : offre TAAS (Transaction-as-a-Service), ancienne page d'accueil. */
 export function TaasScreen() {
-  const { navigate, pendingSection, setPendingSection, handleNavigateToSection, handleSelectRole } = useAuthContext();
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
   return (
     <LandingPage
       onSignIn={() => navigate('/auth/signin')}
       onGetStarted={() => navigate('/auth/choice')}
-      onFindGigs={() => handleSelectRole('rep')}
       initialSection={pendingSection}
       onSectionApplied={() => setPendingSection(null)}
       onNavigateToSection={handleNavigateToSection}

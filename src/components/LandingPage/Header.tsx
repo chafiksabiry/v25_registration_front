@@ -40,11 +40,9 @@ interface HeaderProps {
   telephony?: boolean;
   /** Accueil de l'ensemble HARX (hub) : liens vers les offres, pas de menu de sections ni de « Démarrer ». */
   hub?: boolean;
-  /** Bouton d'action principal du bandeau à la place de « Démarrer » : fait défiler vers une section de la page. */
-  primaryCta?: { label: string; sectionId: string };
 }
 
-export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false, primaryCta }: HeaderProps) {
+export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false }: HeaderProps) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
@@ -101,13 +99,6 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     setIsMenuOpen(false);
   };
 
-  const goToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
-    else onNavigateToSection?.(sectionId);
-    setIsMenuOpen(false);
-  };
-
   const goToDashboard = async () => {
     setDashboardLoading(true);
     setIsMenuOpen(false);
@@ -141,8 +132,9 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
 
   const navLinks: NavLink[] = [
     { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
-    { id: 'examples', label: t('header.examples', 'Examples') },
-    { id: 'reps', label: t('header.forReps', 'For Professionals'), variant: 'rep' },
+    { id: 'pricing', label: t('header.pricing', 'Pricing') },
+    { id: 'clients', label: t('header.forCompanies', 'For Companies'), variant: 'company' },
+    { id: 'reps', label: t('header.forReps', 'For Reps'), variant: 'rep' },
   ];
 
   const linkClass = (variant: NavLink['variant']) => {
@@ -191,13 +183,8 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
         </button>
       )}
       {!hub && (
-        <button
-          type="button"
-          className="nav-cta nav-cta--started group whitespace-nowrap"
-          data-testid={primaryCta ? 'header-primary-cta' : undefined}
-          onClick={primaryCta ? () => goToSection(primaryCta.sectionId) : onGetStarted}
-        >
-          {primaryCta ? primaryCta.label : t('header.getStarted', 'Get Started')}
+        <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
+          {t('header.getStarted', 'Get Started')}
           <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
         </button>
       )}
@@ -230,8 +217,8 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
         </button>
       )}
       {!hub && (
-        <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={primaryCta ? () => goToSection(primaryCta.sectionId) : onGetStarted}>
-          {primaryCta ? primaryCta.label : t('header.getStarted', 'Get Started')}
+        <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
+          {t('header.getStarted', 'Get Started')}
           <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
         </button>
       )}

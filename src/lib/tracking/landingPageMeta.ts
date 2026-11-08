@@ -3,7 +3,7 @@ import type { PageMeta } from './pageMeta';
 
 const BASE_TITLE = 'HARX';
 
-export const LANDING_SECTION_IDS = ['top', 'how-it-works', 'examples', 'reps'] as const;
+export const LANDING_SECTION_IDS = ['top', 'how-it-works', 'pricing', 'clients', 'reps'] as const;
 
 export type LandingSectionId = (typeof LANDING_SECTION_IDS)[number];
 
@@ -11,8 +11,9 @@ export type LandingSectionId = (typeof LANDING_SECTION_IDS)[number];
 const LANDING_SECTION_TITLES: Record<LandingSectionId, string> = {
   top: 'TAAS',
   'how-it-works': 'Comment ça marche',
-  examples: 'Exemples',
-  reps: 'Pour les professionnels',
+  pricing: 'Tarification',
+  clients: 'Pour les entreprises',
+  reps: 'Pour les reps',
 };
 
 export function landingSectionTitle(sectionId: string): string {
@@ -22,8 +23,9 @@ export function landingSectionTitle(sectionId: string): string {
 const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
   top: 'TAAS',
   'how-it-works': 'How it works',
-  examples: 'Examples',
-  reps: 'For professionals',
+  pricing: 'Pricing',
+  clients: 'For companies',
+  reps: 'For reps',
 };
 
 export function landingPageTabTitle(sectionId: string, lang: 'fr' | 'en' = 'fr'): string {
