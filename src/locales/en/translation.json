@@ -98,6 +98,30 @@
   "landingTabs": {
     "aria": "Choose your path"
   },
+  "taasWidgets": {
+    "repsKicker": "Real missions, open now",
+    "statGigs": "missions available",
+    "statCategories": "business areas",
+    "statLanguages": "languages requested",
+    "repStepsTitle": "Start in three steps",
+    "repStep1Title": "Create your profile",
+    "repStep1Text": "Present your skills and languages: it is your business card for companies.",
+    "repStep2Title": "Choose your missions",
+    "repStep2Text": "Browse open missions and apply to the ones that fit you.",
+    "repStep3Title": "Get paid for results",
+    "repStep3Text": "A base for every serious call, a commission on every confirmed transaction, a bonus when you reach your target.",
+    "simTitle": "Estimate your earnings",
+    "simLabel": "Confirmed transactions per month",
+    "simNote": "Indicative estimate based on the average commission per transaction of the open missions. Not a guaranteed income.",
+    "joinTitle": "Ready to take your first mission?",
+    "joinText": "Create your profile and apply to the missions that suit you.",
+    "joinCta": "Join HARX",
+    "budgetTitle": "Simulate your budget",
+    "budgetResults": "Results wanted per month",
+    "budgetPrice": "Price you set per result (€)",
+    "budgetMax": "Maximum monthly budget",
+    "budgetNote": "You only pay for the results you approve."
+  },
   "header": {
     "howItWorks": "How It Works",
     "pricing": "Pricing",
