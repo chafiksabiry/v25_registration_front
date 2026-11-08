@@ -5,6 +5,7 @@ import { TaasHome } from '../components/Taas/TaasHome';
 import { TaasCompanyPage } from '../components/Taas/TaasCompanyPage';
 import { TaasRepsPage } from '../components/Taas/TaasRepsPage';
 import { taasPageTitle } from '../lib/tracking/landingPageMeta';
+import { normalizeSiteLang } from '../lib/langRoutes';
 import ChoicePage from '../components/ChoicePage';
 import { HubPage } from '../components/Hub/HubPage';
 import SignInDialog from '../components/SignInDialog';
@@ -16,7 +17,7 @@ import { usePageTitle } from '../lib/tracking/usePageTitle';
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
   const { i18n } = useTranslation();
-  usePageTitle(buildAuthPageTitle(title, i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  usePageTitle(buildAuthPageTitle(title, normalizeSiteLang(i18n.language)));
   return <>{children}</>;
 }
 
@@ -35,7 +36,7 @@ export function HubScreen() {
 export function TaasScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
   const { i18n } = useTranslation();
-  usePageTitle(taasPageTitle('home', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  usePageTitle(taasPageTitle('home', normalizeSiteLang(i18n.language)));
   return (
     <TaasShell
       page="home"
@@ -54,7 +55,7 @@ export function TaasScreen() {
 export function TaasCompanyScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
   const { i18n } = useTranslation();
-  usePageTitle(taasPageTitle('company', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  usePageTitle(taasPageTitle('company', normalizeSiteLang(i18n.language)));
   return (
     <TaasShell
       page="company"
@@ -73,7 +74,7 @@ export function TaasCompanyScreen() {
 export function TaasRepsScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection, handleSelectRole } = useAuthContext();
   const { i18n } = useTranslation();
-  usePageTitle(taasPageTitle('reps', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  usePageTitle(taasPageTitle('reps', normalizeSiteLang(i18n.language)));
   return (
     <TaasShell
       page="reps"

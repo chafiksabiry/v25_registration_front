@@ -35,7 +35,7 @@ export interface OfferHero {
   flow: Array<{ key: string; icon: FlowIcon }>;
 }
 
-export type OfferLang = 'fr' | 'en';
+export type OfferLang = 'fr' | 'en' | 'es' | 'ar';
 
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =

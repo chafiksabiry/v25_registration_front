@@ -19,6 +19,7 @@ import {
   type OfferIcon,
   type OfferLang,
 } from '../../config/offers';
+import { normalizeSiteLang } from '../../lib/langRoutes';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { hubPageTitle } from '../../lib/tracking/hubMeta';
 import './hub.css';
@@ -211,7 +212,7 @@ export function ThinFooter() {
 
 export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
   const { t, i18n } = useTranslation();
-  const lang: OfferLang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const lang: OfferLang = normalizeSiteLang(i18n.language);
   usePageTitle(hubPageTitle(lang));
   const offers = getAvailableOffers();
   const [activeId, setActiveId] = useState(offers[0]?.id ?? '');

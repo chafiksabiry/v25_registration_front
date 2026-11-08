@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Calculator, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EXAMPLE_GIGS, estimateEarnings } from '../../config/exampleGigs';
+import { normalizeSiteLang } from '../../lib/langRoutes';
 
 const REP_STEPS: Array<{ icon: LucideIcon; title: string; text: string }> = [
   { icon: UserPlus, title: 'taasWidgets.repStep1Title', text: 'taasWidgets.repStep1Text' },
@@ -31,7 +32,7 @@ function RepsSteps() {
 /** Estimation de gains selon le modèle HARX : fixe par appel argumenté, commission par transaction, bonus de performance. */
 function EarningsSimulator() {
   const { t, i18n } = useTranslation();
-  const lang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const lang = normalizeSiteLang(i18n.language) === 'fr' ? 'fr' : 'en';
   const [gigId, setGigId] = useState(EXAMPLE_GIGS[0].id);
   const [calls, setCalls] = useState(200);
   const [tx, setTx] = useState(20);
