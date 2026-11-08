@@ -191,7 +191,7 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
   );
 }
 
-function ThinFooter() {
+export function ThinFooter() {
   const { t } = useTranslation();
   const links = [
     { to: '/privacy', label: t('footer.navPrivacy', 'Privacy Policy') },

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Header } from '../LandingPage/Header';
 import { Footer } from '../LandingPage/Footer';
+import { ThinFooter } from '../Hub/HubPage';
 
 export type TaasPage = 'home' | 'company' | 'reps';
 
@@ -31,10 +32,11 @@ export function TaasShell({ page, onSignIn, onGetStarted, onNavigateToSection, p
   }, [wanted, onSectionApplied]);
 
   return (
-    <div id="top" className="relative bg-space-dark-default text-white">
+    <div id="top" className={`relative bg-space-dark-default text-white ${page === 'home' ? 'flex min-h-svh flex-col' : ''}`}>
       <Header taas={page} onSignIn={onSignIn} onGetStarted={onGetStarted} onNavigateToSection={onNavigateToSection} />
       {children}
-      <Footer />
+      {/* L'accueil TAAS tient sur un seul écran : pied de page réduit aux mentions légales. */}
+      {page === 'home' ? <ThinFooter /> : <Footer />}
     </div>
   );
 }

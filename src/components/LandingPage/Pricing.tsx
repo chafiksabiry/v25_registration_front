@@ -129,7 +129,7 @@ export function Pricing({ onGetStarted, only }: PricingProps) {
           )}
         </div>
 
-        {only === 'rep' ? null : (
+        {only ? null : (
         <div className="pb-2 text-center">
           <h3 className="mb-5 text-xl font-bold text-white md:text-2xl">{t('pricing.ready', 'Ready to Transform Your Operations?')}</h3>
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">

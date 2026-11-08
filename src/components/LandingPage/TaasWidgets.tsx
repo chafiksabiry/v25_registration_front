@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Calculator, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
+import { Calculator, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EXAMPLE_GIGS, estimateEarnings } from '../../config/exampleGigs';
 
@@ -74,30 +74,17 @@ function EarningsSimulator() {
   );
 }
 
-/** Bande d'adhésion : appel à rejoindre HARX. */
-function JoinBand({ onJoin }: { onJoin: () => void }) {
-  const { t } = useTranslation();
-  return (
-    <div className="mx-auto mt-16 max-w-5xl rounded-3xl bg-gradient-to-br from-harx-500 to-harx-alt-500 p-8 text-center text-white shadow-xl shadow-harx-500/25 md:p-12" data-testid="reps-join">
-      <h3 className="text-2xl font-black md:text-3xl">{t('taasWidgets.joinTitle', 'Ready to take your first mission?')}</h3>
-      <p className="mx-auto mt-2 max-w-xl text-sm font-medium text-white/90">{t('taasWidgets.joinText', 'Create your profile and apply to the missions that suit you.')}</p>
-      <button type="button" onClick={onJoin} data-testid="reps-join-cta" className="mt-6 inline-flex h-12 items-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-harx-700 transition-transform hover:scale-[1.03]">
-        {t('taasWidgets.joinCta', 'Join HARX')}
-        <ArrowRight className="h-4 w-4" aria-hidden="true" />
-      </button>
-    </div>
-  );
-}
-
-/** Bloc d'adhésion REPS : étapes, estimation de gains (modèle HARX, missions types) et bouton. */
-export function RepsJoinSection({ onJoin }: { onJoin: () => void }) {
+/** Démarrer en tant que professionnel : trois étapes, puis estimation de gains (modèle HARX, missions types). */
+export function RepsStartSection() {
   return (
     <section className="relative overflow-hidden bg-[#0a0a18] px-4 py-20 text-white" data-testid="reps-join-section">
-      <div className="pointer-events-none absolute inset-0" aria-hidden="true"><div className="absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-fuchsia-600/20 blur-[120px]" /><div className="absolute -right-32 bottom-0 h-[24rem] w-[24rem] rounded-full bg-rose-600/20 blur-[120px]" /></div>
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -left-32 top-0 h-[26rem] w-[26rem] rounded-full bg-fuchsia-600/20 blur-[120px]" />
+        <div className="absolute -right-32 bottom-0 h-[24rem] w-[24rem] rounded-full bg-rose-600/20 blur-[120px]" />
+      </div>
       <div className="relative">
         <RepsSteps />
         <EarningsSimulator />
-        <JoinBand onJoin={onJoin} />
       </div>
     </section>
   );
