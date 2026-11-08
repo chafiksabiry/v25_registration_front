@@ -775,3 +775,10 @@
 .auth-stepper__bar > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #34d399, #14b8a6); transition: width .5s ease; }
 .auth-stepper__bar[data-done='true'] > span { width: 100%; }
 @media (prefers-reduced-motion: reduce) { .auth-card .btn-primary::after { animation: none; } }
+
+/* Illustration Téléphonie des écrans d'inscription : barres de voix et anneau d'appel. */
+@keyframes auth-wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes auth-ring { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, .6); } 100% { box-shadow: 0 0 0 12px rgba(52, 211, 153, 0); } }
+.auth-wave-bar { transform-origin: center; animation: auth-wave 1.2s ease-in-out infinite; }
+.auth-ring { animation: auth-ring 1.6s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .auth-wave-bar { animation: none; transform: scaleY(.6); } .auth-ring { animation: none; } }

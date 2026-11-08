@@ -2,6 +2,8 @@ import React from 'react';
 import { RepsIncomeVisual } from '../Taas/RepsIncomeVisual';
 import { ResultFlowVisual } from '../Taas/ResultFlowVisual';
 import { BrandText, type BrandKind } from '../BrandText';
+import { TelephonyVisual } from './TelephonyVisual';
+import { JourneyTimeline } from './JourneyTimeline';
 
 /**
  * Panneau de gauche des écrans de connexion et d'inscription : une illustration animée propre au parcours
@@ -13,6 +15,8 @@ export function AuthSidePanel({ kind }: { kind: BrandKind }) {
       <div className="mb-7">
         {kind === 'rep' ? (
           <RepsIncomeVisual compact />
+        ) : kind === 'telephony' ? (
+          <div className="-mb-3 origin-top scale-90"><TelephonyVisual /></div>
         ) : kind === 'company' ? (
           <ResultFlowVisual compact />
         ) : (
@@ -23,6 +27,7 @@ export function AuthSidePanel({ kind }: { kind: BrandKind }) {
         )}
       </div>
       <BrandText kind={kind} />
+      {kind === 'telephony' ? <JourneyTimeline current={1} /> : null}
     </div>
   );
 }
