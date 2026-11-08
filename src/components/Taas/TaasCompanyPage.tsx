@@ -3,25 +3,30 @@ import { HowItWorks } from '../LandingPage/HowItWorks';
 import { Pricing } from '../LandingPage/Pricing';
 import { ForClients } from '../LandingPage/ForClients';
 import { TaasBanner } from './TaasBanner';
+import { Aurora } from './Aurora';
 
-/** Espace COMPANY : bandeau d'accroche, comment ça marche, forfaits mis en avant, cas d'usage. */
+/** Espace COMPANY : même langage visuel que l'accueil HARX (fond quasi noir, halos, cartes en verre). */
 export function TaasCompanyPage({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <>
       <TaasBanner kind="company" />
-      <section id="how-it-works" className="scroll-mt-28 bg-gradient-to-b from-white via-harx-50/40 to-white text-slate-900">
-        <HowItWorks onGetStarted={onGetStarted} />
+      <section id="how-it-works" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
+        <Aurora tone="company" />
+        <div className="relative">
+          <HowItWorks onGetStarted={onGetStarted} />
+        </div>
       </section>
-      {/* Forfaits : bande sombre colorée, carte surélevée */}
-      <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-gradient-to-br from-slate-950 via-harx-900 to-harx-alt-900 px-4 py-16 text-slate-900" data-testid="pricing-band">
-        <div className="pointer-events-none absolute -left-20 top-10 h-80 w-80 rounded-full bg-harx-500/25 blur-[110px]" aria-hidden="true" />
-        <div className="pointer-events-none absolute -right-20 bottom-10 h-80 w-80 rounded-full bg-harx-alt-500/25 blur-[110px]" aria-hidden="true" />
+      <section id="pricing" className="relative scroll-mt-28 overflow-hidden bg-[#0a0a18] px-4 py-16 text-white" data-testid="pricing-band">
+        <Aurora tone="pricing" />
         <div className="relative">
           <Pricing onGetStarted={onGetStarted} />
         </div>
       </section>
-      <section id="clients" className="scroll-mt-28 bg-gradient-to-b from-white to-harx-50/60 text-slate-900">
-        <ForClients onGetStarted={onGetStarted} />
+      <section id="clients" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
+        <Aurora tone="company" />
+        <div className="relative">
+          <ForClients onGetStarted={onGetStarted} />
+        </div>
       </section>
     </>
   );

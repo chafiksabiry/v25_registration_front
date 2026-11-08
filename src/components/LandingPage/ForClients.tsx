@@ -67,36 +67,36 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
 
   return (
     <div className="pt-8 pb-12">
-      <div className="relative overflow-hidden bg-white">
+      <div className="relative overflow-hidden">
         <div className="container mx-auto px-4 py-12 md:py-16">
           {/* Use Cases */}
           <div className="max-w-6xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-4">{t('forClients.useCasesTitle', 'Resolution-Based Use Cases')}</h2>
-            <p className="text-center text-gray-600 mb-12">
+            <h2 className="text-3xl md:text-4xl font-black text-center mb-4 text-white">{t('forClients.useCasesTitle', 'Resolution-Based Use Cases')}</h2>
+            <p className="text-center text-slate-300 mb-12">
               {t('forClients.useCasesDesc', 'Explore how HARX delivers measurable results across various customer interactions')}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {useCases.map((useCase, index) => (
-                <div key={index} className="bg-white p-6 rounded-xl shadow-lg">
-                  <div className="w-12 h-12 bg-harx-100 rounded-lg flex items-center justify-center mb-4">
-                    <useCase.icon className="h-6 w-6 text-harx-600" />
+                <div key={index} className="rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-transform duration-300 hover:-translate-y-1">
+                  <div className="w-12 h-12 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-harx-500/20">
+                    <useCase.icon className="h-6 w-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2">{useCase.title}</h3>
-                  <p className="text-gray-600 mb-4">{useCase.description}</p>
+                  <h3 className="text-xl font-bold mb-2 text-white">{useCase.title}</h3>
+                  <p className="text-slate-300 mb-4">{useCase.description}</p>
                   <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Shield className="h-4 w-4 mr-2 text-harx-600" />
+                    <div className="flex items-center text-sm text-slate-400">
+                      <Shield className="h-4 w-4 mr-2 text-harx-300" />
                       {t('forClients.resolution', 'Resolution:')} {useCase.resolutionType}
                     </div>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <CheckCircle2 className="h-4 w-4 mr-2 text-green-600" />
+                    <div className="flex items-center text-sm text-slate-400">
+                      <CheckCircle2 className="h-4 w-4 mr-2 text-emerald-400" />
                       {useCase.metrics}
                     </div>
                     <div className="flex flex-wrap gap-2 mt-2">
                       {useCase.channels.map((channel, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-1 bg-harx-50 text-harx-600 rounded-full text-sm"
+                          className="px-2.5 py-1 bg-harx-500/20 text-harx-200 rounded-full text-xs font-semibold"
                         >
                           {channel}
                         </span>
@@ -110,7 +110,7 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
 
           {/* CTA Section */}
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">{t('forClients.ready', 'Ready to Get Started?')}</h2>
+            <h2 className="text-3xl font-black mb-6 text-white">{t('forClients.ready', 'Ready to Get Started?')}</h2>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 size="lg"
@@ -120,21 +120,16 @@ export function ForClients({ onGetStarted }: ForClientsProps) {
                 {t('forClients.getStarted', 'Get Started')}
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Button>
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={bookDemo}
-                className="group"
-              >
+              <button type="button" onClick={bookDemo} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-6 text-base font-bold text-white transition-colors hover:bg-white/10">
                 {t('forClients.bookDemo', 'Book a Demo')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
+                <ArrowRight className="h-5 w-5" />
+              </button>
             </div>
           </div>
         </div>
 
         {/* Background decoration */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-harx-400/10 rounded-full blur-3xl -z-10" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-harx-500/10 rounded-full blur-3xl -z-10" />
       </div>
     </div>
   );

@@ -25,7 +25,7 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
   const other = company ? TAAS_REPS : TAAS_COMPANY;
 
   return (
-    <section className="relative overflow-hidden bg-space-dark-default pb-16 pt-32 text-white" data-testid={`taas-banner-${kind}`}>
+    <section className="relative overflow-hidden bg-[#070711] pb-16 pt-32 text-white" data-testid={`taas-banner-${kind}`}>
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className={`absolute -left-24 top-0 h-96 w-96 rounded-full blur-[120px] ${company ? 'bg-harx-500/20' : 'bg-harx-alt-500/20'}`} />
         <div className="absolute -right-24 bottom-0 h-96 w-96 rounded-full bg-amber-500/10 blur-[120px]" />
