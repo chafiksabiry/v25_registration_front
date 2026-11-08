@@ -1,9 +1,10 @@
 import React from 'react';
-import { ArrowRight, Building2, Headphones, LayoutDashboard, LayoutGrid, Layers, LogOut, Menu, Phone, X } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, LayoutDashboard, Layers, LogOut, Menu, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
-import { LanguageSelector } from '../LanguageSelector';
+import { OfferMark, type OfferMarkId } from '../Brand/OfferMarks';
+import { LanguageIcons } from '../Brand/LanguageIcons';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { TAAS_COMPANY, TAAS_HOME, TAAS_REPS } from '../../lib/taasPaths';
 import { withLangPrefix } from '../../lib/langRoutes';
@@ -16,36 +17,25 @@ import {
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
-import { getAvailableOffers, resolveOfferHref, type OfferConfig } from '../../config/offers';
-
-/** HARX navbar gradient — vivid red (left) transitioning to magenta/pink (right). */
-const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
-
-type NavLink = {
-  id: string;
-  label: string;
-  variant?: 'default' | 'company' | 'rep';
-};
 
 interface HeaderProps {
   onSignIn: () => void;
   onGetStarted: () => void;
-  /**
-   * Called when the user clicks a navbar entry whose target section
-   * does NOT exist in the current DOM (e.g. user is on the ChoicePage
-   * or a dialog). The parent is then expected to switch back to the
-   * landing page and scroll to that section.
-   */
+  /** Conservé pour compatibilité : le bandeau commun n'a plus de menu de sections. */
   onNavigateToSection?: (sectionId: string) => void;
-  /** Écrans d'inscription et de connexion du produit Téléphonie : bandeau propre au produit (logo, pastille « Telephony »), sans le menu du site HARX. */
+  /** Parcours Téléphonie (connexion, inscription) : l'offre courante est TELEPHONY. */
   telephony?: boolean;
-  /** Accueil de l'ensemble HARX (hub) : liens vers les offres, pas de menu de sections ni de « Démarrer ». */
+  /** Accueil de l'ensemble HARX : aucune offre courante, pas de connexion dans le bandeau. */
   hub?: boolean;
-  /** Pages TAAS (accueil, Company, REPS) : bandeau allégé à trois entrées, sans « Démarrer ». */
+  /** Pages TAAS (accueil, Company, REPS) : l'offre courante est TAAS, avec ses deux espaces. */
   taas?: 'home' | 'company' | 'reps';
 }
 
-export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false, taas }: HeaderProps) {
+/**
+ * Bandeau commun à tous les écrans HARX : le logo toujours en haut à gauche, les deux offres (TAAS, TELEPHONY) en pastilles,
+ * l'espace courant de TAAS (Company / REPS), le choix de la langue en icônes, puis la connexion.
+ */
+export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, taas }: HeaderProps) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
@@ -53,66 +43,49 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
   const siteLang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
-  /** Accueil de l'ensemble (hub) et page de l'offre TAAS (sections « Comment ça marche », « Tarifs »…). */
+  const offer: OfferMarkId | null = hub ? null : telephony ? 'telephony' : 'taas';
   const homeHref = withLangPrefix('/', siteLang);
-  const taasHref = withLangPrefix('/taas', siteLang);
-  const offerLinks = getAvailableOffers();
 
-  const openOffer = (e: React.MouseEvent<HTMLAnchorElement>, offer: OfferConfig) => {
-    e.preventDefault();
-    const href = resolveOfferHref(offer, siteLang);
-    if (!href) return;
-    setIsMenuOpen(false);
+  React.useEffect(() => subscribeAuthChanged(() => setSessionTick((n) => n + 1)), []);
+
+  const loggedIn = React.useMemo(() => !authLoading && hasUiSession(token || undefined), [authLoading, token, sessionTick]);
+
+  const persistLang = () => {
     try {
       persistHarxLanguage(siteLang, siteLang === 'en' ? { explicit: true } : undefined);
     } catch {
       /* ignore */
     }
-    hardNavigate(href);
   };
 
-  /** Retour à l'accueil de l'ensemble (logo, « Toutes les offres HARX »). */
-  const goToHub = (e: React.MouseEvent<HTMLAnchorElement>) => {
+  const goHome = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     setIsMenuOpen(false);
     navigate('/');
   };
 
-  React.useEffect(() => {
-    return subscribeAuthChanged(() => {
-      setSessionTick((n) => n + 1);
-    });
-  }, []);
-
-  // JWT or userId cookie/localStorage (same soft session as /reps).
-  const loggedIn = React.useMemo(
-    () => !authLoading && hasUiSession(token || undefined),
-    [authLoading, token, sessionTick]
-  );
-
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      e.preventDefault();
-      element.scrollIntoView({ behavior: 'smooth' });
-    } else if (onNavigateToSection) {
-      e.preventDefault();
-      onNavigateToSection(sectionId);
-    }
+  const goOffer = (e: React.MouseEvent<HTMLAnchorElement>, target: OfferMarkId) => {
+    e.preventDefault();
     setIsMenuOpen(false);
+    if (target === 'taas') {
+      navigate(TAAS_HOME);
+      return;
+    }
+    persistLang();
+    hardNavigate('/telephony');
+  };
+
+  const goTaas = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    navigate(path);
   };
 
   const goToDashboard = async () => {
     setDashboardLoading(true);
     setIsMenuOpen(false);
     try {
-      // Persist current landing language so /reps does not fall back to English.
-      try {
-        const lang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
-        persistHarxLanguage(lang, lang === 'en' ? { explicit: true } : undefined);
-      } catch {
-        /* ignore */
-      }
+      persistLang();
       const userId = getSessionUserId(token);
       if (!userId) {
         hardNavigate('/company');
@@ -139,292 +112,101 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     { id: 'reps', label: t('choicePage.repTag', 'REPS'), path: TAAS_REPS, Icon: Headphones },
   ];
 
-  const goTaas = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    e.preventDefault();
-    setIsMenuOpen(false);
-    navigate(path);
-  };
+  const signInTelephony = () => hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
+  const signUpTelephony = () => hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
 
-  const navLinks: NavLink[] = [
-    { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
-    { id: 'pricing', label: t('header.pricing', 'Pricing') },
-    { id: 'clients', label: t('header.forCompanies', 'For Companies'), variant: 'company' },
-    { id: 'reps', label: t('header.forReps', 'For Reps'), variant: 'rep' },
-  ];
-
-  const linkClass = (variant: NavLink['variant']) => {
-    if (variant === 'company') {
-      return 'nav-audience-pill nav-audience-pill--company';
+  const authActions = (full: boolean) => {
+    const full_ = full ? ' nav-cta--full' : '';
+    if (loggedIn) {
+      return (
+        <>
+          <button type="button" className={`nav-cta nav-cta--started group${full_}`} onClick={() => void goToDashboard()} disabled={dashboardLoading}>
+            <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
+            {dashboardLoading ? t('header.loading', 'Loading…') : t('header.dashboard', 'Dashboard')}
+          </button>
+          <button type="button" className={`nav-cta nav-cta--signin${full_}`} onClick={handleLogout}>
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            {t('header.logout', 'Log out')}
+          </button>
+        </>
+      );
     }
-    if (variant === 'rep') {
-      return 'nav-audience-pill nav-audience-pill--rep';
+    if (hub) return null;
+    if (telephony) {
+      return (
+        <>
+          <button type="button" className={`nav-cta nav-cta--signin${full_}`} onClick={signInTelephony}>{t('telephonyHeader.signIn', 'Sign in')}</button>
+          <button type="button" className={`nav-cta nav-cta--started group${full_}`} onClick={signUpTelephony}>
+            {t('telephonyHeader.signUp', 'Create my account')}
+            <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
+          </button>
+        </>
+      );
     }
-    return 'nav-link-default';
-  };
-
-  const renderLinkIcon = (variant: NavLink['variant']) => {
-    if (variant === 'company') {
-      return <Building2 className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
-    }
-    if (variant === 'rep') {
-      return <Headphones className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />;
-    }
-    return null;
-  };
-
-  const authActionsDesktop = loggedIn ? (
-    <>
-      <button
-        type="button"
-        className="nav-cta nav-cta--started group"
-        onClick={() => void goToDashboard()}
-        disabled={dashboardLoading}
-      >
-        <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
-        {dashboardLoading
-          ? t('header.loading', 'Loading…')
-          : t('header.dashboard', 'Dashboard')}
-      </button>
-      <button type="button" className="nav-cta nav-cta--signin" onClick={handleLogout}>
-        <LogOut className="h-4 w-4" aria-hidden="true" />
-        {t('header.logout', 'Log out')}
-      </button>
-    </>
-  ) : (
-    <>
-      {!hub && (
-        <button type="button" className="nav-cta nav-cta--signin" onClick={onSignIn}>
-          {t('header.signIn', 'Sign In')}
-        </button>
-      )}
-      {!hub && !taas && (
-        <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
-          {t('header.getStarted', 'Get Started')}
-          <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-        </button>
-      )}
-    </>
-  );
-
-  const authActionsMobile = loggedIn ? (
-    <>
-      <button
-        type="button"
-        className="nav-cta nav-cta--started nav-cta--full group"
-        onClick={() => void goToDashboard()}
-        disabled={dashboardLoading}
-      >
-        <LayoutDashboard className="h-4 w-4" aria-hidden="true" />
-        {dashboardLoading
-          ? t('header.loading', 'Loading…')
-          : t('header.dashboard', 'Dashboard')}
-      </button>
-      <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={handleLogout}>
-        <LogOut className="h-4 w-4" aria-hidden="true" />
-        {t('header.logout', 'Log out')}
-      </button>
-    </>
-  ) : (
-    <>
-      {!hub && (
-        <button type="button" className="nav-cta nav-cta--signin nav-cta--full" onClick={onSignIn}>
-          {t('header.signIn', 'Sign In')}
-        </button>
-      )}
-      {!hub && !taas && (
-        <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
-          {t('header.getStarted', 'Get Started')}
-          <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-        </button>
-      )}
-    </>
-  );
-
-  if (telephony) {
-    const lang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
     return (
-      <header
-        style={{ backgroundImage: HARX_NAV_GRADIENT }}
-        className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 shadow-[0_1px_0_0_rgba(0,0,0,0.08)]"
-        data-testid="telephony-header"
-      >
-        <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-20 md:h-24 flex items-center justify-between gap-3">
-          <a href="/telephony" className="flex items-center gap-3 transition-transform hover:scale-[1.02]" aria-label="HARX Telephony">
-            <Logo className="h-14 w-auto md:h-20 drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]" />
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-[13px] md:px-5 md:py-2.5 md:text-sm font-black tracking-[0.18em] shadow">
-              <Phone className="h-3.5 w-3.5 text-[#E01070]" aria-hidden="true" />
-              <span className="bg-gradient-to-r from-[#f59e0b] via-[#ec4899] to-[#a855f7] bg-clip-text text-transparent">TELEPHONY</span>
-            </span>
-          </a>
-          <div className="flex items-center gap-2.5">
-            <LanguageSelector />
-            <button type="button" className="nav-cta nav-cta--signin" onClick={() => hardNavigate(withLangPrefix('/auth/signin?product=callcentre', lang))}>{t('telephonyHeader.signIn', 'Sign in')}</button>
-            <button type="button" className="nav-cta nav-cta--started group" onClick={() => hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', lang))}>
-              {t('telephonyHeader.signUp', 'Create my account')}
-              <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
-            </button>
-          </div>
-        </nav>
-      </header>
+      <button type="button" className={`nav-cta nav-cta--signin${full_}`} onClick={onSignIn}>
+        {t('header.signIn', 'Sign In')}
+      </button>
     );
-  }
+  };
+
+  const offerMarks = (mobile = false) => (
+    <div className={mobile ? 'flex flex-wrap gap-2' : 'flex items-center gap-2'} data-testid="offer-marks">
+      {(['taas', 'telephony'] as OfferMarkId[]).map((o) => (
+        <OfferMark
+          key={o}
+          offer={o}
+          active={offer === o}
+          href={o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : '/telephony'}
+          onClick={(e) => goOffer(e, o)}
+          data-testid={`offer-mark-${o}`}
+        />
+      ))}
+    </div>
+  );
+
+  const taasSeg = taas ? (
+    <div className="hub-navseg" data-testid="taas-nav">
+      {taasLinks.map(({ id, label, path, Icon }) => (
+        <a key={id} href={withLangPrefix(path, siteLang)} className="hub-navbtn" aria-current={taas === id ? 'page' : undefined} data-testid={`taas-nav-${id}`} onClick={(e) => goTaas(e, path)}>
+          <Icon className="h-4 w-4" aria-hidden="true" />
+          <span>{label}</span>
+        </a>
+      ))}
+    </div>
+  ) : null;
 
   return (
-    <header
-      style={{ backgroundImage: HARX_NAV_GRADIENT }}
-      className="fixed top-0 left-0 right-0 z-50 border-b border-black/10 shadow-[0_1px_0_0_rgba(0,0,0,0.08)]"
-    >
-      <nav className="max-w-[1400px] mx-auto pl-3 pr-4 md:pl-4 md:pr-6 h-16 flex items-center justify-between">
-        <div className="flex items-center space-x-6 lg:space-x-8">
-          <a
-            href={homeHref}
-            className="flex shrink-0 items-center transition-transform hover:scale-[1.02]"
-            onClick={goToHub}
-            aria-label={t('header.allOffers', 'All HARX offers')}
-          >
-            <Logo className="h-14 w-auto md:h-16" />
+    <header className="harx-bar fixed left-0 right-0 top-0 z-50" data-testid="harx-bar">
+      <nav className="relative mx-auto flex h-20 max-w-[1500px] items-center justify-between gap-4 pl-4 pr-4 md:pl-8 md:pr-8">
+        <div className="flex min-w-0 items-center gap-5 lg:gap-7">
+          <a href={homeHref} onClick={goHome} className="harx-bar-logo flex shrink-0 items-center" aria-label={t('header.allOffers', 'All HARX offers')} data-testid="harx-logo">
+            <Logo className="h-14 w-auto md:h-[4.25rem]" />
           </a>
-
-          <div className="hidden md:flex items-center gap-1">
-            {taas
-              ? (
-                <div className="hub-navseg" data-testid="taas-nav">
-                  {taasLinks.map(({ id, label, path, Icon }) => (
-                    <a
-                      key={id}
-                      href={withLangPrefix(path, siteLang)}
-                      className="hub-navbtn"
-                      aria-current={taas === id ? 'page' : undefined}
-                      data-testid={`taas-nav-${id}`}
-                      onClick={(e) => goTaas(e, path)}
-                    >
-                      <Icon className="h-4 w-4" aria-hidden="true" />
-                      <span>{label}</span>
-                    </a>
-                  ))}
-                </div>
-              )
-              : hub
-              ? (
-                <div className="hub-navseg">
-                  {offerLinks.map((offer) => (
-                    <a
-                      key={offer.id}
-                      href={resolveOfferHref(offer, siteLang) ?? '#'}
-                      className="hub-navbtn"
-                      data-testid={`nav-offer-${offer.id}`}
-                      onClick={(e) => openOffer(e, offer)}
-                    >
-                      {offer.icon === 'phone' ? <Phone className="h-4 w-4" aria-hidden="true" /> : <Layers className="h-4 w-4" aria-hidden="true" />}
-                      <span>{t(offer.navKey)}</span>
-                    </a>
-                  ))}
-                </div>
-              )
-              : (
-                <>
-                  <a
-                    href={homeHref}
-                    className="nav-link-default hidden 2xl:inline-flex items-center gap-1.5 whitespace-nowrap"
-                    data-testid="nav-all-offers"
-                    title={t('header.allOffers', 'All HARX offers')}
-                    onClick={goToHub}
-                  >
-                    <LayoutGrid className="h-4 w-4 shrink-0" aria-hidden="true" />
-                    <span>{t('header.allOffers', 'All HARX offers')}</span>
-                  </a>
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.id}
-                      href={`${taasHref}#${link.id}`}
-                      className={linkClass(link.variant)}
-                      onClick={(e) => handleNavClick(e, link.id)}
-                    >
-                      {renderLinkIcon(link.variant)}
-                      <span>{link.label}</span>
-                    </a>
-                  ))}
-                </>
-              )}
+          <span className="hidden h-9 w-px bg-white/25 md:block" aria-hidden="true" />
+          <div className="hidden items-center gap-4 md:flex">
+            {offerMarks()}
+            {taasSeg}
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-2.5">
-          <LanguageSelector />
-          {authActionsDesktop}
+        <div className="hidden items-center gap-3 md:flex">
+          <LanguageIcons />
+          {authActions(false)}
         </div>
 
-        <button
-          className="md:hidden text-white p-2 hover:bg-white/10 transition-colors"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-        >
+        <button className="rounded-lg p-2 text-white transition-colors hover:bg-white/10 md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}>
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </nav>
 
       {isMenuOpen && (
-        <div
-          style={{ backgroundImage: HARX_NAV_GRADIENT }}
-          className="md:hidden absolute top-full left-0 right-0 border-t border-white/15 p-6 shadow-xl animate-fade-in"
-        >
-          <div className="flex flex-col space-y-1">
-            {taas
-              ? taasLinks.map(({ id, label, path, Icon }) => (
-                  <a
-                    key={id}
-                    href={withLangPrefix(path, siteLang)}
-                    className={`flex items-center gap-2 px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white/10 hover:text-white ${taas === id ? 'text-white' : 'text-white/90'}`}
-                    aria-current={taas === id ? 'page' : undefined}
-                    onClick={(e) => goTaas(e, path)}
-                  >
-                    <Icon className="h-4 w-4" aria-hidden="true" />
-                    <span>{label}</span>
-                  </a>
-                ))
-              : hub
-              ? offerLinks.map((offer) => (
-                  <a
-                    key={offer.id}
-                    href={resolveOfferHref(offer, siteLang) ?? '#'}
-                    className="px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={(e) => openOffer(e, offer)}
-                  >
-                    <span>{t(offer.navKey)}</span>
-                  </a>
-                ))
-              : (
-                <>
-                  <a
-                    href={homeHref}
-                    className="px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
-                    onClick={goToHub}
-                  >
-                    {t('header.allOffers', 'All HARX offers')}
-                  </a>
-                  {navLinks.map((link) => (
-                    <a
-                      key={link.id}
-                      href={`${taasHref}#${link.id}`}
-                      className={
-                        link.variant
-                          ? `${linkClass(link.variant)} my-1 w-full justify-center`
-                          : 'px-3 py-2.5 text-base font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white'
-                      }
-                      onClick={(e) => handleNavClick(e, link.id)}
-                    >
-                      {renderLinkIcon(link.variant)}
-                      <span>{link.label}</span>
-                    </a>
-                  ))}
-                </>
-              )}
-            <div className="pt-4 mt-2 border-t border-white/15 space-y-3">
-              <div className="flex justify-center mb-4">
-                <LanguageSelector />
-              </div>
-              {authActionsMobile}
-            </div>
+        <div className="harx-bar absolute left-0 right-0 top-full border-t border-white/15 p-6 shadow-xl animate-fade-in md:hidden">
+          <div className="flex flex-col gap-4">
+            {offerMarks(true)}
+            {taasSeg}
+            <div className="flex justify-center"><LanguageIcons /></div>
+            <div className="space-y-3 border-t border-white/15 pt-4">{authActions(true)}</div>
           </div>
         </div>
       )}
