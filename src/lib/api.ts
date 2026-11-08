@@ -407,7 +407,7 @@ export const publicPlansApi = {
 };
 
 export const newsletter = {
-  subscribe: async (data: { email: string; locale?: string }) => {
+  subscribe: async (data: { email: string; locale?: string; source?: string }) => {
     if (!API_URL) {
       throw new Error('VITE_API_URL is not configured');
     }

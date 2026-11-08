@@ -15,9 +15,8 @@ export function Footer() {
   const navigation = {
     company: [
       { name: t('footer.navHowItWorks', 'How It Works'), href: '#how-it-works' },
-      { name: t('footer.navPricing', 'Pricing'), href: '#pricing' },
-      { name: t('footer.navForCompanies', 'For Companies'), href: '#clients' },
-      { name: t('footer.navForReps', 'For Reps'), href: '#reps' },
+      { name: t('header.examples', 'Examples'), href: '#examples' },
+      { name: t('header.forReps', 'For Professionals'), href: '#reps' },
     ],
     legal: [
       { name: t('footer.navPrivacy', 'Privacy Policy'), href: '/privacy' },

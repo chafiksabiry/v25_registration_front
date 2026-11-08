@@ -1,12 +1,12 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { Button } from './Button';
-import { ArrowRight, Globe, Headphones, Users2, Clock, DollarSign, Shield, Heart, Brain, Sparkles, Target, BarChart, Bot, Zap, Phone, Mail, MessageSquare, Video, BookOpen, CheckCircle2, Coins, Eye } from 'lucide-react';
+import { ArrowDown, Sparkles } from 'lucide-react';
 import harxMascotte from './assets/harx-mascotte.webp';
 
 import { useTranslation } from 'react-i18next';
 
 interface HeroProps {
-  onGetStarted: () => void;
+  onGetStarted?: () => void;
 }
 
 export function Hero({ onGetStarted }: HeroProps) {
@@ -59,11 +59,11 @@ export function Hero({ onGetStarted }: HeroProps) {
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-radial from-harx-500/5 via-transparent to-transparent rounded-full blur-3xl" />
       </div>
 
-      <div className="container mx-auto px-4 pt-16 pb-32 relative z-10">
+      <div className="container mx-auto px-4 pt-16 pb-16 relative z-10">
         <div className="max-w-6xl mx-auto text-center">
           <div className="mb-6 animate-fade-in">
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md text-slate-200 text-sm font-semibold mb-4 hover:border-harx-400/50 transition-all duration-300">
-              <Sparkles className="h-4 w-4 text-harx-400" />
+              <Sparkles className="h-4 w-4 shrink-0 text-harx-400" />
               {t('hero.badge', 'AI-Powered • 60,000+ Expert Agents • Transaction-as-a-Service')}
             </span>
           </div>
@@ -105,14 +105,15 @@ export function Hero({ onGetStarted }: HeroProps) {
             <p>{t('hero.desc5', 'Harx connects your business to a global network of certified agents — human or AI — who handle your customer engagement end to end. Every interaction is scored in real time. You only pay when the result you defined is delivered.')}</p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
             <Button
               size="lg"
               className="h-12 px-6 bg-gradient-harx hover:opacity-95 text-white font-semibold shadow-lg shadow-harx-500/20 hover:shadow-harx-500/35 transition-all duration-300"
-              onClick={onGetStarted}
+              onClick={() => scrollToSection('how-it-works')}
+              data-testid="hero-see-how"
             >
-              {t('hero.getStarted', 'Get Started')}
-              <ArrowRight className="ml-2 h-5 w-5" />
+              {t('taasPage.seeHow', 'See how it works')}
+              <ArrowDown className="ml-2 h-5 w-5" />
             </Button>
             <Button
               variant="outline"
@@ -122,130 +123,6 @@ export function Hero({ onGetStarted }: HeroProps) {
             >
               {t('hero.bookDemo', 'Book a Demo')}
             </Button>
-          </div>
-
-          {/* Value Propositions */}
-          <div className="grid md:grid-cols-2 gap-8 mb-20">
-            {/* AI Technology */}
-            <div className="glass-card-premium p-8 rounded-2xl flex flex-col hover:border-harx-500/30 transition-all duration-500 group">
-              <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 mx-auto shadow-lg shadow-harx-500/10">
-                <Brain className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-[0_1px_8px_rgba(255,77,77,0.25)]">{t('hero.aiTech.title', 'Advanced AI Technology')}</h3>
-              <ul className="space-y-4 text-left flex-grow text-slate-200">
-                <li className="flex items-start">
-                  <Bot className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.aiTech.list1', 'AI-augmented agents with real-time decision support')}</span>
-                </li>
-                <li className="flex items-start">
-                  <Eye className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.aiTech.list2', 'Continuous quality assurance monitored by AI')}</span>
-                </li>
-                <li className="flex items-start">
-                  <Zap className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.aiTech.list3', 'Performance optimization through AI coaching')}</span>
-                </li>
-                <li className="flex items-start">
-                  <Target className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.aiTech.list4', 'Intelligent matching of customer needs with expert agents')}</span>
-                </li>
-                <li className="flex items-start">
-                  <BookOpen className="h-5 w-5 text-harx-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.aiTech.list5', 'AI Engine for Knowledge Base management')}</span>
-                </li>
-              </ul>
-              <div className="mt-8 pt-6 border-t border-harx-500/20">
-                <Button className="w-full h-11 bg-gradient-to-r from-harx-500/30 to-harx-alt-500/25 border border-harx-400/40 hover:border-harx-300 hover:from-harx-500/45 hover:to-harx-alt-500/35 text-white font-semibold shadow-lg shadow-harx-500/20 transition-all duration-300" onClick={() => scrollToSection('features')}>
-                  {t('hero.aiTech.cta', 'Explore AI Features')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            {/* TaaS Platform */}
-            <div className="glass-card-premium p-8 rounded-2xl flex flex-col hover:border-harx-alt-500/30 transition-all duration-500 group">
-              <div className="w-14 h-14 bg-gradient-harx rounded-xl flex items-center justify-center mb-6 mx-auto shadow-lg shadow-harx-500/10">
-                <Heart className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold mb-4 text-white drop-shadow-[0_1px_8px_rgba(236,72,153,0.25)]">{t('hero.taas.title', 'Transaction-as-a-Service')}</h3>
-              <ul className="space-y-4 text-left flex-grow text-slate-200">
-                <li className="flex items-start">
-                  <Coins className="h-5 w-5 text-harx-alt-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.taas.list1', 'You set the price per successful transaction')}</span>
-                </li>
-                <li className="flex items-start">
-                  <CheckCircle2 className="h-5 w-5 text-harx-alt-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.taas.list2', 'Only pay when you approve completed transactions')}</span>
-                </li>
-                <li className="flex items-start">
-                  <DollarSign className="h-5 w-5 text-harx-alt-400 mt-0.5 mr-3 flex-shrink-0" />
-                  <span>{t('hero.taas.list3', 'Commission released upon transaction approval')}</span>
-                </li>
-                <li className="flex flex-col space-y-2">
-                  <div className="flex items-start">
-                    <MessageSquare className="h-5 w-5 text-harx-alt-400 mt-0.5 mr-3 flex-shrink-0" />
-                    <span>{t('hero.taas.completeOmnichannel', 'Complete omnichannel support:')}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 pl-8">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-harx-950/40 border border-harx-800/40 text-harx-300">
-                      <Phone className="h-3 w-3 mr-1" />
-                      {t('hero.taas.calls', 'Calls')}
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-harx-950/40 border border-harx-800/40 text-harx-300">
-                      <Mail className="h-3 w-3 mr-1" />
-                      {t('hero.taas.email', 'Email')}
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-harx-950/40 border border-harx-800/40 text-harx-300">
-                      <MessageSquare className="h-3 w-3 mr-1" />
-                      {t('hero.taas.liveChat', 'Live Chat')}
-                    </span>
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-harx-950/40 border border-harx-800/40 text-harx-300">
-                      <Video className="h-3 w-3 mr-1" />
-                      {t('hero.taas.video', 'Video')}
-                    </span>
-                  </div>
-                </li>
-              </ul>
-              <div className="mt-8 pt-6 border-t border-harx-alt-500/20">
-                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => scrollToSection('how-it-works')}>
-                  {t('hero.taas.cta', 'See How It Works')}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Trust Indicators */}
-          <div className="flex items-center justify-center gap-8 text-sm text-harx-200 mb-16">
-            <div className="flex items-center gap-2 px-4 py-2 bg-harx-500/10 border border-harx-500/30 rounded-full">
-              <CheckCircle2 className="h-4 w-4 text-harx-400" />
-              <span>{t('hero.trust', 'GDPR Compliant & Encrypted Data')}</span>
-            </div>
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-500/50 transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
-                <Brain className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="text-lg font-bold mb-1">{t('hero.stats.stat1Title', 'AI-First Platform')}</h3>
-              <p className="text-sm text-harx-200">{t('hero.stats.stat1Desc', 'Cutting-edge artificial intelligence')}</p>
-            </div>
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-alt-500/50 transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
-                <Users2 className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="text-lg font-bold mb-1">{t('hero.stats.stat2Title', '60,000+ AI-Enhanced Agents')}</h3>
-              <p className="text-sm text-harx-200">{t('hero.stats.stat2Desc', 'Powered by intelligent technology')}</p>
-            </div>
-            <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-500/50 transition-colors">
-              <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
-                <Globe className="h-5 w-5 text-white" />
-              </div>
-              <h3 className="text-lg font-bold mb-1">{t('hero.stats.stat3Title', 'Global AI Network')}</h3>
-              <p className="text-sm text-harx-200">{t('hero.stats.stat3Desc', 'Intelligent service worldwide')}</p>
-            </div>
           </div>
         </div>
       </div>
