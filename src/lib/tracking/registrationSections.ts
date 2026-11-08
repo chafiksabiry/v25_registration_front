@@ -1,3 +1,4 @@
+import type { SiteLang } from '../langRoutes';
 const AUTH_ROUTE_TITLES: Array<{ test: (path: string) => boolean; label: string }> = [
   { test: (p) => p.startsWith('/auth/choice'), label: 'Choix du profil' },
   { test: (p) => p.startsWith('/auth/signin'), label: 'Connexion' },
@@ -32,7 +33,7 @@ const AUTH_LABELS_EN: Record<string, string> = {
   'Récupération de compte': 'Account recovery',
 };
 
-export function buildAuthPageTitle(label: string, lang: 'fr' | 'en' = 'fr'): string {
-  if (lang === 'en') return `HARX — Account · ${AUTH_LABELS_EN[label] ?? label}`;
+export function buildAuthPageTitle(label: string, lang: SiteLang = 'fr'): string {
+  if (lang !== 'fr') return `HARX — Account · ${AUTH_LABELS_EN[label] ?? label}`;
   return `HARX — Compte · ${label}`;
 }

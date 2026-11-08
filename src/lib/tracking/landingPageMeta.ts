@@ -1,3 +1,4 @@
+import type { SiteLang } from '../langRoutes';
 import { DEFAULT_PAGE_DESCRIPTION, HARX_SITE_URL } from './constants';
 import type { PageMeta } from './pageMeta';
 
@@ -28,8 +29,8 @@ const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
   reps: 'For reps',
 };
 
-export function landingPageTabTitle(sectionId: string, lang: 'fr' | 'en' = 'fr'): string {
-  if (lang === 'en') {
+export function landingPageTabTitle(sectionId: string, lang: SiteLang = 'fr'): string {
+  if (lang !== 'fr') {
     const label = LANDING_SECTION_TITLES_EN[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES_EN.top;
     return sectionId === 'top' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS · ${label}`;
   }
@@ -47,7 +48,7 @@ export function buildLandingSectionMeta(sectionId: string): PageMeta {
 }
 
 /** Titre d'onglet des trois pages TAAS : accueil, espace COMPANY, espace REPS. */
-export function taasPageTitle(page: 'home' | 'company' | 'reps', lang: 'fr' | 'en' = 'fr'): string {
-  if (page === 'home') return lang === 'en' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS : Transaction-as-a-Service`;
+export function taasPageTitle(page: 'home' | 'company' | 'reps', lang: SiteLang = 'fr'): string {
+  if (page === 'home') return lang !== 'fr' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS : Transaction-as-a-Service`;
   return `${BASE_TITLE} — TAAS · ${page === 'company' ? 'Company' : 'REPS'}`;
 }

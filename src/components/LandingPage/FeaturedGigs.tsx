@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Briefcase, Building2, Headphones, PhoneCall, ShoppingBag, Stethoscope, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { EXAMPLE_GIGS, type ExampleGigIcon } from '../../config/exampleGigs';
+import { normalizeSiteLang } from '../../lib/langRoutes';
 
 const ICONS: Record<ExampleGigIcon, LucideIcon> = {
   Sales: PhoneCall,
@@ -20,7 +21,7 @@ interface FeaturedGigsProps {
 /** Missions types : contenu marketing (voir config/exampleGigs.ts), indépendant des missions réelles. */
 export function FeaturedGigs({ onJoin }: FeaturedGigsProps) {
   const { t, i18n } = useTranslation();
-  const lang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const lang = normalizeSiteLang(i18n.language) === 'fr' ? 'fr' : 'en';
   const money = (n: number) => `€${n.toFixed(Number.isInteger(n) ? 0 : 2)}`;
 
   return (

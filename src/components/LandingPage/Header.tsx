@@ -7,7 +7,7 @@ import { OfferMark, type OfferMarkId } from '../Brand/OfferMarks';
 import { LanguageIcons } from '../Brand/LanguageIcons';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { TAAS_COMPANY, TAAS_HOME, TAAS_REPS } from '../../lib/taasPaths';
-import { withLangPrefix } from '../../lib/langRoutes';
+import { normalizeSiteLang, withLangPrefix } from '../../lib/langRoutes';
 import { useAuth } from '../../contexts/AuthContext';
 import {
   getPostLoginRedirectUrl,
@@ -42,7 +42,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
   const [sessionTick, setSessionTick] = React.useState(0);
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
-  const siteLang = (i18n.language || 'fr').toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const siteLang = normalizeSiteLang(i18n.language);
   const offer: OfferMarkId | null = hub ? null : telephony ? 'telephony' : 'taas';
   const homeHref = withLangPrefix('/', siteLang);
 
@@ -52,7 +52,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
 
   const persistLang = () => {
     try {
-      persistHarxLanguage(siteLang, siteLang === 'en' ? { explicit: true } : undefined);
+      persistHarxLanguage(siteLang, siteLang !== 'fr' ? { explicit: true } : undefined);
     } catch {
       /* ignore */
     }

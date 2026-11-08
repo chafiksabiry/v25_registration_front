@@ -2,12 +2,11 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { hardNavigate } from '../../lib/appNavigation';
-import { isPrefixablePath, stripLangPrefix, withLangPrefix } from '../../lib/langRoutes';
+import { isPrefixablePath, normalizeSiteLang, stripLangPrefix, withLangPrefix } from '../../lib/langRoutes';
 
 type LangId = 'fr' | 'en' | 'es' | 'ar';
 
-/** Langues réellement disponibles ; l'espagnol et l'arabe sont annoncés mais leurs textes n'existent pas encore. */
-const AVAILABLE: LangId[] = ['fr', 'en'];
+const AVAILABLE: LangId[] = ['fr', 'en', 'es', 'ar'];
 
 const FlagFr = () => (
   <svg viewBox="0 0 3 2" className="h-full w-full" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
@@ -55,7 +54,7 @@ const ORDER: LangId[] = ['fr', 'en', 'es', 'ar'];
 /** Choix de la langue par icônes rondes (français, anglais, espagnol, arabe) à la place d'une liste déroulante. */
 export function LanguageIcons({ className = '' }: { className?: string }) {
   const { i18n, t } = useTranslation();
-  const current: LangId = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const current: LangId = normalizeSiteLang(i18n.language);
 
   const select = (lang: LangId) => {
     if (!AVAILABLE.includes(lang) || lang === current) return;
@@ -63,7 +62,7 @@ export function LanguageIcons({ className = '' }: { className?: string }) {
     const { pathname, search, hash } = window.location;
     if (isPrefixablePath(pathname)) {
       // Page publique : une URL par langue (/fr/…, /en/…), rechargement complet.
-      hardNavigate(`${withLangPrefix(stripLangPrefix(pathname), lang as 'fr' | 'en')}${search}${hash}`);
+      hardNavigate(`${withLangPrefix(stripLangPrefix(pathname), lang)}${search}${hash}`);
       return;
     }
     void i18n.changeLanguage(lang);
