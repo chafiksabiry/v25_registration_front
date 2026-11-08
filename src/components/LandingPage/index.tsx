@@ -6,6 +6,7 @@ import { Pricing } from './Pricing';
 import { ForClients } from './ForClients';
 import { ForReps } from './ForReps';
 import { FeaturedGigs } from './FeaturedGigs';
+import { BudgetSimulator, RepsJoinSection, RepsStatsStrip } from './TaasWidgets';
 import { Footer } from './Footer';
 import { LANDING_SECTION_IDS, landingPageTabTitle } from '../../lib/tracking/landingPageMeta';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
@@ -17,6 +18,8 @@ import { withLangPrefix } from '../../lib/langRoutes';
 interface LandingPageProps {
   onSignIn: () => void;
   onGetStarted: () => void;
+  /** Rejoindre HARX en tant que professionnel (inscription REPS). */
+  onFindGigs: () => void;
   /**
    * If provided, the landing page will smoothly scroll to that section id
    * once it has mounted. Used when navigating back to the landing from
@@ -48,6 +51,7 @@ function tabOfSection(sectionId: string | null | undefined): TaasTab | null {
 export function LandingPage({
   onSignIn,
   onGetStarted,
+  onFindGigs,
   initialSection,
   onSectionApplied,
   onNavigateToSection,
@@ -232,6 +236,8 @@ export function LandingPage({
             <HowItWorks onGetStarted={onGetStarted} />
           </section>
 
+          <BudgetSimulator />
+
           <section id="pricing" className="scroll-mt-28 bg-white text-slate-900">
             <Pricing onGetStarted={onGetStarted} />
           </section>
@@ -242,7 +248,11 @@ export function LandingPage({
         </div>
       ) : (
         <div role="tabpanel" data-testid="taas-panel-rep">
+          <RepsStatsStrip />
+
           <FeaturedGigs />
+
+          <RepsJoinSection onJoin={onFindGigs} />
 
           <section id="reps" className="scroll-mt-28 bg-white text-slate-900">
             <ForReps onGetStarted={onGetStarted} />

@@ -98,6 +98,30 @@
   "landingTabs": {
     "aria": "Choisissez votre parcours"
   },
+  "taasWidgets": {
+    "repsKicker": "De vraies missions, ouvertes maintenant",
+    "statGigs": "missions disponibles",
+    "statCategories": "secteurs d'activité",
+    "statLanguages": "langues demandées",
+    "repStepsTitle": "Démarrez en trois étapes",
+    "repStep1Title": "Créez votre profil",
+    "repStep1Text": "Présentez vos compétences et vos langues : c'est votre carte de visite auprès des entreprises.",
+    "repStep2Title": "Choisissez vos missions",
+    "repStep2Text": "Parcourez les missions ouvertes et postulez à celles qui vous correspondent.",
+    "repStep3Title": "Soyez payé au résultat",
+    "repStep3Text": "Une base pour chaque appel sérieux, une commission sur chaque transaction confirmée, un bonus si vous atteignez votre objectif.",
+    "simTitle": "Estimez vos gains",
+    "simLabel": "Transactions confirmées par mois",
+    "simNote": "Estimation indicative, calculée sur la commission moyenne par transaction des missions ouvertes. Ce n'est pas un revenu garanti.",
+    "joinTitle": "Prêt pour votre première mission ?",
+    "joinText": "Créez votre profil et postulez aux missions qui vous conviennent.",
+    "joinCta": "Rejoindre HARX",
+    "budgetTitle": "Simulez votre budget",
+    "budgetResults": "Résultats souhaités par mois",
+    "budgetPrice": "Prix que vous fixez par résultat (€)",
+    "budgetMax": "Budget mensuel maximum",
+    "budgetNote": "Vous ne payez que les résultats que vous approuvez."
+  },
   "header": {
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
