@@ -71,6 +71,9 @@ export default function RegistrationDialog({
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [legalPart, setLegalPart] = useState<number | null>(null);
   const { t } = useTranslation();
+  // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
+  // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
+  const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
 
@@ -188,7 +191,7 @@ export default function RegistrationDialog({
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
-      if (isCallcentreProduct()) {
+      if (telephonyContext) {
         setTimeout(() => hardNavigate(CALLCENTRE_PATH), 1500);
       } else {
         setTimeout(() => onSignIn(), 1500);
@@ -463,7 +466,7 @@ export default function RegistrationDialog({
         onSignIn={onSignIn}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
-        telephony={defaultUserType === 'call-center' || isCallcentreProduct()}
+        telephony={telephonyContext}
       />
 
       {/* Immersive background decoration */}
@@ -488,7 +491,7 @@ export default function RegistrationDialog({
                 />
                 <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
               </div>
-              <BrandText callCentre={defaultUserType === 'call-center' || isCallcentreProduct()} />
+              <BrandText callCentre={telephonyContext} />
             </div>
           </div>
 
