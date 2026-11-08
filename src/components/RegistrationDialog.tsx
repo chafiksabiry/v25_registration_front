@@ -1,8 +1,10 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, KeyRound } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import {
   REGISTER_FORM_STEPS,
@@ -16,7 +18,6 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
-import { BrandText } from './BrandText';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion } from '../lib/tracking/conversions';
@@ -468,31 +469,15 @@ export default function RegistrationDialog({
         onNavigateToSection={onNavigateToSection}
         telephony={telephonyContext}
       />
-
-      {/* Immersive background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float"></div>
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
-      </div>
+      <AuthBackdrop />
 
       <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden relative z-10">
 
           {/* Left Side - Brand Section */}
-          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
-            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }}></div>
-            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
-              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
-                  loading="eager"
-                />
-                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
-              </div>
-              <BrandText callCentre={telephonyContext} />
-            </div>
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-10 xl:p-12 bg-gradient-to-b from-[#0a0a18] via-[#0d0d1f] to-[#0a0a18] text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <AuthSidePanel kind={telephonyContext ? 'telephony' : defaultUserType === 'rep' ? 'rep' : defaultUserType === 'company' ? 'company' : 'neutral'} />
           </div>
 
           {/* Right Side - Form Section */}
@@ -505,22 +490,20 @@ export default function RegistrationDialog({
                 </button>
               )}
 
-              {/* Visual Step Progress Indicator */}
+              {/* Indicateur d'avancement : une pastille par étape, reliées par une barre qui se remplit */}
               {step !== 'success' && (
-                <div className="flex items-center gap-2 mb-8 justify-center lg:justify-start">
-                  {['name', 'email', 'password', 'phone', 'terms', 'verification'].map((s, idx) => {
-                    const stepsList = ['name', 'email', 'password', 'phone', 'terms', 'verification'];
-                    const currentIdx = stepsList.indexOf(step);
-                    const isCompleted = idx < currentIdx;
-                    const isActive = step === s;
+                <div className="auth-stepper mb-8" data-testid="register-stepper" aria-label={t('register.progress', 'Progress')}>
+                  {(['name', 'email', 'password', 'phone', 'terms', 'verification'] as const).map((s, idx, all) => {
+                    const currentIdx = all.indexOf(step as (typeof all)[number]);
+                    const StepIcon = { name: User, email: Mail, password: Lock, phone: Phone, terms: ShieldCheck, verification: KeyRound }[s];
+                    const state = idx < currentIdx ? 'done' : idx === currentIdx ? 'active' : 'todo';
                     return (
-                      <div
-                        key={s}
-                        className={`h-1.5 rounded-full transition-all duration-350 ${
-                          isCompleted ? 'w-6 bg-gradient-harx' :
-                          isActive ? 'w-8 bg-harx-500 shadow-md shadow-harx-500/30' : 'w-2 bg-white/10'
-                        }`}
-                      />
+                      <React.Fragment key={s}>
+                        <span className="auth-stepper__dot" data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
+                          {state === 'done' ? <Check className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}
+                        </span>
+                        {idx < all.length - 1 && <span className="auth-stepper__bar" data-done={idx < currentIdx}><span /></span>}
+                      </React.Fragment>
                     );
                   })}
                 </div>

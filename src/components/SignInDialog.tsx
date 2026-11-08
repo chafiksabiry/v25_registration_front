@@ -6,9 +6,10 @@ import { hardNavigate } from '../lib/appNavigation';
 import { useAuth } from '../contexts/AuthContext';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import { useTranslation } from 'react-i18next';
-import { BrandText } from './BrandText';
 import { isCallcentreProduct } from '../lib/product';
 import { mapSignInError } from '../lib/authErrors';
 import { audienceMismatchKey, readAudience, saveAudience, type Audience } from '../lib/signInAudience';
@@ -258,29 +259,14 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         telephony={isCallcentreProduct()}
       />
       
-      {/* Immersive background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float" />
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
-      </div>
+      <AuthBackdrop />
 
       <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden relative z-10">
           {/* Left Side - Brand Section */}
-          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
-            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
-            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
-              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
-                  loading="eager"
-                />
-                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
-              </div>
-              <BrandText callCentre={isCallcentreProduct()} />
-            </div>
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-10 xl:p-12 bg-gradient-to-b from-[#0a0a18] via-[#0d0d1f] to-[#0a0a18] text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <AuthSidePanel kind={isCallcentreProduct() ? 'telephony' : 'neutral'} />
           </div>
 
           {/* Right Side - Form Section */}
