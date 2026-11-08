@@ -142,6 +142,7 @@
     "repsCta": "Enter the REPS space"
   },
   "taasPages": {
+    "statCountries": "countries covered",
     "payFixed": "Fixed amount per argued call",
     "payCommission": "Commission per transaction",
     "payBonus": "Performance bonus",

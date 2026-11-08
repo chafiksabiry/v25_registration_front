@@ -142,6 +142,7 @@
     "repsCta": "Entrer dans l'espace REPS"
   },
   "taasPages": {
+    "statCountries": "pays couverts",
     "payFixed": "Fixe par appel argumenté",
     "payCommission": "Commission par transaction",
     "payBonus": "Bonus de performance",

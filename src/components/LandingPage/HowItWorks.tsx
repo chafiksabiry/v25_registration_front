@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Users, Brain, FilePlus2, Sparkles, Tag, Wallet, ShieldCheck, ScanSearch, Globe2, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Users, FilePlus2, Sparkles, Tag, Wallet, ShieldCheck, ScanSearch, Globe2, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from './Button';
 
@@ -132,16 +132,6 @@ export function HowItWorks({ onGetStarted }: HowItWorksProps) {
             />
 
             {/* Floating Stats Cards */}
-            <div className="absolute top-8 right-8 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
-              <div className="flex items-center gap-3">
-                <Brain className="h-6 w-6 text-harx-500" />
-                <div>
-                  <div className="font-semibold">{t('howItWorks.aiResponseTime', 'AI Response Time')}</div>
-                  <div className="text-2xl font-bold text-harx-500">0.3s</div>
-                </div>
-              </div>
-            </div>
-
             <div className="absolute bottom-8 left-8 bg-white/90 backdrop-blur-sm rounded-lg p-4 shadow-lg">
               <div className="flex items-center gap-3">
                 <Users className="h-6 w-6 text-harx-500" />
