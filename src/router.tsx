@@ -12,6 +12,8 @@ import AuthShell from './components/layout/AuthShell';
 import {
   HubScreen,
   TaasScreen,
+  TaasCompanyScreen,
+  TaasRepsScreen,
   ChoiceScreen,
   SignInScreen,
   RegisterScreen,
@@ -137,6 +139,8 @@ const routes: RouteObject[] = [
           children: [
             { index: true, element: <HubScreen /> },
             { path: 'taas', element: <TaasScreen /> },
+            { path: 'taas/company', element: <TaasCompanyScreen /> },
+            { path: 'taas/reps', element: <TaasRepsScreen /> },
             { path: 'auth/choice', element: <ChoiceScreen /> },
             { path: 'auth/signin', element: <SignInScreen /> },
             { path: 'auth/register', element: <RegisterScreen /> },

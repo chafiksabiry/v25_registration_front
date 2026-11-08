@@ -48,9 +48,9 @@ export function FeaturedGigs({ onJoin }: FeaturedGigsProps) {
             const text = gig[lang];
             const c = gig.commission;
             const chips: Array<{ value: string; label: string; tone: string }> = [
-              ...(c.perCall ? [{ value: money(c.perCall), label: t('featuredGigs.perCall', '/ call'), tone: 'bg-harx-500/10 border-harx-500/30 text-harx-300' }] : []),
-              ...(c.perTransaction ? [{ value: money(c.perTransaction), label: t('featuredGigs.perSuccess', '/ success'), tone: 'bg-harx-alt-500/10 border-harx-alt-500/30 text-harx-alt-300' }] : []),
-              ...(c.bonus ? [{ value: money(c.bonus), label: t('featuredGigs.bonus', 'bonus'), tone: 'bg-purple-500/10 border-purple-500/30 text-purple-300' }] : []),
+              { value: money(c.perCall), label: t('featuredGigs.perCall', 'fixed / argued call'), tone: 'bg-harx-500/10 border-harx-500/30 text-harx-300' },
+              { value: money(c.perTransaction), label: t('featuredGigs.perSuccess', 'commission / transaction'), tone: 'bg-harx-alt-500/10 border-harx-alt-500/30 text-harx-alt-300' },
+              { value: money(c.bonus), label: t('featuredGigs.bonus', 'performance bonus'), tone: 'bg-purple-500/10 border-purple-500/30 text-purple-300' },
             ];
             return (
               <div key={gig.id} className="group relative glass-card-premium rounded-2xl p-8 hover:border-harx-500/30 hover:-translate-y-1 transition-all duration-500 flex flex-col" data-testid={`example-gig-${gig.id}`}>
