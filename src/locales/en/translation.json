@@ -112,7 +112,7 @@
     "repStep3Text": "A base for every serious call, a commission on every confirmed transaction, a bonus when you reach your target.",
     "simTitle": "Estimate your earnings",
     "simLabel": "Confirmed transactions per month",
-    "simNote": "Indicative estimate based on the average commission per transaction of the open missions. Not a guaranteed income.",
+    "simNote": "Indicative estimate based on the average commission per transaction of the example missions shown. Not a guaranteed income.",
     "joinTitle": "Ready to take your first mission?",
     "joinText": "Create your profile and apply to the missions that suit you.",
     "joinCta": "Join HARX",
@@ -350,9 +350,11 @@
     "errServer": "Password reset failed. Please try again in a moment."
   },
   "featuredGigs": {
+    "apply": "Join to apply",
+    "examplesNote": "Example missions. Amounts shown are what the professional earns.",
     "title1": "Discover",
-    "title2": "Active Gigs",
-    "desc": "Browse exciting opportunities and start earning by representing top global companies today.",
+    "title2": "example missions",
+    "desc": "Browse the kinds of missions you can take on and start earning by representing companies.",
     "readLess": "Read less",
     "readMore": "Read more...",
     "requirements": "Requirements",

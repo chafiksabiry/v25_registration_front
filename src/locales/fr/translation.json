@@ -112,7 +112,7 @@
     "repStep3Text": "Une base pour chaque appel sérieux, une commission sur chaque transaction confirmée, un bonus si vous atteignez votre objectif.",
     "simTitle": "Estimez vos gains",
     "simLabel": "Transactions confirmées par mois",
-    "simNote": "Estimation indicative, calculée sur la commission moyenne par transaction des missions ouvertes. Ce n'est pas un revenu garanti.",
+    "simNote": "Estimation indicative, calculée sur la commission moyenne par transaction des missions types présentées. Ce n'est pas un revenu garanti.",
     "joinTitle": "Prêt pour votre première mission ?",
     "joinText": "Créez votre profil et postulez aux missions qui vous conviennent.",
     "joinCta": "Rejoindre HARX",
@@ -350,9 +350,11 @@
     "errServer": "La réinitialisation a échoué. Réessayez dans un instant."
   },
   "featuredGigs": {
-    "title1": "Découvrez les",
-    "title2": "Missions Actives",
-    "desc": "Parcourez des opportunités passionnantes et commencez à gagner de l'argent en représentant dès aujourd'hui les meilleures entreprises mondiales.",
+    "apply": "Rejoindre pour postuler",
+    "examplesNote": "Exemples de missions. Les montants affichés sont ce que le professionnel gagne.",
+    "title1": "Découvrez des",
+    "title2": "exemples de missions",
+    "desc": "Parcourez le type de missions que vous pouvez prendre et commencez à gagner de l'argent en représentant des entreprises.",
     "readLess": "Voir moins",
     "readMore": "Voir plus...",
     "requirements": "Exigences",
