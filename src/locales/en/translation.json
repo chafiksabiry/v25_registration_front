@@ -95,6 +95,9 @@
     "signIn": "Sign in",
     "signUp": "Create my account"
   },
+  "landingTabs": {
+    "aria": "Choose your path"
+  },
   "header": {
     "howItWorks": "How It Works",
     "pricing": "Pricing",
