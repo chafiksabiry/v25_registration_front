@@ -19,6 +19,8 @@ import companyBanner from './assets/choice-company.jpg';
 import repBanner from './assets/choice-rep.jpg';
 import { useTranslation } from 'react-i18next';
 import { isRoleComingSoon } from '../config/offers';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { spotMove } from './Taas/spot';
 
 export type SignupUserType = 'company' | 'rep' | 'call-center';
 
@@ -78,10 +80,11 @@ function ChoiceCard({
   return (
     <article
       onClick={interactive ? onClick : undefined}
-      className={`relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-lg ${
+      onMouseMove={spotMove}
+      className={`taas-spot relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white/[0.05] shadow-2xl shadow-black/40 backdrop-blur-xl ${
         interactive
-          ? 'cursor-pointer border-rose-100 shadow-rose-500/10 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl'
-          : 'border-slate-200/80'
+          ? 'cursor-pointer border-white/15 transition-all duration-300 hover:-translate-y-1.5 hover:border-rose-400/50 hover:shadow-rose-500/25'
+          : 'border-white/10 opacity-90'
       }`}
     >
       <div className="relative h-52 shrink-0 overflow-hidden">
@@ -113,9 +116,9 @@ function ChoiceCard({
       <div className="flex flex-1 flex-col p-6">
         <ul className="flex-1 space-y-2">
           {features.map(({ icon: FeatureIcon, id, label }) => (
-            <li key={id} className="flex min-h-10 items-center text-slate-700">
-              <span className={`mr-3 inline-flex shrink-0 rounded-lg p-1.5 ${disabled ? 'bg-slate-100' : 'bg-rose-50'}`}>
-                <FeatureIcon className={`h-4 w-4 ${disabled ? 'text-slate-500' : 'text-rose-600'}`} />
+            <li key={id} className="flex min-h-10 items-center text-slate-200">
+              <span className={`mr-3 inline-flex shrink-0 rounded-lg p-1.5 ${disabled ? 'bg-white/10' : 'bg-gradient-to-br from-rose-500/30 to-fuchsia-500/20'}`}>
+                <FeatureIcon className={`h-4 w-4 ${disabled ? 'text-slate-400' : 'text-rose-300'}`} />
               </span>
               <span className="text-sm font-semibold leading-snug">{label}</span>
             </li>
@@ -127,8 +130,8 @@ function ChoiceCard({
           aria-disabled={disabled || undefined}
           className={`mt-6 flex h-14 w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-4 text-center text-sm font-bold leading-tight ${
             disabled
-              ? 'cursor-not-allowed bg-slate-200 text-slate-500'
-              : 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-lg shadow-rose-500/25 transition-all hover:shadow-rose-500/40 active:scale-[0.98]'
+              ? 'cursor-not-allowed border border-white/15 bg-white/[0.06] text-slate-300'
+              : 'harx-cta bg-gradient-to-r from-[#ff4d4d] to-[#ec4899] text-white shadow-[0_18px_44px_-16px_rgba(255,77,109,0.9)] transition-all hover:brightness-110 active:scale-[0.98]'
           }`}
         >
           {cta}
@@ -144,30 +147,25 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
   const companySoon = isRoleComingSoon('company');
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-gradient-to-br from-harx-50 via-white to-harx-alt-50/60 flex flex-col animate-fade-in relative">
-      {/* Decorative background blobs — pure CSS, render instantly */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-harx-300/30 blur-3xl animate-pulse-slow" />
-        <div className="absolute top-1/3 -right-24 w-96 h-96 rounded-full bg-harx-alt-300/30 blur-3xl animate-pulse-slow" />
-        <div className="absolute -bottom-24 left-1/3 w-96 h-96 rounded-full bg-harx-400/20 blur-3xl animate-pulse-slow" />
-      </div>
+    <div className="min-h-screen overflow-x-hidden bg-[#070711] text-white flex flex-col animate-fade-in relative">
+      <AuthBackdrop />
 
       {/* Navbar */}
       <Header onSignIn={onSignIn} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       {/* Hero */}
       <div className="relative z-10 pt-24 pb-6 px-4 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/80 backdrop-blur border border-harx-100 shadow-sm mb-4">
-          <Sparkles className="w-4 h-4 text-harx-500" />
-          <span className="text-xs font-bold tracking-wide text-harx-600 uppercase">{t('choicePage.marketplace', 'HARX Marketplace')}</span>
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/20 mb-4">
+          <Sparkles className="w-4 h-4 text-harx-300" />
+          <span className="text-xs font-bold tracking-wide text-white uppercase">{t('choicePage.marketplace', 'HARX Marketplace')}</span>
         </div>
-        <h1 className="text-3xl md:text-5xl font-black text-slate-900 leading-tight tracking-tight">
+        <h1 className="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
           {t('choicePage.title1', 'Transform Your')}{' '}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-harx-500 via-harx-alt-500 to-harx-600">
+          <span className="taas-shine-text">
             {t('choicePage.title2', 'Contact Center')}
           </span>
         </h1>
-        <p className="mt-3 text-sm md:text-lg text-slate-500 max-w-2xl mx-auto leading-relaxed">
+        <p className="mt-3 text-sm md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">
           {t('choicePage.subtitle', 'Connect with opportunities or find the perfect talent for your customer service needs.')}
         </p>
       </div>
@@ -209,13 +207,13 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
       <div className="relative z-10 pb-6 px-4">
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-medium text-slate-400">
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-harx-500" /> {t('choicePage.trust1', 'No setup fees')}
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {t('choicePage.trust1', 'No setup fees')}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-harx-500" /> {t('choicePage.trust2', 'Verified professionals')}
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {t('choicePage.trust2', 'Verified professionals')}
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-harx-500" /> {t('choicePage.trust3', 'AI-powered matching')}
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> {t('choicePage.trust3', 'AI-powered matching')}
           </span>
         </div>
       </div>

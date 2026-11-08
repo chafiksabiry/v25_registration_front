@@ -8,7 +8,7 @@ const STEPS = ['step1', 'step2', 'step3', 'step4', 'step5'] as const;
  * Illustration animée du principe TAAS : un résultat est défini, pris en charge par des professionnels humains ou IA,
  * évalué par l'IA, approuvé, puis seulement alors payé. C'est une illustration (mention visible), pas une donnée réelle.
  */
-export function ResultFlowVisual() {
+export function ResultFlowVisual({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
   const [step, setStep] = useState(0);
 
@@ -35,7 +35,7 @@ export function ResultFlowVisual() {
           <span className="rounded-full border border-white/25 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/70">{t('taasVisual.illustration', 'Illustration')}</span>
         </div>
 
-        <div className="mt-5 rounded-2xl border border-white/15 bg-black/25 p-4">
+        <div className={`mt-5 rounded-2xl border border-white/15 bg-black/25 p-4 ${compact ? 'hidden' : ''}`}>
           <p className="text-[11px] font-bold uppercase tracking-wider text-white/55">{t('taasVisual.resultLabel', 'Expected result')}</p>
           <p className="mt-1 flex items-center gap-2 text-lg font-extrabold text-white">
             <Sparkles className="h-5 w-5 text-amber-300" aria-hidden="true" />
@@ -83,7 +83,7 @@ export function ResultFlowVisual() {
       </div>
 
       {/* Puces flottantes */}
-      <div className="taas-float taas-float--slow absolute -left-4 -top-5 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md sm:flex md:-left-10">
+      <div className={`taas-float taas-float--slow absolute -left-4 -top-5 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md ${compact ? '' : 'sm:flex md:-left-10'}`}>
         <BadgeCheck className="h-5 w-5 text-sky-300" aria-hidden="true" />
         <span className="text-xs font-extrabold text-white">{t('taasVisual.humanAi', 'Humans or AI')}</span>
       </div>

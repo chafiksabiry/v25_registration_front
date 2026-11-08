@@ -22,7 +22,7 @@ const EVENTS = [
  * Illustration animée du modèle de rémunération REPS : un revenu qui se construit en trois couches
  * (fixe par appel argumenté, commission à la transaction, bonus de performance). Illustration sans montants.
  */
-export function RepsIncomeVisual() {
+export function RepsIncomeVisual({ compact = false }: { compact?: boolean }) {
   const { t } = useTranslation();
   const [tick, setTick] = useState(0);
 
@@ -50,7 +50,7 @@ export function RepsIncomeVisual() {
         </div>
 
         {/* Histogramme empilé */}
-        <div className="mt-5 flex h-48 items-end gap-3 rounded-2xl border border-white/10 bg-black/25 px-4 pb-4 pt-6">
+        <div className={`mt-5 flex items-end ${compact ? 'h-32' : 'h-48'} gap-3 rounded-2xl border border-white/10 bg-black/25 px-4 pb-4 pt-6`}>
           {MONTHS.map((m, i) => {
             const on = i < shown;
             return (
@@ -70,7 +70,7 @@ export function RepsIncomeVisual() {
         </div>
 
         {/* Événement qui s'ajoute */}
-        <ul className="mt-4 space-y-2">
+        <ul className={`mt-4 space-y-2 ${compact ? 'hidden' : ''}`}>
           {EVENTS.map(({ key, Icon, tone }, i) => {
             const active = shown >= MONTHS.length ? true : i === evIdx;
             return (
@@ -84,11 +84,11 @@ export function RepsIncomeVisual() {
         </ul>
       </div>
 
-      <div className="taas-float taas-float--slow absolute -left-4 -top-5 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md sm:flex md:-left-10">
+      <div className={`taas-float taas-float--slow absolute -left-4 -top-5 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md ${compact ? '' : 'sm:flex md:-left-10'}`}>
         <Globe2 className="h-5 w-5 text-sky-300" aria-hidden="true" />
         <span className="text-xs font-extrabold text-white">{t('taasVisual.anywhere', 'From anywhere')}</span>
       </div>
-      <div className="taas-float absolute -bottom-5 -right-3 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md sm:flex md:-right-8">
+      <div className={`taas-float absolute -bottom-5 -right-3 hidden items-center gap-2 rounded-2xl border border-white/20 bg-[#0d0d1c]/80 px-3.5 py-2 shadow-xl backdrop-blur-md ${compact ? '' : 'sm:flex md:-right-8'}`}>
         <Clock className="h-5 w-5 text-amber-300" aria-hidden="true" />
         <span className="text-xs font-extrabold text-white">{t('taasVisual.yourHours', 'Your own hours')}</span>
       </div>
