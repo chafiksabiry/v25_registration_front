@@ -1,4 +1,5 @@
 import { isRoleComingSoon } from '../../config/offers';
+import { taasPathForSection } from '../../lib/taasPaths';
 import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
@@ -37,9 +38,9 @@ export default function AuthShell() {
   }, [location.pathname, location.search]);
 
   const handleNavigateToSection = (sectionId: string) => {
-    // Les sections (Comment ça marche, Tarifs…) sont celles de la page de l'offre TAAS.
+    // Chaque section appartient à la page COMPANY, à la page REPS ou à l'accueil TAAS.
     setPendingSection(sectionId);
-    navigate('/taas');
+    navigate(taasPathForSection(sectionId));
   };
 
   const handleSelectRole = (role: SignupUserType) => {

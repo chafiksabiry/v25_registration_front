@@ -1,6 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LandingPage } from '../components/LandingPage';
+import { TaasShell } from '../components/Taas/TaasShell';
+import { TaasHome } from '../components/Taas/TaasHome';
+import { TaasCompanyPage } from '../components/Taas/TaasCompanyPage';
+import { TaasRepsPage } from '../components/Taas/TaasRepsPage';
+import { taasPageTitle } from '../lib/tracking/landingPageMeta';
 import ChoicePage from '../components/ChoicePage';
 import { HubPage } from '../components/Hub/HubPage';
 import SignInDialog from '../components/SignInDialog';
@@ -27,18 +31,60 @@ export function HubScreen() {
   return <HubPage onSelectRole={handleSelectRole} onNavigateToSection={handleNavigateToSection} />;
 }
 
-/** `/taas` : offre TAAS (Transaction-as-a-Service), ancienne page d'accueil. */
+/** `/taas` : accueil de l'offre TAAS, avec deux portes (espace COMPANY, espace REPS). */
 export function TaasScreen() {
-  const { navigate, pendingSection, setPendingSection, handleNavigateToSection, handleSelectRole } = useAuthContext();
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('home', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
   return (
-    <LandingPage
+    <TaasShell
+      page="home"
       onSignIn={() => navigate('/auth/signin')}
       onGetStarted={() => navigate('/auth/choice')}
-      onFindGigs={() => handleSelectRole('rep')}
-      initialSection={pendingSection}
-      onSectionApplied={() => setPendingSection(null)}
       onNavigateToSection={handleNavigateToSection}
-    />
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasHome />
+    </TaasShell>
+  );
+}
+
+/** `/taas/company` : espace COMPANY (publier un gig). */
+export function TaasCompanyScreen() {
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('company', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  return (
+    <TaasShell
+      page="company"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasCompanyPage onGetStarted={() => navigate('/auth/choice')} />
+    </TaasShell>
+  );
+}
+
+/** `/taas/reps` : espace REPS (trouver des gigs). */
+export function TaasRepsScreen() {
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection, handleSelectRole } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('reps', i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr'));
+  return (
+    <TaasShell
+      page="reps"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasRepsPage onGetStarted={() => navigate('/auth/choice')} onJoin={() => handleSelectRole('rep')} />
+    </TaasShell>
   );
 }
 

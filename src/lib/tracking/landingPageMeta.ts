@@ -45,3 +45,9 @@ export function buildLandingSectionMeta(sectionId: string): PageMeta {
     canonical: `${HARX_SITE_URL}/taas`,
   };
 }
+
+/** Titre d'onglet des trois pages TAAS : accueil, espace COMPANY, espace REPS. */
+export function taasPageTitle(page: 'home' | 'company' | 'reps', lang: 'fr' | 'en' = 'fr'): string {
+  if (page === 'home') return lang === 'en' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS : Transaction-as-a-Service`;
+  return `${BASE_TITLE} — TAAS · ${page === 'company' ? 'Company' : 'REPS'}`;
+}

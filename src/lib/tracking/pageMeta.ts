@@ -36,6 +36,22 @@ const ROUTE_META: Array<{ test: (path: string) => boolean; meta: PageMeta }> = [
     },
   },
   {
+    test: (p) => p === '/taas/company',
+    meta: {
+      title: `${BASE_TITLE} — TAAS · Company`,
+      description: DEFAULT_PAGE_DESCRIPTION,
+      canonical: `${HARX_SITE_URL}/taas/company`,
+    },
+  },
+  {
+    test: (p) => p === '/taas/reps',
+    meta: {
+      title: `${BASE_TITLE} — TAAS · REPS`,
+      description: DEFAULT_PAGE_DESCRIPTION,
+      canonical: `${HARX_SITE_URL}/taas/reps`,
+    },
+  },
+  {
     test: (p) => p.startsWith('/admin/signin'),
     meta: {
       title: `${BASE_TITLE} — Admin · Connexion`,

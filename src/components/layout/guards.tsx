@@ -8,7 +8,7 @@ const isPasswordRecoveryRoute = (pathname: string) =>
 
 /** Hub (`/`) and TAAS landing (`/taas`) — stay here when logged in; user opens Dashboard from the header. */
 const isLandingHomeRoute = (pathname: string) =>
-  pathname === '/' || pathname === '' || pathname === '/taas' || pathname === '/taas/';
+  pathname === '/' || pathname === '' || pathname === '/taas' || pathname.startsWith('/taas/');
 
 export function AuthSpinner() {
   return (

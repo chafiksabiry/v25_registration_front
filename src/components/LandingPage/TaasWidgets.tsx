@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowRight, Calculator, Coins, FileText, Rocket, UserPlus, Wallet, type LucideIcon } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { exampleAvgTransaction } from '../../config/exampleGigs';
+import { EXAMPLE_GIGS, estimateEarnings } from '../../config/exampleGigs';
 
 const REP_STEPS: Array<{ icon: LucideIcon; title: string; text: string }> = [
   { icon: UserPlus, title: 'taasWidgets.repStep1Title', text: 'taasWidgets.repStep1Text' },
@@ -28,26 +28,48 @@ function RepsSteps() {
   );
 }
 
-/** Estimation de gains : transactions confirmées par mois × commission moyenne par transaction des missions types. */
-function EarningsSimulator({ avgTransaction }: { avgTransaction: number }) {
+/** Estimation de gains selon le modèle HARX : fixe par appel argumenté, commission par transaction, bonus de performance. */
+function EarningsSimulator() {
   const { t, i18n } = useTranslation();
-  const [count, setCount] = useState(20);
-  const total = count * avgTransaction;
-  const fmt = (n: number) => new Intl.NumberFormat(i18n.language?.startsWith('en') ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+  const lang = i18n.language?.toLowerCase().startsWith('en') ? 'en' : 'fr';
+  const [gigId, setGigId] = useState(EXAMPLE_GIGS[0].id);
+  const [calls, setCalls] = useState(200);
+  const [tx, setTx] = useState(20);
+  const [target, setTarget] = useState(false);
+  const gig = EXAMPLE_GIGS.find((g) => g.id === gigId) ?? EXAMPLE_GIGS[0];
+  const est = estimateEarnings(gig, calls, tx, target);
+  const fmt = (n: number) => new Intl.NumberFormat(lang === 'en' ? 'en-GB' : 'fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 2, minimumFractionDigits: 0 }).format(n);
   return (
     <div className="mx-auto mt-16 max-w-3xl rounded-3xl border border-slate-200 bg-white p-8 shadow-lg shadow-slate-200/60" data-testid="earnings-simulator">
       <div className="flex items-center gap-3">
         <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-harx-50 text-harx-600"><Calculator className="h-5 w-5" aria-hidden="true" /></span>
         <h3 className="text-xl font-black">{t('taasWidgets.simTitle', 'Estimate your earnings')}</h3>
       </div>
-      <label className="mt-6 block text-sm font-semibold text-slate-700" htmlFor="sim-tx">
-        {t('taasWidgets.simLabel', 'Confirmed transactions per month')} : <strong className="text-harx-600">{count}</strong>
+      <label className="mt-6 block text-sm font-semibold text-slate-700" htmlFor="sim-gig">{t('taasWidgets.simMission', 'Example mission')}</label>
+      <select id="sim-gig" value={gigId} onChange={(e) => setGigId(e.target.value)} className="mt-2 h-11 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold focus:border-harx-500 focus:outline-none focus:ring-2 focus:ring-harx-200" data-testid="sim-gig">
+        {EXAMPLE_GIGS.map((g) => <option key={g.id} value={g.id}>{g[lang].title}</option>)}
+      </select>
+      <div className="mt-5 grid gap-6 sm:grid-cols-2">
+        <div>
+          <label className="block text-sm font-semibold text-slate-700" htmlFor="sim-calls">{t('taasWidgets.simCalls', 'Argued calls per month')} : <strong className="text-harx-600">{calls}</strong></label>
+          <input id="sim-calls" type="range" min={0} max={1000} step={10} value={calls} onChange={(e) => setCalls(Number(e.target.value))} className="mt-2 w-full accent-harx-500" data-testid="sim-calls" />
+        </div>
+        <div>
+          <label className="block text-sm font-semibold text-slate-700" htmlFor="sim-tx">{t('taasWidgets.simLabel', 'Confirmed transactions per month')} : <strong className="text-harx-600">{tx}</strong></label>
+          <input id="sim-tx" type="range" min={0} max={100} value={tx} onChange={(e) => setTx(Number(e.target.value))} className="mt-2 w-full accent-harx-500" data-testid="sim-range" />
+        </div>
+      </div>
+      <label className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
+        <input type="checkbox" checked={target} onChange={(e) => setTarget(e.target.checked)} className="h-4 w-4 accent-harx-500" data-testid="sim-target" />
+        {t('taasWidgets.simTarget', 'Performance target reached')}
       </label>
-      <input id="sim-tx" type="range" min={1} max={100} value={count} onChange={(e) => setCount(Number(e.target.value))} className="mt-2 w-full accent-harx-500" data-testid="sim-range" />
-      <p className="mt-5 text-4xl font-black text-slate-900" data-testid="sim-total">{fmt(total)}</p>
-      <p className="mt-1 text-xs font-medium text-slate-500">
-        {t('taasWidgets.simNote', 'Indicative estimate based on the average commission per transaction of the missions shown above. Not a guaranteed income.')}
-      </p>
+      <dl className="mt-6 grid gap-2 text-sm font-semibold text-slate-600" data-testid="sim-breakdown">
+        <div className="flex justify-between"><dt>{t('taasWidgets.simFixed', 'Fixed amount per argued call')}</dt><dd data-testid="sim-fixed">{fmt(est.fixed)}</dd></div>
+        <div className="flex justify-between"><dt>{t('taasWidgets.simCommission', 'Commission per transaction')}</dt><dd data-testid="sim-commission">{fmt(est.commission)}</dd></div>
+        <div className="flex justify-between"><dt>{t('taasWidgets.simBonus', 'Performance bonus')}</dt><dd data-testid="sim-bonus">{fmt(est.bonus)}</dd></div>
+      </dl>
+      <p className="mt-4 text-4xl font-black text-slate-900" data-testid="sim-total">{fmt(est.total)}</p>
+      <p className="mt-1 text-xs font-medium text-slate-500">{t('taasWidgets.simNote', 'Indicative estimate')}</p>
     </div>
   );
 }
@@ -67,13 +89,12 @@ function JoinBand({ onJoin }: { onJoin: () => void }) {
   );
 }
 
-/** Bloc d'adhésion REPS : étapes, estimation de gains (sur les missions types) et bouton. */
+/** Bloc d'adhésion REPS : étapes, estimation de gains (modèle HARX, missions types) et bouton. */
 export function RepsJoinSection({ onJoin }: { onJoin: () => void }) {
-  const avgTransaction = exampleAvgTransaction();
   return (
     <section className="bg-white px-4 py-20 text-slate-900" data-testid="reps-join-section">
       <RepsSteps />
-      {avgTransaction > 0 ? <EarningsSimulator avgTransaction={avgTransaction} /> : null}
+      <EarningsSimulator />
       <JoinBand onJoin={onJoin} />
     </section>
   );

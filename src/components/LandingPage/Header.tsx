@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageSelector } from '../LanguageSelector';
 import { persistHarxLanguage } from '../../lib/i18n';
+import { TAAS_COMPANY, TAAS_HOME, TAAS_REPS } from '../../lib/taasPaths';
 import { withLangPrefix } from '../../lib/langRoutes';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -40,9 +41,11 @@ interface HeaderProps {
   telephony?: boolean;
   /** Accueil de l'ensemble HARX (hub) : liens vers les offres, pas de menu de sections ni de « Démarrer ». */
   hub?: boolean;
+  /** Pages TAAS (accueil, Company, REPS) : bandeau allégé à trois entrées, sans « Démarrer ». */
+  taas?: 'home' | 'company' | 'reps';
 }
 
-export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false }: HeaderProps) {
+export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony = false, hub = false, taas }: HeaderProps) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
@@ -130,6 +133,18 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
     hardNavigate('/');
   };
 
+  const taasLinks: Array<{ id: 'home' | 'company' | 'reps'; label: string; path: string; Icon: typeof Layers }> = [
+    { id: 'home', label: t('taasNav.home', 'TAAS'), path: TAAS_HOME, Icon: Layers },
+    { id: 'company', label: t('choicePage.companyTag', 'COMPANY'), path: TAAS_COMPANY, Icon: Building2 },
+    { id: 'reps', label: t('choicePage.repTag', 'REPS'), path: TAAS_REPS, Icon: Headphones },
+  ];
+
+  const goTaas = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
+    setIsMenuOpen(false);
+    navigate(path);
+  };
+
   const navLinks: NavLink[] = [
     { id: 'how-it-works', label: t('header.howItWorks', 'How It Works') },
     { id: 'pricing', label: t('header.pricing', 'Pricing') },
@@ -182,7 +197,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
           {t('header.signIn', 'Sign In')}
         </button>
       )}
-      {!hub && (
+      {!hub && !taas && (
         <button type="button" className="nav-cta nav-cta--started group" onClick={onGetStarted}>
           {t('header.getStarted', 'Get Started')}
           <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
@@ -216,7 +231,7 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
           {t('header.signIn', 'Sign In')}
         </button>
       )}
-      {!hub && (
+      {!hub && !taas && (
         <button type="button" className="nav-cta nav-cta--started nav-cta--full group" onClick={onGetStarted}>
           {t('header.getStarted', 'Get Started')}
           <ArrowRight className="nav-cta-arrow h-4 w-4" aria-hidden="true" />
@@ -271,7 +286,25 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
           </a>
 
           <div className="hidden md:flex items-center gap-1">
-            {hub
+            {taas
+              ? (
+                <div className="hub-navseg" data-testid="taas-nav">
+                  {taasLinks.map(({ id, label, path, Icon }) => (
+                    <a
+                      key={id}
+                      href={withLangPrefix(path, siteLang)}
+                      className="hub-navbtn"
+                      aria-current={taas === id ? 'page' : undefined}
+                      data-testid={`taas-nav-${id}`}
+                      onClick={(e) => goTaas(e, path)}
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                      <span>{label}</span>
+                    </a>
+                  ))}
+                </div>
+              )
+              : hub
               ? (
                 <div className="hub-navseg">
                   {offerLinks.map((offer) => (
@@ -336,7 +369,20 @@ export function Header({ onSignIn, onGetStarted, onNavigateToSection, telephony 
           className="md:hidden absolute top-full left-0 right-0 border-t border-white/15 p-6 shadow-xl animate-fade-in"
         >
           <div className="flex flex-col space-y-1">
-            {hub
+            {taas
+              ? taasLinks.map(({ id, label, path, Icon }) => (
+                  <a
+                    key={id}
+                    href={withLangPrefix(path, siteLang)}
+                    className={`flex items-center gap-2 px-3 py-2.5 text-base font-semibold transition-colors hover:bg-white/10 hover:text-white ${taas === id ? 'text-white' : 'text-white/90'}`}
+                    aria-current={taas === id ? 'page' : undefined}
+                    onClick={(e) => goTaas(e, path)}
+                  >
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    <span>{label}</span>
+                  </a>
+                ))
+              : hub
               ? offerLinks.map((offer) => (
                   <a
                     key={offer.id}
