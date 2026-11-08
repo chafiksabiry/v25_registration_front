@@ -2,7 +2,8 @@ import React from 'react';
 import { HowItWorks } from '../LandingPage/HowItWorks';
 import { Pricing } from '../LandingPage/Pricing';
 import { ForClients } from '../LandingPage/ForClients';
-import { TaasBanner } from './TaasBanner';
+import { CompanyHero } from './CompanyHero';
+import { UseCaseMarquee } from './UseCaseMarquee';
 import { TaasFinalCta } from './TaasFinalCta';
 import { Aurora } from './Aurora';
 
@@ -13,7 +14,8 @@ import { Aurora } from './Aurora';
 export function TaasCompanyPage({ onGetStarted: _onGetStarted }: { onGetStarted?: () => void }) {
   return (
     <>
-      <TaasBanner kind="company" />
+      <CompanyHero />
+      <UseCaseMarquee />
       <section id="clients" className="relative scroll-mt-28 overflow-hidden bg-[#070711] text-white">
         <Aurora tone="company" />
         <div className="relative">

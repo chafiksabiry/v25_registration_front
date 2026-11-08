@@ -1,8 +1,7 @@
 import React from 'react';
-import { ArrowRight, Bot, Building2, Clock, Globe, Laptop, PhoneCall, Target, Users2 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Bot, Clock, Globe, Laptop, PhoneCall, Target, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { TAAS_COMPANY } from '../../lib/taasPaths';
+import { SpaceSwitch } from '../Taas/SpaceSwitch';
 
 interface RepsHeroProps {
   /** Rejoindre HARX (inscription REPS). */
@@ -12,7 +11,6 @@ interface RepsHeroProps {
 /** Ouverture de l'espace REPS : photo, promesse et les trois composantes de rémunération HARX en tuiles. */
 export function RepsHero({ onJoin }: RepsHeroProps) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const pay = [
     {
@@ -47,9 +45,7 @@ export function RepsHero({ onJoin }: RepsHeroProps) {
       <div className="pointer-events-none absolute -right-32 top-1/3 h-[26rem] w-[26rem] rounded-full bg-rose-600/20 blur-[120px]" aria-hidden="true" />
       <div className="container relative z-10 mx-auto px-4 pb-20 pt-12">
         <div className="mx-auto max-w-4xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest backdrop-blur">
-            {t('choicePage.repTag', 'REPS')}
-          </span>
+          <SpaceSwitch current="reps" />
           <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight md:text-6xl">
             <span className="bg-gradient-harx bg-clip-text text-transparent">{t('forReps.heroTitle', 'Earn money. Extra income. Or a full income.')}</span>
           </h1>
@@ -89,21 +85,6 @@ export function RepsHero({ onJoin }: RepsHeroProps) {
             {t('taasPages.seeMissions', 'See example missions')}
           </a>
         </div>
-        <p className="mt-6 text-center text-sm font-semibold text-white/60">
-          {t('taasPages.areCompany', 'You are a company?')}{' '}
-          <a
-            href={TAAS_COMPANY}
-            data-testid="taas-cross-link"
-            onClick={(e) => {
-              e.preventDefault();
-              navigate(TAAS_COMPANY);
-            }}
-            className="inline-flex items-center gap-1 font-bold text-harx-300 underline underline-offset-4 hover:text-white"
-          >
-            <Building2 className="h-3.5 w-3.5" aria-hidden="true" />
-            {t('taasPages.goCompany', 'Go to the Company space')}
-          </a>
-        </p>
       </div>
     </section>
   );

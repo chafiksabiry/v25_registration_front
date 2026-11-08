@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart, Shield, Phone, MessageSquare, Video, CheckCircle2, Target } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { spotMove } from '../Taas/spot';
 
 interface ForClientsProps {
   onGetStarted?: () => void;
@@ -73,7 +74,7 @@ export function ForClients(_props: ForClientsProps) {
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {useCases.map((useCase, index) => (
-                <div key={index} className="rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-transform duration-300 hover:-translate-y-1">
+                <div key={index} onMouseMove={spotMove} className="taas-spot rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-transform duration-300 hover:-translate-y-1">
                   <div className="w-12 h-12 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-harx-500/20">
                     <useCase.icon className="h-6 w-6 text-white" />
                   </div>

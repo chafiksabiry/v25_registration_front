@@ -165,6 +165,20 @@
   "taasNav": {
     "home": "TAAS"
   },
+  "taasVisual": {
+    "illustration": "Illustration",
+    "gigTitle": "Your gig",
+    "resultLabel": "Expected result",
+    "resultValue": "Confirmed appointment",
+    "priceLabel": "Price you set",
+    "step1": "Defined",
+    "step2": "Handled",
+    "step3": "Scored by AI",
+    "step4": "Approved by you",
+    "step5": "Paid",
+    "humanAi": "Humans or AI",
+    "paidNote": "You only pay on approval"
+  },
   "header": {
     "howItWorks": "How It Works",
     "pricing": "Pricing",
