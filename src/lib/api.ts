@@ -370,7 +370,11 @@ function mapStripeCompanyPlan(p: Record<string, unknown>) {
 }
 
 export const publicPlansApi = {
-  companyPlans: async () => {
+  /**
+   * Forfaits entreprise. `currency` (déduite du pays du visiteur) est demandée au serveur : il renvoie les prix dans cette
+   * devise quand le prix Stripe la propose, sinon en EUR ; `plan.currency` dit la devise réellement affichée.
+   */
+  companyPlans: async (currency?: string) => {
     // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
     const companyBack = (
       import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
@@ -380,6 +384,7 @@ export const publicPlansApi = {
     try {
       const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {
         timeout: 15000,
+        ...(currency ? { params: { currency } } : {}),
       });
       const plans = Array.isArray(response.data)
         ? response.data
