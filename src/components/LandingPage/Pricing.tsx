@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { publicPlansApi } from '../../lib/api';
+import { useCurrency } from '../../hooks/useCurrency';
 import { Button } from './Button';
 import { PricingPlansGrid } from './PricingPlansGrid';
 import {
@@ -26,10 +27,11 @@ export function Pricing({ onGetStarted, only }: PricingProps) {
   const [repPlans, setRepPlans] = useState<PricingPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
   const { t } = useTranslation();
+  const currency = useCurrency();
 
   useEffect(() => {
     setPlansLoading(true);
-    Promise.all([publicPlansApi.companyPlans(), publicPlansApi.repPlans()])
+    Promise.all([publicPlansApi.companyPlans(currency), publicPlansApi.repPlans()])
       .then(([companyResponse, repResponse]) => {
         const company =
           companyResponse?.data?.plans ??
@@ -55,7 +57,7 @@ export function Pricing({ onGetStarted, only }: PricingProps) {
         setRepPlans([]);
       })
       .finally(() => setPlansLoading(false));
-  }, []);
+  }, [currency]);
 
   const handleRepRegister = useCallback(() => {
     localStorage.setItem('pendingUserType', 'rep');
