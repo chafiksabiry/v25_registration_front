@@ -54,6 +54,8 @@ export default function RegistrationDialog({
   const step = stepFromSearch(readBrowserSearchStep() || searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // Confirmation du mot de passe : saisie locale, jamais envoyée au serveur.
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -281,6 +283,8 @@ export default function RegistrationDialog({
         case 'password':
           if (!validatePassword(formData.password)) {
             newErrors.password = t('register.errPassword', 'Password must be at least 8 characters with letters and numbers');
+          } else if (confirmPassword !== formData.password) {
+            newErrors.confirmPassword = t('register.errPasswordMismatch', 'Passwords do not match');
           } else {
             pushStep('phone');
           }
@@ -595,6 +599,29 @@ export default function RegistrationDialog({
                     </div>
                     <p className="text-xs text-slate-500 pl-2">{t('register.passwordHint', 'Must be at least 8 characters with letters and numbers.')}</p>
                     {errors.password && <p className="text-red-400 text-sm pl-2">{errors.password}</p>}
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="input-premium-glow pr-12"
+                        placeholder={t('register.placeholderConfirmPassword', 'Confirm your password')}
+                        autoComplete="new-password"
+                        aria-invalid={Boolean(errors.confirmPassword) || (confirmPassword.length > 0 && confirmPassword !== formData.password)}
+                        data-testid="confirm-password"
+                      />
+                      {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                        <Check className="absolute right-4 top-3.5 h-5 w-5 text-emerald-400" aria-hidden="true" />
+                      ) : null}
+                    </div>
+                    {confirmPassword.length > 0 && confirmPassword !== formData.password && !errors.confirmPassword ? (
+                      <p className="text-amber-300 text-xs pl-2">{t('register.errPasswordMismatch', 'Passwords do not match')}</p>
+                    ) : null}
+                    {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                      <p className="text-emerald-400 text-xs pl-2">{t('register.passwordMatch', 'Passwords match')}</p>
+                    ) : null}
+                    {errors.confirmPassword && <p className="text-red-400 text-sm pl-2">{errors.confirmPassword}</p>}
                   </div>
                 )}
 
