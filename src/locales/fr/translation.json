@@ -915,7 +915,17 @@
     "invalidTitle": "Ce lien n’est pas valide",
     "help": "Connectez-vous avec votre e-mail pour continuer. Si vous n’avez pas encore de mot de passe, utilisez « Mot de passe oublié ».",
     "signIn": "Se connecter",
-    "forgot": "Mot de passe oublié"
+    "forgot": "Mot de passe oublié",
+    "requestTitle": "Recevez votre lien personnel",
+    "requestIntro": "Saisissez l’adresse e-mail à laquelle vous avez reçu notre message. Nous vous envoyons un lien en un clic vers votre espace HARX.",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "send": "Recevoir mon lien",
+    "sending": "Envoi en cours...",
+    "sentTitle": "Consultez votre boîte mail",
+    "sentText": "Si cette adresse est enregistrée, vous recevrez votre lien personnel dans quelques minutes. Pensez à regarder vos courriers indésirables.",
+    "sendAgain": "Utiliser une autre adresse",
+    "requestError": "Cela n’a pas fonctionné. Vérifiez l’adresse et réessayez."
   },
   "invitations": {
     "title": "Vous avez été invité",
