@@ -205,6 +205,9 @@ export function ThinFooter() {
       {links.map((l) => (
         <Link key={l.to} to={l.to} data-testid={`legal-${l.to.slice(1)}`}>{l.label}</Link>
       ))}
+      <button type="button" className="hub-foot-link" data-testid="legal-manage-cookies" onClick={() => window.dispatchEvent(new Event('harx:open-consent'))}>
+        {t('footer.manageCookies', 'Manage cookies')}
+      </button>
       <span>{t('footer.rights', '© {{year}} HARX Technologies Inc. All rights reserved.', { year: new Date().getFullYear() })}</span>
     </footer>
   );
