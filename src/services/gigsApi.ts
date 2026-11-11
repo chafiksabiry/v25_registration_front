@@ -15,7 +15,7 @@ export interface Gig {
   location?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-recette.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-production.up.railway.app/api';
 
 /** Missions actives (même source que les cartes) : liste complète, sans tirage au sort. */
 async function fetchActiveGigsList(): Promise<Gig[]> {
