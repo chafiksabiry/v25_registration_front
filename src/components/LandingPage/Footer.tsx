@@ -4,6 +4,7 @@ import { Facebook, Twitter, Linkedin, Instagram, Mail, MapPin } from 'lucide-rea
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { newsletter } from '../../lib/api';
+import { taasPathForSection } from '../../lib/taasPaths';
 
 export function Footer() {
   const { t, i18n } = useTranslation();
@@ -39,7 +40,7 @@ export function Footer() {
       if (element) {
         element.scrollIntoView({ behavior: 'smooth' });
       } else {
-        navigate('/' + href);
+        navigate(`${taasPathForSection(href.substring(1))}${href}`);
       }
     } else {
       navigate(href);
@@ -155,6 +156,15 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <button
+                  type="button"
+                  onClick={() => window.dispatchEvent(new Event('harx:open-consent'))}
+                  className="text-gray-400 hover:text-white transition-colors text-left"
+                >
+                  {t('footer.manageCookies', 'Manage cookies')}
+                </button>
+              </li>
             </ul>
           </div>
 

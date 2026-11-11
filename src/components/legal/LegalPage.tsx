@@ -1,14 +1,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft } from 'lucide-react';
-import { Logo } from '../LandingPage/Logo';
-import { LanguageSelector } from '../LanguageSelector';
+import { Header } from '../LandingPage/Header';
 import { Footer } from '../LandingPage/Footer';
 import { getLegalDocument, LEGAL_DOC_IDS, type LegalDocId } from '../../content/legal';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
-
-const HARX_NAV_GRADIENT = 'linear-gradient(90deg, #E51A4C 0%, #E01070 55%, #E6188D 100%)';
 
 function isLegalDocId(value: string | undefined): value is LegalDocId {
   return !!value && (LEGAL_DOC_IDS as string[]).includes(value);
@@ -29,28 +25,9 @@ export function LegalPage() {
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col">
-      <header
-        className="sticky top-0 z-40 shadow-lg"
-        style={{ background: HARX_NAV_GRADIENT }}
-      >
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3" aria-label="HARX home">
-            <Logo className="h-10 w-auto" />
-          </Link>
-          <div className="flex items-center gap-3">
-            <LanguageSelector />
-            <Link
-              to="/"
-              className="inline-flex items-center gap-2 text-sm font-medium text-white/95 hover:text-white"
-            >
-              <ArrowLeft className="h-4 w-4" aria-hidden />
-              {t('legal.backHome', 'Back to home')}
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Header hub onSignIn={() => {}} onGetStarted={() => {}} />
 
-      <main className="flex-1">
+      <main className="flex-1 pt-20">
         <article className="max-w-4xl mx-auto px-4 py-10 md:py-14">
           <p className="text-sm text-gray-400 mb-3">
             {t('legal.lastUpdated', 'Last updated')}: {doc.lastUpdated}

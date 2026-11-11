@@ -1,9 +1,11 @@
+import { isCallcentreProduct } from '../lib/product';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { auth } from '../lib/api';
 import { clearAuthSession } from '../lib/authRedirect';
 import { useTranslation } from 'react-i18next';
+import { AuthBackdrop } from './layout/AuthBackdrop';
 import { Header } from './LandingPage/Header';
 
 type RecoveryStep = 'email' | 'verification' | 'new-password' | 'success';
@@ -142,8 +144,9 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           return;
         }
         try {
-          const verificationCode = await auth.generateVerificationCode(formData.email);
-          await auth.sendVerificationEmail(formData.email, verificationCode.verificationCode);
+          // Backend sends the reset code by email itself now — it no longer
+          // echoes it back, so there's nothing left to forward here.
+          await auth.generateVerificationCode(formData.email);
           pushStep('verification', { email: formData.email });
         } catch (err: unknown) {
           setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
@@ -210,13 +213,11 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
         onSignIn={onBack}
         onGetStarted={onGetStarted || onBack}
         onNavigateToSection={onNavigateToSection}
+        telephony={isCallcentreProduct()}
       />
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[8%] left-[15%] w-[42%] h-[42%] bg-rose-500/30 blur-[120px] rounded-full animate-float" />
-        <div className="absolute bottom-[8%] right-[8%] w-[48%] h-[48%] bg-fuchsia-600/25 blur-[140px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
-      </div>
+      <AuthBackdrop />
       <div className="flex min-h-screen items-center justify-center px-4 pb-10 pt-24 relative z-10">
-        <div className="w-full max-w-md glass-card-premium rounded-3xl p-8 text-center relative z-10">
+        <div className="w-full max-w-md auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-8 text-center relative z-10">
           {step !== 'success' && (
             <button
               type="button"

@@ -1,14 +1,18 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
-import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, KeyRound, AlertCircle, RefreshCw, Linkedin, Phone, Eye, EyeOff, Building2, Users } from 'lucide-react';
 import { auth } from '../lib/api';
 import { getPostLoginRedirectUrl, isSessionActive, getSessionUserId, getSessionToken, syncSessionUserIdCookie, clearAuthSession } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
 import { useAuth } from '../contexts/AuthContext';
 import { handleLinkedInSignIn } from '../utils/Linkedin';
 import { jwtDecode } from 'jwt-decode';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import { useTranslation } from 'react-i18next';
+import { isCallcentreProduct } from '../lib/product';
 import { mapSignInError } from '../lib/authErrors';
+import { audienceMismatchKey, readAudience, saveAudience, type Audience } from '../lib/signInAudience';
 import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
 
 type SignInStep = 'credentials' | '2fa' | 'success';
@@ -35,6 +39,8 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
       phone: '',
     };
   });
+  const [audience, setAudience] = useState<Audience>(() => readAudience());
+  const telephony = isCallcentreProduct();
   const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
@@ -158,6 +164,24 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
           return;
         }
 
+        // Téléphonie : une entreprise n'est pas une équipe. Le choix de l'écran doit correspondre au compte, sinon on s'arrête ici avec un message clair.
+        if (telephony) {
+          try {
+            const info = await auth.checkUserType(result.data.userId);
+            const mismatch = audienceMismatchKey(audience, info?.userType);
+            if (mismatch) {
+              setError(
+                mismatch === 'accountIsCompany'
+                  ? t('signIn.accountIsCompany', 'Ce compte est un compte entreprise. Choisissez « Entreprise » pour vous connecter.')
+                  : t('signIn.accountIsTeam', 'Ce compte appartient à une équipe (secrétaire ou responsable). Choisissez « Équipe » pour vous connecter.')
+              );
+              return;
+            }
+          } catch {
+            /* type de compte illisible : on laisse la connexion suivre son cours */
+          }
+        }
+
         // login() already emails the 2FA code server-side (AUTH-07: the code
         // is never returned in the response, so it can't be re-sent from
         // here) — just move on to the 2FA step.
@@ -232,37 +256,17 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         onSignIn={() => {}}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
+        telephony={isCallcentreProduct()}
       />
       
-      {/* Immersive background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float" />
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }} />
-      </div>
+      <AuthBackdrop />
 
       <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden relative z-10">
           {/* Left Side - Brand Section */}
-          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
-            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
-            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
-              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
-                  loading="eager"
-                />
-                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
-              </div>
-              <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                {t('signIn.brandTitle1', 'Start Your')} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
-              </h1>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
-              </p>
-            </div>
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-10 xl:p-12 bg-gradient-to-b from-[#0a0a18] via-[#0d0d1f] to-[#0a0a18] text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <AuthSidePanel kind={isCallcentreProduct() ? 'telephony' : 'neutral'} />
           </div>
 
           {/* Right Side - Form Section */}
@@ -280,6 +284,30 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                     <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
                     <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
                   </div>
+
+                  {step === 'credentials' && telephony && (
+                    <div className="mb-6" data-testid="signin-audience">
+                      <div role="tablist" aria-label={t('signIn.audienceLabel', 'Type de compte')} className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-800/70 p-1 border border-white/10">
+                        {([
+                          { id: 'company' as const, icon: Building2, label: t('signIn.audienceCompany', 'Entreprise'), hint: t('signIn.audienceCompanyHint', 'Je gère une entreprise') },
+                          { id: 'team' as const, icon: Users, label: t('signIn.audienceTeam', 'Équipe'), hint: t('signIn.audienceTeamHint', 'Secrétaire, responsable') },
+                        ]).map(({ id, icon: Icon, label, hint }) => (
+                          <button
+                            key={id}
+                            type="button"
+                            role="tab"
+                            aria-selected={audience === id}
+                            data-testid={`signin-audience-${id}`}
+                            onClick={() => { setAudience(id); saveAudience(id); setError(null); }}
+                            className={`flex flex-col items-center gap-0.5 rounded-xl px-3 py-2.5 text-center transition ${audience === id ? 'bg-white text-slate-900 shadow-lg' : 'text-slate-300 hover:bg-white/10'}`}
+                          >
+                            <span className="flex items-center gap-2 text-sm font-black"><Icon className="h-4 w-4" aria-hidden /> {label}</span>
+                            <span className={`text-[11px] font-medium ${audience === id ? 'text-slate-600' : 'text-slate-400'}`}>{hint}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {step === 'credentials' && (
                     <div className="space-y-4">

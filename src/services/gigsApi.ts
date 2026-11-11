@@ -15,9 +15,23 @@ export interface Gig {
   location?: string;
 }
 
-const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-production.up.railway.app/api';
+const API_URL = import.meta.env.VITE_API_URL_GIGS || 'https://v25gigsmanualcreationbackend-recette.up.railway.app/api';
+
+/** Missions actives (même source que les cartes) : liste complète, sans tirage au sort. */
+async function fetchActiveGigsList(): Promise<Gig[]> {
+  let response = await fetch(`${API_URL}/gigs/active`);
+  let json = await response.json();
+  let list: Gig[] = json.data || [];
+  if (list.length < 3) {
+    response = await fetch(`${API_URL}/gigs`);
+    json = await response.json();
+    list = json.data || [];
+  }
+  return list;
+}
 
 export const gigsApi = {
+  fetchActiveGigs: fetchActiveGigsList,
   fetchFeaturedGigs: async (): Promise<Gig[]> => {
     try {
       let response = await fetch(`${API_URL}/gigs/active`);

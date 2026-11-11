@@ -1,3 +1,4 @@
+import type { SiteLang } from '../langRoutes';
 import { DEFAULT_PAGE_DESCRIPTION, HARX_SITE_URL } from './constants';
 import type { PageMeta } from './pageMeta';
 
@@ -7,8 +8,9 @@ export const LANDING_SECTION_IDS = ['top', 'how-it-works', 'pricing', 'clients',
 
 export type LandingSectionId = (typeof LANDING_SECTION_IDS)[number];
 
+// Cette page est l'offre TAAS (`/taas`) ; l'accueil de l'ensemble HARX est le hub (`/`).
 const LANDING_SECTION_TITLES: Record<LandingSectionId, string> = {
-  top: 'Accueil',
+  top: 'TAAS',
   'how-it-works': 'Comment ça marche',
   pricing: 'Tarification',
   clients: 'Pour les entreprises',
@@ -19,9 +21,21 @@ export function landingSectionTitle(sectionId: string): string {
   return LANDING_SECTION_TITLES[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES.top;
 }
 
-export function landingPageTabTitle(sectionId: string): string {
+const LANDING_SECTION_TITLES_EN: Record<LandingSectionId, string> = {
+  top: 'TAAS',
+  'how-it-works': 'How it works',
+  pricing: 'Pricing',
+  clients: 'For companies',
+  reps: 'For reps',
+};
+
+export function landingPageTabTitle(sectionId: string, lang: SiteLang = 'fr'): string {
+  if (lang !== 'fr') {
+    const label = LANDING_SECTION_TITLES_EN[sectionId as LandingSectionId] ?? LANDING_SECTION_TITLES_EN.top;
+    return sectionId === 'top' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS · ${label}`;
+  }
   const label = landingSectionTitle(sectionId);
-  return sectionId === 'top' ? `${BASE_TITLE} — ${label}` : `${BASE_TITLE} — Accueil · ${label}`;
+  return sectionId === 'top' ? `${BASE_TITLE} — TAAS : Transaction-as-a-Service` : `${BASE_TITLE} — TAAS · ${label}`;
 }
 
 export function buildLandingSectionMeta(sectionId: string): PageMeta {
@@ -29,6 +43,12 @@ export function buildLandingSectionMeta(sectionId: string): PageMeta {
   return {
     title: landingPageTabTitle(sectionId),
     description: DEFAULT_PAGE_DESCRIPTION,
-    canonical: `${HARX_SITE_URL}/`,
+    canonical: `${HARX_SITE_URL}/taas`,
   };
+}
+
+/** Titre d'onglet des trois pages TAAS : accueil, espace COMPANY, espace REPS. */
+export function taasPageTitle(page: 'home' | 'company' | 'reps', lang: SiteLang = 'fr'): string {
+  if (page === 'home') return lang !== 'fr' ? `${BASE_TITLE} — TAAS: Transaction-as-a-Service` : `${BASE_TITLE} — TAAS : Transaction-as-a-Service`;
+  return `${BASE_TITLE} — TAAS · ${page === 'company' ? 'Company' : 'REPS'}`;
 }

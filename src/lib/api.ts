@@ -123,6 +123,11 @@ export const auth = {
     const response = await api.post('/auth/check-user-type', { userId });
     return response.data;
   },
+  /** Rattache le compte connecté à un produit HARX (« callcentre »). */
+  setProduct: async (product: 'callcentre', token: string) => {
+    const response = await api.post('/auth/product', { product }, { headers: { Authorization: `Bearer ${token}` } });
+    return response.data;
+  },
   changeUserType: async (
     userId: string,
     newType: 'company' | 'rep' | 'call-center'
@@ -371,16 +376,21 @@ function mapStripeCompanyPlan(p: Record<string, unknown>) {
 }
 
 export const publicPlansApi = {
-  companyPlans: async () => {
+  /**
+   * Forfaits entreprise. `currency` (déduite du pays du visiteur) est demandée au serveur : il renvoie les prix dans cette
+   * devise quand le prix Stripe la propose, sinon en EUR ; `plan.currency` dit la devise réellement affichée.
+   */
+  companyPlans: async (currency?: string) => {
     // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
     const companyBack = (
       import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
       import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
-      'https://v25comporchestratorback-production.up.railway.app'
+      'https://v25comporchestratorback-recette.up.railway.app'
     ).replace(/\/$/, '');
     try {
       const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {
         timeout: 15000,
+        ...(currency ? { params: { currency } } : {}),
       });
       const plans = Array.isArray(response.data)
         ? response.data

@@ -1,9 +1,16 @@
+import { isRoleComingSoon } from '../../config/offers';
+import { taasPathForSection } from '../../lib/taasPaths';
 import React, { useLayoutEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useOutletContext } from 'react-router-dom';
 import type { SignupUserType } from '../ChoicePage';
+import { captureProductFromUrl, clearProduct } from '../../lib/product';
+import { stripLangPrefix } from '../../lib/langRoutes';
+
+/** Parcours TAAS : l'accueil, les pages COMPANY / REPS, le choix de profil et les inscriptions REPS et entreprise. */
+const TAAS_PATH = /^\/(taas(\/|$)|auth\/choice$|auth\/register-(rep|company)$)/;
 
 /**
- * Shared shell for the auth screens (landing + choice + signin + register +
+ * Shared shell for the auth screens (hub + TAAS landing + choice + signin + register +
  * recovery). Mirrors the rep orchestrator's `OnboardingShell`: a layout route
  * that renders child screens through <Outlet /> and shares navigation helpers
  * + cross-screen state (pending landing section) via the outlet context.
@@ -23,6 +30,11 @@ export function useAuthContext() {
 export default function AuthShell() {
   const navigate = useNavigate();
   const location = useLocation();
+  // During render so it lands before any child effect redirects a signed-in visitor.
+  const search = location.search || window.location.search;
+  captureProductFromUrl(search);
+  // Dans un parcours TAAS sans lien produit explicite, un produit mémorisé plus tôt (Téléphonie) ne doit pas déteindre sur l'écran.
+  if (!new URLSearchParams(search).has('product') && TAAS_PATH.test(stripLangPrefix(location.pathname).replace(/\/+$/, '') || '/')) clearProduct();
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   useLayoutEffect(() => {
@@ -33,11 +45,14 @@ export default function AuthShell() {
   }, [location.pathname, location.search]);
 
   const handleNavigateToSection = (sectionId: string) => {
+    // Chaque section appartient à la page COMPANY, à la page REPS ou à l'accueil TAAS.
     setPendingSection(sectionId);
-    navigate('/');
+    navigate(taasPathForSection(sectionId));
   };
 
   const handleSelectRole = (role: SignupUserType) => {
+    // Parcours pas encore ouvert (« Publier un gig ») : aucune inscription ne démarre.
+    if (isRoleComingSoon(role)) return;
     localStorage.setItem('pendingUserType', role);
     const pathByRole: Record<SignupUserType, string> = {
       company: '/auth/register-company',
