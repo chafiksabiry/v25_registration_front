@@ -20,7 +20,7 @@ import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
-import { trackSignUpConversion } from '../lib/tracking/conversions';
+import { trackSignUpConversion, metaSignUpContext } from '../lib/tracking/conversions';
 
 type Step = RegisterFormStep | 'success';
 
@@ -197,7 +197,9 @@ export default function RegistrationDialog({
       } catch {
         /* ignore */
       }
-      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown');
+      let metaEventId: string | undefined;
+      try { metaEventId = sessionStorage.getItem('harx_meta_event_id') ?? undefined; sessionStorage.removeItem('harx_meta_event_id'); } catch { /* ignore */ }
+      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown', metaEventId);
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
@@ -330,13 +332,16 @@ export default function RegistrationDialog({
             setIsLoading(true);
 
             let RegisterResult: any;
+            const metaCtx = metaSignUpContext();
             try {
               RegisterResult = await auth.register({
                 fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password,
-                phone: formData.phone
+                phone: formData.phone,
+                ...metaCtx
               });
+              try { sessionStorage.setItem('harx_meta_event_id', metaCtx.metaEventId); } catch { /* ignore */ }
 
               if (RegisterResult?.data?._id) {
                 setRegisteredUserId(RegisterResult.data._id as string);
