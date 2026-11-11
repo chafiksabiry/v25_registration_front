@@ -337,6 +337,12 @@ export async function getPostLoginRedirectUrl(
         }
         if (checkUserType.mustChangePassword) {
           localStorage.setItem('mustChangePassword', '1');
+          // Compte Téléphonie (ex. secrétaire invitée) : le mot de passe temporaire se change dans le portail Téléphonie,
+          // pas dans l'espace des agents REPS, qui reste réservé aux agents du marketplace.
+          if (checkUserType.product === 'callcentre' || isCallcentreProduct()) {
+            if (checkUserType.product !== 'callcentre') auth.setProduct('callcentre', token).catch(() => undefined);
+            return CALLCENTRE_PATH;
+          }
           return toRepAbsoluteUrl('/account-settings?changePassword=1');
         }
         return toRepAbsoluteUrl('/dashboard');
