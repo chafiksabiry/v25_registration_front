@@ -25,7 +25,7 @@ export type LegalPack = {
   parts: PackPart[];
 };
 
-export type SignupAudience = 'rep' | 'company';
+export type SignupAudience = 'rep' | 'company' | 'callcenter';
 
 const PACKS: Record<'fr' | 'en', LegalPack> = {
   fr: packFr as LegalPack,
@@ -37,6 +37,7 @@ const PART_TITLES = {
     general: "Conditions Générales d'Utilisation",
     rep: 'Conditions REP',
     company: 'Conditions Company',
+    callcenter: "Conditions Centre d'appels",
     privacy: 'Politique de confidentialité',
     dpa: 'Accord de traitement des données',
   },
@@ -44,30 +45,39 @@ const PART_TITLES = {
     general: 'Terms of Use',
     rep: 'REP Terms',
     company: 'Company Terms',
+    callcenter: 'Contact Center Terms',
     privacy: 'Privacy Policy',
     dpa: 'Data Processing Agreement',
   },
 } as const;
 
-export function signupLegalPack(
-  language: string,
-  docId: 'terms' | 'privacy',
-  audience: SignupAudience
-): LegalPack {
-  const lang = language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+export type SignupLanguage = 'fr' | 'en';
+
+export function signupLanguage(language: string): SignupLanguage {
+  return language.toLowerCase().startsWith('fr') ? 'fr' : 'en';
+}
+
+/**
+ * Single document shown at sign-up: the general terms, the terms of the audience's own role
+ * (REP, Company or Contact Center), the privacy policy and, for the two business roles, the
+ * data processing agreement.
+ */
+export function signupLegalPack(language: string, audience: SignupAudience): LegalPack {
+  const lang = signupLanguage(language);
   const pack = PACKS[lang];
   const names = PART_TITLES[lang];
-  const titles: string[] =
-    docId === 'terms'
-      ? [names.general, audience === 'rep' ? names.rep : names.company]
-      : [names.privacy, ...(audience === 'company' ? [names.dpa] : [])];
+  const roleTitle = { rep: names.rep, company: names.company, callcenter: names.callcenter }[audience];
+  const titles: string[] = [
+    names.general,
+    roleTitle,
+    names.privacy,
+    ...(audience === 'rep' ? [] : [names.dpa]),
+  ];
+  const parts = titles
+    .map((title) => pack.parts.find((part) => part.title === title))
+    .filter((part): part is PackPart => Boolean(part));
   return {
-    cover: {
-      ...pack.cover,
-      documents: pack.cover.documents.filter((line) =>
-        titles.some((title) => line.replace(/^\d+\.\s*/, '') === title)
-      ),
-    },
-    parts: pack.parts.filter((part) => titles.includes(part.title)),
+    cover: { ...pack.cover, documents: parts.map((part, index) => `${index + 1}. ${part.title}`) },
+    parts,
   };
 }

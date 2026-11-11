@@ -2,8 +2,10 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { auth } from "./api";
+import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
+import { CALLCENTRE_PATH, clearProduct, isCallcentreProduct } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -38,6 +40,7 @@ export function clearAuthSession(): void {
   localStorage.removeItem('callCenterStaff');
   localStorage.removeItem('employerCompanyId');
   localStorage.removeItem('mustChangePassword');
+  clearProduct();
 }
 
 /** Persist userId cookie from JWT / localStorage so company MFE auth gates pass. */
@@ -266,6 +269,24 @@ export async function getPostLoginRedirectUrl(
   userId: string,
   token: string
 ): Promise<string | null> {
+  const dest = await computePostLoginRedirectUrl(userId, token);
+  if (!dest) return dest;
+  // A person invited by a call centre accepts or declines right after signing in.
+  try {
+    if (sessionStorage.getItem(INVITATIONS_SEEN_KEY) !== "1") {
+      const pending = await fetchPendingInvitations(token);
+      if (pending.length > 0) return `/auth/invitations?next=${encodeURIComponent(dest)}`;
+    }
+  } catch {
+    /* storage unavailable: go straight to the destination */
+  }
+  return dest;
+}
+
+async function computePostLoginRedirectUrl(
+  userId: string,
+  token: string
+): Promise<string | null> {
   try {
     const checkUserType = await auth.checkUserType(userId);
     if (checkUserType.userType == null) return null;
@@ -279,8 +300,18 @@ export async function getPostLoginRedirectUrl(
       checkUserType.userType === "company" ||
       checkUserType.userType === "call-center"
     ) {
-      const dest =
-        checkUserType.userType === "call-center" ? "/call-center" : "/company";
+      // Accounts that came from the standalone Call Centre product land there.
+      // Le produit est porté par le compte (il survit à la déconnexion), avec repli sur le lien d'arrivée.
+      const callcentre = checkUserType.product === "callcentre" || isCallcentreProduct();
+      if (isCallcentreProduct() && checkUserType.product !== "callcentre") {
+        // Compte créé avant que le produit soit porté par le compte : on le rattache pour les prochaines connexions.
+        auth.setProduct("callcentre", token).catch(() => undefined);
+      }
+      const dest = callcentre
+        ? CALLCENTRE_PATH
+        : checkUserType.userType === "call-center"
+          ? "/call-center"
+          : "/company";
       try {
         localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
@@ -319,7 +350,7 @@ export async function getPostLoginRedirectUrl(
         return "/company/#/dashboard/account-settings?changePassword=1";
       }
       localStorage.removeItem("mustChangePassword");
-      return "/company/#/dashboard/main";
+      return checkUserType.product === "callcentre" ? CALLCENTRE_PATH : "/company/#/dashboard/main";
     }
 
     // Always prefer live profile so login resumes the real onboarding step
@@ -337,9 +368,15 @@ export async function getPostLoginRedirectUrl(
         }
         if (checkUserType.mustChangePassword) {
           localStorage.setItem('mustChangePassword', '1');
+          // Compte Téléphonie (ex. secrétaire invitée) : le mot de passe temporaire se change dans le portail Téléphonie,
+          // pas dans l'espace des agents REPS, qui reste réservé aux agents du marketplace.
+          if (checkUserType.product === 'callcentre' || isCallcentreProduct()) {
+            if (checkUserType.product !== 'callcentre') auth.setProduct('callcentre', token).catch(() => undefined);
+            return CALLCENTRE_PATH;
+          }
           return toRepAbsoluteUrl('/account-settings?changePassword=1');
         }
-        return toRepAbsoluteUrl('/dashboard');
+        return checkUserType.product === 'callcentre' ? CALLCENTRE_PATH : toRepAbsoluteUrl('/dashboard');
       }
 
       const { data: profileData } = await axios.get(

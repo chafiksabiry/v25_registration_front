@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, Navigate, Outlet } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, type RouteObject } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LinkedInCallback from './components/LinkedInCallback';
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
@@ -10,7 +10,10 @@ import HistorySync from './components/layout/HistorySync';
 import VisitorTracker from './lib/VisitorTracker';
 import AuthShell from './components/layout/AuthShell';
 import {
-  LandingScreen,
+  HubScreen,
+  TaasScreen,
+  TaasCompanyScreen,
+  TaasRepsScreen,
   ChoiceScreen,
   SignInScreen,
   RegisterScreen,
@@ -34,6 +37,7 @@ import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
 import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
+import InvitationsPage from './components/InvitationsPage';
 import { LegalPage } from './components/legal/LegalPage';
 
 function RootLayout() {
@@ -58,8 +62,7 @@ function AuthProviders({ children }: { children: React.ReactNode }) {
   return <AuthProvider>{children}</AuthProvider>;
 }
 
-export const appRouter = createBrowserRouter(
-  [
+const routes: RouteObject[] = [
     {
       element: (
         <AuthProviders>
@@ -68,6 +71,14 @@ export const appRouter = createBrowserRouter(
       ),
       children: [
         { path: 'auth/reactivate', element: <ReactivateAccount /> },
+        {
+          path: 'auth/invitations',
+          element: (
+            <PrivateRoute>
+              <InvitationsPage onSignIn={() => { window.location.assign('/auth/signin'); }} />
+            </PrivateRoute>
+          ),
+        },
         { path: 'linkedin/callback', element: <LinkedInCallback /> },
         { path: 'linkedin/signin/callback', element: <LinkedInSignInCallback /> },
         { path: 'app2', element: <Navigate to="/" replace /> },
@@ -126,7 +137,10 @@ export const appRouter = createBrowserRouter(
         {
           element: <GuestAuthLayout />,
           children: [
-            { index: true, element: <LandingScreen /> },
+            { index: true, element: <HubScreen /> },
+            { path: 'taas', element: <TaasScreen /> },
+            { path: 'taas/company', element: <TaasCompanyScreen /> },
+            { path: 'taas/reps', element: <TaasRepsScreen /> },
             { path: 'auth/choice', element: <ChoiceScreen /> },
             { path: 'auth/signin', element: <SignInScreen /> },
             { path: 'auth/register', element: <RegisterScreen /> },
@@ -138,6 +152,15 @@ export const appRouter = createBrowserRouter(
         },
       ],
     },
-  ],
-  { basename: getRouterBasename() }
-);
+];
+
+let cachedRouter: { basename: string; router: ReturnType<typeof createBrowserRouter> } | null = null;
+
+/** Router lié au préfixe de langue de l'URL courante (recréé si le préfixe change). */
+export function getAppRouter() {
+  const basename = getRouterBasename();
+  if (!cachedRouter || cachedRouter.basename !== basename) {
+    cachedRouter = { basename, router: createBrowserRouter(routes, { basename }) };
+  }
+  return cachedRouter.router;
+}

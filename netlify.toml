@@ -13,6 +13,7 @@
 
 # Production Netlify context → production Railway + harx DB
 [context.production.environment]
+  VITE_COMPORCHESTRATOR_BACK_URL = "https://v25comporchestratorback-production.up.railway.app"
   VITE_API_URL = "https://v25registrationbackend-production.up.railway.app/api"
   VITE_FRONT_URL = "https://harx26register.netlify.app/"
 

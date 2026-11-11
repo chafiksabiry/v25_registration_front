@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { publicPlansApi } from '../../lib/api';
+import { useCurrency } from '../../hooks/useCurrency';
 import { Button } from './Button';
 import { PricingPlansGrid } from './PricingPlansGrid';
 import {
@@ -12,21 +13,25 @@ import {
 
 interface PricingProps {
   onGetStarted: () => void;
+  /** Une seule offre de forfaits (page Company ou page REPS) : plus de bascule entre les deux publics. */
+  only?: 'company' | 'rep';
 }
 
 type PricingAudience = 'company' | 'rep';
 
-export function Pricing({ onGetStarted }: PricingProps) {
+export function Pricing({ onGetStarted, only }: PricingProps) {
   const navigate = useNavigate();
-  const [audience, setAudience] = useState<PricingAudience>('company');
+  const [audienceState, setAudience] = useState<PricingAudience>(only ?? 'company');
+  const audience: PricingAudience = only ?? audienceState;
   const [companyPlans, setCompanyPlans] = useState<PricingPlan[]>([]);
   const [repPlans, setRepPlans] = useState<PricingPlan[]>([]);
   const [plansLoading, setPlansLoading] = useState(true);
   const { t } = useTranslation();
+  const currency = useCurrency();
 
   useEffect(() => {
     setPlansLoading(true);
-    Promise.all([publicPlansApi.companyPlans(), publicPlansApi.repPlans()])
+    Promise.all([publicPlansApi.companyPlans(currency), publicPlansApi.repPlans()])
       .then(([companyResponse, repResponse]) => {
         const company =
           companyResponse?.data?.plans ??
@@ -52,11 +57,11 @@ export function Pricing({ onGetStarted }: PricingProps) {
         setRepPlans([]);
       })
       .finally(() => setPlansLoading(false));
-  }, []);
+  }, [currency]);
 
   const handleRepRegister = useCallback(() => {
     localStorage.setItem('pendingUserType', 'rep');
-    navigate('/auth/register-rep', { state: { returnTo: '/', scrollTo: 'pricing' } });
+    navigate('/auth/register-rep', { state: { returnTo: '/taas/reps', scrollTo: 'pricing' } });
   }, [navigate]);
 
   const bookDemo = () => {
@@ -64,182 +69,85 @@ export function Pricing({ onGetStarted }: PricingProps) {
   };
 
   return (
-    <div className="pt-4 md:pt-6">
-      <div className="relative overflow-hidden bg-white py-6 md:py-8">
-        <div className="pointer-events-none absolute -left-24 top-20 h-72 w-72 rounded-full bg-harx-300/20 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 bottom-20 h-72 w-72 rounded-full bg-harx-alt-300/20 blur-3xl" />
+    <div className="mx-auto max-w-[90rem]" data-testid="pricing-card">
+      <div className="relative">
+        <div className="mx-auto mb-6 max-w-3xl text-center">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white">
+            <Sparkles className="h-4 w-4 text-harx-300" aria-hidden="true" />
+            {t('pricing.limitedTime', 'Limited Time Offer')}
+          </span>
+          <h2 className="mt-5 text-4xl font-black tracking-tight text-white md:text-5xl">{t('pricing.title', 'Subscription Plans')}</h2>
+          {audience === 'company' ? (
+            <>
+              <p className="mt-3 text-lg font-medium text-white/80">{t('pricing.discount', 'Get 50% off company plans when you subscribe today!')}</p>
+              <p className="mt-1 text-xs font-semibold text-white/50">{t('pricing.validity', '*Offer valid for the first 3 months')}</p>
+            </>
+          ) : (
+            <p className="mt-3 text-lg font-medium text-white/80">{t('pricing.repHintDesc', 'Find gigs, work remotely, and grow your earnings.')}</p>
+          )}
 
-        <div className="container relative mx-auto px-4">
-          <div className="mx-auto mb-4 max-w-3xl text-center">
-            <div className="rounded-xl bg-gradient-to-r from-harx-600 to-harx-alt-500 p-4 shadow-lg md:p-5">
-              <div className="mb-1 flex items-center justify-center gap-2 text-white">
-                <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
-                <h2 className="text-base font-bold md:text-lg">{t('pricing.limitedTime', 'Limited Time Offer')}</h2>
-                <Sparkles className="h-4 w-4 md:h-5 md:w-5" />
-              </div>
-              <p className="text-sm text-white md:text-base">
-                {t('pricing.discount', 'Get 50% off company plans when you subscribe today!')}
-              </p>
-              <p className="mt-1 text-xs text-harx-100">{t('pricing.validity', '*Offer valid for the first 3 months')}</p>
-            </div>
-          </div>
-
-          <div className="mx-auto mb-4 max-w-3xl text-center">
-            <h1 className="mb-2 text-2xl font-black tracking-tight text-slate-900 md:text-4xl">
-              {t('pricing.title', 'Subscription Plans')}
-            </h1>
-            <p className="text-sm text-slate-600 md:text-base">
-              {t('pricing.subtitle', 'Choose the profile that matches you.')}
-            </p>
-
-            <div className="mt-4 flex justify-center">
-              <div className="pricing-audience-toggle" role="tablist" aria-label="Choose your profile">
-                <div
-                  className={`pricing-audience-toggle-slider ${
-                    audience === 'rep' ? 'pricing-audience-toggle-slider--rep' : ''
-                  }`}
-                  aria-hidden="true"
-                />
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={audience === 'company'}
-                  onClick={() => setAudience('company')}
-                  className={`pricing-audience-btn ${
-                    audience === 'company' ? 'pricing-audience-btn--active' : ''
-                  }`}
-                >
-                  <Building2 className="pricing-audience-icon h-3.5 w-3.5 md:h-4 md:w-4" />
-                  {t('pricing.companyBtn', 'Company · Post a Gig')}
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  aria-selected={audience === 'rep'}
-                  onClick={() => setAudience('rep')}
-                  className={`pricing-audience-btn ${
-                    audience === 'rep' ? 'pricing-audience-btn--active' : ''
-                  }`}
-                >
-                  <Headphones className="pricing-audience-icon h-3.5 w-3.5 md:h-4 md:w-4" />
-                  {t('pricing.repBtn', 'Rep · Find Gigs')}
-                </button>
-              </div>
-            </div>
-
-            <p key={audience} className="pricing-audience-hint mt-3 text-xs text-slate-500 md:text-sm">
-              {audience === 'company' ? (
-                <>
-                  <span className="font-semibold text-slate-700">{t('pricing.companyHintTitle', 'Are you a company?')}</span>{' '}
-                  {t('pricing.companyHintDesc', 'Post gigs, recruit REPs, and scale.')}
-                  {' · '}
-                  <button
-                    type="button"
-                    onClick={() => setAudience('rep')}
-                    className="font-semibold text-harx-alt-600 underline-offset-2 hover:underline"
-                  >
-                    {t('pricing.repHintTitle', 'Want to become a Rep?')}
+          {only ? null : (
+            <>
+              <div className="mt-7 flex justify-center">
+                <div className="pricing-audience-toggle" role="tablist" aria-label="Choose your profile">
+                  <div className={`pricing-audience-toggle-slider ${audience === 'rep' ? 'pricing-audience-toggle-slider--rep' : ''}`} aria-hidden="true" />
+                  <button type="button" role="tab" aria-selected={audience === 'company'} onClick={() => setAudience('company')} className={`pricing-audience-btn ${audience === 'company' ? 'pricing-audience-btn--active' : ''}`}>
+                    <Building2 className="pricing-audience-icon h-3.5 w-3.5 md:h-4 md:w-4" />
+                    {t('pricing.companyBtn', 'Company · Post a Gig')}
                   </button>
-                </>
+                  <button type="button" role="tab" aria-selected={audience === 'rep'} onClick={() => setAudience('rep')} className={`pricing-audience-btn ${audience === 'rep' ? 'pricing-audience-btn--active' : ''}`}>
+                    <Headphones className="pricing-audience-icon h-3.5 w-3.5 md:h-4 md:w-4" />
+                    {t('pricing.repBtn', 'Rep · Find Gigs')}
+                  </button>
+                </div>
+              </div>
+              <p key={audience} className="pricing-audience-hint mt-4 text-sm text-white/65">
+                {audience === 'company' ? t('pricing.companyHintDesc', 'Post gigs, recruit REPs, and scale.') : t('pricing.repHintDesc', 'Find gigs, work remotely, and grow your earnings.')}
+              </p>
+            </>
+          )}
+        </div>
+
+        <div className="mx-auto mb-10 w-full px-1 sm:px-0">
+          {plansLoading ? (
+            <p className="py-10 text-center text-sm font-medium text-white/60">{t('pricing.loading', 'Loading plans…')}</p>
+          ) : audience === 'company' ? (
+            <div key="company-pricing" className="pricing-panel">
+              {companyPlans.length === 0 ? (
+                <p className="py-10 text-center text-sm font-medium text-white/60">{t('pricing.empty', 'No plans available yet.')}</p>
               ) : (
-                <>
-                  <span className="font-semibold text-slate-700">{t('pricing.repHintTitle', 'Want to become a Rep?')}</span>{' '}
-                  {t('pricing.repHintDesc', 'Find gigs, work remotely, and grow your earnings.')}
-                  {' · '}
-                  <button
-                    type="button"
-                    onClick={() => setAudience('company')}
-                    className="font-semibold text-harx-600 underline-offset-2 hover:underline"
-                  >
-                    {t('pricing.companyHintTitle', 'Are you a company?')}
-                  </button>
-                </>
+                // AUTH-14 : l'inscription entreprise est « Bientôt disponible » sur toute la plateforme — pas de bouton d'achat.
+                <PricingPlansGrid plans={companyPlans} columns={3} comingSoon promoLabel={t('pricing.promoPill', '−50% for 3 months')} />
               )}
-            </p>
-          </div>
-
-          <div className="mx-auto mb-6 w-full max-w-[90rem] px-1 sm:px-0">
-            {plansLoading ? (
-              <p className="py-10 text-center text-sm font-medium text-slate-500">
-                {t('pricing.loading', 'Loading plans…')}
-              </p>
-            ) : audience === 'company' ? (
-              <div key="company-pricing" className="pricing-panel space-y-2">
-                <div className="pricing-panel-banner rounded-lg border border-harx-100 bg-harx-50/80 px-3 py-1.5 text-center text-xs text-harx-800 md:text-sm">
-                  <Building2 className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
-                  <span dangerouslySetInnerHTML={{ __html: t('pricing.companyBanner', '<strong>For companies</strong> — subscribe to post gigs on HARX.') }} />
-                  {' · '}
-                  <strong>{t('choicePage.comingSoon', 'Coming soon')}</strong>
-                </div>
-                <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  {companyPlans.length === 0 ? (
-                    <p className="py-10 text-center text-sm font-medium text-slate-500">
-                      {t('pricing.empty', 'No plans available yet.')}
-                    </p>
-                  ) : (
-                    // AUTH-14: company registration is "Coming soon" platform-wide
-                    // (same gating as the public ChoicePage cards) — no CTA here.
-                    <PricingPlansGrid
-                      plans={companyPlans}
-                      columns={3}
-                    />
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div key="rep-pricing" className="pricing-panel space-y-2">
-                <div className="pricing-panel-banner rounded-lg border border-harx-alt-100 bg-harx-alt-50/80 px-3 py-1.5 text-center text-xs text-harx-alt-800 md:text-sm">
-                  <Headphones className="mr-1 inline h-3.5 w-3.5 align-text-bottom" />
-                  <span dangerouslySetInnerHTML={{ __html: t('pricing.repBanner', '<strong>For REPs</strong> — subscribe to access gigs and start earning.') }} />
-                </div>
-                <div className="pricing-panel-grid overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-slate-100">
-                  {repPlans.length === 0 ? (
-                    <p className="py-10 text-center text-sm font-medium text-slate-500">
-                      {t('pricing.empty', 'No plans available yet.')}
-                    </p>
-                  ) : (
-                    <PricingPlansGrid
-                      plans={repPlans}
-                      columns={4}
-                      showCta
-                      onCtaClick={handleRepRegister}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="text-center pb-2">
-            <h2 className="mb-5 text-xl font-bold text-slate-900 md:text-2xl">
-              {t('pricing.ready', 'Ready to Transform Your Operations?')}
-            </h2>
-            <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-              <Button
-                variant="gradient"
-                size="xl"
-                onClick={onGetStarted}
-                className="group min-w-[220px] shadow-lg md:min-w-[240px]"
-              >
-                <span className="flex items-center justify-center">
-                  {t('pricing.getStarted', 'Get Started')}
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Button>
-              <Button
-                variant="outline"
-                size="xl"
-                onClick={bookDemo}
-                className="group min-w-[220px] md:min-w-[240px]"
-              >
-                <span className="flex items-center justify-center">
-                  {t('pricing.bookDemo', 'Book a Demo')}
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </span>
-              </Button>
             </div>
+          ) : (
+            <div key="rep-pricing" className="pricing-panel">
+              {repPlans.length === 0 ? (
+                <p className="py-10 text-center text-sm font-medium text-white/60">{t('pricing.empty', 'No plans available yet.')}</p>
+              ) : (
+                <PricingPlansGrid plans={repPlans} columns={4} showCta onCtaClick={handleRepRegister} />
+              )}
+            </div>
+          )}
+        </div>
+
+        {only ? null : (
+        <div className="pb-2 text-center">
+          <h3 className="mb-5 text-xl font-bold text-white md:text-2xl">{t('pricing.ready', 'Ready to Transform Your Operations?')}</h3>
+          <div className="flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
+            <Button variant="gradient" size="xl" onClick={onGetStarted} className="group min-w-[220px] shadow-lg md:min-w-[240px]">
+              <span className="flex items-center justify-center">
+                {t('pricing.getStarted', 'Get Started')}
+                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+              </span>
+            </Button>
+            <button type="button" onClick={bookDemo} className="inline-flex h-14 min-w-[220px] items-center justify-center gap-2 rounded-xl border border-white/30 px-6 text-base font-bold text-white transition-colors hover:bg-white/10 md:min-w-[240px]">
+              {t('pricing.bookDemo', 'Book a Demo')}
+              <ArrowRight className="h-5 w-5" />
+            </button>
           </div>
         </div>
+        )}
       </div>
     </div>
   );

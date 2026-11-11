@@ -1,7 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { LandingPage } from '../components/LandingPage';
+import { TaasShell } from '../components/Taas/TaasShell';
+import { TaasHome } from '../components/Taas/TaasHome';
+import { TaasCompanyPage } from '../components/Taas/TaasCompanyPage';
+import { TaasRepsPage } from '../components/Taas/TaasRepsPage';
+import { taasPageTitle } from '../lib/tracking/landingPageMeta';
+import { normalizeSiteLang } from '../lib/langRoutes';
 import ChoicePage from '../components/ChoicePage';
+import { HubPage } from '../components/Hub/HubPage';
 import SignInDialog from '../components/SignInDialog';
 import RegistrationDialog from '../components/RegistrationDialog';
 import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
@@ -10,7 +16,8 @@ import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
-  usePageTitle(buildAuthPageTitle(title));
+  const { i18n } = useTranslation();
+  usePageTitle(buildAuthPageTitle(title, normalizeSiteLang(i18n.language)));
   return <>{children}</>;
 }
 
@@ -19,16 +26,66 @@ function AuthScreen({ title, children }: { title: string; children: React.ReactN
  * Each screen is a real route so Back/Forward mounts the correct page.
  */
 
-export function LandingScreen() {
+/** `/` : accueil de l'ensemble HARX (une carte par offre, voir src/config/offers.ts). */
+export function HubScreen() {
+  const { handleSelectRole, handleNavigateToSection } = useAuthContext();
+  return <HubPage onSelectRole={handleSelectRole} onNavigateToSection={handleNavigateToSection} />;
+}
+
+/** `/taas` : accueil de l'offre TAAS, avec deux portes (espace COMPANY, espace REPS). */
+export function TaasScreen() {
   const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('home', normalizeSiteLang(i18n.language)));
   return (
-    <LandingPage
+    <TaasShell
+      page="home"
       onSignIn={() => navigate('/auth/signin')}
       onGetStarted={() => navigate('/auth/choice')}
-      initialSection={pendingSection}
-      onSectionApplied={() => setPendingSection(null)}
       onNavigateToSection={handleNavigateToSection}
-    />
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasHome />
+    </TaasShell>
+  );
+}
+
+/** `/taas/company` : espace COMPANY (publier un gig). */
+export function TaasCompanyScreen() {
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('company', normalizeSiteLang(i18n.language)));
+  return (
+    <TaasShell
+      page="company"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasCompanyPage />
+    </TaasShell>
+  );
+}
+
+/** `/taas/reps` : espace REPS (trouver des gigs). */
+export function TaasRepsScreen() {
+  const { navigate, pendingSection, setPendingSection, handleNavigateToSection, handleSelectRole } = useAuthContext();
+  const { i18n } = useTranslation();
+  usePageTitle(taasPageTitle('reps', normalizeSiteLang(i18n.language)));
+  return (
+    <TaasShell
+      page="reps"
+      onSignIn={() => navigate('/auth/signin')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+      pendingSection={pendingSection}
+      onSectionApplied={() => setPendingSection(null)}
+    >
+      <TaasRepsPage onJoin={() => handleSelectRole('rep')} />
+    </TaasShell>
   );
 }
 

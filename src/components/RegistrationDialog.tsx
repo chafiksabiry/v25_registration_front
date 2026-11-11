@@ -1,8 +1,10 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, KeyRound } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import {
   REGISTER_FORM_STEPS,
@@ -14,12 +16,11 @@ import {
 } from '../lib/registerNavigation';
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
-import { useTranslation } from 'react-i18next';
-import {
-  bothSignupDocsRead,
-  LegalScrollModal,
-  type SignupLegalDocId,
-} from './legal/LegalScrollModal';
+import { hardNavigate } from '../lib/appNavigation';
+import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
+import { Trans, useTranslation } from 'react-i18next';
+import { LegalViewerModal } from './legal/LegalViewerModal';
+import { trackSignUpConversion } from '../lib/tracking/conversions';
 
 type Step = RegisterFormStep | 'success';
 
@@ -53,6 +54,8 @@ export default function RegistrationDialog({
   const step = stepFromSearch(readBrowserSearchStep() || searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // Confirmation du mot de passe : saisie locale, jamais envoyée au serveur.
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -69,11 +72,20 @@ export default function RegistrationDialog({
   const [emailNotice, setEmailNotice] = useState<string | null>(null);
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
-  const [readLegalDocs, setReadLegalDocs] = useState<SignupLegalDocId[]>([]);
-  const [openLegalDoc, setOpenLegalDoc] = useState<SignupLegalDocId | null>(null);
+  const [legalPart, setLegalPart] = useState<number | null>(null);
+  // Read-gating (production fix): the legal documents must be scrolled to the end before they can be accepted.
+  const [legalDocsRead, setLegalDocsRead] = useState(false);
   const { t } = useTranslation();
-  const legalDocsRead = bothSignupDocsRead(readLegalDocs);
+  // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
+  // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
+  const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
+  const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
+
+  useEffect(() => {
+    if (legalDocsRead || !formData.termsAccepted) return;
+    setFormData((current) => ({ ...current, termsAccepted: false }));
+  }, [legalDocsRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -97,11 +109,6 @@ export default function RegistrationDialog({
       { replace: true, state: navState }
     );
   }, [navigate, navState, registerPath, searchParams]);
-
-  useEffect(() => {
-    if (legalDocsRead || !formData.termsAccepted) return;
-    setFormData((current) => ({ ...current, termsAccepted: false }));
-  }, [legalDocsRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (!isSessionActive()) {
@@ -190,9 +197,15 @@ export default function RegistrationDialog({
       } catch {
         /* ignore */
       }
+      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown');
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
-      setTimeout(() => onSignIn(), 1500);
+      // Call Centre product: the account is already signed in, go straight to its onboarding.
+      if (telephonyContext) {
+        setTimeout(() => hardNavigate(CALLCENTRE_PATH), 1500);
+      } else {
+        setTimeout(() => onSignIn(), 1500);
+      }
       return true;
     } catch (err) {
       newErrors.general = err instanceof Error ? err.message : t('register.errGeneralFailed', 'Account verification failed');
@@ -277,6 +290,8 @@ export default function RegistrationDialog({
         case 'password':
           if (!validatePassword(formData.password)) {
             newErrors.password = t('register.errPassword', 'Password must be at least 8 characters with letters and numbers');
+          } else if (confirmPassword !== formData.password) {
+            newErrors.confirmPassword = t('register.errPasswordMismatch', 'Passwords do not match');
           } else {
             pushStep('phone');
           }
@@ -298,9 +313,7 @@ export default function RegistrationDialog({
             );
           }
           if (!formData.termsAccepted) {
-            newErrors.terms =
-              newErrors.terms ||
-              t('register.errTerms', 'Please accept the terms and conditions');
+            newErrors.terms = newErrors.terms || t('register.errTerms', 'Please accept the terms and conditions');
           }
           if (newErrors.terms) {
             break;
@@ -371,8 +384,8 @@ export default function RegistrationDialog({
               }
             }
 
-            await auth.sendVerificationEmail(formData.email, RegisterResult.data.code);
-
+            // Backend sends the verification email itself now (register()
+            // no longer echoes the code back for us to re-send).
             setSmsOtpAvailable(false);
             setSmsNotice(null);
             try {
@@ -451,38 +464,17 @@ export default function RegistrationDialog({
         onSignIn={onSignIn}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
+        telephony={telephonyContext}
       />
-
-      {/* Immersive background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float"></div>
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
-      </div>
+      <AuthBackdrop />
 
       <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden relative z-10">
 
           {/* Left Side - Brand Section */}
-          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
-            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }}></div>
-            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
-              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
-                  loading="eager"
-                />
-                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
-              </div>
-              <h1 className="text-3xl font-extrabold leading-tight mb-4">
-                {t('signIn.brandTitle1', 'Start Your')} <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-harx-400 to-harx-alt-400">{t('signIn.brandTitle2', 'Journey Today')}</span>
-              </h1>
-              <p className="text-slate-400 text-sm leading-relaxed">
-                {t('signIn.brandDesc', 'Access premium AI tools, real-time customer support analytics, and join a global community of customer service professionals.')}
-              </p>
-            </div>
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-10 xl:p-12 bg-gradient-to-b from-[#0a0a18] via-[#0d0d1f] to-[#0a0a18] text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <AuthSidePanel kind={telephonyContext ? 'telephony' : defaultUserType === 'rep' ? 'rep' : defaultUserType === 'company' ? 'company' : 'neutral'} />
           </div>
 
           {/* Right Side - Form Section */}
@@ -495,22 +487,20 @@ export default function RegistrationDialog({
                 </button>
               )}
 
-              {/* Visual Step Progress Indicator */}
+              {/* Indicateur d'avancement : une pastille par étape, reliées par une barre qui se remplit */}
               {step !== 'success' && (
-                <div className="flex items-center gap-2 mb-8 justify-center lg:justify-start">
-                  {['name', 'email', 'password', 'phone', 'terms', 'verification'].map((s, idx) => {
-                    const stepsList = ['name', 'email', 'password', 'phone', 'terms', 'verification'];
-                    const currentIdx = stepsList.indexOf(step);
-                    const isCompleted = idx < currentIdx;
-                    const isActive = step === s;
+                <div className="auth-stepper mb-8" data-testid="register-stepper" aria-label={t('register.progress', 'Progress')}>
+                  {(['name', 'email', 'password', 'phone', 'terms', 'verification'] as const).map((s, idx, all) => {
+                    const currentIdx = all.indexOf(step as (typeof all)[number]);
+                    const StepIcon = { name: User, email: Mail, password: Lock, phone: Phone, terms: ShieldCheck, verification: KeyRound }[s];
+                    const state = idx < currentIdx ? 'done' : idx === currentIdx ? 'active' : 'todo';
                     return (
-                      <div
-                        key={s}
-                        className={`h-1.5 rounded-full transition-all duration-350 ${
-                          isCompleted ? 'w-6 bg-gradient-harx' :
-                          isActive ? 'w-8 bg-harx-500 shadow-md shadow-harx-500/30' : 'w-2 bg-white/10'
-                        }`}
-                      />
+                      <React.Fragment key={s}>
+                        <span className="auth-stepper__dot" data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
+                          {state === 'done' ? <Check className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}
+                        </span>
+                        {idx < all.length - 1 && <span className="auth-stepper__bar" data-done={idx < currentIdx}><span /></span>}
+                      </React.Fragment>
                     );
                   })}
                 </div>
@@ -602,6 +592,29 @@ export default function RegistrationDialog({
                     </div>
                     <p className="text-xs text-slate-500 pl-2">{t('register.passwordHint', 'Must be at least 8 characters with letters and numbers.')}</p>
                     {errors.password && <p className="text-red-400 text-sm pl-2">{errors.password}</p>}
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="input-premium-glow pr-12"
+                        placeholder={t('register.placeholderConfirmPassword', 'Confirm your password')}
+                        autoComplete="new-password"
+                        aria-invalid={Boolean(errors.confirmPassword) || (confirmPassword.length > 0 && confirmPassword !== formData.password)}
+                        data-testid="confirm-password"
+                      />
+                      {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                        <Check className="absolute right-4 top-3.5 h-5 w-5 text-emerald-400" aria-hidden="true" />
+                      ) : null}
+                    </div>
+                    {confirmPassword.length > 0 && confirmPassword !== formData.password && !errors.confirmPassword ? (
+                      <p className="text-amber-300 text-xs pl-2">{t('register.errPasswordMismatch', 'Passwords do not match')}</p>
+                    ) : null}
+                    {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                      <p className="text-emerald-400 text-xs pl-2">{t('register.passwordMatch', 'Passwords match')}</p>
+                    ) : null}
+                    {errors.confirmPassword && <p className="text-red-400 text-sm pl-2">{errors.confirmPassword}</p>}
                   </div>
                 )}
 
@@ -623,109 +636,26 @@ export default function RegistrationDialog({
                 )}
 
                 {step === 'terms' && (
-                  <div className="space-y-6">
-                    <div className="bg-slate-950/40 p-6 rounded-xl border border-white/[0.06]">
+                  <div className="space-y-4">
+                    <div className="bg-slate-950/40 p-5 rounded-xl border border-white/[0.06]">
                       <div className="flex items-start space-x-3">
                         <ShieldCheck className="h-6 w-6 text-harx-400 mt-0.5 flex-shrink-0" />
-                        <div className="space-y-3">
-                          <p className="text-sm text-slate-300 leading-relaxed">
-                            {t('register.termsAgreeText', 'By creating an account, you agree to comply with our')}{' '}
-                            <button
-                              type="button"
-                              onClick={() => setOpenLegalDoc('terms')}
-                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
-                            >
-                              {t('register.termsLink', 'Terms of Service')}
-                            </button>
-                            {readLegalDocs.includes('terms') ? (
-                              <span className="ml-1 text-xs font-semibold text-emerald-300">
-                                ({t('register.legalRead', 'Read')})
-                              </span>
-                            ) : null}{' '}
-                            {t('register.termsAnd', 'and acknowledge our')}{' '}
-                            <button
-                              type="button"
-                              onClick={() => setOpenLegalDoc('privacy')}
-                              className="text-harx-400 font-medium hover:text-harx-300 transition-colors underline-offset-2 hover:underline"
-                            >
-                              {t('register.privacyLink', 'Privacy Policy')}
-                            </button>
-                            {readLegalDocs.includes('privacy') ? (
-                              <span className="ml-1 text-xs font-semibold text-emerald-300">
-                                ({t('register.legalRead', 'Read')})
-                              </span>
-                            ) : null}
-                            . {t('register.termsSecurity', 'We prioritize your data security.')}
-                          </p>
-                          <p className="text-xs text-slate-400">
-                            {t(
-                              'register.legalIntro',
-                              'You must read the Terms of Service and the Privacy Policy before you accept.'
-                            )}
-                          </p>
-                          {legalDocsRead ? (
-                            <p className="text-xs font-medium text-emerald-300">
-                              {t(
-                                'register.legalBothReached',
-                                'Both documents have been read. You can accept the terms.'
-                              )}
-                            </p>
-                          ) : null}
-                        </div>
+                        <p className="text-sm text-slate-300 leading-relaxed">
+                          {t(
+                            `register.termsIncludes.${legalAudience}`,
+                            'These terms include the conditions that apply to your role on HARX.'
+                          )}{' '}
+                          {t('register.termsSecurity', 'We prioritize your data security.')}
+                        </p>
                       </div>
                     </div>
-                    <LegalScrollModal
-                      docId={openLegalDoc}
-                      audience={defaultUserType === 'rep' ? 'rep' : 'company'}
-                      accepted={formData.termsAccepted}
-                      readIds={readLegalDocs}
-                      onAcceptedChange={(checked) => {
-                        setFormData((current) => ({ ...current, termsAccepted: checked }));
-                        if (!checked) return;
-                        setErrors((current) => {
-                          if (!current.terms) return current;
-                          const next = { ...current };
-                          delete next.terms;
-                          return next;
-                        });
-                      }}
-                      onContinue={() => {
-                        if (!openLegalDoc || !formData.termsAccepted) return;
-                        const other: SignupLegalDocId = openLegalDoc === 'terms' ? 'privacy' : 'terms';
-                        const read = readLegalDocs.includes(openLegalDoc)
-                          ? readLegalDocs
-                          : [...readLegalDocs, openLegalDoc];
-                        if (!read.includes(other)) {
-                          setOpenLegalDoc(other);
-                          return;
-                        }
-                        setOpenLegalDoc(null);
-                        handleNext();
-                      }}
-                      onClose={() => setOpenLegalDoc(null)}
-                      onReachedEnd={(id) => {
-                        setReadLegalDocs((current) =>
-                          current.includes(id) ? current : [...current, id]
-                        );
-                        setErrors((current) => {
-                          if (!current.terms) return current;
-                          const next = { ...current };
-                          delete next.terms;
-                          return next;
-                        });
-                      }}
-                    />
 
                     <label
-                      className={`flex items-center space-x-3 p-4 rounded-xl border transition-colors ${
+                      className={`flex items-start space-x-3 p-4 rounded-xl border transition-colors ${
                         errors.terms
                           ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
                           : 'border-white/[0.08]'
-                      } ${
-                        !legalDocsRead
-                          ? 'cursor-not-allowed opacity-60'
-                          : 'cursor-pointer hover:bg-slate-800/40'
-                      }`}
+                      } ${!legalDocsRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}
                     >
                       <input
                         type="checkbox"
@@ -743,15 +673,58 @@ export default function RegistrationDialog({
                             });
                           }
                         }}
-                        className={`rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 transition-all ${
+                        className={`mt-0.5 rounded bg-slate-800 text-harx-500 focus:ring-harx-500 w-5 h-5 shrink-0 transition-all ${
                           errors.terms ? 'border-red-500' : 'border-slate-700'
                         }`}
                       />
-                      <span className={`font-medium ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
-                        {t('register.termsCheckbox', 'I agree to the Terms & Conditions')}
+                      <span className={`font-medium leading-snug ${errors.terms ? 'text-red-300' : 'text-slate-200'}`}>
+                        <Trans
+                          i18nKey="register.termsAccept"
+                          defaults="I have read and accept the <terms>Terms of Use</terms> and the <privacy>Privacy Policy</privacy>."
+                          components={{
+                            terms: (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); setLegalPart(0); }}
+                                className="text-harx-400 underline underline-offset-2 hover:text-harx-300"
+                              />
+                            ),
+                            privacy: (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.preventDefault(); setLegalPart(2); }}
+                                className="text-harx-400 underline underline-offset-2 hover:text-harx-300"
+                              />
+                            ),
+                          }}
+                        />
                       </span>
                     </label>
                     {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
+                    <p className="text-xs text-slate-400 pl-2">
+                      {t('register.termsOpenHint', 'The documents open in a window, in French or English.')}{' '}
+                      {t('register.legalIntro', 'You must read the Terms of Service and the Privacy Policy before you accept.')}
+                    </p>
+                    {legalDocsRead ? (
+                      <p className="text-xs font-medium text-emerald-300 pl-2">
+                        {t('register.legalBothReached', 'Both documents have been read. You can accept the terms.')}
+                      </p>
+                    ) : null}
+                    <LegalViewerModal
+                      open={legalPart !== null}
+                      audience={legalAudience}
+                      initialPart={legalPart ?? 0}
+                      onClose={() => setLegalPart(null)}
+                      onReachedEnd={() => {
+                        setLegalDocsRead(true);
+                        setErrors((current) => {
+                          if (!current.terms) return current;
+                          const next = { ...current };
+                          delete next.terms;
+                          return next;
+                        });
+                      }}
+                    />
                   </div>
                 )}
 

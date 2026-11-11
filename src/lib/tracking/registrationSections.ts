@@ -1,3 +1,4 @@
+import type { SiteLang } from '../langRoutes';
 const AUTH_ROUTE_TITLES: Array<{ test: (path: string) => boolean; label: string }> = [
   { test: (p) => p.startsWith('/auth/choice'), label: 'Choix du profil' },
   { test: (p) => p.startsWith('/auth/signin'), label: 'Connexion' },
@@ -23,6 +24,16 @@ export function isAuthPortalPath(pathname: string): boolean {
   return AUTH_ROUTE_TITLES.some(({ test }) => test(path));
 }
 
-export function buildAuthPageTitle(label: string): string {
+const AUTH_LABELS_EN: Record<string, string> = {
+  'Choix du profil': 'Choose your profile',
+  Connexion: 'Sign in',
+  Inscription: 'Sign up',
+  'Inscription entreprise': 'Company sign-up',
+  'Inscription rep': 'Rep sign-up',
+  'Récupération de compte': 'Account recovery',
+};
+
+export function buildAuthPageTitle(label: string, lang: SiteLang = 'fr'): string {
+  if (lang !== 'fr') return `HARX — Account · ${AUTH_LABELS_EN[label] ?? label}`;
   return `HARX — Compte · ${label}`;
 }

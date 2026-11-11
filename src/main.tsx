@@ -6,7 +6,7 @@ import App from './App';
 import './index.css';
 import { initVisitorTrackingScripts } from './lib/initVisitorTracking';
 import { syncVisitorTracking } from './lib/tracking/visitorTracking';
-import './lib/i18n';
+import { syncLanguageFromPath } from './lib/i18n';
 
 initVisitorTrackingScripts();
 
@@ -38,6 +38,7 @@ function render(props: { container?: HTMLElement } = {}) {
     return;
   }
 
+  syncLanguageFromPath(window.location.pathname);
   syncVisitorTracking();
   if (!root) {
     root = createRoot(rootElement);
