@@ -15,7 +15,7 @@ export function CompanyHero() {
   const { t } = useTranslation();
   const soon = isRoleComingSoon('company');
   const stats = [
-    { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
+    { icon: Users2, value: '64 000+', label: t('taasPages.statPros', 'customer service professionals') },
     { icon: Globe2, value: '70+', label: t('taasPages.statCountries', 'countries covered') },
     { icon: ShieldCheck, value: 'RGPD', label: t('taasPages.statGdpr', 'compliant, encrypted data') },
   ];

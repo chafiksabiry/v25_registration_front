@@ -20,6 +20,7 @@ import {
   type OfferLang,
 } from '../../config/offers';
 import { normalizeSiteLang } from '../../lib/langRoutes';
+import { TAAS_REPS } from '../../lib/taasPaths';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { hubPageTitle } from '../../lib/tracking/hubMeta';
 import './hub.css';
@@ -155,7 +156,7 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
               return (
                 <li key={child.id} className={mini ? '' : 'hub-links__item'}>
                   <a
-                    href={target.type === 'href' ? target.href : '#'}
+                    href={target.type === 'href' ? target.href : target.role === 'rep' ? `/${lang}${TAAS_REPS}` : '#'}
                     data-testid={`offer-child-${offer.id}-${child.id}`}
                     onClick={(e) => openChild(e, child)}
                     className={mini ? 'hub-mini' : 'hub-link'}
