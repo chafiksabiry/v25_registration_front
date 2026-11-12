@@ -21,8 +21,16 @@ export function audienceMismatchKey(chosen: Audience, userType: string | null | 
   return actual === 'company' ? 'accountIsCompany' : 'accountIsTeam';
 }
 
+/** `?audience=team` (lien d'une invitation par e-mail) : la personne invitée arrive sur « Équipe », sans devoir le deviner. */
+export function audienceFromSearch(search: string): Audience | null {
+  const v = new URLSearchParams(search).get('audience');
+  return v === 'team' || v === 'company' ? v : null;
+}
+
 export function readAudience(): Audience {
   try {
+    const fromLink = audienceFromSearch(window.location.search);
+    if (fromLink) return fromLink;
     const v = localStorage.getItem(KEY);
     return v === 'team' ? 'team' : 'company';
   } catch {
