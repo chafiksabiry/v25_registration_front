@@ -917,6 +917,14 @@
     "call-center": "Centre d'appels",
     "admin": "Admin"
   },
+  "invite": {
+    "loading": "Ouverture de votre espace HARX…",
+    "expiredTitle": "Ce lien a expiré",
+    "invalidTitle": "Ce lien n’est pas valide",
+    "help": "Connectez-vous avec votre e-mail et votre mot de passe. Si vous n’en avez pas encore, demandez à la personne qui vous a invité(e) de vous renvoyer l’invitation, ou utilisez « Mot de passe oublié ».",
+    "signIn": "Se connecter",
+    "forgot": "Mot de passe oublié"
+  },
   "reactivate": {
     "loading": "Ouverture de votre espace HARX...",
     "expiredTitle": "Ce lien a expiré",
