@@ -25,7 +25,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const auth = {
-  register: async (data: { fullName: string; email: string; password: string; phone: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string }) => {
+  register: async (data: { fullName: string; email: string; password: string; phone: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string> }) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   },
