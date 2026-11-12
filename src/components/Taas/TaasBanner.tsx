@@ -79,7 +79,7 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
           {company ? (
             <ul className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3" data-testid="company-stats">
               {[
-                { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
+                { icon: Users2, value: '64 000+', label: t('taasPages.statPros', 'customer service professionals') },
                 { icon: Globe2, value: '70+', label: t('taasPages.statCountries', 'countries covered') },
                 { icon: ShieldCheck, value: 'RGPD', label: t('taasPages.statGdpr', 'compliant, encrypted data') },
               ].map(({ icon: Icon, value, label }) => (
