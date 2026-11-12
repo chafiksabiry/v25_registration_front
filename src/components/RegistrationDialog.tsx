@@ -21,6 +21,7 @@ import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion, metaSignUpContext } from '../lib/tracking/conversions';
+import { signUpAttribution, utmFromSearch } from '../lib/tracking/attribution';
 
 type Step = RegisterFormStep | 'success';
 
@@ -81,6 +82,8 @@ export default function RegistrationDialog({
   const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
+  // Origine de la visite (utm_ du lien de campagne) : lue une fois à l'ouverture, jointe à l'inscription avec le consentement.
+  const capturedOrigin = useRef<Record<string, string>>(utmFromSearch(window.location.search));
 
   useEffect(() => {
     if (legalDocsRead || !formData.termsAccepted) return;
@@ -339,7 +342,8 @@ export default function RegistrationDialog({
                 email: formData.email,
                 password: formData.password,
                 phone: formData.phone,
-                ...metaCtx
+                ...metaCtx,
+                attribution: signUpAttribution(capturedOrigin.current),
               });
               try { sessionStorage.setItem('harx_meta_event_id', metaCtx.metaEventId); } catch { /* ignore */ }
 
