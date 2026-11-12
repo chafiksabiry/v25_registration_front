@@ -55,6 +55,12 @@ export const auth = {
     return response.data as { token: string };
   },
 
+  /** Échange le jeton du lien d'une invitation (secrétaire invitée) contre une session. */
+  inviteLogin: async (token: string) => {
+    const response = await api.post('/auth/invite-login', { token });
+    return response.data as { token: string };
+  },
+
   /** Asks for the personal one-click link to be e-mailed to this address (always answers "sent"). */
   reengageRequest: async (email: string) => {
     const response = await api.post('/auth/reengage-request', { email });
