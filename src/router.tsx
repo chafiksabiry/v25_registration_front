@@ -40,6 +40,7 @@ import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 import InvitationsPage from './components/InvitationsPage';
 import InviteLogin from './components/InviteLogin';
 import { LegalPage } from './components/legal/LegalPage';
+import WhatsAppButton from './components/WhatsAppButton';
 
 function RootLayout() {
   return (
@@ -47,6 +48,7 @@ function RootLayout() {
       <HistorySync />
       <VisitorTracker />
       <Outlet />
+      <WhatsAppButton />
     </>
   );
 }

@@ -53,6 +53,11 @@
     "point3": "Portail client à votre marque, en lecture",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
+  "whatsappButton": {
+    "label": "WhatsApp",
+    "aria": "Discuter avec l'assistant HARX sur WhatsApp",
+    "prefill": "Bonjour, j'ai besoin d'aide sur HARX"
+  },
   "hub": {
     "comingSoon": "Bientôt disponible",
     "alreadyClient": "Déjà client ?",

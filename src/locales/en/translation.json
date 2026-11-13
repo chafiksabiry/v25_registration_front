@@ -53,6 +53,11 @@
     "point3": "A client portal under your brand, read-only",
     "point4": "A subscription, then you pay for what you use"
   },
+  "whatsappButton": {
+    "label": "WhatsApp",
+    "aria": "Chat with the HARX assistant on WhatsApp",
+    "prefill": "Hello, I need help with HARX"
+  },
   "hub": {
     "comingSoon": "Coming soon",
     "alreadyClient": "Already a client?",
