@@ -85,83 +85,47 @@ export default function ReactivateAccount() {
   if (status === 'request' || status === 'sent') {
     return (
       <ReactivateShell lang={lang}>
-        <div className="grid items-start gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <section aria-labelledby="reactivate-title">
-            <p className="mb-2 text-xs font-bold tracking-[0.2em]" style={{ color: HARX_BRAND.magenta }}>
-              {copy.eyebrow}
-            </p>
-            <h1 id="reactivate-title" className="mb-4 text-3xl font-extrabold text-white sm:text-4xl">
-              {copy.title}
-            </h1>
-            <p className="mb-1 text-slate-300">{copy.hello}</p>
-            <p className="mb-5 text-slate-300">{copy.intro}</p>
-            <h2 className="mb-1 text-base font-bold text-white">{copy.whyTitle}</h2>
-            <p className="mb-6 text-slate-300">{copy.why}</p>
+        <section className="mx-auto max-w-xl text-center" aria-labelledby="reactivate-title">
+          <h1 id="reactivate-title" className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+            {copy.title}
+          </h1>
+          <p className="mt-3 text-lg text-slate-300">{copy.heroLine}</p>
 
-            <div
-              data-testid="reactivate-offer"
-              className="mb-6 rounded-2xl border bg-slate-900/70 p-5"
-              style={{ borderColor: `${HARX_BRAND.magenta}66` }}
-            >
-              <p className="text-xs font-bold tracking-[0.2em]" style={{ color: HARX_BRAND.magenta }}>
-                {copy.offerLabel}
-              </p>
-              <p className="my-1 text-3xl font-extrabold text-white">{copy.offerHeadline}</p>
-              <p className="mb-3 text-sm font-semibold text-slate-300">{copy.offerPlan}</p>
-              <p
-                className="inline-block rounded-lg border px-3 py-1 text-sm font-extrabold tracking-wide text-white"
-                style={{ borderColor: HARX_BRAND.magenta, backgroundColor: `${HARX_BRAND.magenta}26` }}
-              >
-                {copy.offerCode}
-              </p>
-              <p className="mt-2 text-xs text-slate-400">{copy.offerValid}</p>
-            </div>
-
-            <h2 className="mb-3 text-xs font-bold tracking-[0.2em] text-slate-400">{copy.stepsTitle}</h2>
-            <ol className="mb-4 space-y-2" data-testid="reactivate-steps">
-              {copy.steps.map((step, index) => (
-                <li key={step} className="flex items-start gap-3 text-slate-200">
-                  <span
-                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ backgroundColor: HARX_BRAND.magenta }}
-                  >
-                    {index + 1}
-                  </span>
-                  <span>{step}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="flex items-center gap-2 text-sm text-slate-400">
-              <Check className="h-4 w-4 text-emerald-400" />
-              {copy.noCard}
-            </p>
-          </section>
-
-          <section
-            className="order-first rounded-2xl p-[2px] lg:order-none lg:sticky lg:top-6"
-            style={{ backgroundImage: offerBg, boxShadow: '0 0 40px -8px rgba(230, 24, 141, 0.55)' }}
+          <div
+            className="mt-8 rounded-2xl border border-white/10 p-5 text-left shadow-2xl sm:p-7"
+            style={{ backgroundColor: '#0F1330', boxShadow: '0 24px 60px -24px rgba(230, 24, 141, 0.45)' }}
             aria-live="polite"
           >
-            <div className="rounded-[14px] bg-slate-900 p-6 sm:p-8">
+            <div
+              data-testid="reactivate-offer"
+              className="mb-6 rounded-xl border-l-4 bg-white/5 px-4 py-3"
+              style={{ borderLeftColor: HARX_BRAND.magenta }}
+            >
+              <p className="text-xl font-extrabold text-white">{copy.offerHeadline}</p>
+              <p className="mt-0.5 text-sm text-slate-300">
+                {copy.offerPlan}. <strong className="whitespace-nowrap font-bold text-white">{copy.offerCode}</strong>
+              </p>
+              <p className="mt-0.5 text-xs text-slate-400">{copy.offerValid}</p>
+            </div>
+
             {status === 'sent' ? (
               <div className="text-center">
-                <h2 className="mb-2 text-lg font-bold text-white">{copy.sentTitle}</h2>
+                <h2 className="mb-2 text-xl font-bold text-white">{copy.sentTitle}</h2>
                 <p className="mb-6 text-sm text-slate-300">{copy.sentText}</p>
                 <button
                   type="button"
                   onClick={() => setStatus('request')}
-                  className="rounded-xl border border-slate-700 px-4 py-2 text-sm font-semibold text-white"
+                  className="rounded-xl border border-slate-600 px-4 py-2 text-sm font-semibold text-white hover:bg-white/5"
                 >
                   {copy.sendAgain}
                 </button>
               </div>
             ) : (
-              <form onSubmit={submitRequest} className="text-left">
-                <h2 className="mb-2 text-xl font-extrabold text-white">{copy.formTitle}</h2>
-                <p className="mb-5 text-sm text-slate-300">{copy.formIntro}</p>
-                <label htmlFor="reactivate-email" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  {copy.emailLabel}
+              <form onSubmit={submitRequest}>
+                <label htmlFor="reactivate-email" className="mb-1.5 block text-sm font-semibold text-white">
+                  {copy.formTitle}
                 </label>
+                <p className="mb-3 text-sm text-slate-300">{copy.formIntro}</p>
                 <input
                   id="reactivate-email"
                   type="email"
@@ -171,11 +135,12 @@ export default function ReactivateAccount() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={copy.emailPlaceholder}
+                  aria-label={copy.emailLabel}
                   className="mb-4 w-full rounded-xl border-2 border-slate-600 bg-slate-950 px-4 py-3.5 text-base text-white outline-none focus:border-pink-400"
                 />
                 {requestError && (
                   <p className="mb-4 flex items-center gap-2 text-sm text-amber-400">
-                    <AlertCircle className="h-4 w-4" />
+                    <AlertCircle className="h-4 w-4 shrink-0" />
                     {copy.requestError}
                   </p>
                 )}
@@ -188,11 +153,38 @@ export default function ReactivateAccount() {
                   {sending ? copy.sending : copy.send}
                   {!sending && <ArrowRight className="h-5 w-5" aria-hidden="true" />}
                 </button>
+                <p className="mt-3 flex items-center justify-center gap-2 text-xs text-slate-400">
+                  <Check className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+                  {copy.noCard}
+                </p>
               </form>
             )}
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
+
+        <section className="mx-auto mt-14 grid max-w-3xl gap-10 border-t border-white/10 pt-10 sm:grid-cols-2">
+          <div>
+            <h2 className="mb-2 text-lg font-bold text-white">{copy.whyTitle}</h2>
+            <p className="mb-3 text-slate-300">{copy.intro}</p>
+            <p className="text-slate-300">{copy.why}</p>
+          </div>
+          <div>
+            <h2 className="mb-3 text-lg font-bold text-white">{copy.stepsTitle}</h2>
+            <ol className="space-y-3" data-testid="reactivate-steps">
+              {copy.steps.map((step, index) => (
+                <li key={step} className="flex items-start gap-3 text-slate-200">
+                  <span
+                    className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+                    style={{ backgroundColor: HARX_BRAND.magenta }}
+                  >
+                    {index + 1}
+                  </span>
+                  <span>{step}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
       </ReactivateShell>
     );
   }

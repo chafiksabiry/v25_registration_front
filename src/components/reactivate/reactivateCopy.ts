@@ -9,6 +9,7 @@ export interface ReactivateCopy {
   title: string;
   hello: string;
   intro: string;
+  heroLine: string;
   whyTitle: string;
   why: string;
   offerLabel: string;
@@ -35,7 +36,6 @@ export interface ReactivateCopy {
   help: string;
   signIn: string;
   forgot: string;
-  tagline: string;
 }
 
 export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
@@ -44,7 +44,8 @@ export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
     title: 'Votre espace HARX vous attend',
     hello: 'Bonjour,',
     intro:
-      'Vous vous étiez inscrit(e) sur HARX, la plateforme qui met en relation des professionnels de la relation client à distance avec des entreprises. Votre compte a été transféré sur la nouvelle plateforme.',
+      'Vous vous étiez inscrit(e) sur HARX, la plateforme qui met en relation des professionnels de la relation client à distance avec des entreprises.',
+    heroLine: 'Votre compte a été transféré sur la nouvelle plateforme.',
     whyTitle: 'Pourquoi HARX ?',
     why:
       'Pour gagner de l’argent en travaillant à distance sur des missions de relation client : en complément de vos revenus actuels ou comme activité principale, à votre rythme, selon les créneaux que vous indiquez.',
@@ -53,7 +54,7 @@ export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
     offerPlan: 'avec la formule « IN THE RICH MAN’S WORLD »',
     offerCode: 'Code REPS2027',
     offerValid: 'Valable jusqu’au 31 décembre 2026',
-    stepsTitle: 'EN 5 ÉTAPES',
+    stepsTitle: 'En 5 étapes',
     steps: [
       'Importer votre CV',
       'Valider votre profil',
@@ -79,14 +80,14 @@ export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
     help: 'Demandez un nouveau lien avec votre e-mail, ou connectez-vous. Si vous n’avez pas encore de mot de passe, utilisez « Mot de passe oublié ».',
     signIn: 'Se connecter',
     forgot: 'Mot de passe oublié',
-    tagline: 'We inspire growth',
   },
   en: {
     eyebrow: 'YOUR REP SPACE',
     title: 'Your HARX space is waiting for you',
     hello: 'Hello,',
     intro:
-      'You signed up on HARX, the platform that connects remote customer-service professionals with companies. Your account has been moved to our new platform.',
+      'You signed up on HARX, the platform that connects remote customer-service professionals with companies.',
+    heroLine: 'Your account has been moved to our new platform.',
     whyTitle: 'Why HARX?',
     why:
       'To earn money by working remotely on customer-service missions: on top of your current income or as your main activity, at your own pace, based on the availability you set.',
@@ -95,7 +96,7 @@ export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
     offerPlan: 'with the “IN THE RICH MAN’S WORLD” plan',
     offerCode: 'Code REPS2027',
     offerValid: 'Valid until 31 December 2026',
-    stepsTitle: 'IN 5 STEPS',
+    stepsTitle: 'In 5 steps',
     steps: [
       'Upload your CV',
       'Validate your profile',
@@ -121,7 +122,6 @@ export const REACTIVATE_COPY: Record<ReactivateLang, ReactivateCopy> = {
     help: 'Request a new link with your email, or sign in. If you have no password yet, use “Forgot password”.',
     signIn: 'Sign in',
     forgot: 'Forgot password',
-    tagline: 'We inspire growth',
   },
 };
 

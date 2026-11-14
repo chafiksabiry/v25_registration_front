@@ -32,9 +32,9 @@ async function open(browser, { viewport, lang, query = '' }) {
     for (const lang of ['fr', 'en']) {
       const tag = `${label} ${lang}`;
       const { ctx, page, pageErrors } = await open(browser, { viewport, lang });
-      await page.waitForSelector('[data-testid="reactivate-banner"]');
+      await page.waitForSelector('[data-testid="harx-bar"]');
       const text = await page.locator('main').innerText();
-      check(`${tag}: bandeau + logo présents`, (await page.locator('[data-testid="harx-logo"]').count()) === 1);
+      check(`${tag}: bandeau commun HARX + logo présents`, (await page.locator('[data-testid="harx-bar"]').count()) === 1 && (await page.locator('[data-testid="harx-logo"]').count()) >= 1);
       check(`${tag}: titre`, text.includes(lang === 'fr' ? 'Votre espace HARX vous attend' : 'Your HARX space is waiting for you'));
       check(`${tag}: offre 6 mois + REPS2027 + 31 décembre 2026`,
         text.includes('REPS2027') && /6 (mois offerts|months free)/.test(text) && /31 (décembre|December) 2026/.test(text));
