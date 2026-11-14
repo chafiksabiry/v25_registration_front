@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { jwtDecode } from 'jwt-decode';
-import { AlertCircle, Check, Loader2 } from 'lucide-react';
+import { AlertCircle, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
 import { getPostLoginRedirectUrl, syncSessionUserIdCookie } from '../lib/authRedirect';
@@ -100,16 +100,21 @@ export default function ReactivateAccount() {
 
             <div
               data-testid="reactivate-offer"
-              className="mb-6 rounded-2xl p-5 text-white shadow-lg"
-              style={{ backgroundImage: offerBg }}
+              className="mb-6 rounded-2xl border bg-slate-900/70 p-5"
+              style={{ borderColor: `${HARX_BRAND.magenta}66` }}
             >
-              <p className="text-xs font-bold tracking-[0.2em] text-white/80">{copy.offerLabel}</p>
-              <p className="my-1 text-3xl font-extrabold">{copy.offerHeadline}</p>
-              <p className="mb-3 text-sm font-semibold text-white/90">{copy.offerPlan}</p>
-              <p className="inline-block rounded-lg bg-white/20 px-3 py-1 text-sm font-extrabold tracking-wide">
+              <p className="text-xs font-bold tracking-[0.2em]" style={{ color: HARX_BRAND.magenta }}>
+                {copy.offerLabel}
+              </p>
+              <p className="my-1 text-3xl font-extrabold text-white">{copy.offerHeadline}</p>
+              <p className="mb-3 text-sm font-semibold text-slate-300">{copy.offerPlan}</p>
+              <p
+                className="inline-block rounded-lg border px-3 py-1 text-sm font-extrabold tracking-wide text-white"
+                style={{ borderColor: HARX_BRAND.magenta, backgroundColor: `${HARX_BRAND.magenta}26` }}
+              >
                 {copy.offerCode}
               </p>
-              <p className="mt-2 text-xs text-white/85">{copy.offerValid}</p>
+              <p className="mt-2 text-xs text-slate-400">{copy.offerValid}</p>
             </div>
 
             <h2 className="mb-3 text-xs font-bold tracking-[0.2em] text-slate-400">{copy.stepsTitle}</h2>
@@ -132,7 +137,12 @@ export default function ReactivateAccount() {
             </p>
           </section>
 
-          <section className={`${cardClass} order-first lg:order-none lg:sticky lg:top-6`} aria-live="polite">
+          <section
+            className="order-first rounded-2xl p-[2px] lg:order-none lg:sticky lg:top-6"
+            style={{ backgroundImage: offerBg, boxShadow: '0 0 40px -8px rgba(230, 24, 141, 0.55)' }}
+            aria-live="polite"
+          >
+            <div className="rounded-[14px] bg-slate-900 p-6 sm:p-8">
             {status === 'sent' ? (
               <div className="text-center">
                 <h2 className="mb-2 text-lg font-bold text-white">{copy.sentTitle}</h2>
@@ -147,7 +157,7 @@ export default function ReactivateAccount() {
               </div>
             ) : (
               <form onSubmit={submitRequest} className="text-left">
-                <h2 className="mb-2 text-lg font-bold text-white">{copy.formTitle}</h2>
+                <h2 className="mb-2 text-xl font-extrabold text-white">{copy.formTitle}</h2>
                 <p className="mb-5 text-sm text-slate-300">{copy.formIntro}</p>
                 <label htmlFor="reactivate-email" className="mb-1 block text-xs font-semibold uppercase tracking-wide text-slate-400">
                   {copy.emailLabel}
@@ -161,7 +171,7 @@ export default function ReactivateAccount() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder={copy.emailPlaceholder}
-                  className="mb-4 w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none focus:border-pink-400"
+                  className="mb-4 w-full rounded-xl border-2 border-slate-600 bg-slate-950 px-4 py-3.5 text-base text-white outline-none focus:border-pink-400"
                 />
                 {requestError && (
                   <p className="mb-4 flex items-center gap-2 text-sm text-amber-400">
@@ -172,13 +182,15 @@ export default function ReactivateAccount() {
                 <button
                   type="submit"
                   disabled={sending}
-                  className={primaryButton}
+                  className={`${primaryButton} flex items-center justify-center gap-2 py-4 text-base`}
                   style={{ backgroundImage: offerBg }}
                 >
                   {sending ? copy.sending : copy.send}
+                  {!sending && <ArrowRight className="h-5 w-5" aria-hidden="true" />}
                 </button>
               </form>
             )}
+            </div>
           </section>
         </div>
       </ReactivateShell>
