@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, Check, Cloud, Globe, Layers, Sparkles, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { OfferWordmark } from './OfferWordmark';
 import { Header } from '../LandingPage/Header';
 import type { SignupUserType } from '../ChoicePage';
 import { persistHarxLanguage } from '../../lib/i18n';
@@ -68,11 +69,13 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
       <header className="hub-card__head">
         <span className="hub-badge"><Icon className="h-6 w-6" aria-hidden="true" /></span>
         <div className="hub-card__id">
-          <p className="hub-acronym" data-testid={`hub-acronym-${offer.id}`}>{offer.acronym}</p>
+          <h2 id={titleId} className="hub-acronym" data-testid={`hub-acronym-${offer.id}`}>
+            <OfferWordmark offer={offer.id as 'taas' | 'cloud' | 'nomad'} label={offer.acronym} />
+          </h2>
           <p className="hub-ai" data-testid={`hub-ai-${offer.id}`}><Sparkles className="h-3.5 w-3.5" aria-hidden="true" />{t('hub.aiPowered')}</p>
         </div>
       </header>
-      <h2 id={titleId} className="hub-card__title"><bdi>{t(offer.titleKey)}</bdi></h2>
+      <p className="hub-card__title"><bdi>{t(offer.titleKey)}</bdi></p>
       <p className="hub-card__target"><bdi>{t(offer.targetKey)}</bdi></p>
       <ul className="hub-benefits" data-testid={`hub-benefits-${offer.id}`}>
         {offer.benefitKeys.map((key) => (
