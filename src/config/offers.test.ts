@@ -6,6 +6,7 @@ import {
   HEADER_MARK_IDS,
   NOMAD_SOLO_START,
   getAvailableOffers,
+  isChildComingSoon,
   resolveChildTarget,
   resolveMarkHref,
   resolveOfferHref,
@@ -51,6 +52,15 @@ describe('accueil : trois offres', () => {
       '/telephony#centres-appels',
     ]);
     expect(byId.nomad.children).toEqual([]);
+  });
+
+  it('CLOUD : seules les offres ouvertes sont des liens (Full Scope et Multi-clients « Bientôt disponible »)', () => {
+    expect(byId.cloud.children.map((c) => [c.id, isChildComingSoon(c)])).toEqual([
+      ['accueil', false],
+      ['full_scope', true],
+      ['multi_clients', true],
+    ]);
+    expect(byId.taas.children.map((c) => isChildComingSoon(c))).toEqual([true, false]);
   });
 });
 
@@ -101,9 +111,14 @@ describe('textes (i18n)', () => {
     }
   });
 
+  it('anglais : « Contact Center Multi-Clients » ; français : « Contact Centre Multi-clients »', () => {
+    expect(lookup(locale('en'), 'hub.offers.cloud.multiClients')).toBe('Contact Center Multi-Clients');
+    expect(lookup(locale('fr'), 'hub.offers.cloud.multiClients')).toBe('Contact Centre Multi-clients');
+  });
+
   it('anglais : orthographe US', () => {
     const json = locale('en');
-    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys]) expect(lookup(json, key), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
+    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys, ...o.children.map((c) => c.labelKey)]) expect(lookup(json, key), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
   });
 
   it('les noms complets et la mention AI POWERED', () => {

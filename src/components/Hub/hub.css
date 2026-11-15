@@ -63,6 +63,7 @@
 .hub-cta:hover::after { transform: translateX(120%); }
 [dir="rtl"] .hub-cta__arrow { transform: scaleX(-1); }
 
+.hub-mini--soon { gap: .5rem; cursor: not-allowed; color: #e2e8f0; border-color: rgba(255, 255, 255, .25); background: rgba(255, 255, 255, .05); }
 .hub-more { display: block; }
 @media (min-width: 1024px) { .hub-more { min-height: 9.5rem; } }
 .hub-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-start; }

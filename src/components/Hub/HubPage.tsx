@@ -104,7 +104,7 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
               if (isChildComingSoon(child)) {
                 return (
                   <li key={child.id} className={mini ? '' : 'hub-links__item'}>
-                    <span className="hub-link hub-link--soon" aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
+                    <span className={`${mini ? 'hub-mini hub-mini--soon' : 'hub-link hub-link--soon'}`} aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
                       {t(child.labelKey)}
                       <span className="hub-soon">{t('hub.comingSoon')}</span>
                     </span>

@@ -18,7 +18,7 @@ export type OfferLang = 'fr' | 'en' | 'es' | 'ar';
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =
   | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
-  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean };
+  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean; /** Offre annoncée mais pas encore ouverte : affichée « Bientôt disponible », sans lien. */ soon?: boolean };
 
 /**
  * Parcours d'inscription pas encore ouverts : « Publier un gig » (rôle company) est annoncé « Bientôt disponible » ;
@@ -31,7 +31,7 @@ export function isRoleComingSoon(role: 'company' | 'rep' | 'call-center'): boole
 }
 
 export function isChildComingSoon(child: OfferChild): boolean {
-  return child.kind === 'role' && isRoleComingSoon(child.role);
+  return child.kind === 'role' ? isRoleComingSoon(child.role) : child.soon === true;
 }
 
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
@@ -100,11 +100,12 @@ export const OFFERS: readonly OfferConfig[] = [
     ctaKey: 'hub.offers.cloud.cta',
     targetKey: 'hub.offers.cloud.target',
     benefitKeys: ['hub.offers.cloud.benefit1', 'hub.offers.cloud.benefit2', 'hub.offers.cloud.benefit3'],
-    // Noms et ancres de la vitrine /telephony (Nomad Solo a désormais sa propre offre).
+    // Noms et ancres de la vitrine /telephony (Nomad Solo a désormais sa propre offre). Full Scope et Multi-clients sont
+    // « Bientôt disponible » sur la page Téléphonie (statut communiqué par le CTO, non revérifié dans callcenter_front).
     children: [
       { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
-      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
-      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false, soon: true },
+      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false, soon: true },
     ],
     signIn: TELEPHONY_SIGN_IN,
   },
