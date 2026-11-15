@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
-import { ArrowRight, Building2, PhoneCall, PhoneIncoming, Sparkles, Target, Voicemail, Wallet, Layers, Phone, type LucideIcon } from 'lucide-react';
+import React from 'react';
+import { ArrowRight, Check, Cloud, Globe, Layers, Sparkles, type LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Header } from '../LandingPage/Header';
 import type { SignupUserType } from '../ChoicePage';
-import harxMascotte from '../LandingPage/assets/harx-mascotte.webp';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { hardNavigate } from '../../lib/appNavigation';
 import {
@@ -13,7 +12,6 @@ import {
   isChildComingSoon,
   resolveOfferHref,
   resolveOfferSignInHref,
-  type FlowIcon,
   type OfferChild,
   type OfferConfig,
   type OfferIcon,
@@ -24,16 +22,7 @@ import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { hubPageTitle } from '../../lib/tracking/hubMeta';
 import './hub.css';
 
-const OFFER_ICONS: Record<OfferIcon, LucideIcon> = { layers: Layers, phone: Phone, sparkles: Sparkles };
-const FLOW_ICONS: Record<Exclude<FlowIcon, 'mascot'>, LucideIcon> = {
-  building: Building2,
-  target: Target,
-  wallet: Wallet,
-  phone: PhoneCall,
-  calls: PhoneIncoming,
-  voicemail: Voicemail,
-  sparkles: Sparkles,
-};
+const OFFER_ICONS: Record<OfferIcon, LucideIcon> = { layers: Layers, cloud: Cloud, globe: Globe };
 
 interface HubPageProps {
   /** Même mécanisme que les cartes de /auth/choice (pendingUserType + retour). */
@@ -57,37 +46,12 @@ export function openOffer(offer: OfferConfig, lang: OfferLang) {
   hardNavigate(href);
 }
 
-function Flow({ offer }: { offer: OfferConfig }) {
-  const { t } = useTranslation();
-  const steps = offer.hero.flow;
-  return (
-    <ol className="hub-flow" data-testid={`hub-flow-${offer.id}`}>
-      {steps.map((step, i) => {
-        const Icon = step.icon === 'mascot' ? null : FLOW_ICONS[step.icon];
-        return (
-          <li key={step.key} className="hub-flow__node">
-            <span className="hub-flow__circle">
-              {Icon ? <Icon className="h-5 w-5" aria-hidden="true" /> : <img src={harxMascotte} alt="" className="hub-flow__mascot" />}
-            </span>
-            {i < steps.length - 1 && (
-              <span className="hub-flow__link" aria-hidden="true">
-                <span className="hub-flow__dot" style={{ ['--d' as string]: `${i * 0.55}s` }} />
-              </span>
-            )}
-            <span className="hub-flow__label">{t(step.key)}</span>
-          </li>
-        );
-      })}
-    </ol>
-  );
-}
-
-function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfig; index: number; active: boolean; lang: OfferLang; onSelectRole: (role: SignupUserType) => void }) {
+function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: OfferLang; onSelectRole: (role: SignupUserType) => void }) {
   const { t } = useTranslation();
   const Icon = OFFER_ICONS[offer.icon];
   const href = resolveOfferHref(offer, lang) ?? '#';
   const signInHref = resolveOfferSignInHref(offer, lang);
-  const b = { ['--b' as string]: index };
+  const titleId = `hub-offer-${offer.id}-title`;
 
   const openChild = (e: React.MouseEvent, child: OfferChild) => {
     e.preventDefault();
@@ -100,28 +64,25 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
   };
 
   return (
-    <section
-      id={`hub-panel-${offer.id}`}
-      role="tabpanel"
-      aria-label={t(offer.titleKey)}
-      data-testid={`hub-panel-${offer.id}`}
-      data-active={active}
-      className="hub-panel"
-      data-offer={offer.id}
-      style={b}
-    >
-      <div className="hub-cell hub-cell--kicker hub-rise" style={{ ['--i' as string]: 0 }}>
-        <span className="hub-kicker" data-row="kicker">
-          <span className="hub-kicker__badge"><Icon className="h-4 w-4" aria-hidden="true" /></span>
-          {t(offer.titleKey)}
-        </span>
-      </div>
-      <h2 className="hub-cell hub-h2 hub-rise" style={{ ['--i' as string]: 1 }} data-row="title">{t(offer.hero.defKey)}</h2>
-      <p className={`hub-cell hub-support hub-rise${offer.hero.supportQuote ? ' hub-support--quote' : ''}`} style={{ ['--i' as string]: 2 }} data-row="support">
-        {t(offer.hero.supportKey)}
-      </p>
-      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 3 }} data-row="flow"><Flow offer={offer} /></div>
-      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 4 }} data-row="cta">
+    <article className="hub-card hub-rise" data-offer={offer.id} data-testid={`hub-panel-${offer.id}`} aria-labelledby={titleId}>
+      <header className="hub-card__head">
+        <span className="hub-badge"><Icon className="h-6 w-6" aria-hidden="true" /></span>
+        <div className="hub-card__id">
+          <p className="hub-acronym" data-testid={`hub-acronym-${offer.id}`}>{offer.acronym}</p>
+          <p className="hub-ai" data-testid={`hub-ai-${offer.id}`}><Sparkles className="h-3.5 w-3.5" aria-hidden="true" />{t('hub.aiPowered')}</p>
+        </div>
+      </header>
+      <h2 id={titleId} className="hub-card__title"><bdi>{t(offer.titleKey)}</bdi></h2>
+      <p className="hub-card__target"><bdi>{t(offer.targetKey)}</bdi></p>
+      <ul className="hub-benefits" data-testid={`hub-benefits-${offer.id}`}>
+        {offer.benefitKeys.map((key) => (
+          <li key={key}>
+            <Check className="hub-benefits__tick" aria-hidden="true" />
+            <span><bdi>{t(key)}</bdi></span>
+          </li>
+        ))}
+      </ul>
+      <div className="hub-card__actions">
         <a
           href={href}
           data-testid={`panel-cta-${offer.id}`}
@@ -131,11 +92,10 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
           }}
           className="hub-cta"
         >
-          {t(offer.ctaKey)}
-          <ArrowRight className="h-5 w-5" aria-hidden="true" />
+          <bdi>{t(offer.ctaKey)}</bdi>
+          <ArrowRight className="h-5 w-5 hub-cta__arrow" aria-hidden="true" />
         </a>
-      </div>
-      <div className="hub-cell hub-rise" style={{ ['--i' as string]: 5 }} data-row="links">
+        <div className="hub-more">
         {offer.children.length > 0 && (
           <ul className="hub-links" data-testid={`offer-children-${offer.id}`}>
             {offer.children.map((child) => {
@@ -144,11 +104,11 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
               if (isChildComingSoon(child)) {
                 return (
                   <li key={child.id} className={mini ? '' : 'hub-links__item'}>
-                    <span className="hub-link hub-link--soon" aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
-                      {t(child.labelKey)}
+                    <span className={`${mini ? 'hub-mini hub-mini--soon' : 'hub-link hub-link--soon'}`} aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
+                      <bdi>{t(child.labelKey)}</bdi>
                       <span className="hub-soon">{t('hub.comingSoon')}</span>
                     </span>
-                    {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
+                    {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
                   </li>
                 );
               }
@@ -160,17 +120,17 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
                     onClick={(e) => openChild(e, child)}
                     className={mini ? 'hub-mini' : 'hub-link'}
                   >
-                    {t(child.labelKey)}
+                    <bdi>{t(child.labelKey)}</bdi>
                   </a>
-                  {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
+                  {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
                 </li>
               );
             })}
           </ul>
         )}
+        </div>
       </div>
-      <p className="hub-cell hub-note hub-rise" style={{ ['--i' as string]: 6 }} data-row="note">{t(offer.hero.noteKey)}</p>
-      <p className="hub-cell hub-signin hub-rise" style={{ ['--i' as string]: 7 }} data-row="signin">
+      <p className="hub-signin">
         {signInHref && (
           <>
             {t('hub.alreadyClient')}{' '}
@@ -188,7 +148,7 @@ function Panel({ offer, index, active, lang, onSelectRole }: { offer: OfferConfi
           </>
         )}
       </p>
-    </section>
+    </article>
   );
 }
 
@@ -215,11 +175,10 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
   const lang: OfferLang = normalizeSiteLang(i18n.language);
   usePageTitle(hubPageTitle(lang));
   const offers = getAvailableOffers();
-  const [activeId, setActiveId] = useState(offers[0]?.id ?? '');
 
   return (
     <div id="top" className="hub-root hub-screen relative overflow-x-hidden text-white">
-      <Header hub onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
+      <Header hub homeThreePills onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       <main className="hub-stage" aria-label={t('hub.offersAria')}>
         <div className="hub-aurora" aria-hidden="true">
@@ -229,31 +188,11 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
         </div>
         <div className="hub-grain" aria-hidden="true" />
 
-        <p className="hub-defline hub-rise" style={{ ['--i' as string]: 0 }} data-testid="hub-definition">{t('hub.definition')}</p>
+        <h1 className="hub-defline hub-rise" data-testid="hub-definition">{t('hub.definition')}</h1>
 
-        {/* Mobile : un panneau à la fois */}
-        <div className="hub-tabs" role="tablist" aria-label={t('hub.tabsAria')}>
-          <div className="flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] p-1.5">
-            {offers.map((o) => (
-              <button
-                key={o.id}
-                type="button"
-                role="tab"
-                aria-selected={activeId === o.id}
-                aria-controls={`hub-panel-${o.id}`}
-                data-testid={`hub-tab-${o.id}`}
-                onClick={() => setActiveId(o.id)}
-                className={`hub-pill${activeId === o.id ? ' is-on' : ''}`}
-              >
-                {t(o.navKey)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="hub-panels" data-count={offers.length} style={{ ['--n' as string]: offers.length }}>
-          {offers.map((o, i) => (
-            <Panel key={o.id} offer={o} index={i} active={activeId === o.id} lang={lang} onSelectRole={onSelectRole} />
+        <div className="hub-panels" data-count={offers.length}>
+          {offers.map((o) => (
+            <OfferCard key={o.id} offer={o} lang={lang} onSelectRole={onSelectRole} />
           ))}
         </div>
       </main>
