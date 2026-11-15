@@ -58,47 +58,45 @@
     "alreadyClient": "Déjà client ?",
     "signIn": "Se connecter",
     "offersAria": "Les offres HARX",
-    "tabsAria": "Choisir l'offre à présenter",
     "legalAria": "Informations légales",
+    "aiPowered": "AI POWERED",
     "offers": {
       "taas": {
-        "title": "Transaction-as-a-Service",
+        "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Découvrir TAAS",
+        "target": "Pour les entreprises qui veulent des professionnels du service client, humains ou IA, payés au résultat, et pour les professionnels (REPS) qui cherchent des missions.",
+        "benefit1": "Vous ne payez que le résultat que vous avez défini",
+        "benefit2": "Des professionnels du service client et de la vente, humains ou IA",
+        "benefit3": "Les REPS trouvent des missions (gigs) à leur mesure",
         "company": "Company : Publier un gig",
-        "reps": "REPS : Trouver des gigs",
-        "hero": {
-          "def": "Des professionnels du service client, de la télévente et du support, humains ou IA, travaillent pour vous : vous ne payez que le résultat que vous avez défini.",
-          "support": "« Uber vous connecte aux chauffeurs. Airbnb, aux logements. HARX vous connecte à des professionnels du service client, et ne vous facture que lorsqu'ils livrent un résultat. »",
-          "note": "TAAS = Transaction-as-a-Service : vous payez à la transaction réussie. Un gig est une mission.",
-          "flow1": "Votre entreprise",
-          "flow2": "Des professionnels du service client (humains ou IA)",
-          "flow3": "Un résultat que vous avez défini",
-          "flow4": "Vous payez ce résultat"
-        },
         "companyHint": "Vous cherchez des professionnels du service client",
+        "reps": "REPS : Trouver des gigs",
         "repsHint": "Vous êtes professionnel du service client et cherchez des missions"
       },
-      "telephony": {
-        "title": "HARX Téléphonie",
-        "nav": "Téléphonie",
-        "cta": "Ouvrir HARX Téléphonie",
-        "nomadSolo": "Nomad Solo",
+      "cloud": {
+        "title": "Telephony In The Cloud",
+        "nav": "CLOUD",
+        "cta": "Découvrir CLOUD",
+        "target": "Pour les entreprises et les équipes qui veulent leur téléphonie dans le cloud : accueil, équipe commerciale ou équipe support.",
+        "benefit1": "Appels entrants et sortants depuis n'importe quel appareil",
+        "benefit2": "Accueil, secrétariat et messagerie vocale pris en charge",
+        "benefit3": "Un accès pour le titulaire, les managers, les agents et les secrétaires",
         "accueil": "Accueil / Secrétariat",
         "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients",
-        "hero": {
-          "def": "Un numéro de votre pays, vos appels entrants et sortants, un accueil / secrétariat et une IA pour vous assister.",
-          "support": "Votre téléphonie, opérationnelle en 5 minutes.",
-          "note": "Quatre offres selon votre situation, une ligne incluse dans chacune.",
-          "flow1": "Un numéro de votre pays",
-          "flow2": "Appels entrants et sortants",
-          "flow3": "Accueil / secrétariat et répondeur",
-          "flow4": "L'IA vous assiste"
-        }
+        "multiClients": "Contact Centre Multi-clients"
+      },
+      "nomad": {
+        "title": "Telephony for Digital Workers",
+        "nav": "NOMAD",
+        "cta": "Découvrir NOMAD",
+        "target": "Pour les freelances, nomades et travailleurs numériques qui veulent leur propre numéro, utilisable partout dans le monde.",
+        "benefit1": "Un numéro qui fonctionne partout dans le monde",
+        "benefit2": "Sans roaming",
+        "benefit3": "Application iPhone HARX Nomad pour appeler et recevoir des appels"
       }
     },
-    "definition": "HARX vous aide à gérer votre relation client : des professionnels qui livrent des résultats, et une téléphonie opérationnelle en 5 minutes."
+    "definition": "Trois offres propulsées par l'IA pour trois besoins : des professionnels du service client payés au résultat, la téléphonie d'entreprise dans le cloud, et un numéro pour les travailleurs numériques."
   },
   "telephonyHeader": {
     "signIn": "Se connecter",

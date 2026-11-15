@@ -1,39 +1,17 @@
 /**
- * Offres HARX présentées sur l'écran d'accueil de l'ensemble (hub, `/`).
+ * Offres HARX présentées sur l'écran d'accueil de l'ensemble (hub, `/`) : TAAS, CLOUD, NOMAD, toutes « AI POWERED ».
  *
- * Ajouter une offre = ajouter UNE entrée à `OFFERS` (puis ses textes fr/en dans
- * `src/locales/*\/translation.json`, sous `hub.offers.<id>`). Le panneau de
- * l'écran d'accueil, l'onglet mobile et le lien de l'en-tête sont générés depuis
- * cette liste, dans l'ordre. Mise en page : voir « .hub-panels » dans
- * src/components/Hub/hub.css (2 panneaux de largeur égale aujourd'hui ; au-delà,
- * chaque panneau garde une largeur minimale et la rangée défile horizontalement).
- * `status: 'soon'` = offre annoncée, sans lien, non affichée.
+ * Ajouter une offre = ajouter UNE entrée à `OFFERS` (puis ses textes dans `src/locales/*\/translation.json`,
+ * sous `hub.offers.<id>`). Les cartes de l'accueil et les pastilles du bandeau de l'accueil sont générées depuis
+ * cette liste. `status: 'soon'` = offre annoncée, sans lien, non affichée.
  *
- * Module volontairement sans dépendance (ni React, ni i18n) : il est vérifié
- * par `node --experimental-strip-types scripts/check-offers.ts`.
+ * Module volontairement sans dépendance (ni React, ni i18n) : testé par `src/config/offers.test.ts`.
  */
 
 export type OfferStatus = 'available' | 'soon';
 
 /** Identifiants d'icônes ; la correspondance avec les icônes lucide est faite dans le composant. */
-export type OfferIcon = 'layers' | 'phone' | 'sparkles';
-
-/** Icônes des étapes du flux animé ; `mascot` = la mascotte HARX. */
-export type FlowIcon = 'building' | 'mascot' | 'target' | 'wallet' | 'phone' | 'calls' | 'voicemail' | 'sparkles';
-
-/** Présentation d'une offre sur l'écran d'accueil (chaque clé = une rangée alignée d'un panneau à l'autre). */
-export interface OfferHero {
-  /** « C'est quoi, pour quoi faire ? » en une phrase. */
-  defKey: string;
-  /** Phrase d'illustration sous la définition. */
-  supportKey: string;
-  /** `true` : l'illustration est une citation (italique). */
-  supportQuote: boolean;
-  /** Petite note de vocabulaire. */
-  noteKey: string;
-  /** Étapes du flux animé (4). */
-  flow: Array<{ key: string; icon: FlowIcon }>;
-}
+export type OfferIcon = 'layers' | 'cloud' | 'globe';
 
 export type OfferLang = 'fr' | 'en' | 'es' | 'ar';
 
@@ -70,21 +48,31 @@ export interface OfferConfig {
   status: OfferStatus;
   icon: OfferIcon;
   /** Clés i18n (namespace par défaut). */
+  /** Sigle de la marque (non traduit) : TAAS, CLOUD, NOMAD. */
+  acronym: string;
+  /** Clés i18n (namespace par défaut) : nom complet, libellé court, bouton principal. */
   titleKey: string;
-  /** Libellé court pour l'en-tête et l'onglet mobile. */
   navKey: string;
   ctaKey: string;
-  /** Accroche et flux animé du panneau de l'offre. */
-  hero: OfferHero;
-  /** Sous-entrées affichées sous la carte (arborescence de l'offre). */
+  /** La cible en une phrase. */
+  targetKey: string;
+  /** Trois bénéfices concrets. */
+  benefitKeys: [string, string, string];
+  /** Sous-entrées affichées sous le bouton principal. */
   children: OfferChild[];
   /** Connexion propre à l'offre (« Déjà client ? Se connecter ») ; `null` si aucune. */
   signIn: { route: string; langPrefixed: boolean } | null;
 }
 
+/** Démarrage de l'offre Nomad Solo (application Téléphonie, même origine). */
+export const NOMAD_SOLO_START = '/telephony/start?plan=nomad_solo';
+
+const TELEPHONY_SIGN_IN = { route: '/auth/signin?product=callcentre', langPrefixed: false } as const;
+
 export const OFFERS: readonly OfferConfig[] = [
   {
     id: 'taas',
+    acronym: 'TAAS',
     route: '/taas',
     langPrefixed: true,
     status: 'available',
@@ -92,18 +80,8 @@ export const OFFERS: readonly OfferConfig[] = [
     titleKey: 'hub.offers.taas.title',
     navKey: 'hub.offers.taas.nav',
     ctaKey: 'hub.offers.taas.cta',
-    hero: {
-      defKey: 'hub.offers.taas.hero.def',
-      supportKey: 'hub.offers.taas.hero.support',
-      supportQuote: true,
-      noteKey: 'hub.offers.taas.hero.note',
-      flow: [
-        { key: 'hub.offers.taas.hero.flow1', icon: 'building' },
-        { key: 'hub.offers.taas.hero.flow2', icon: 'mascot' },
-        { key: 'hub.offers.taas.hero.flow3', icon: 'target' },
-        { key: 'hub.offers.taas.hero.flow4', icon: 'wallet' },
-      ],
-    },
+    targetKey: 'hub.offers.taas.target',
+    benefitKeys: ['hub.offers.taas.benefit1', 'hub.offers.taas.benefit2', 'hub.offers.taas.benefit3'],
     children: [
       { id: 'company', labelKey: 'hub.offers.taas.company', hintKey: 'hub.offers.taas.companyHint', kind: 'role', role: 'company' },
       { id: 'reps', labelKey: 'hub.offers.taas.reps', hintKey: 'hub.offers.taas.repsHint', kind: 'role', role: 'rep' },
@@ -111,37 +89,56 @@ export const OFFERS: readonly OfferConfig[] = [
     signIn: { route: '/auth/signin', langPrefixed: true },
   },
   {
-    id: 'telephony',
+    id: 'cloud',
+    acronym: 'CLOUD',
     route: '/telephony',
     langPrefixed: false,
     status: 'available',
-    icon: 'phone',
-    titleKey: 'hub.offers.telephony.title',
-    navKey: 'hub.offers.telephony.nav',
-    ctaKey: 'hub.offers.telephony.cta',
-    // Accroche et étapes tirées de la vitrine /telephony (Landing.tsx, landingStories.ts, landingProfiles.ts).
-    hero: {
-      defKey: 'hub.offers.telephony.hero.def',
-      supportKey: 'hub.offers.telephony.hero.support',
-      supportQuote: false,
-      noteKey: 'hub.offers.telephony.hero.note',
-      flow: [
-        { key: 'hub.offers.telephony.hero.flow1', icon: 'phone' },
-        { key: 'hub.offers.telephony.hero.flow2', icon: 'calls' },
-        { key: 'hub.offers.telephony.hero.flow3', icon: 'voicemail' },
-        { key: 'hub.offers.telephony.hero.flow4', icon: 'sparkles' },
-      ],
-    },
-    // Noms et ordre de la vitrine /telephony ; ancres déjà présentes sur la vitrine (sections d'histoires).
+    icon: 'cloud',
+    titleKey: 'hub.offers.cloud.title',
+    navKey: 'hub.offers.cloud.nav',
+    ctaKey: 'hub.offers.cloud.cta',
+    targetKey: 'hub.offers.cloud.target',
+    benefitKeys: ['hub.offers.cloud.benefit1', 'hub.offers.cloud.benefit2', 'hub.offers.cloud.benefit3'],
+    // Noms et ancres de la vitrine /telephony (Nomad Solo a désormais sa propre offre).
     children: [
-      { id: 'nomad_solo', labelKey: 'hub.offers.telephony.nomadSolo', kind: 'route', route: '/telephony#nomade', langPrefixed: false },
-      { id: 'accueil', labelKey: 'hub.offers.telephony.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
-      { id: 'full_scope', labelKey: 'hub.offers.telephony.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
-      { id: 'multi_clients', labelKey: 'hub.offers.telephony.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
+      { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false },
+      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false },
     ],
-    signIn: { route: '/auth/signin?product=callcentre', langPrefixed: false },
+    signIn: TELEPHONY_SIGN_IN,
+  },
+  {
+    id: 'nomad',
+    acronym: 'NOMAD',
+    route: NOMAD_SOLO_START,
+    langPrefixed: false,
+    status: 'available',
+    icon: 'globe',
+    titleKey: 'hub.offers.nomad.title',
+    navKey: 'hub.offers.nomad.nav',
+    ctaKey: 'hub.offers.nomad.cta',
+    targetKey: 'hub.offers.nomad.target',
+    benefitKeys: ['hub.offers.nomad.benefit1', 'hub.offers.nomad.benefit2', 'hub.offers.nomad.benefit3'],
+    children: [],
+    signIn: TELEPHONY_SIGN_IN,
   },
 ];
+
+/**
+ * Pastilles du bandeau. Sur l'accueil : TAAS, CLOUD, NOMAD. Sur tous les autres écrans : TAAS et TELEPHONY (inchangé,
+ * à aligner plus tard sur les trois offres).
+ */
+export type MarkId = 'taas' | 'telephony' | 'cloud' | 'nomad';
+export const HUB_MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
+export const HEADER_MARK_IDS: readonly MarkId[] = ['taas', 'telephony'];
+
+/** Lien d'une pastille (l'accueil et TAAS sont préfixés par la langue ; Téléphonie est une application distincte). */
+export function resolveMarkHref(mark: MarkId, lang: OfferLang): string {
+  if (mark === 'taas') return `/${lang}/taas`;
+  if (mark === 'nomad') return NOMAD_SOLO_START;
+  return '/telephony';
+}
 
 /** Offres ouvertes (avec une route) : cartes cliquables et liens de l'en-tête. */
 export function getAvailableOffers(offers: readonly OfferConfig[] = OFFERS): OfferConfig[] {
