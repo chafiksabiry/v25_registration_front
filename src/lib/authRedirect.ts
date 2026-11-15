@@ -345,12 +345,15 @@ async function computePostLoginRedirectUrl(
         localStorage.setItem("employerCompanyId", companyId);
         Cookies.set("companyId", companyId, SESSION_COOKIE_OPTS);
       }
+      // Product carried by the account, falling back to the arrival link (?product=callcentre).
+      const callcentreMember = checkUserType.product === "callcentre" || isCallcentreProduct();
       if (checkUserType.mustChangePassword) {
         localStorage.setItem("mustChangePassword", "1");
-        return "/company/#/dashboard/account-settings?changePassword=1";
+        // Telephony shows its own forced-password screen.
+        return callcentreMember ? CALLCENTRE_PATH : "/company/#/dashboard/account-settings?changePassword=1";
       }
       localStorage.removeItem("mustChangePassword");
-      return checkUserType.product === "callcentre" ? CALLCENTRE_PATH : "/company/#/dashboard/main";
+      return callcentreMember ? CALLCENTRE_PATH : "/company/#/dashboard/main";
     }
 
     // Always prefer live profile so login resumes the real onboarding step
@@ -376,7 +379,7 @@ async function computePostLoginRedirectUrl(
           }
           return toRepAbsoluteUrl('/account-settings?changePassword=1');
         }
-        return checkUserType.product === 'callcentre' ? CALLCENTRE_PATH : toRepAbsoluteUrl('/dashboard');
+        return checkUserType.product === 'callcentre' || isCallcentreProduct() ? CALLCENTRE_PATH : toRepAbsoluteUrl('/dashboard');
       }
 
       const { data: profileData } = await axios.get(
