@@ -17,7 +17,7 @@ import {
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
-import { HEADER_MARK_IDS, HUB_MARK_IDS, resolveMarkHref } from '../../config/offers';
+import { getHeaderMarkIds, resolveMarkHref } from '../../config/offers';
 
 interface HeaderProps {
   onSignIn: () => void;
@@ -28,6 +28,8 @@ interface HeaderProps {
   telephony?: boolean;
   /** Accueil de l'ensemble HARX : aucune offre courante, pas de connexion dans le bandeau. */
   hub?: boolean;
+  /** Accueil HARX seulement : trois pastilles (TAAS, CLOUD, NOMAD). Les autres écrans, pages légales comprises, gardent TAAS et TELEPHONY. */
+  homeThreePills?: boolean;
   /** Pages TAAS (accueil, Company, REPS) : l'offre courante est TAAS, avec ses deux espaces. */
   taas?: 'home' | 'company' | 'reps';
 }
@@ -36,7 +38,7 @@ interface HeaderProps {
  * Bandeau commun à tous les écrans HARX : le logo toujours en haut à gauche, les offres en pastilles (TAAS et TELEPHONY ; TAAS, CLOUD et NOMAD sur l'accueil),
  * l'espace courant de TAAS (Company / REPS), le choix de la langue en icônes, puis la connexion.
  */
-export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, taas }: HeaderProps) {
+export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, homeThreePills = false, taas }: HeaderProps) {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
@@ -141,12 +143,12 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
 
   const offerMarks = (mobile = false) => (
     <div className={mobile ? 'flex flex-wrap gap-2' : 'flex items-center gap-2'} data-testid="offer-marks">
-      {(hub ? HUB_MARK_IDS : HEADER_MARK_IDS).map((o) => (
+      {getHeaderMarkIds(homeThreePills).map((o) => (
         <OfferMark
           key={o}
           offer={o}
           active={offer === o}
-          compact={hub}
+          compact={homeThreePills}
           href={o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : resolveMarkHref(o, siteLang)}
           onClick={(e) => goOffer(e, o)}
           data-testid={`offer-mark-${o}`}

@@ -6,6 +6,7 @@ import {
   HEADER_MARK_IDS,
   NOMAD_SOLO_START,
   getAvailableOffers,
+  getHeaderMarkIds,
   isChildComingSoon,
   resolveChildTarget,
   resolveMarkHref,
@@ -32,8 +33,8 @@ describe('accueil : trois offres', () => {
     expect(resolveOfferHref(byId.taas, 'en')).toBe('/en/taas');
     expect(resolveOfferHref(byId.taas, 'fr')).toBe('/fr/taas');
     expect(resolveOfferHref(byId.cloud, 'es')).toBe('/telephony');
-    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/telephony/start?plan=nomad_solo');
-    expect(NOMAD_SOLO_START).toBe('/telephony/start?plan=nomad_solo');
+    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/telephony/start?profil=solo&plan=nomad_solo');
+    expect(NOMAD_SOLO_START).toBe('/telephony/start?profil=solo&plan=nomad_solo');
   });
 
   it('« Déjà client ? » : connexions existantes inchangées', () => {
@@ -70,11 +71,16 @@ describe('bandeau', () => {
     expect(HEADER_MARK_IDS).toEqual(['taas', 'telephony']);
   });
 
+  it('seul l\'accueil (prop homeThreePills) affiche trois pastilles ; pages légales et autres : ancien bandeau', () => {
+    expect(getHeaderMarkIds(true)).toEqual(['taas', 'cloud', 'nomad']);
+    expect(getHeaderMarkIds(false)).toEqual(['taas', 'telephony']);
+  });
+
   it('liens des pastilles', () => {
     expect(resolveMarkHref('taas', 'en')).toBe('/en/taas');
     expect(resolveMarkHref('telephony', 'fr')).toBe('/telephony');
     expect(resolveMarkHref('cloud', 'fr')).toBe('/telephony');
-    expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/start?plan=nomad_solo');
+    expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/start?profil=solo&plan=nomad_solo');
   });
 });
 

@@ -72,13 +72,13 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
           <p className="hub-ai" data-testid={`hub-ai-${offer.id}`}><Sparkles className="h-3.5 w-3.5" aria-hidden="true" />{t('hub.aiPowered')}</p>
         </div>
       </header>
-      <h2 id={titleId} className="hub-card__title">{t(offer.titleKey)}</h2>
-      <p className="hub-card__target">{t(offer.targetKey)}</p>
+      <h2 id={titleId} className="hub-card__title"><bdi>{t(offer.titleKey)}</bdi></h2>
+      <p className="hub-card__target"><bdi>{t(offer.targetKey)}</bdi></p>
       <ul className="hub-benefits" data-testid={`hub-benefits-${offer.id}`}>
         {offer.benefitKeys.map((key) => (
           <li key={key}>
             <Check className="hub-benefits__tick" aria-hidden="true" />
-            <span>{t(key)}</span>
+            <span><bdi>{t(key)}</bdi></span>
           </li>
         ))}
       </ul>
@@ -92,7 +92,7 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
           }}
           className="hub-cta"
         >
-          {t(offer.ctaKey)}
+          <bdi>{t(offer.ctaKey)}</bdi>
           <ArrowRight className="h-5 w-5 hub-cta__arrow" aria-hidden="true" />
         </a>
         <div className="hub-more">
@@ -105,10 +105,10 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
                 return (
                   <li key={child.id} className={mini ? '' : 'hub-links__item'}>
                     <span className={`${mini ? 'hub-mini hub-mini--soon' : 'hub-link hub-link--soon'}`} aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
-                      {t(child.labelKey)}
+                      <bdi>{t(child.labelKey)}</bdi>
                       <span className="hub-soon">{t('hub.comingSoon')}</span>
                     </span>
-                    {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
+                    {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
                   </li>
                 );
               }
@@ -120,9 +120,9 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
                     onClick={(e) => openChild(e, child)}
                     className={mini ? 'hub-mini' : 'hub-link'}
                   >
-                    {t(child.labelKey)}
+                    <bdi>{t(child.labelKey)}</bdi>
                   </a>
-                  {child.hintKey && <span className="hub-hint">{t(child.hintKey)}</span>}
+                  {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
                 </li>
               );
             })}
@@ -178,7 +178,7 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
 
   return (
     <div id="top" className="hub-root hub-screen relative overflow-x-hidden text-white">
-      <Header hub onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
+      <Header hub homeThreePills onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       <main className="hub-stage" aria-label={t('hub.offersAria')}>
         <div className="hub-aurora" aria-hidden="true">

@@ -64,8 +64,11 @@ export interface OfferConfig {
   signIn: { route: string; langPrefixed: boolean } | null;
 }
 
-/** Démarrage de l'offre Nomad Solo (application Téléphonie, même origine). */
-export const NOMAD_SOLO_START = '/telephony/start?plan=nomad_solo';
+/**
+ * Démarrage de l'offre Nomad Solo (application Téléphonie, même origine). `profil=solo` est indispensable : sans lui, l'application
+ * ouvre le parcours entreprise (callcenter_front : planStartPath, src/domain/profile.ts ; StartCenter.tsx).
+ */
+export const NOMAD_SOLO_START = '/telephony/start?profil=solo&plan=nomad_solo';
 
 const TELEPHONY_SIGN_IN = { route: '/auth/signin?product=callcentre', langPrefixed: false } as const;
 
@@ -133,6 +136,11 @@ export const OFFERS: readonly OfferConfig[] = [
 export type MarkId = 'taas' | 'telephony' | 'cloud' | 'nomad';
 export const HUB_MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
 export const HEADER_MARK_IDS: readonly MarkId[] = ['taas', 'telephony'];
+
+/** Pastilles du bandeau : trois sur l'accueil seulement (`homeThreePills`), les deux d'origine partout ailleurs (pages légales comprises). */
+export function getHeaderMarkIds(homeThreePills: boolean): readonly MarkId[] {
+  return homeThreePills ? HUB_MARK_IDS : HEADER_MARK_IDS;
+}
 
 /** Lien d'une pastille (l'accueil et TAAS sont préfixés par la langue ; Téléphonie est une application distincte). */
 export function resolveMarkHref(mark: MarkId, lang: OfferLang): string {
