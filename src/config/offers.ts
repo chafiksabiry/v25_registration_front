@@ -83,11 +83,8 @@ export interface OfferConfig {
 /** Textes du haut de l'accueil (clés i18n). */
 export const HUB_HERO_KEYS = { title1: 'hub.hero.title1', title2: 'hub.hero.title2', sub: 'hub.hero.sub' } as const;
 
-/**
- * Démarrage de l'offre Nomad Solo (application Téléphonie, même origine). `profil=solo` est indispensable : sans lui, l'application
- * ouvre le parcours entreprise (callcenter_front : planStartPath, src/domain/profile.ts ; StartCenter.tsx).
- */
-export const NOMAD_SOLO_START = '/telephony/start?profil=solo&plan=nomad_solo';
+/** Page de l'offre NOMAD (Nomad Solo), servie par l'application Téléphonie, même origine. */
+export const NOMAD_PAGE = '/telephony/nomad';
 
 const TELEPHONY_SIGN_IN = { route: '/auth/signin?product=callcentre', langPrefixed: false } as const;
 
@@ -134,7 +131,7 @@ export const OFFERS: readonly OfferConfig[] = [
   {
     id: 'nomad',
     acronym: 'NOMAD',
-    route: NOMAD_SOLO_START,
+    route: NOMAD_PAGE,
     langPrefixed: false,
     status: 'available',
     icon: 'globe',
@@ -153,10 +150,12 @@ export type MarkId = 'taas' | 'cloud' | 'nomad';
 export const MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
 
 /**
- * Pastille de l'offre courante : aucune sur l'accueil et les pages légales (`hub`), CLOUD sur les parcours Téléphonie,
- * NOMAD sur les parcours Nomad Solo, TAAS partout ailleurs (pages TAAS, choix du profil, inscription et connexion).
+ * Pastille de l'offre courante : NOMAD quand l'adresse courante est la page NOMAD (/telephony/nomad, avec ou sans préfixe de
+ * langue) ; sinon aucune sur l'accueil et les pages légales (`hub`), CLOUD sur les parcours Téléphonie, NOMAD sur les parcours
+ * Nomad Solo (plan nomad_solo / profil solo), TAAS partout ailleurs (pages TAAS, choix du profil, inscription et connexion).
  */
-export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: boolean; nomad?: boolean }): MarkId | null {
+export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: boolean; nomad?: boolean; pathname?: string }): MarkId | null {
+  if (ctx.pathname && /^(\/(fr|en|es|ar))?\/telephony\/nomad\/?$/.test(ctx.pathname)) return 'nomad';
   if (ctx.hub) return null;
   if (ctx.telephony) return ctx.nomad ? 'nomad' : 'cloud';
   return 'taas';
@@ -165,7 +164,7 @@ export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: bool
 /** Lien d'une pastille (TAAS est préfixé par la langue ; Téléphonie est une application distincte). */
 export function resolveMarkHref(mark: MarkId, lang: OfferLang): string {
   if (mark === 'taas') return `/${lang}/taas`;
-  if (mark === 'nomad') return NOMAD_SOLO_START;
+  if (mark === 'nomad') return NOMAD_PAGE;
   return '/telephony';
 }
 

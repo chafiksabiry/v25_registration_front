@@ -4,7 +4,7 @@ import {
   OFFERS,
   MARK_IDS,
   activeMark,
-  NOMAD_SOLO_START,
+  NOMAD_PAGE,
   getAvailableOffers,
   HUB_HERO_KEYS,
   isChildComingSoon,
@@ -36,8 +36,8 @@ describe('accueil : trois offres', () => {
     expect(resolveOfferHref(byId.taas, 'en')).toBe('/en/taas');
     expect(resolveOfferHref(byId.taas, 'fr')).toBe('/fr/taas');
     expect(resolveOfferHref(byId.cloud, 'es')).toBe('/telephony');
-    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/telephony/start?profil=solo&plan=nomad_solo');
-    expect(NOMAD_SOLO_START).toBe('/telephony/start?profil=solo&plan=nomad_solo');
+    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/telephony/nomad');
+    expect(NOMAD_PAGE).toBe('/telephony/nomad');
   });
 
   it('« Déjà client ? » : connexions existantes inchangées', () => {
@@ -124,13 +124,24 @@ describe('bandeau à trois pastilles sur tous les écrans', () => {
     expect(activeMark({ telephony: true })).toBe('cloud'); // parcours Téléphonie non Nomad
     expect(activeMark({ telephony: true, nomad: false })).toBe('cloud');
     expect(activeMark({ telephony: true, nomad: true })).toBe('nomad'); // parcours Nomad Solo
+    // adresse courante /telephony/nomad : NOMAD actif, quel que soit le contexte
+    expect(activeMark({ pathname: '/telephony/nomad' })).toBe('nomad');
+    expect(activeMark({ pathname: '/telephony/nomad/' })).toBe('nomad');
+    expect(activeMark({ pathname: '/fr/telephony/nomad' })).toBe('nomad');
+    expect(activeMark({ pathname: '/telephony/nomad', telephony: true })).toBe('nomad');
+    expect(activeMark({ pathname: '/telephony/nomad', hub: true })).toBe('nomad');
+    // CLOUD et TAAS restent actifs ailleurs ; un chemin voisin n'active pas NOMAD
+    expect(activeMark({ pathname: '/telephony', telephony: true })).toBe('cloud');
+    expect(activeMark({ pathname: '/telephony/nomadic' })).toBe('taas');
+    expect(activeMark({ pathname: '/en/taas' })).toBe('taas');
   });
 
   it('liens des pastilles', () => {
     expect(resolveMarkHref('taas', 'en')).toBe('/en/taas');
     expect(resolveMarkHref('taas', 'ar')).toBe('/ar/taas');
     expect(resolveMarkHref('cloud', 'fr')).toBe('/telephony');
-    expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/start?profil=solo&plan=nomad_solo');
+    expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/nomad');
+    expect(resolveMarkHref('nomad', 'ar')).toBe('/telephony/nomad');
   });
 });
 
