@@ -46,8 +46,6 @@ interface OfferMarkProps {
   active?: boolean;
   href?: string;
   onClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
-  /** Gabarit plus étroit, pour les trois pastilles de l'accueil (TAAS, CLOUD, NOMAD). */
-  compact?: boolean;
   className?: string;
   'data-testid'?: string;
 }
@@ -56,10 +54,9 @@ interface OfferMarkProps {
  * Marque d'une offre dans le bandeau. TAAS et TELEPHONY partagent exactement le même gabarit (largeur et hauteur fixes) :
  * le nom de l'offre n'est pas traduit, c'est une marque.
  */
-export function OfferMark({ offer, active = false, href, onClick, compact = false, className = '', ...rest }: OfferMarkProps) {
+export function OfferMark({ offer, active = false, href, onClick, className = '', ...rest }: OfferMarkProps) {
   const { label, Icon, gradient, badge, hoverText, glow } = MARKS[offer];
-  const width = compact ? 'w-[7.75rem] md:w-[8.5rem] lg:w-[10rem]' : 'w-[10.25rem] md:w-[11.5rem]';
-  const size = `relative inline-flex h-11 ${width} shrink-0 items-center justify-center gap-2 overflow-hidden rounded-2xl text-[13px] font-black tracking-[0.18em] transition-all duration-300 md:h-12 md:text-sm`;
+  const size = `relative inline-flex h-11 w-[10.25rem] md:w-[11.5rem] shrink-0 items-center justify-center gap-2 overflow-hidden rounded-2xl text-[13px] font-black tracking-[0.18em] transition-all duration-300 md:h-12 md:text-sm`;
   const look = active
     ? `bg-white ring-1 ring-white/80 ${glow}`
     : 'bg-white/[0.12] ring-1 ring-white/35 backdrop-blur-md hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_10px_28px_-8px_rgba(0,0,0,0.55)]';

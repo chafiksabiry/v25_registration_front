@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import * as offersModule from './offers';
 import { readFileSync } from 'node:fs';
 import {
   OFFERS,
@@ -7,7 +8,7 @@ import {
   NOMAD_SOLO_START,
   getAvailableOffers,
   getHeaderMarkIds,
-  isChildComingSoon,
+  HUB_HERO_KEYS,
   resolveChildTarget,
   resolveMarkHref,
   resolveOfferHref,
@@ -43,25 +44,22 @@ describe('accueil : trois offres', () => {
     expect(resolveOfferSignInHref(byId.nomad, 'fr')).toBe('/auth/signin?product=callcentre');
   });
 
-  it('TAAS conserve ses deux parcours (Company bientôt disponible, REPS) et CLOUD ses ancres SEO', () => {
-    expect(byId.taas.children.map((c) => c.id)).toEqual(['company', 'reps']);
-    expect(resolveChildTarget(byId.taas.children[0], 'en')).toEqual({ type: 'role', role: 'company' });
-    expect(resolveChildTarget(byId.taas.children[1], 'en')).toEqual({ type: 'role', role: 'rep' });
-    expect(byId.cloud.children.map((c) => (resolveChildTarget(c, 'en') as { href: string }).href)).toEqual([
-      '/telephony#accueil-secretariat',
-      '/telephony#pme-equipes-distantes',
-      '/telephony#centres-appels',
-    ]);
+  it('liens de l\'accueil : un vrai lien pour chaque entrée, aucune entrée « bientôt »', () => {
+    const table = Object.fromEntries(
+      OFFERS.flatMap((o) => o.children.map((c) => [`${o.id}/${c.id}`, resolveChildTarget(c, 'en')])),
+    );
+    expect(table).toEqual({
+      // Company : point d'entrée entreprise TAAS (inscription entreprise), jamais /company/ en direct.
+      'taas/company': { type: 'href', href: '/en/auth/register-company' },
+      'taas/reps': { type: 'role', role: 'rep' },
+      'cloud/accueil': { type: 'href', href: '/telephony/start?plan=accueil' },
+      'cloud/full_scope': { type: 'href', href: '/telephony/start?plan=full_scope' },
+      'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
+    });
     expect(byId.nomad.children).toEqual([]);
-  });
-
-  it('CLOUD : seules les offres ouvertes sont des liens (Full Scope et Multi-clients « Bientôt disponible »)', () => {
-    expect(byId.cloud.children.map((c) => [c.id, isChildComingSoon(c)])).toEqual([
-      ['accueil', false],
-      ['full_scope', true],
-      ['multi_clients', true],
-    ]);
-    expect(byId.taas.children.map((c) => isChildComingSoon(c))).toEqual([true, false]);
+    for (const o of OFFERS) for (const c of o.children) expect(JSON.stringify(c)).not.toMatch(/soon/i);
+    expect(offersModule).not.toHaveProperty('isChildComingSoon');
+    expect(Object.values(table).some((t) => t.type === 'href' && /^\/(\w\w\/)?company(\/|$)/.test(t.href))).toBe(false);
   });
 });
 
@@ -89,7 +87,7 @@ describe('textes (i18n)', () => {
     o.titleKey, o.navKey, o.ctaKey, o.targetKey, ...o.benefitKeys,
     ...o.children.flatMap((c) => [c.labelKey, ...(c.hintKey ? [c.hintKey] : [])]),
   ];
-  const globalKeys = ['hub.aiPowered', 'hub.alreadyClient', 'hub.signIn', 'hub.definition', 'hub.offersAria'];
+  const globalKeys = ['hub.aiPowered', 'hub.alreadyClient', 'hub.signIn', 'hub.offersAria', ...Object.values(HUB_HERO_KEYS)];
 
   for (const lang of LANGS) {
     it(`${lang} : toutes les clés existent`, () => {
@@ -117,9 +115,23 @@ describe('textes (i18n)', () => {
     }
   });
 
-  it('anglais : « Contact Center Multi-Clients » ; français : « Contact Centre Multi-clients »', () => {
-    expect(lookup(locale('en'), 'hub.offers.cloud.multiClients')).toBe('Contact Center Multi-Clients');
-    expect(lookup(locale('fr'), 'hub.offers.cloud.multiClients')).toBe('Contact Centre Multi-clients');
+  it('héros : titre en deux lignes et phrase d\'appui, traduits ; aucun « Bientôt disponible » dans l\'accueil', () => {
+    const en = locale('en');
+    expect(lookup(en, HUB_HERO_KEYS.title1)).toBe('Customer service, telephony, your number.');
+    expect(lookup(en, HUB_HERO_KEYS.title2)).toBe('Powered by AI.');
+    expect(lookup(en, HUB_HERO_KEYS.sub)).toBe('Three offers, three ways to work with HARX.');
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.title1)).toBe('Service client, téléphonie, votre numéro.');
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.title2)).toBe("Propulsés par l'IA.");
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.sub)).toBe('Trois offres pour trois façons de travailler avec HARX.');
+    for (const lang of ['es', 'ar']) for (const key of Object.values(HUB_HERO_KEYS)) expect(lookup(locale(lang), key), `${lang} ${key}`).not.toBe(lookup(en, key));
+    for (const lang of LANGS) expect(JSON.stringify(lookup(locale(lang), 'hub')), lang).not.toMatch(/comingSoon|bient[ôo]t|pr[óo]ximamente|قريبًا|coming soon/i);
+  });
+
+  it('liens secondaires courts, comme la maquette', () => {
+    for (const lang of LANGS) {
+      expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Full Scope');
+      expect(lookup(locale(lang), 'hub.offers.cloud.multiClients')).toBe('Multi-clients');
+    }
   });
 
   it('anglais : orthographe US', () => {

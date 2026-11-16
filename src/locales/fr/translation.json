@@ -54,49 +54,50 @@
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
   "hub": {
-    "comingSoon": "Bientôt disponible",
     "alreadyClient": "Déjà client ?",
     "signIn": "Se connecter",
     "offersAria": "Les offres HARX",
     "legalAria": "Informations légales",
     "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "Service client, téléphonie, votre numéro.",
+      "title2": "Propulsés par l'IA.",
+      "sub": "Trois offres pour trois façons de travailler avec HARX."
+    },
     "offers": {
       "taas": {
         "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Découvrir TAAS",
-        "target": "Pour les entreprises qui veulent des professionnels du service client, humains ou IA, payés au résultat, et pour les professionnels (REPS) qui cherchent des missions.",
-        "benefit1": "Vous ne payez que le résultat que vous avez défini",
-        "benefit2": "Des professionnels du service client et de la vente, humains ou IA",
-        "benefit3": "Les REPS trouvent des missions (gigs) à leur mesure",
+        "target": "Des professionnels du service client, payés au résultat.",
+        "benefit1": "Vous ne payez que le résultat défini",
+        "benefit2": "Humains ou IA, à la demande",
+        "benefit3": "Les REPS trouvent des missions à leur mesure",
         "company": "Company : Publier un gig",
-        "companyHint": "Vous cherchez des professionnels du service client",
-        "reps": "REPS : Trouver des gigs",
-        "repsHint": "Vous êtes professionnel du service client et cherchez des missions"
+        "reps": "REPS : Trouver des gigs"
       },
       "cloud": {
         "title": "Telephony In The Cloud",
         "nav": "CLOUD",
         "cta": "Découvrir CLOUD",
-        "target": "Pour les entreprises et les équipes qui veulent leur téléphonie dans le cloud : accueil, équipe commerciale ou équipe support.",
-        "benefit1": "Appels entrants et sortants depuis n'importe quel appareil",
-        "benefit2": "Accueil, secrétariat et messagerie vocale pris en charge",
-        "benefit3": "Un accès pour le titulaire, les managers, les agents et les secrétaires",
+        "target": "La téléphonie des entreprises et des équipes.",
+        "benefit1": "Appels entrants et sortants, partout",
+        "benefit2": "Accueil, secrétariat et répondeur IA",
+        "benefit3": "Titulaire, managers, agents, secrétaires",
         "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients"
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
       },
       "nomad": {
         "title": "Telephony for Digital Workers",
         "nav": "NOMAD",
         "cta": "Découvrir NOMAD",
-        "target": "Pour les freelances, nomades et travailleurs numériques qui veulent leur propre numéro, utilisable partout dans le monde.",
+        "target": "Votre numéro, où que vous soyez.",
         "benefit1": "Un numéro qui fonctionne partout dans le monde",
         "benefit2": "Sans roaming",
-        "benefit3": "Application iPhone HARX Nomad pour appeler et recevoir des appels"
+        "benefit3": "Application iPhone HARX Nomad"
       }
-    },
-    "definition": "Trois offres propulsées par l'IA pour trois besoins : des professionnels du service client payés au résultat, la téléphonie d'entreprise dans le cloud, et un numéro pour les travailleurs numériques."
+    }
   },
   "telephonyHeader": {
     "signIn": "Se connecter",

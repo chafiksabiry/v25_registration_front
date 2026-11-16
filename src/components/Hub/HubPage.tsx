@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Check, Cloud, Globe, Layers, Sparkles, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { OfferWordmark } from './OfferWordmark';
@@ -9,21 +9,18 @@ import { persistHarxLanguage } from '../../lib/i18n';
 import { hardNavigate } from '../../lib/appNavigation';
 import {
   getAvailableOffers,
+  HUB_HERO_KEYS,
   resolveChildTarget,
-  isChildComingSoon,
   resolveOfferHref,
   resolveOfferSignInHref,
   type OfferChild,
   type OfferConfig,
-  type OfferIcon,
   type OfferLang,
 } from '../../config/offers';
 import { normalizeSiteLang } from '../../lib/langRoutes';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { hubPageTitle } from '../../lib/tracking/hubMeta';
 import './hub.css';
-
-const OFFER_ICONS: Record<OfferIcon, LucideIcon> = { layers: Layers, cloud: Cloud, globe: Globe };
 
 interface HubPageProps {
   /** Même mécanisme que les cartes de /auth/choice (pendingUserType + retour). */
@@ -49,7 +46,6 @@ export function openOffer(offer: OfferConfig, lang: OfferLang) {
 
 function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: OfferLang; onSelectRole: (role: SignupUserType) => void }) {
   const { t } = useTranslation();
-  const Icon = OFFER_ICONS[offer.icon];
   const href = resolveOfferHref(offer, lang) ?? '#';
   const signInHref = resolveOfferSignInHref(offer, lang);
   const titleId = `hub-offer-${offer.id}-title`;
@@ -66,15 +62,10 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
 
   return (
     <article className="hub-card hub-rise" data-offer={offer.id} data-testid={`hub-panel-${offer.id}`} aria-labelledby={titleId}>
-      <header className="hub-card__head">
-        <span className="hub-badge"><Icon className="h-6 w-6" aria-hidden="true" /></span>
-        <div className="hub-card__id">
-          <h2 id={titleId} className="hub-acronym" data-testid={`hub-acronym-${offer.id}`}>
-            <OfferWordmark offer={offer.id as 'taas' | 'cloud' | 'nomad'} label={offer.acronym} />
-          </h2>
-          <p className="hub-ai" data-testid={`hub-ai-${offer.id}`}><Sparkles className="h-3.5 w-3.5" aria-hidden="true" />{t('hub.aiPowered')}</p>
-        </div>
-      </header>
+      <div className="hub-card__top"><span className="hub-chip" data-testid={`hub-ai-${offer.id}`}>{t('hub.aiPowered')}</span></div>
+      <h2 id={titleId} className="hub-acronym" data-testid={`hub-acronym-${offer.id}`}>
+        <OfferWordmark offer={offer.id as 'taas' | 'cloud' | 'nomad'} label={offer.acronym} />
+      </h2>
       <p className="hub-card__title"><bdi>{t(offer.titleKey)}</bdi></p>
       <p className="hub-card__target"><bdi>{t(offer.targetKey)}</bdi></p>
       <ul className="hub-benefits" data-testid={`hub-benefits-${offer.id}`}>
@@ -99,38 +90,25 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
           <ArrowRight className="h-5 w-5 hub-cta__arrow" aria-hidden="true" />
         </a>
         <div className="hub-more">
-        {offer.children.length > 0 && (
-          <ul className="hub-links" data-testid={`offer-children-${offer.id}`}>
-            {offer.children.map((child) => {
-              const target = resolveChildTarget(child, lang);
-              const mini = !child.hintKey;
-              if (isChildComingSoon(child)) {
+          {offer.children.length > 0 && (
+            <ul className="hub-links" data-testid={`offer-children-${offer.id}`}>
+              {offer.children.map((child) => {
+                const target = resolveChildTarget(child, lang);
                 return (
-                  <li key={child.id} className={mini ? '' : 'hub-links__item'}>
-                    <span className={`${mini ? 'hub-mini hub-mini--soon' : 'hub-link hub-link--soon'}`} aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
+                  <li key={child.id}>
+                    <a
+                      href={target.type === 'href' ? target.href : '#'}
+                      data-testid={`offer-child-${offer.id}-${child.id}`}
+                      onClick={(e) => openChild(e, child)}
+                      className="hub-pill"
+                    >
                       <bdi>{t(child.labelKey)}</bdi>
-                      <span className="hub-soon">{t('hub.comingSoon')}</span>
-                    </span>
-                    {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
+                    </a>
                   </li>
                 );
-              }
-              return (
-                <li key={child.id} className={mini ? '' : 'hub-links__item'}>
-                  <a
-                    href={target.type === 'href' ? target.href : '#'}
-                    data-testid={`offer-child-${offer.id}-${child.id}`}
-                    onClick={(e) => openChild(e, child)}
-                    className={mini ? 'hub-mini' : 'hub-link'}
-                  >
-                    <bdi>{t(child.labelKey)}</bdi>
-                  </a>
-                  {child.hintKey && <span className="hub-hint"><bdi>{t(child.hintKey)}</bdi></span>}
-                </li>
-              );
-            })}
-          </ul>
-        )}
+              })}
+            </ul>
+          )}
         </div>
       </div>
       <p className="hub-signin">
@@ -184,14 +162,15 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
       <Header hub homeThreePills onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       <main className="hub-stage" aria-label={t('hub.offersAria')}>
-        <div className="hub-aurora" aria-hidden="true">
-          <div className="hub-aurora__blob hub-aurora__blob--a" />
-          <div className="hub-aurora__blob hub-aurora__blob--b" />
-          <div className="hub-aurora__blob hub-aurora__blob--c" />
-        </div>
-        <div className="hub-grain" aria-hidden="true" />
-
-        <h1 className="hub-defline hub-rise" data-testid="hub-definition">{t('hub.definition')}</h1>
+        <section className="hub-hero hub-rise" data-testid="hub-definition">
+          <span className="hub-eyebrow"><i aria-hidden="true" />{t('hub.aiPowered')}</span>
+          <h1 className="hub-h1">
+            {t(HUB_HERO_KEYS.title1)}
+            <br />
+            <em>{t(HUB_HERO_KEYS.title2)}</em>
+          </h1>
+          <p className="hub-sub">{t(HUB_HERO_KEYS.sub)}</p>
+        </section>
 
         <div className="hub-panels" data-count={offers.length}>
           {offers.map((o) => (
