@@ -54,49 +54,50 @@
     "point4": "Una suscripción y luego paga por lo que utiliza"
   },
   "hub": {
-    "comingSoon": "Próximamente",
     "alreadyClient": "¿Ya es cliente?",
     "signIn": "Iniciar sesión",
     "offersAria": "Ofertas de HARX",
     "legalAria": "Información legal",
     "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "Atención al cliente, telefonía, su número.",
+      "title2": "Impulsados por IA.",
+      "sub": "Tres ofertas, tres formas de trabajar con HARX."
+    },
     "offers": {
       "taas": {
         "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Descubrir TAAS",
-        "target": "Para empresas que quieren profesionales de atención al cliente, humanos o IA, pagados por resultados, y para profesionales (REPS) que buscan misiones.",
-        "benefit1": "Solo paga el resultado que definió",
-        "benefit2": "Profesionales de atención al cliente y ventas, humanos o IA",
-        "benefit3": "Los REPS encuentran misiones (gigs) a su medida",
+        "target": "Profesionales de atención al cliente, pagados por resultados.",
+        "benefit1": "Solo paga el resultado que define",
+        "benefit2": "Humanos o IA, a demanda",
+        "benefit3": "Los REPS encuentran misiones a su medida",
         "company": "Company: Publicar una misión",
-        "companyHint": "Usted busca profesionales del servicio al cliente",
-        "reps": "REPS: Encontrar misiones",
-        "repsHint": "Usted es profesional del servicio al cliente y busca misiones"
+        "reps": "REPS: Encontrar misiones"
       },
       "cloud": {
         "title": "Telephony In The Cloud",
         "nav": "CLOUD",
         "cta": "Descubrir CLOUD",
-        "target": "Para empresas y equipos que quieren su telefonía en la nube: recepción, equipo comercial o equipo de soporte.",
-        "benefit1": "Llamadas entrantes y salientes desde cualquier dispositivo",
-        "benefit2": "Recepción, secretaría y buzón de voz gestionados por nosotros",
-        "benefit3": "Acceso para el titular, los gerentes, los agentes y las secretarias",
+        "target": "La telefonía de empresas y equipos.",
+        "benefit1": "Llamadas entrantes y salientes, desde cualquier lugar",
+        "benefit2": "Recepción, secretaría y contestador con IA",
+        "benefit3": "Titular, gerentes, agentes, secretarias",
         "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients"
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
       },
       "nomad": {
         "title": "Telephony for Digital Workers",
         "nav": "NOMAD",
         "cta": "Descubrir NOMAD",
-        "target": "Para freelancers, nómadas y trabajadores digitales que quieren su propio número, utilizable en cualquier parte del mundo.",
+        "target": "Su número, esté donde esté.",
         "benefit1": "Un número que funciona en todo el mundo",
         "benefit2": "Sin roaming",
-        "benefit3": "Aplicación HARX Nomad para iPhone para llamar y recibir llamadas"
+        "benefit3": "Aplicación HARX Nomad para iPhone"
       }
-    },
-    "definition": "Tres ofertas con IA para tres necesidades: profesionales de atención al cliente pagados por resultados, telefonía empresarial en la nube y un número de teléfono para trabajadores digitales."
+    }
   },
   "telephonyHeader": {
     "signIn": "Iniciar sesión",

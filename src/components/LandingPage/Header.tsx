@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { OfferMark, type OfferMarkId } from '../Brand/OfferMarks';
 import { LanguageIcons } from '../Brand/LanguageIcons';
+import { HubSegmentedNav } from '../Brand/HubSegmentedNav';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { TAAS_HOME } from '../../lib/taasPaths';
 import { normalizeSiteLang, withLangPrefix } from '../../lib/langRoutes';
@@ -141,29 +142,35 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     );
   };
 
-  const offerMarks = (mobile = false) => (
+  const offerMarks = (mobile = false) =>
+    homeThreePills ? (
+      <HubSegmentedNav
+        ids={getHeaderMarkIds(true)}
+        hrefFor={(o) => (o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : resolveMarkHref(o, siteLang))}
+        onSelect={goOffer}
+        showLabels={mobile}
+      />
+    ) : (
     <div className={mobile ? 'flex flex-wrap gap-2' : 'flex items-center gap-2'} data-testid="offer-marks">
-      {getHeaderMarkIds(homeThreePills).map((o) => (
+      {getHeaderMarkIds(false).map((o) => (
         <OfferMark
           key={o}
           offer={o}
           active={offer === o}
-          compact={homeThreePills}
           href={o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : resolveMarkHref(o, siteLang)}
           onClick={(e) => goOffer(e, o)}
           data-testid={`offer-mark-${o}`}
         />
       ))}
     </div>
-  );
-
+    );
 
   return (
     <header className="harx-bar fixed left-0 right-0 top-0 z-50" data-testid="harx-bar">
       <nav className="relative flex h-20 w-full items-center justify-between gap-4 pl-4 pr-4 md:pl-6 md:pr-8">
         <div className="flex min-w-0 items-center gap-5 lg:gap-7">
           <a href={homeHref} onClick={goHome} className="harx-bar-logo flex shrink-0 items-center" aria-label={t('header.allOffers', 'All HARX offers')} data-testid="harx-logo">
-            <Logo className="h-14 w-auto md:h-[4.25rem]" />
+            <Logo className={homeThreePills ? 'hub-logo h-14 w-auto md:h-[4.25rem]' : 'h-14 w-auto md:h-[4.25rem]'} />
           </a>
           <span className="hidden h-9 w-px bg-white/25 md:block" aria-hidden="true" />
           <div className="hidden items-center gap-4 md:flex">
@@ -172,7 +179,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <LanguageIcons />
+          <LanguageIcons glass={homeThreePills} />
           {authActions(false)}
         </div>
 
@@ -185,7 +192,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
         <div className="harx-bar absolute left-0 right-0 top-full border-t border-white/15 p-6 shadow-xl animate-fade-in md:hidden">
           <div className="flex flex-col gap-4">
             {offerMarks(true)}
-            <div className="flex justify-center"><LanguageIcons /></div>
+            <div className="flex justify-center"><LanguageIcons glass={homeThreePills} /></div>
             <div className="space-y-3 border-t border-white/15 pt-4">{authActions(true)}</div>
           </div>
         </div>

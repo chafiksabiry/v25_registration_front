@@ -18,20 +18,16 @@ export type OfferLang = 'fr' | 'en' | 'es' | 'ar';
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =
   | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
-  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean; /** Offre annoncée mais pas encore ouverte : affichée « Bientôt disponible », sans lien. */ soon?: boolean };
+  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean };
 
 /**
- * Parcours d'inscription pas encore ouverts : « Publier un gig » (rôle company) est annoncé « Bientôt disponible » ;
- * son entrée reste visible mais ne démarre aucune inscription. Les connexions existantes ne sont pas concernées.
+ * Parcours d'inscription pas encore ouverts dans les écrans TAAS (page Company, choix du profil) : ils gardent « Bientôt disponible ».
+ * L'accueil n'utilise plus cet état : « Company » y est un vrai lien vers l'inscription entreprise.
  */
 export const COMING_SOON_ROLES: ReadonlyArray<'company' | 'rep' | 'call-center'> = ['company'];
 
 export function isRoleComingSoon(role: 'company' | 'rep' | 'call-center'): boolean {
   return COMING_SOON_ROLES.includes(role);
-}
-
-export function isChildComingSoon(child: OfferChild): boolean {
-  return child.kind === 'role' ? isRoleComingSoon(child.role) : child.soon === true;
 }
 
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
@@ -64,6 +60,9 @@ export interface OfferConfig {
   signIn: { route: string; langPrefixed: boolean } | null;
 }
 
+/** Textes du haut de l'accueil (clés i18n). */
+export const HUB_HERO_KEYS = { title1: 'hub.hero.title1', title2: 'hub.hero.title2', sub: 'hub.hero.sub' } as const;
+
 /**
  * Démarrage de l'offre Nomad Solo (application Téléphonie, même origine). `profil=solo` est indispensable : sans lui, l'application
  * ouvre le parcours entreprise (callcenter_front : planStartPath, src/domain/profile.ts ; StartCenter.tsx).
@@ -86,8 +85,9 @@ export const OFFERS: readonly OfferConfig[] = [
     targetKey: 'hub.offers.taas.target',
     benefitKeys: ['hub.offers.taas.benefit1', 'hub.offers.taas.benefit2', 'hub.offers.taas.benefit3'],
     children: [
-      { id: 'company', labelKey: 'hub.offers.taas.company', hintKey: 'hub.offers.taas.companyHint', kind: 'role', role: 'company' },
-      { id: 'reps', labelKey: 'hub.offers.taas.reps', hintKey: 'hub.offers.taas.repsHint', kind: 'role', role: 'rep' },
+      // Point d'entrée entreprise TAAS (écran d'inscription entreprise, qui mémorise le profil « company ») : jamais /company/ en direct.
+      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'route', route: '/auth/register-company', langPrefixed: true },
+      { id: 'reps', labelKey: 'hub.offers.taas.reps', kind: 'role', role: 'rep' },
     ],
     signIn: { route: '/auth/signin', langPrefixed: true },
   },
@@ -103,12 +103,11 @@ export const OFFERS: readonly OfferConfig[] = [
     ctaKey: 'hub.offers.cloud.cta',
     targetKey: 'hub.offers.cloud.target',
     benefitKeys: ['hub.offers.cloud.benefit1', 'hub.offers.cloud.benefit2', 'hub.offers.cloud.benefit3'],
-    // Noms et ancres de la vitrine /telephony (Nomad Solo a désormais sa propre offre). Full Scope et Multi-clients sont
-    // « Bientôt disponible » sur la page Téléphonie (statut communiqué par le CTO, non revérifié dans callcenter_front).
+    // Chaque offre Téléphonie s'ouvre sur son parcours de démarrage (planStartPath de l'application Téléphonie).
     children: [
-      { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony#accueil-secretariat', langPrefixed: false },
-      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony#pme-equipes-distantes', langPrefixed: false, soon: true },
-      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony#centres-appels', langPrefixed: false, soon: true },
+      { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony/start?plan=accueil', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony/start?plan=full_scope', langPrefixed: false },
+      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony/start?plan=multi_clients', langPrefixed: false },
     ],
     signIn: TELEPHONY_SIGN_IN,
   },
