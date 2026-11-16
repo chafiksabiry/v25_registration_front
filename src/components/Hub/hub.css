@@ -45,7 +45,8 @@
 .hub-card__head { display: flex; align-items: center; gap: .85rem; }
 .hub-badge { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: 9999px; color: #fff; background: linear-gradient(135deg, #be185d, #c2410c); box-shadow: 0 8px 20px -6px rgba(255, 77, 109, .8); }
 .hub-card__id { display: flex; flex-direction: column; align-items: flex-start; gap: .3rem; min-width: 0; }
-.hub-acronym { margin: 0; font-size: 1.6rem; font-weight: 900; letter-spacing: .12em; line-height: 1; color: #fff; }
+.hub-acronym { margin: 0; line-height: 0; color: #fff; }
+.hub-wordmark { display: block; width: auto; height: 30px; overflow: visible; }
 .hub-ai { margin: 0; display: inline-flex; align-items: center; gap: .3rem; height: 1.45rem; padding: 0 .6rem; border-radius: 9999px; font-size: .68rem; font-weight: 800; letter-spacing: .14em; color: #fff; border: 1px solid rgba(255, 190, 120, .65); background: rgba(245, 158, 11, .16); }
 .hub-card__title { margin: 0; font-size: clamp(1.15rem, .5vw + 1rem, 1.5rem); font-weight: 800; line-height: 1.2; color: #fff; }
 .hub-card__target { margin: 0; font-size: 1rem; line-height: 1.5; color: #f1f5f9; }
@@ -92,8 +93,10 @@
 @media (max-width: 1023px) {
   .hub-aurora__blob { filter: blur(48px); animation: none; opacity: .45; }
 }
+@media (max-width: 767px) {
+  .hub-wordmark { height: 26px; }
+}
 @media (max-width: 380px) {
-  .hub-acronym { font-size: 1.35rem; }
   .hub-card { border-radius: 1.4rem; }
 }
 @media (prefers-reduced-motion: reduce) {
