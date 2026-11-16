@@ -10,20 +10,6 @@
 .hub-screen { min-height: 100svh; display: flex; flex-direction: column; padding-top: 5rem; }
 .hub-stage { position: relative; flex: 1; display: flex; flex-direction: column; }
 
-/* Bandeau : sélecteur segmenté (verre sombre, 3 onglets de même largeur) */
-.hub-logo { transform: scale(1.4); transform-origin: left center; margin-inline-end: 2.5rem; margin-inline-start: .5rem; }
-[dir="rtl"] .hub-logo { transform-origin: right center; }
-.hub-seg { display: flex; padding: 4px; border-radius: 16px; background: rgba(7, 10, 26, .28); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
-.hub-seg__tab { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1 1 0; min-width: 0; height: 44px; padding: 0 22px; border-radius: 12px; color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: .18em; transition: background .2s ease, color .2s ease, box-shadow .2s ease; }
-.hub-seg__icon { width: 18px; height: 18px; flex: none; stroke: currentColor; stroke-width: 1.8; fill: none; }
-.hub-seg__tab:hover, .hub-seg__tab:focus-visible { background: #fff; color: #1a1033; box-shadow: 0 6px 18px -6px rgba(0, 0, 0, .45); }
-.hub-seg__tab:hover .hub-seg__icon, .hub-seg__tab:focus-visible .hub-seg__icon { stroke: #c0125f; }
-.hub-seg--labels { width: 100%; }
-@media (max-width: 1099px) {
-  .hub-seg:not(.hub-seg--labels) .hub-seg__tab { padding: 0 14px; }
-  .hub-seg:not(.hub-seg--labels) .hub-seg__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
-}
-
 /* Héros */
 .hub-hero { max-width: 74rem; margin: 0 auto; padding: clamp(2.5rem, 5vw, 4rem) 1.25rem clamp(1.75rem, 3vw, 2.75rem); text-align: center; }
 .hub-eyebrow { display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 14px; border-radius: 999px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); font-size: 12px; font-weight: 700; letter-spacing: .2em; color: #ffd7e8; background: rgba(255, 255, 255, .05); }
@@ -75,6 +61,8 @@
 .hub-links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 8px; }
 .hub-pill { display: inline-flex; align-items: center; min-height: 32px; padding: 4px 13px; border-radius: 999px; font-size: 13px; font-weight: 600; color: #fff; text-decoration: none; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .26); transition: background .2s ease, color .2s ease; }
 .hub-pill:hover { background: #fff; color: #1a1033; }
+.hub-pill--soon, .hub-pill--soon:hover { gap: 8px; cursor: not-allowed; background: rgba(255, 255, 255, .05); color: #e2e8f0; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .2); }
+.hub-soon { display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: 9999px; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; background: rgba(255, 255, 255, .14); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .35); }
 
 .hub-signin { margin: 14px 0 0; min-height: 1.4em; font-size: 14px; color: var(--muted); }
 .hub-signin a { font-weight: 700; color: #ffb3d1; text-decoration: none; }

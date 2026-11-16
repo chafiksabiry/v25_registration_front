@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import { getLangFromPath, isRtlLang, normalizeSiteLang, SITE_LANGS, type SiteLang } from './langRoutes';
+import { DEFAULT_SITE_LANG, getLangFromPath, isRtlLang, normalizeSiteLang, resolveSiteLanguage, SITE_LANGS, type SiteLang } from './langRoutes';
 import translationEN from '../locales/en/translation.json';
 import translationFR from '../locales/fr/translation.json';
 import translationES from '../locales/es/translation.json';
@@ -17,11 +17,15 @@ export const HARX_LANG_EXPLICIT_KEY = 'harxLangExplicit';
  */
 export const HARX_SITE_LANG_KEY = 'harxSiteLang';
 
+/** Langues préférées du navigateur (dans l'ordre), vide hors navigateur. */
+function browserLanguages(): string[] {
+  if (typeof navigator === 'undefined') return [];
+  return navigator.languages?.length ? [...navigator.languages] : navigator.language ? [navigator.language] : [];
+}
+
 /** Première langue prise en charge (fr, en, es, ar) parmi les préférences du navigateur, sinon null. */
 export function detectBrowserLanguage(): SiteLang | null {
-  if (typeof navigator === 'undefined') return null;
-  const candidates = navigator.languages?.length ? navigator.languages : [navigator.language];
-  for (const candidate of candidates) {
+  for (const candidate of browserLanguages()) {
     const code = (candidate || '').toLowerCase().slice(0, 2);
     if ((SITE_LANGS as readonly string[]).includes(code)) return code as SiteLang;
   }
@@ -29,23 +33,20 @@ export function detectBrowserLanguage(): SiteLang | null {
 }
 
 /**
- * Langue à afficher : le choix explicite (icônes de langue ou URL /fr, /en, /es, /ar) prime ;
- * sinon la langue du navigateur (fr, en, es, ar) ; sinon le français.
+ * Langue à afficher : préfixe d'URL (/fr, /en, /es, /ar) > choix explicite mémorisé (icônes de langue)
+ * > langue du navigateur (fr, en, es, ar) > anglais. Voir resolveSiteLanguage (src/lib/langRoutes.ts).
  */
 export function readHarxLanguage(): SiteLang {
+  let storedExplicit: string | null = null;
   try {
-    const explicit = localStorage.getItem(HARX_LANG_EXPLICIT_KEY) === '1';
-    if (explicit) {
-      const site = (localStorage.getItem(HARX_SITE_LANG_KEY) || '').toLowerCase();
-      if ((SITE_LANGS as readonly string[]).includes(site)) return site as SiteLang;
-      const raw = (localStorage.getItem(HARX_LANG_KEY) || '').toLowerCase();
-      if (raw.startsWith('en')) return 'en';
-      if (raw.startsWith('fr')) return 'fr';
+    if (localStorage.getItem(HARX_LANG_EXPLICIT_KEY) === '1') {
+      storedExplicit = localStorage.getItem(HARX_SITE_LANG_KEY) || localStorage.getItem(HARX_LANG_KEY);
     }
   } catch {
     /* ignore */
   }
-  return detectBrowserLanguage() ?? 'fr';
+  const urlLang = typeof window !== 'undefined' ? getLangFromPath(window.location.pathname) : null;
+  return resolveSiteLanguage({ urlLang, storedExplicit, browser: browserLanguages() });
 }
 
 export function persistHarxLanguage(lang: string, opts?: { explicit?: boolean }): void {
@@ -122,7 +123,7 @@ if (typeof window !== 'undefined') {
 void i18n.use(initReactI18next).init({
   resources,
   lng: readHarxLanguage(),
-  fallbackLng: 'fr',
+  fallbackLng: DEFAULT_SITE_LANG,
   supportedLngs: ['en', 'fr', 'es', 'ar'],
   interpolation: {
     escapeValue: false,

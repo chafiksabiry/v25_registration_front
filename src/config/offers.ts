@@ -17,17 +17,37 @@ export type OfferLang = 'fr' | 'en' | 'es' | 'ar';
 
 /** Entrée de l'arborescence d'une offre : parcours d'inscription direct (rôle) ou lien vers une page. */
 export type OfferChild =
-  | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center' }
-  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean };
+  | { id: string; labelKey: string; hintKey?: string; kind: 'role'; role: 'company' | 'rep' | 'call-center'; soonKey?: ComingSoonKey }
+  | { id: string; labelKey: string; hintKey?: string; kind: 'route'; route: string; langPrefixed: boolean; soonKey?: ComingSoonKey };
 
 /**
- * Parcours d'inscription pas encore ouverts dans les écrans TAAS (page Company, choix du profil) : ils gardent « Bientôt disponible ».
- * L'accueil n'utilise plus cet état : « Company » y est un vrai lien vers l'inscription entreprise.
+ * « Bientôt disponible » : UNE seule règle, pilotée par l'environnement.
+ * - Production (réglage de construction absent) : Company (TAAS), Full Scope et Multi-clients sont « bientôt », sans lien,
+ *   partout où ils apparaissent (accueil et écrans TAAS).
+ * - Recette : VITE_RECETTE_UNLOCK_OFFERS=true les ouvre pour les tester (même principe que VITE_RECETTE_UNLOCK_CENTRE_OFFERS
+ *   dans l'application Téléphonie).
  */
-export const COMING_SOON_ROLES: ReadonlyArray<'company' | 'rep' | 'call-center'> = ['company'];
+export type ComingSoonKey = 'company' | 'full_scope' | 'multi_clients';
+export const COMING_SOON_OFFERS: readonly ComingSoonKey[] = ['company', 'full_scope', 'multi_clients'];
 
-export function isRoleComingSoon(role: 'company' | 'rep' | 'call-center'): boolean {
-  return COMING_SOON_ROLES.includes(role);
+/** Offres ouvertes pour les tests ? Seule la valeur exacte « true » compte ; absent = production. */
+export function offersUnlocked(env: { VITE_RECETTE_UNLOCK_OFFERS?: string } | undefined = import.meta.env): boolean {
+  return env?.VITE_RECETTE_UNLOCK_OFFERS === 'true';
+}
+
+/** La règle unique : cette offre est-elle « bientôt disponible » ? */
+export function isOfferComingSoon(key: ComingSoonKey, unlocked: boolean = offersUnlocked()): boolean {
+  return !unlocked && COMING_SOON_OFFERS.includes(key);
+}
+
+/** Rôle d'inscription « bientôt » (écrans TAAS : page Company, choix du profil, garde d'inscription). */
+export function isRoleComingSoon(role: 'company' | 'rep' | 'call-center', unlocked: boolean = offersUnlocked()): boolean {
+  return role === 'company' && isOfferComingSoon('company', unlocked);
+}
+
+/** Entrée de l'accueil « bientôt » ? */
+export function isChildComingSoon(child: OfferChild, unlocked: boolean = offersUnlocked()): boolean {
+  return child.soonKey !== undefined && isOfferComingSoon(child.soonKey, unlocked);
 }
 
 export type OfferChildTarget = { type: 'role'; role: 'company' | 'rep' | 'call-center' } | { type: 'href'; href: string };
@@ -86,7 +106,7 @@ export const OFFERS: readonly OfferConfig[] = [
     benefitKeys: ['hub.offers.taas.benefit1', 'hub.offers.taas.benefit2', 'hub.offers.taas.benefit3'],
     children: [
       // Point d'entrée entreprise TAAS (écran d'inscription entreprise, qui mémorise le profil « company ») : jamais /company/ en direct.
-      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'route', route: '/auth/register-company', langPrefixed: true },
+      { id: 'company', labelKey: 'hub.offers.taas.company', kind: 'route', route: '/auth/register-company', langPrefixed: true, soonKey: 'company' },
       { id: 'reps', labelKey: 'hub.offers.taas.reps', kind: 'role', role: 'rep' },
     ],
     signIn: { route: '/auth/signin', langPrefixed: true },
@@ -106,8 +126,8 @@ export const OFFERS: readonly OfferConfig[] = [
     // Chaque offre Téléphonie s'ouvre sur son parcours de démarrage (planStartPath de l'application Téléphonie).
     children: [
       { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony/start?plan=accueil', langPrefixed: false },
-      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony/start?plan=full_scope', langPrefixed: false },
-      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony/start?plan=multi_clients', langPrefixed: false },
+      { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony/start?plan=full_scope', langPrefixed: false, soonKey: 'full_scope' },
+      { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony/start?plan=multi_clients', langPrefixed: false, soonKey: 'multi_clients' },
     ],
     signIn: TELEPHONY_SIGN_IN,
   },
@@ -128,20 +148,21 @@ export const OFFERS: readonly OfferConfig[] = [
   },
 ];
 
-/**
- * Pastilles du bandeau. Sur l'accueil : TAAS, CLOUD, NOMAD. Sur tous les autres écrans : TAAS et TELEPHONY (inchangé,
- * à aligner plus tard sur les trois offres).
- */
-export type MarkId = 'taas' | 'telephony' | 'cloud' | 'nomad';
-export const HUB_MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
-export const HEADER_MARK_IDS: readonly MarkId[] = ['taas', 'telephony'];
+/** Pastilles du bandeau, identiques sur TOUS les écrans : TAAS, CLOUD, NOMAD. */
+export type MarkId = 'taas' | 'cloud' | 'nomad';
+export const MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
 
-/** Pastilles du bandeau : trois sur l'accueil seulement (`homeThreePills`), les deux d'origine partout ailleurs (pages légales comprises). */
-export function getHeaderMarkIds(homeThreePills: boolean): readonly MarkId[] {
-  return homeThreePills ? HUB_MARK_IDS : HEADER_MARK_IDS;
+/**
+ * Pastille de l'offre courante : aucune sur l'accueil et les pages légales (`hub`), CLOUD sur les parcours Téléphonie,
+ * NOMAD sur les parcours Nomad Solo, TAAS partout ailleurs (pages TAAS, choix du profil, inscription et connexion).
+ */
+export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: boolean; nomad?: boolean }): MarkId | null {
+  if (ctx.hub) return null;
+  if (ctx.telephony) return ctx.nomad ? 'nomad' : 'cloud';
+  return 'taas';
 }
 
-/** Lien d'une pastille (l'accueil et TAAS sont préfixés par la langue ; Téléphonie est une application distincte). */
+/** Lien d'une pastille (TAAS est préfixé par la langue ; Téléphonie est une application distincte). */
 export function resolveMarkHref(mark: MarkId, lang: OfferLang): string {
   if (mark === 'taas') return `/${lang}/taas`;
   if (mark === 'nomad') return NOMAD_SOLO_START;

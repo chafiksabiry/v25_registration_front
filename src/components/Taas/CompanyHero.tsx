@@ -1,8 +1,8 @@
 import React from 'react';
 import { spotMove } from './spot';
-import { ArrowRight, Globe2, Lock, ShieldCheck, Users2 } from 'lucide-react';
+import { ArrowRight, Globe2, ShieldCheck, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { isRoleComingSoon } from '../../config/offers';
+import { PostGigCta } from './PostGigCta';
 import { SpaceSwitch } from './SpaceSwitch';
 import { ResultFlowVisual } from './ResultFlowVisual';
 
@@ -13,7 +13,6 @@ const bookDemo = () => {
 /** Ouverture de la page COMPANY : promesse en grand à gauche, illustration animée du principe « payer le résultat » à droite. */
 export function CompanyHero() {
   const { t } = useTranslation();
-  const soon = isRoleComingSoon('company');
   const stats = [
     { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
     { icon: Globe2, value: '70+', label: t('taasPages.statCountries', 'countries covered') },
@@ -41,10 +40,11 @@ export function CompanyHero() {
               {t('hero.bookDemo', 'Book a Demo')}
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
             </button>
-            <span className="inline-flex h-14 cursor-not-allowed items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[0.06] px-6 text-sm font-bold text-white/85" aria-disabled={soon || undefined} data-testid="taas-company-cta">
-              <Lock className="h-4 w-4" aria-hidden="true" />
-              {t('choicePage.companyTitle', 'Post a Gig')} · {t('choicePage.comingSoon', 'Coming soon')}
-            </span>
+            <PostGigCta
+              soonClassName="inline-flex h-14 cursor-not-allowed items-center justify-center gap-2 rounded-2xl border border-white/20 bg-white/[0.06] px-6 text-sm font-bold text-white/85"
+              openClassName="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/30 bg-white/[0.08] px-6 text-sm font-bold text-white transition-colors hover:bg-white/15"
+              data-testid="taas-company-cta"
+            />
           </div>
 
           <ul className="mt-12 grid max-w-xl grid-cols-3 gap-3" data-testid="company-stats">

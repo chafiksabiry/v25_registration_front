@@ -54,6 +54,7 @@
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
   "hub": {
+    "comingSoon": "Bientôt disponible",
     "alreadyClient": "Déjà client ?",
     "signIn": "Se connecter",
     "offersAria": "Les offres HARX",

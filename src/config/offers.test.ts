@@ -1,14 +1,16 @@
-import { describe, expect, it } from 'vitest';
-import * as offersModule from './offers';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import {
   OFFERS,
-  HUB_MARK_IDS,
-  HEADER_MARK_IDS,
+  MARK_IDS,
+  activeMark,
   NOMAD_SOLO_START,
   getAvailableOffers,
-  getHeaderMarkIds,
   HUB_HERO_KEYS,
+  isChildComingSoon,
+  isOfferComingSoon,
+  isRoleComingSoon,
+  offersUnlocked,
   resolveChildTarget,
   resolveMarkHref,
   resolveOfferHref,
@@ -44,7 +46,7 @@ describe('accueil : trois offres', () => {
     expect(resolveOfferSignInHref(byId.nomad, 'fr')).toBe('/auth/signin?product=callcentre');
   });
 
-  it('liens de l\'accueil : un vrai lien pour chaque entrée, aucune entrée « bientôt »', () => {
+  it('liens de l\'accueil (offres ouvertes) : un vrai lien pour chaque entrée', () => {
     const table = Object.fromEntries(
       OFFERS.flatMap((o) => o.children.map((c) => [`${o.id}/${c.id}`, resolveChildTarget(c, 'en')])),
     );
@@ -57,26 +59,76 @@ describe('accueil : trois offres', () => {
       'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
     });
     expect(byId.nomad.children).toEqual([]);
-    for (const o of OFFERS) for (const c of o.children) expect(JSON.stringify(c)).not.toMatch(/soon/i);
-    expect(offersModule).not.toHaveProperty('isChildComingSoon');
     expect(Object.values(table).some((t) => t.type === 'href' && /^\/(\w\w\/)?company(\/|$)/.test(t.href))).toBe(false);
   });
 });
 
-describe('bandeau', () => {
-  it('l\'accueil affiche TAAS, CLOUD, NOMAD ; les autres écrans gardent TAAS et TELEPHONY', () => {
-    expect(HUB_MARK_IDS).toEqual(['taas', 'cloud', 'nomad']);
-    expect(HEADER_MARK_IDS).toEqual(['taas', 'telephony']);
+describe('« Bientôt disponible » piloté par VITE_RECETTE_UNLOCK_OFFERS', () => {
+  afterEach(() => vi.unstubAllEnvs());
+  const soonKeys = ['company', 'full_scope', 'multi_clients'] as const;
+
+  it('production (réglage absent ou différent de « true ») : Company, Full Scope et Multi-clients sont « bientôt »', () => {
+    for (const k of soonKeys) expect(isOfferComingSoon(k, false)).toBe(true);
+    expect(offersUnlocked({})).toBe(false);
+    expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: 'false' })).toBe(false);
+    expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: '1' })).toBe(false);
+    expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: 'TRUE' })).toBe(false);
   });
 
-  it('seul l\'accueil (prop homeThreePills) affiche trois pastilles ; pages légales et autres : ancien bandeau', () => {
-    expect(getHeaderMarkIds(true)).toEqual(['taas', 'cloud', 'nomad']);
-    expect(getHeaderMarkIds(false)).toEqual(['taas', 'telephony']);
+  it('recette (réglage = « true ») : tout est ouvert', () => {
+    for (const k of soonKeys) expect(isOfferComingSoon(k, true)).toBe(false);
+    expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: 'true' })).toBe(true);
+  });
+
+  it('les autres offres ne sont jamais « bientôt »', () => {
+    expect(isRoleComingSoon('rep', false)).toBe(false);
+    expect(isRoleComingSoon('call-center', false)).toBe(false);
+  });
+
+  it('une seule règle : rôle et entrées de l\'accueil suivent le même réglage', () => {
+    expect(isRoleComingSoon('company', false)).toBe(true);
+    expect(isRoleComingSoon('company', true)).toBe(false);
+    const state = (unlocked: boolean) => Object.fromEntries(OFFERS.flatMap((o) => o.children.map((c) => [`${o.id}/${c.id}`, isChildComingSoon(c, unlocked)])));
+    expect(state(false)).toEqual({ 'taas/company': true, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': true, 'cloud/multi_clients': true });
+    expect(state(true)).toEqual({ 'taas/company': false, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false });
+  });
+
+  it('sans paramètre : lit le réglage de construction', () => {
+    vi.stubEnv('VITE_RECETTE_UNLOCK_OFFERS', 'true');
+    expect(isRoleComingSoon('company')).toBe(false);
+    expect(isOfferComingSoon('full_scope')).toBe(false);
+    vi.stubEnv('VITE_RECETTE_UNLOCK_OFFERS', '');
+    expect(isRoleComingSoon('company')).toBe(true);
+    expect(isOfferComingSoon('multi_clients')).toBe(true);
+  });
+
+  it('la pastille « Bientôt disponible » est traduite dans les 4 langues', () => {
+    const en = lookup(locale('en'), 'hub.comingSoon');
+    expect(en).toBe('Coming soon');
+    expect(lookup(locale('fr'), 'hub.comingSoon')).toBe('Bientôt disponible');
+    for (const lang of ['es', 'ar']) expect(lookup(locale(lang), 'hub.comingSoon'), lang).not.toBe(en);
+    for (const lang of LANGS) expect(String(lookup(locale(lang), 'hub.comingSoon')).trim(), lang).not.toBe('');
+  });
+});
+
+describe('bandeau à trois pastilles sur tous les écrans', () => {
+  it('toujours TAAS, CLOUD, NOMAD (plus de couple TAAS / TELEPHONY)', () => {
+    expect(MARK_IDS).toEqual(['taas', 'cloud', 'nomad']);
+  });
+
+  it('pastille active selon la page', () => {
+    expect(activeMark({ hub: true })).toBeNull(); // accueil, pages légales : aucune offre courante
+    expect(activeMark({ taas: 'home' })).toBe('taas');
+    expect(activeMark({ taas: 'company' })).toBe('taas');
+    expect(activeMark({})).toBe('taas'); // /auth/choice, inscription et connexion TAAS
+    expect(activeMark({ telephony: true })).toBe('cloud'); // parcours Téléphonie non Nomad
+    expect(activeMark({ telephony: true, nomad: false })).toBe('cloud');
+    expect(activeMark({ telephony: true, nomad: true })).toBe('nomad'); // parcours Nomad Solo
   });
 
   it('liens des pastilles', () => {
     expect(resolveMarkHref('taas', 'en')).toBe('/en/taas');
-    expect(resolveMarkHref('telephony', 'fr')).toBe('/telephony');
+    expect(resolveMarkHref('taas', 'ar')).toBe('/ar/taas');
     expect(resolveMarkHref('cloud', 'fr')).toBe('/telephony');
     expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/start?profil=solo&plan=nomad_solo');
   });
@@ -115,7 +167,7 @@ describe('textes (i18n)', () => {
     }
   });
 
-  it('héros : titre en deux lignes et phrase d\'appui, traduits ; aucun « Bientôt disponible » dans l\'accueil', () => {
+  it('héros : titre en deux lignes et phrase d\'appui, traduits', () => {
     const en = locale('en');
     expect(lookup(en, HUB_HERO_KEYS.title1)).toBe('Customer service, telephony, your number.');
     expect(lookup(en, HUB_HERO_KEYS.title2)).toBe('Powered by AI.');
@@ -124,7 +176,6 @@ describe('textes (i18n)', () => {
     expect(lookup(locale('fr'), HUB_HERO_KEYS.title2)).toBe("Propulsés par l'IA.");
     expect(lookup(locale('fr'), HUB_HERO_KEYS.sub)).toBe('Trois offres pour trois façons de travailler avec HARX.');
     for (const lang of ['es', 'ar']) for (const key of Object.values(HUB_HERO_KEYS)) expect(lookup(locale(lang), key), `${lang} ${key}`).not.toBe(lookup(en, key));
-    for (const lang of LANGS) expect(JSON.stringify(lookup(locale(lang), 'hub')), lang).not.toMatch(/comingSoon|bient[ôo]t|pr[óo]ximamente|قريبًا|coming soon/i);
   });
 
   it('liens secondaires courts, comme la maquette', () => {

@@ -1,7 +1,7 @@
 import React from 'react';
-import { ArrowRight, Lock } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { isRoleComingSoon } from '../../config/offers';
+import { PostGigCta } from './PostGigCta';
 
 const bookDemo = () => {
   window.open('https://harxtechnologies.zohobookings.com/#/WebsiteBooking', '_blank');
@@ -27,10 +27,11 @@ export function TaasFinalCta({ kind, onJoin }: { kind: 'company' | 'reps'; onJoi
                 {t('hero.bookDemo', 'Book a Demo')}
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </button>
-              <span className="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-bold text-white/90" aria-disabled={isRoleComingSoon('company') || undefined} data-testid="final-company-soon">
-                <Lock className="h-4 w-4" aria-hidden="true" />
-                {t('choicePage.companyTitle', 'Post a Gig')} · {t('choicePage.comingSoon', 'Coming soon')}
-              </span>
+              <PostGigCta
+                soonClassName="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-xl border border-white/40 bg-white/10 px-6 text-sm font-bold text-white/90"
+                openClassName="inline-flex h-12 items-center gap-2 rounded-xl border border-white/60 bg-white/10 px-6 text-sm font-bold text-white transition-colors hover:bg-white/20"
+                data-testid="final-company-soon"
+              />
             </>
           ) : (
             <button type="button" onClick={onJoin} data-testid="reps-join-cta" className="inline-flex h-12 items-center gap-2 rounded-xl bg-white px-7 text-sm font-bold text-harx-700 transition-transform hover:scale-[1.03]">

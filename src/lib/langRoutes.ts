@@ -3,6 +3,9 @@ export type SiteLang = 'fr' | 'en' | 'es' | 'ar';
 
 export const SITE_LANGS: readonly SiteLang[] = ['fr', 'en', 'es', 'ar'];
 
+/** Langue de repli : l'anglais (HARX est d'abord une société américaine). Le français reste servi sur /fr. */
+export const DEFAULT_SITE_LANG: SiteLang = 'en';
+
 /** Langues qui s'écrivent de droite à gauche. */
 export const RTL_LANGS: readonly SiteLang[] = ['ar'];
 
@@ -10,10 +13,34 @@ export function isRtlLang(lang: string | null | undefined): boolean {
   return RTL_LANGS.includes(normalizeSiteLang(lang));
 }
 
-/** Code de langue quelconque (« en-GB », « ES », « ar-MA »…) → langue du site ; le français par défaut. */
+/** Code de langue quelconque (« en-GB », « ES », « ar-MA »…) → langue du site ; l'anglais par défaut. */
 export function normalizeSiteLang(raw: string | null | undefined): SiteLang {
   const code = (raw || '').toLowerCase().slice(0, 2);
-  return (SITE_LANGS as readonly string[]).includes(code) ? (code as SiteLang) : 'fr';
+  return (SITE_LANGS as readonly string[]).includes(code) ? (code as SiteLang) : DEFAULT_SITE_LANG;
+}
+
+/**
+ * Choix de la langue, par ordre de priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite) >
+ * première langue du navigateur parmi fr, en, es, ar > anglais.
+ */
+export function resolveSiteLanguage(input: {
+  urlLang: string | null | undefined;
+  storedExplicit: string | null | undefined;
+  browser: readonly string[] | undefined;
+}): SiteLang {
+  const supported = (raw: string | null | undefined): SiteLang | null => {
+    const code = (raw || '').toLowerCase().slice(0, 2);
+    return (SITE_LANGS as readonly string[]).includes(code) ? (code as SiteLang) : null;
+  };
+  const fromUrl = supported(input.urlLang);
+  if (fromUrl) return fromUrl;
+  const stored = supported(input.storedExplicit);
+  if (stored) return stored;
+  for (const candidate of input.browser ?? []) {
+    const lang = supported(candidate);
+    if (lang) return lang;
+  }
+  return DEFAULT_SITE_LANG;
 }
 
 const LANG_PREFIX_RE = /^\/(fr|en|es|ar)(?=\/|$)/;
