@@ -1,6 +1,6 @@
 import React from 'react';
 import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
 import { LanguageIcons } from '../Brand/LanguageIcons';
@@ -39,13 +39,14 @@ interface HeaderProps {
  */
 export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, taas }: HeaderProps) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
   const [sessionTick, setSessionTick] = React.useState(0);
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
   const siteLang = normalizeSiteLang(i18n.language);
-  const offer: MarkId | null = activeMark({ hub, taas, telephony, nomad: telephony && isNomadVisitor() });
+  const offer: MarkId | null = activeMark({ hub, taas, telephony, nomad: telephony && isNomadVisitor(), pathname });
   const homeHref = withLangPrefix('/', siteLang);
 
   React.useEffect(() => subscribeAuthChanged(() => setSessionTick((n) => n + 1)), []);
