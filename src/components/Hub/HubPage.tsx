@@ -9,6 +9,7 @@ import { persistHarxLanguage } from '../../lib/i18n';
 import { hardNavigate } from '../../lib/appNavigation';
 import {
   getAvailableOffers,
+  isChildComingSoon,
   HUB_HERO_KEYS,
   resolveChildTarget,
   resolveOfferHref,
@@ -94,6 +95,16 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
             <ul className="hub-links" data-testid={`offer-children-${offer.id}`}>
               {offer.children.map((child) => {
                 const target = resolveChildTarget(child, lang);
+                if (isChildComingSoon(child)) {
+                  return (
+                    <li key={child.id}>
+                      <span className="hub-pill hub-pill--soon" aria-disabled="true" data-testid={`offer-child-${offer.id}-${child.id}`}>
+                        <bdi>{t(child.labelKey)}</bdi>
+                        <span className="hub-soon">{t('hub.comingSoon')}</span>
+                      </span>
+                    </li>
+                  );
+                }
                 return (
                   <li key={child.id}>
                     <a
@@ -159,7 +170,7 @@ export function HubPage({ onSelectRole, onNavigateToSection }: HubPageProps) {
 
   return (
     <div id="top" className="hub-root hub-screen relative overflow-x-hidden text-white">
-      <Header hub homeThreePills onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
+      <Header hub onSignIn={() => {}} onGetStarted={() => {}} onNavigateToSection={onNavigateToSection} />
 
       <main className="hub-stage" aria-label={t('hub.offersAria')}>
         <section className="hub-hero hub-rise" data-testid="hub-definition">

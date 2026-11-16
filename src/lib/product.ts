@@ -46,3 +46,14 @@ export function readPendingPlan(): TelephonyPlan | null {
     return null;
   }
 }
+
+/** Visiteur d'un parcours Nomad Solo (offre choisie ou profil « solo » mémorisé par l'application Téléphonie) : pastille NOMAD du bandeau. */
+export function isNomadVisitor(): boolean {
+  const plan = readPendingPlan();
+  if (plan) return plan === 'nomad_solo';
+  try {
+    return localStorage.getItem('harx_cc_pending_profile') === 'solo';
+  } catch {
+    return false;
+  }
+}

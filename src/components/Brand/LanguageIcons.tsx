@@ -51,8 +51,8 @@ const ICONS: Record<LangId, { Icon: React.ComponentType; name: string }> = {
 
 const ORDER: LangId[] = ['fr', 'en', 'es', 'ar'];
 
-/** Choix de la langue par icônes rondes (français, anglais, espagnol, arabe) à la place d'une liste déroulante. */
-export function LanguageIcons({ className = '', glass = false }: { className?: string; /** Accueil : cadre en verre sombre, pastilles de 34 px. */ glass?: boolean }) {
+/** Choix de la langue par icônes rondes, dans un cadre en verre sombre (même style que le sélecteur d'offres), (français, anglais, espagnol, arabe) à la place d'une liste déroulante. */
+export function LanguageIcons({ className = '' }: { className?: string }) {
   const { i18n, t } = useTranslation();
   const current: LangId = normalizeSiteLang(i18n.language);
 
@@ -69,7 +69,7 @@ export function LanguageIcons({ className = '', glass = false }: { className?: s
   };
 
   return (
-    <div className={`inline-flex items-center rounded-full backdrop-blur-md ${glass ? 'gap-1.5 bg-[rgba(7,10,26,0.28)] p-1 ring-1 ring-white/[0.22]' : 'gap-2 bg-black/15 p-1.5 ring-1 ring-white/25'} ${className}`} role="group" aria-label={t('header.language', 'Language')} data-testid="language-icons">
+    <div className={`inline-flex items-center rounded-full backdrop-blur-md gap-1.5 bg-[rgba(7,10,26,0.28)] p-1 ring-1 ring-white/[0.22] ${className}`} role="group" aria-label={t('header.language', 'Language')} data-testid="language-icons">
       {ORDER.map((lang) => {
         const { Icon, name } = ICONS[lang];
         const available = AVAILABLE.includes(lang);
@@ -84,7 +84,7 @@ export function LanguageIcons({ className = '', glass = false }: { className?: s
             aria-label={available ? name : `${name} — ${t('choicePage.comingSoon', 'Coming soon')}`}
             title={available ? name : `${name} — ${t('choicePage.comingSoon', 'Coming soon')}`}
             data-testid={`lang-${lang}`}
-            className={`${glass ? 'h-[34px] w-[34px]' : 'h-7 w-7'} overflow-hidden rounded-full transition-all duration-200 ${
+            className={`h-[34px] w-[34px] overflow-hidden rounded-full transition-all duration-200 ${
               active ? 'scale-110 ring-2 ring-white shadow-[0_0_14px_rgba(255,255,255,0.65)]' : available ? 'opacity-80 ring-1 ring-white/30 hover:scale-110 hover:opacity-100' : 'cursor-not-allowed opacity-35 grayscale ring-1 ring-white/20'
             }`}
           >
