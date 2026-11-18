@@ -3,6 +3,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { WORDMARKS, WORDMARK_STROKE_WIDTH } from '../../config/offerWordmarks';
 import { OfferWordmark } from './OfferWordmark';
+import { HubSegmentedNav } from '../Brand/HubSegmentedNav';
 
 const render = (id: 'taas' | 'cloud' | 'nomad') => renderToStaticMarkup(React.createElement(OfferWordmark, { offer: id, label: id.toUpperCase() }));
 
@@ -34,4 +35,24 @@ describe('wordmarks des offres', () => {
       expect(html).not.toMatch(/animate|<style/);
     });
   }
+
+  it('même dessin partout : seule la classe de taille change (carte par défaut, onglet du bandeau)', () => {
+    const card = render('nomad');
+    const tab = renderToStaticMarkup(React.createElement(OfferWordmark, { offer: 'nomad', label: 'NOMAD', className: 'seg-nav__wordmark' }));
+    expect(card).toContain('class="hub-wordmark"');
+    expect(tab).toContain('class="seg-nav__wordmark"');
+    expect(tab.replace('seg-nav__wordmark', 'hub-wordmark')).toBe(card);
+  });
+
+  it('bandeau : chaque onglet porte le logotype de son offre et son nom lisible', () => {
+    const html = renderToStaticMarkup(
+      React.createElement(HubSegmentedNav, { ids: ['taas', 'cloud', 'nomad'], active: 'cloud', hrefFor: (id: string) => `/${id}`, onSelect: () => undefined }),
+    );
+    for (const id of ['taas', 'cloud', 'nomad'] as const) {
+      expect(html).toContain(`<span class="sr-only">${id.toUpperCase()}</span>`);
+      expect(html).toContain(`viewBox="${WORDMARKS[id].viewBox}"`);
+    }
+    expect(html.match(/class="seg-nav__wordmark"/g)).toHaveLength(3);
+    expect(html).toMatch(/class="seg-nav__tab is-active"[^>]*aria-current="page"[^>]*data-testid="offer-mark-cloud"/);
+  });
 });

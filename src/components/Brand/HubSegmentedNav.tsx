@@ -1,6 +1,7 @@
 import React from 'react';
 import { Cloud, Globe, Layers, type LucideIcon } from 'lucide-react';
 import type { MarkId } from '../../config/offers';
+import { OfferWordmark } from '../Hub/OfferWordmark';
 import './segNav.css';
 
 const ICONS: Record<MarkId, { Icon: LucideIcon; label: string }> = {
@@ -19,7 +20,7 @@ interface HubSegmentedNavProps {
   showLabels?: boolean;
 }
 
-/** Sélecteur segmenté de l'accueil : un cadre en verre sombre, trois onglets de même largeur (icône en trait fin + sigle). */
+/** Sélecteur segmenté de l'accueil : un cadre en verre sombre, trois onglets de même largeur (icône en trait fin + sigle en logotype, le même que sur les cartes de l'accueil). */
 export function HubSegmentedNav({ ids, active = null, hrefFor, onSelect, showLabels = false }: HubSegmentedNavProps) {
   return (
     <div className={`seg-nav${showLabels ? ' seg-nav--labels' : ''}`} data-testid="offer-marks">
@@ -28,7 +29,7 @@ export function HubSegmentedNav({ ids, active = null, hrefFor, onSelect, showLab
         return (
           <a key={id} href={hrefFor(id)} onClick={(e) => onSelect(e, id)} className={`seg-nav__tab${active === id ? ' is-active' : ''}`} aria-current={active === id ? 'page' : undefined} data-testid={`offer-mark-${id}`}>
             <Icon className="seg-nav__icon" aria-hidden="true" />
-            <span className="seg-nav__label">{label}</span>
+            <span className="seg-nav__label"><OfferWordmark offer={id} label={label} className="seg-nav__wordmark" /></span>
           </a>
         );
       })}
