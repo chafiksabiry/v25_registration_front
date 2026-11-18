@@ -180,12 +180,12 @@ describe('textes (i18n)', () => {
 
   it('héros : titre en deux lignes et phrase d\'appui, traduits', () => {
     const en = locale('en');
-    expect(lookup(en, HUB_HERO_KEYS.title1)).toBe('Customer service, telephony, your number.');
-    expect(lookup(en, HUB_HERO_KEYS.title2)).toBe('Powered by AI.');
-    expect(lookup(en, HUB_HERO_KEYS.sub)).toBe('Three offers, three ways to work with HARX.');
-    expect(lookup(locale('fr'), HUB_HERO_KEYS.title1)).toBe('Service client, téléphonie, votre numéro.');
-    expect(lookup(locale('fr'), HUB_HERO_KEYS.title2)).toBe("Propulsés par l'IA.");
-    expect(lookup(locale('fr'), HUB_HERO_KEYS.sub)).toBe('Trois offres pour trois façons de travailler avec HARX.');
+    expect(lookup(en, HUB_HERO_KEYS.title1)).toBe('All your calls,');
+    expect(lookup(en, HUB_HERO_KEYS.title2)).toBe('wherever you are.');
+    expect(lookup(en, HUB_HERO_KEYS.sub)).toBe('Make and take calls with your team, our experts, or AI.');
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.title1)).toBe('Tous vos appels,');
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.title2)).toBe('où que vous soyez.');
+    expect(lookup(locale('fr'), HUB_HERO_KEYS.sub)).toBe("Recevez et passez vos appels avec vos équipes, nos experts ou l'IA.");
     for (const lang of ['es', 'ar']) for (const key of Object.values(HUB_HERO_KEYS)) expect(lookup(locale(lang), key), `${lang} ${key}`).not.toBe(lookup(en, key));
   });
 
