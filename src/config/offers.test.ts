@@ -189,6 +189,21 @@ describe('textes (i18n)', () => {
     for (const lang of ['es', 'ar']) for (const key of Object.values(HUB_HERO_KEYS)) expect(lookup(locale(lang), key), `${lang} ${key}`).not.toBe(lookup(en, key));
   });
 
+  it('NOMAD : accroche de la carte distincte du titre de la page', () => {
+    const expected: Record<string, string> = {
+      fr: 'Votre numéro vous suit partout dans le monde.',
+      en: 'Your number follows you anywhere in the world.',
+      es: 'Su número le sigue a cualquier parte del mundo.',
+      ar: 'رقمك يرافقك في كل مكان حول العالم.',
+    };
+    for (const lang of LANGS) {
+      const json = locale(lang);
+      const tagline = lookup(json, 'hub.offers.nomad.target');
+      expect(tagline, lang).toBe(expected[lang]);
+      expect(tagline, lang).not.toContain(lookup(json, HUB_HERO_KEYS.title2).replace(/\.$/, ''));
+    }
+  });
+
   it('liens secondaires courts, comme la maquette', () => {
     for (const lang of LANGS) {
       expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Full Scope');
