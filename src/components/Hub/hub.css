@@ -16,7 +16,7 @@
 .hub-eyebrow i { width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, var(--org), var(--mag)); }
 .hub-h1 { margin: 22px 0 0; font-size: clamp(2rem, 1.2rem + 2.6vw, 3.375rem); line-height: 1.08; font-weight: 800; letter-spacing: -.025em; color: #fff; text-wrap: balance; }
 .hub-h1 em { font-style: normal; background: linear-gradient(90deg, var(--org), var(--mag) 55%, var(--vio)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.hub-sub { margin: 20px auto 0; max-width: 40rem; font-size: clamp(1.05rem, .9rem + .4vw, 1.25rem); line-height: 1.5; color: var(--muted); }
+.hub-sub { margin: 20px auto 0; max-width: 40rem; font-size: clamp(1.05rem, .9rem + .4vw, 1.25rem); line-height: 1.5; color: var(--muted); text-wrap: balance; }
 @media (max-width: 1099px) { .hub-h1 br { display: none; } .hub-h1 em { display: block; } }
 
 /* Trois cartes égales (3 colonnes dès 1100 px ; empilées en dessous) */
