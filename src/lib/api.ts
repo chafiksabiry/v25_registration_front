@@ -79,8 +79,9 @@ export const auth = {
       return { error: true, message };
     }
   },
-  verifyAccount: async (userId: string)=> {
-    const response= await api.post('/auth/verify-account', {userId});
+  /** Le service exige le jeton du compte (reçu après le code e-mail / SMS), pas encore enregistré à ce stade. */
+  verifyAccount: async (userId: string, token?: string)=> {
+    const response= await api.post('/auth/verify-account', {userId}, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined);
     return response.data;
   },
   generateVerificationCode: async (email: string) => {

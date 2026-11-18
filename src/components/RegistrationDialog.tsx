@@ -163,7 +163,7 @@ export default function RegistrationDialog({
     newErrors: Record<string, string>
   ): Promise<boolean> => {
     try {
-      const accountVerificationResult = await auth.verifyAccount(storedUserId);
+      const accountVerificationResult = await auth.verifyAccount(storedUserId, token);
       if (!accountVerificationResult.success) {
         newErrors.general = accountVerificationResult.message || t('register.errGeneralFailed', 'Account verification failed');
         return false;
