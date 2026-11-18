@@ -23,7 +23,7 @@
     "desc": "Create your account, choose Nomad Solo, buy a number from your country and make or receive calls, with AI to assist you.",
     "point1": "A number from your country, tested before your first call",
     "point2": "Your calls in the browser, installable on computer and mobile",
-    "point3": "Your call log, transcription and AI analysis",
+    "point3": "Your call log, and voicemail messages transcribed and summarized by AI",
     "point4": "One subscription, then pay for what you use"
   },
   "callcentreBrandAccueil": {
@@ -877,7 +877,7 @@
     "callCenterCta": "Open HARX Telephony",
     "ccFeat1": "A number from your country and your calls in the browser",
     "ccFeat2": "Inbound and outbound calls, greeting and voicemail",
-    "ccFeat3": "Call log, transcription and AI analysis",
+    "ccFeat3": "Call log, with recording and AI analysis depending on the plan",
     "ccFeat4": "From freelancer to multi-client centre",
     "repTitle": "Find Gigs",
     "repDesc": "For contact center professionals",

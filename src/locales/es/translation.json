@@ -23,7 +23,7 @@
     "desc": "Cree su cuenta, elija Nomad Solo, compre un número de su país y haga o reciba llamadas, con IA para asistirle.",
     "point1": "Un número de su país, probado antes de su primera llamada",
     "point2": "Sus llamadas en el navegador, instalables en ordenador y móvil",
-    "point3": "Su registro de llamadas, transcripción y análisis por IA",
+    "point3": "Su registro de llamadas y los mensajes del buzón de voz transcritos y resumidos por IA",
     "point4": "Una suscripción y luego paga por lo que utiliza"
   },
   "callcentreBrandAccueil": {
@@ -698,7 +698,7 @@
     "callCenterCta": "Abrir HARX Telephony",
     "ccFeat1": "Un número de su país y sus llamadas en el navegador",
     "ccFeat2": "Llamadas entrantes y salientes, saludo y buzón de voz",
-    "ccFeat3": "Registro de llamadas, transcripción y análisis por IA",
+    "ccFeat3": "Registro de llamadas, con grabación y análisis por IA según la oferta",
     "ccFeat4": "Del autónomo al centro multiclientes",
     "repTitle": "Encontrar misiones",
     "repDesc": "Para profesionales de centros de contacto",
