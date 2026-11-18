@@ -189,6 +189,29 @@ describe('textes (i18n)', () => {
     for (const lang of ['es', 'ar']) for (const key of Object.values(HUB_HERO_KEYS)) expect(lookup(locale(lang), key), `${lang} ${key}`).not.toBe(lookup(en, key));
   });
 
+  it('NOMAD : accroche de la carte distincte du titre de la page et du premier avantage', () => {
+    const expected: Record<string, string> = {
+      fr: 'Gardez votre numéro, même en voyage.',
+      en: 'Keep your number, even when you travel.',
+      es: 'Conserve su número, incluso de viaje.',
+      ar: 'احتفظ برقمك، حتى أثناء السفر.',
+    };
+    // « partout dans le monde » est déjà dit par le premier avantage de la carte.
+    const worldwide: Record<string, RegExp> = {
+      fr: /partout dans le monde/i,
+      en: /anywhere in the world/i,
+      es: /todo el mundo|parte del mundo/i,
+      ar: /العالم/,
+    };
+    for (const lang of LANGS) {
+      const json = locale(lang);
+      const tagline = lookup(json, 'hub.offers.nomad.target');
+      expect(tagline, lang).toBe(expected[lang]);
+      expect(tagline, lang).not.toContain(lookup(json, HUB_HERO_KEYS.title2).replace(/\.$/, ''));
+      expect(tagline, lang).not.toMatch(worldwide[lang]);
+    }
+  });
+
   it('liens secondaires courts, comme la maquette', () => {
     for (const lang of LANGS) {
       expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Full Scope');
