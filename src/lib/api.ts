@@ -55,6 +55,12 @@ export const auth = {
     return response.data as { token: string };
   },
 
+  /** Asks for the personal one-click link to be e-mailed to this address (always answers "sent"). */
+  reengageRequest: async (email: string) => {
+    const response = await api.post('/auth/reengage-request', { email });
+    return response.data as { sent: boolean };
+  },
+
   resendVerification: async (email: string) => {
     const response = await api.post('/auth/resend-verification', { email });
     return response.data;
