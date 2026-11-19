@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "Incoming call",
-    "country": "A number from your country"
+    "country": "A number from your country",
+    "ai": "AI"
   },
   "callcentreJourney": {
     "name": "Name",
@@ -96,7 +97,8 @@
         "target": "Keep your number, even when you travel.",
         "benefit1": "One number that works anywhere in the world",
         "benefit2": "No roaming",
-        "benefit3": "HARX Nomad iPhone app"
+        "benefit3": "HARX Nomad iPhone app",
+        "solo": "Nomad Solo"
       }
     }
   },
@@ -303,7 +305,7 @@
     "errInvalidEmailCode": "Invalid or expired email verification code",
     "errInvalidSmsCode": "Invalid SMS verification code",
     "errInvalidCredentials": "Incorrect email or password.",
-    "errAccountNotVerified": "This account is not verified yet. Check your email and phone for the codes.",
+    "errAccountNotVerified": "This account is not verified yet. Enter the code we sent you by email to activate it.",
     "errInvalidEmail": "No account found with this email.",
     "errInvalidPassword": "Incorrect password.",
     "errMissingEmail": "Please enter your email.",
@@ -319,6 +321,10 @@
     "errUnexpected": "Sign-in failed. Check your details and try again."
   },
   "register": {
+    "titlePhoneOptional": "Your phone (optional)",
+    "descPhoneOptional": "To call you during your test call.",
+    "phoneOptionalHint": "Optional. It is used for your test call during setup; you can leave it empty and add it later.",
+    "errPhoneNeededServer": "Please enter your phone number to finish creating your account.",
     "errName": "Please enter your full name",
     "errEmail": "Please enter a valid email address",
     "errPassword": "Password must be at least 8 characters with letters and numbers",
@@ -354,7 +360,7 @@
     "placeholderName": "Full Name",
     "placeholderEmail": "Work Email",
     "placeholderPassword": "Choose a strong password",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+44 7700 900123",
     "passwordHint": "Must be at least 8 characters with letters and numbers.",
     "placeholderConfirmPassword": "Confirm your password",
     "errPasswordMismatch": "Passwords do not match",
@@ -715,7 +721,7 @@
     "errUnexpected": "Sign-in failed. Check your details and try again.",
     "errGeneric": "Sign-in failed. Check your details and try again.",
     "errInvalidCredentials": "Incorrect email or password.",
-    "errAccountNotVerified": "This account is not verified yet. Check your email and phone for the codes.",
+    "errAccountNotVerified": "This account is not verified yet. Enter the code we sent you by email to activate it.",
     "errInvalidEmail": "No account found with this email.",
     "errInvalidPassword": "Incorrect password.",
     "errMissingEmail": "Please enter your email.",
@@ -766,6 +772,10 @@
     "signUp": "Sign up"
   },
   "register": {
+    "titlePhoneOptional": "Your phone (optional)",
+    "descPhoneOptional": "To call you during your test call.",
+    "phoneOptionalHint": "Optional. It is used for your test call during setup; you can leave it empty and add it later.",
+    "errPhoneNeededServer": "Please enter your phone number to finish creating your account.",
     "errGeneralFailed": "Account verification failed",
     "smsNoticeSent": "SMS code sent. Check your phone.",
     "smsNoticeUnavailable": "SMS unavailable. Continue with email verification only.",
@@ -808,7 +818,7 @@
     "placeholderConfirmPassword": "Confirm your password",
     "errPasswordMismatch": "Passwords do not match",
     "passwordMatch": "Passwords match",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+44 7700 900123",
     "termsAgreeText": "By creating an account, you agree to comply with our",
     "termsLink": "Terms of Service",
     "termsAnd": "and acknowledge our",
@@ -909,7 +919,7 @@
     "onboardingMissing": "Missing"
   },
   "authScreens": {
-    "registerCallCenter": "Call center signup"
+    "registerCallCenter": "HARX Telephony signup"
   },
   "userTypes": {
     "company": "Company",
