@@ -752,5 +752,15 @@
     "decline": "Rechazar",
     "later": "Decidir más tarde",
     "error": "No funcionó. Inténtelo de nuevo."
+  },
+  "notFound": {
+    "docTitle": "HARX — Página no encontrada",
+    "docTitleError": "HARX — Error de visualización",
+    "title": "Esta página no existe",
+    "titleError": "No se ha podido mostrar esta página",
+    "desc": "Puede que el enlace sea antiguo o esté mal escrito. Puede continuar desde aquí.",
+    "descError": "Algo ha fallado por nuestra parte. Vuelva a cargar la página o continúe desde uno de los enlaces de abajo.",
+    "home": "Inicio HARX",
+    "telephony": "HARX Telefonía"
   }
 }
