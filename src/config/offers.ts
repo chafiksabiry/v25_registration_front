@@ -22,13 +22,14 @@ export type OfferChild =
 
 /**
  * « Bientôt disponible » : UNE seule règle, pilotée par l'environnement.
- * - Production (réglage de construction absent) : Company (TAAS), Full Scope et Multi-clients sont « bientôt », sans lien,
- *   partout où ils apparaissent (accueil et écrans TAAS).
+ * - Production (réglage de construction absent) : Company (TAAS) est « bientôt », sans lien, partout où il apparaît
+ *   (accueil et écrans TAAS). Full Scope et Multi-clients sont ouverts à la vente depuis le 19/11/2026 (décision du fondateur) :
+ *   leur clé reste dans le type pour pouvoir les refermer en une ligne, mais ils ne sont plus dans la liste.
  * - Recette : VITE_RECETTE_UNLOCK_OFFERS=true les ouvre pour les tester (même principe que VITE_RECETTE_UNLOCK_CENTRE_OFFERS
  *   dans l'application Téléphonie).
  */
 export type ComingSoonKey = 'company' | 'full_scope' | 'multi_clients';
-export const COMING_SOON_OFFERS: readonly ComingSoonKey[] = ['company', 'full_scope', 'multi_clients'];
+export const COMING_SOON_OFFERS: readonly ComingSoonKey[] = ['company'];
 
 /** Offres ouvertes pour les tests ? Seule la valeur exacte « true » compte ; absent = production. */
 export function offersUnlocked(env: { VITE_RECETTE_UNLOCK_OFFERS?: string } | undefined = import.meta.env): boolean {
