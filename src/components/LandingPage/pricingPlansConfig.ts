@@ -1,9 +1,12 @@
+import { formatMoney, normalizeCurrency, type Currency } from '../../lib/currency';
+
 export type PricingPlan = {
   id: string;
   name: string;
   description: string;
   price: number;
-  currency: 'eur';
+  /** Devise réellement affichée : celle de l'API (EUR si le prix Stripe ne propose pas la devise du pays). */
+  currency: Currency;
   features: string[];
   popular?: boolean;
   ctaLabel?: string;
@@ -13,19 +16,8 @@ export type PricingPlan = {
 export const COMPANY_PRICING_PLANS: PricingPlan[] = [];
 export const REP_PRICING_PLANS: PricingPlan[] = [];
 
-function formatPrice(price: number): string {
-  if (!Number.isFinite(price)) return '—';
-  // Keep exact cents (e.g. 29.99) — never drop decimals / round to integer.
-  return new Intl.NumberFormat('en-IE', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(Number(Number(price).toFixed(2)));
-}
-
 export function getPlanPriceLabel(plan: PricingPlan): string {
-  return formatPrice(plan.price);
+  return formatMoney(plan.price, plan.currency);
 }
 
 export function mapApiPlanToPricingPlan(plan: Record<string, unknown>): PricingPlan {
@@ -38,7 +30,7 @@ export function mapApiPlanToPricingPlan(plan: Record<string, unknown>): PricingP
     name: String(plan.name ?? ''),
     description: String(plan.description ?? ''),
     price,
-    currency: 'eur',
+    currency: normalizeCurrency(plan.currency),
     features: Array.isArray(plan.features) ? plan.features.map(String) : [],
     popular: Boolean(plan.popular ?? plan.isPopular),
     ctaLabel: plan.ctaLabel ? String(plan.ctaLabel) : undefined,

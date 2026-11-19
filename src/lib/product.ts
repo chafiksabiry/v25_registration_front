@@ -8,6 +8,16 @@ const PRODUCT_KEY = 'harx_product';
 export const CALLCENTRE_PRODUCT = 'callcentre';
 export const CALLCENTRE_PATH = '/telephony';
 
+/**
+ * Espace d'arrivée d'un compte entreprise après connexion (arbitrage 12 du 18/11/2026) :
+ * un compte Call Center (ou venu du produit Téléphonie) va vers `/telephony`, l'ancienne
+ * application `/call-center` étant retirée. Les autres comptes entreprise vont vers `/company`.
+ */
+export function companyWorkspacePath(userType: string | null | undefined, callcentreProduct: boolean): string {
+  if (callcentreProduct || userType === 'call-center') return CALLCENTRE_PATH;
+  return '/company';
+}
+
 /** Remember the product named in the address bar, if any. */
 export function captureProductFromUrl(search: string = window.location.search): void {
   try {
@@ -44,5 +54,16 @@ export function readPendingPlan(): TelephonyPlan | null {
     return PLANS.find((p) => p === v) ?? null;
   } catch {
     return null;
+  }
+}
+
+/** Visiteur d'un parcours Nomad Solo (offre choisie ou profil « solo » mémorisé par l'application Téléphonie) : pastille NOMAD du bandeau. */
+export function isNomadVisitor(): boolean {
+  const plan = readPendingPlan();
+  if (plan) return plan === 'nomad_solo';
+  try {
+    return localStorage.getItem('harx_cc_pending_profile') === 'solo';
+  } catch {
+    return false;
   }
 }

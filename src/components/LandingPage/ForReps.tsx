@@ -1,251 +1,119 @@
 import React from 'react';
-import { ArrowRight, Bot, Clock, Globe, Laptop, PhoneCall, Target, CheckCircle2, Users2 } from 'lucide-react';
+import { ArrowRight, Bot, Clock, Globe, Laptop, PhoneCall, Target, Users2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Button } from './Button';
+import { SpaceSwitch } from '../Taas/SpaceSwitch';
+import { RepsIncomeVisual } from '../Taas/RepsIncomeVisual';
+import { spotMove } from '../Taas/spot';
 
-interface ForRepsProps {
-  onGetStarted: () => void;
+interface RepsHeroProps {
+  /** Rejoindre HARX (inscription REPS). */
+  onJoin: () => void;
 }
 
-export function ForReps({ onGetStarted }: ForRepsProps) {
+/** Ouverture de l'espace REPS : promesse à gauche avec les trois composantes de rémunération, illustration animée du revenu à droite. */
+export function RepsHero({ onJoin }: RepsHeroProps) {
   const { t } = useTranslation();
 
-  const payHighlights = [
+  const pay = [
     {
       icon: PhoneCall,
+      tone: 'from-rose-500 to-pink-500',
+      label: t('taasPages.payFixed', 'Fixed amount per argued call'),
       text: t('forReps.payFloor', 'Paid (floor) for every serious call, even without a transaction.'),
     },
     {
       icon: Bot,
+      tone: 'from-fuchsia-500 to-purple-500',
+      label: t('taasPages.payCommission', 'Commission per transaction'),
       text: t('forReps.payCommission', 'Paid commission on every transaction confirmed by our AI.'),
     },
     {
       icon: Target,
+      tone: 'from-violet-500 to-indigo-500',
+      label: t('taasPages.payBonus', 'Performance bonus'),
       text: t('forReps.payTarget', 'Paid when you hit your monthly target.'),
     },
   ];
 
-  const benefits = [
-    {
-      title: t('forReps.benefit1Title', "Flexible Work"),
-      description: t('forReps.benefit1Desc', "Choose your hours and work from anywhere in the world."),
-      icon: Clock,
-      color: "harx"
-    },
-    {
-      title: t('forReps.benefit2Title', "Growth Opportunities"),
-      description: t('forReps.benefit2Desc', "Continuous learning and career advancement possibilities."),
-      icon: Users2,
-      color: "harx"
-    },
-    {
-      title: t('forReps.benefit3Title', "Global Network"),
-      description: t('forReps.benefit3Desc', "Connect with clients and colleagues worldwide."),
-      icon: Globe,
-      color: "harx"
-    },
-    {
-      title: t('forReps.benefit4Title', "Advanced Tools"),
-      description: t('forReps.benefit4Desc', "Use our AI-powered platform to maximize your success."),
-      icon: Laptop,
-      color: "harx"
-    }
-  ];
-
-  const repStories = [
-    {
-      name: "Fatima Al-Sayed",
-      location: "Kuwait City, Kuwait",
-      expertise: "Financial Services & Customer Success",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote1', "The AI-powered platform helps me provide exceptional support to global clients while maintaining a perfect work-life balance.")
-    },
-    {
-      name: "Kwame Osei",
-      location: "Accra, Ghana",
-      expertise: "Technical Support & Product Specialist",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1578496781985-452d4a934d50?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote2', "HARX's technology allows me to focus on what matters most - solving customer problems efficiently while continuously improving my skills.")
-    },
-    {
-      name: "Mei Zhang",
-      location: "Singapore",
-      expertise: "E-commerce & Digital Solutions",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote3', "The platform's multilingual capabilities and AI assistance make it possible to serve customers across Asia effectively.")
-    },
-    {
-      name: "Raj Patel",
-      location: "Mumbai, India",
-      expertise: "Enterprise Solutions & Integration",
-      company: "HARX Global Network",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&h=400",
-      quote: t('forReps.quote4', "HARX's flexible platform and continuous learning opportunities have helped me grow from a support agent to a solutions architect.")
-    }
-  ];
-
   return (
-    <div className="pt-8 pb-12">
-      {/* Hero Section with Inspiring Image */}
-      <div className="relative h-[600px] overflow-hidden">
-        <img
-          src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&w=1920&q=80"
-          alt="Remote work lifestyle"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-harx-950/90 to-harx-900/50">
-          <div className="container mx-auto px-4 h-full flex items-center">
-            <div className="max-w-3xl">
-              <h1 className="mb-4 text-4xl font-bold leading-tight text-white md:text-5xl">
-                {t('forReps.heroTitle', 'Earn money. Extra income. Or a full income.')}
-              </h1>
-              <h3 className="mb-5 text-xl font-bold leading-snug text-white md:text-2xl">
-                {t('forReps.heroSubtitle', 'No boss. No office. No fixed schedule. Just you, your laptop — and your skills.')}
-              </h3>
-              <div className="mb-8 space-y-3">
-                <p className="text-base font-medium leading-relaxed text-white/90 md:text-lg">
-                  {t('forReps.heroDesc', 'HARX connects you to companies that need you. And pays you for every effort:')}
-                </p>
-                <ul className="space-y-3">
-                  {payHighlights.map(({ icon: Icon, text }) => (
-                    <li key={text} className="flex items-center gap-3 text-base leading-relaxed text-white/90 md:text-lg">
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-harx-300 ring-1 ring-white/20">
-                        <Icon className="h-4 w-4" aria-hidden="true" />
-                      </span>
-                      <span>{text}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button
-                  size="lg"
-                  variant="gradient"
-                  onClick={onGetStarted}
-                  className="group"
-                >
-                  {t('forReps.getStarted', 'Get Started')}
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+    <section className="relative overflow-hidden bg-[#070711] pb-16 pt-28 text-white md:pb-24 md:pt-32" data-testid="reps-hero">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -right-40 -top-20 h-[34rem] w-[34rem] rounded-full bg-fuchsia-600/25 blur-[140px]" />
+        <div className="absolute -left-32 top-1/3 h-[30rem] w-[30rem] rounded-full bg-rose-600/25 blur-[140px]" />
+        <div className="absolute bottom-0 right-1/3 h-[22rem] w-[22rem] rounded-full bg-violet-500/15 blur-[120px]" />
+        <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.6) 1px, transparent 1px)', backgroundSize: '56px 56px', maskImage: 'radial-gradient(70% 60% at 50% 40%, #000, transparent)' }} />
       </div>
+      <div className="relative z-10 mx-auto grid max-w-7xl items-center gap-14 px-5 md:px-8 lg:grid-cols-[1.1fr_0.9fr]">
+        <div>
+          <SpaceSwitch current="reps" />
+          <h1 className="mt-8 text-4xl font-black leading-[1.05] tracking-tight md:text-6xl">
+            <span className="taas-shine-text">{t('forReps.heroTitle', 'Earn money. Extra income. Or a full income.')}</span>
+          </h1>
+          <p className="mt-6 max-w-xl text-lg font-semibold leading-relaxed text-white/95 md:text-xl">
+            {t('forReps.heroSubtitle', 'No boss. No office. No fixed schedule. Just you, your laptop — and your skills.')}
+          </p>
+          <p className="mt-3 max-w-xl text-base font-medium text-white/75">
+            {t('forReps.heroDesc', 'HARX connects you to companies that need you. And pays you for every effort:')}
+          </p>
 
-      <div className="relative overflow-hidden bg-gradient-to-b from-harx-50 to-white">
-        <div className="container mx-auto px-4 py-24">
-          {/* Benefits Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="bg-white p-6 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                <div className="w-12 h-12 bg-gradient-harx rounded-lg flex items-center justify-center mb-4">
-                  <benefit.icon className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold mb-2">{benefit.title}</h3>
-                <p className="text-gray-600">{benefit.description}</p>
-              </div>
+          <ul className="mt-7 grid max-w-2xl gap-3 sm:grid-cols-3" data-testid="reps-pay-tiles">
+            {pay.map(({ icon: Icon, tone, label, text }) => (
+              <li key={label} className="taas-spot rounded-2xl border border-white/12 bg-white/[0.05] p-4 text-left backdrop-blur" onMouseMove={spotMove}>
+                <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${tone} shadow-lg`}>
+                  <Icon className="h-5 w-5 text-white" aria-hidden="true" />
+                </span>
+                <h3 className="mt-3 text-sm font-extrabold leading-snug">{label}</h3>
+                <p className="mt-1 text-xs font-medium leading-relaxed text-white/70">{text}</p>
+              </li>
             ))}
-          </div>
+          </ul>
 
-          {/* Rep Stories */}
-          <div className="max-w-6xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-4">{t('forReps.storiesTitle', 'Meet Our Global Representatives')}</h2>
-            <p className="text-center text-gray-600 mb-12">
-              {t('forReps.storiesDesc', 'Discover how professionals worldwide are building successful careers with HARX')}
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {repStories.map((story, index) => (
-                <div key={index} className="bg-white p-8 rounded-xl shadow-lg transform hover:scale-105 transition-transform duration-300">
-                  <div className="flex items-center mb-6">
-                    <img
-                      src={story.image}
-                      alt={story.name}
-                      className="w-16 h-16 rounded-full mr-4 object-cover"
-                    />
-                    <div>
-                      <h3 className="font-bold text-lg">{story.name}</h3>
-                      <p className="text-harx-600">{story.expertise}</p>
-                      <p className="text-gray-600 text-sm">{story.location}</p>
-                    </div>
-                  </div>
-                  <blockquote className="text-gray-700 italic">
-                    "{story.quote}"
-                  </blockquote>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Requirements Section */}
-          <div className="max-w-4xl mx-auto mb-24">
-            <h2 className="text-3xl font-bold text-center mb-12">{t('forReps.requirementsTitle', 'What We Look For')}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="bg-white p-6 rounded-xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">{t('forReps.skillsTitle', 'Skills & Experience')}</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.skill1', 'Customer service experience')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.skill2', 'Strong communication skills')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.skill3', 'Problem-solving abilities')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.skill4', 'Tech-savvy mindset')}</span>
-                  </li>
-                </ul>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-lg">
-                <h3 className="text-xl font-bold mb-4">{t('forReps.techTitle', 'Technical Requirements')}</h3>
-                <ul className="space-y-3">
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.tech1', 'Reliable internet connection')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.tech2', 'Modern computer or laptop')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.tech3', 'Quiet workspace')}</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-harx-500 mr-2" />
-                    <span>{t('forReps.tech4', 'Professional headset')}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Section */}
-          <div className="text-center">
-            <h2 className="text-3xl font-bold mb-6">{t('forReps.ready', 'Ready to Join Our Team?')}</h2>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
-                size="lg"
-                variant="gradient"
-                onClick={onGetStarted}
-                className="group"
-              >
-                {t('forReps.getStarted', 'Get Started')}
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </div>
+          <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+            <button type="button" onClick={onJoin} data-testid="taas-reps-cta" className="group inline-flex h-14 items-center justify-center gap-2 rounded-2xl bg-gradient-harx px-8 text-base font-bold text-white shadow-[0_20px_50px_-15px_rgba(255,77,109,0.9)] transition-transform hover:scale-[1.03]">
+              {t('taasWidgets.joinCta', 'Join HARX')}
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+            </button>
+            <a
+              href="#featured-gigs"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('featured-gigs')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="inline-flex h-14 items-center justify-center gap-2 rounded-2xl border border-white/25 bg-white/[0.04] px-6 text-sm font-bold text-white transition-colors hover:bg-white/10"
+            >
+              {t('taasPages.seeMissions', 'See example missions')}
+            </a>
           </div>
         </div>
+
+        <RepsIncomeVisual />
       </div>
-    </div>
+    </section>
+  );
+}
+
+/** Quatre atouts du travail avec HARX. */
+export function RepsBenefits() {
+  const { t } = useTranslation();
+  const benefits = [
+    { title: t('forReps.benefit1Title', 'Flexible Work'), description: t('forReps.benefit1Desc', 'Choose your hours and work from anywhere in the world.'), icon: Clock },
+    { title: t('forReps.benefit2Title', 'Growth Opportunities'), description: t('forReps.benefit2Desc', 'Continuous learning and career advancement possibilities.'), icon: Users2 },
+    { title: t('forReps.benefit3Title', 'Global Network'), description: t('forReps.benefit3Desc', 'Connect with clients and colleagues worldwide.'), icon: Globe },
+    { title: t('forReps.benefit4Title', 'Advanced Tools'), description: t('forReps.benefit4Desc', 'Use our AI-powered platform to maximize your success.'), icon: Laptop },
+  ];
+  return (
+    <section className="relative overflow-hidden bg-[#070711] px-4 py-16 text-white" data-testid="reps-benefits">
+      <div className="mx-auto grid max-w-6xl gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {benefits.map(({ title, description, icon: Icon }) => (
+          <div key={title} onMouseMove={spotMove} className="taas-spot rounded-3xl border border-white/12 bg-white/[0.05] p-6 shadow-xl shadow-black/30 backdrop-blur transition-transform duration-300 hover:-translate-y-1">
+            <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-harx">
+              <Icon className="h-6 w-6 text-white" aria-hidden="true" />
+            </div>
+            <h3 className="mb-2 text-lg font-bold text-white">{title}</h3>
+            <p className="text-sm text-slate-300">{description}</p>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

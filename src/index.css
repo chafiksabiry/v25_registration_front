@@ -663,3 +663,122 @@
     @apply bg-harx-200 rounded-full hover:bg-harx-300 transition-colors;
   }
 }
+
+/* Boutons d'offre du bandeau : segment verre dépoli, pastille active */
+.hub-navseg { display: inline-flex; align-items: center; gap: .25rem; padding: .25rem; border-radius: 9999px; background: rgba(7, 7, 17, .28); border: 1px solid rgba(255, 255, 255, .32); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.hub-navbtn { display: inline-flex; align-items: center; gap: .5rem; height: 2.35rem; padding: 0 1.15rem; border-radius: 9999px; font-size: .92rem; font-weight: 800; letter-spacing: .01em; color: #fff; white-space: nowrap; transition: background .2s ease, color .2s ease, transform .2s ease, box-shadow .2s ease; }
+.hub-navbtn:hover { background: #fff; color: #be185d; transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(0, 0, 0, .45); }
+.hub-navbtn[aria-current="page"] { background: #fff; color: #be185d; }
+.hub-navbtn:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+
+/* Bandeau commun HARX : dégradé profond, halos, reflet qui glisse lentement, fin liseré lumineux en bas. */
+.harx-bar {
+  isolation: isolate;
+  background:
+    radial-gradient(60% 140% at 12% -30%, rgba(255, 255, 255, 0.22), transparent 60%),
+    radial-gradient(45% 120% at 88% 130%, rgba(139, 92, 246, 0.45), transparent 65%),
+    linear-gradient(95deg, #d9143f 0%, #e01070 48%, #c0179f 100%);
+  box-shadow: 0 10px 40px -12px rgba(224, 16, 112, 0.55), 0 1px 0 rgba(0, 0, 0, 0.25);
+  overflow: visible;
+}
+.harx-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.16) 50%, transparent 65%);
+  background-size: 250% 100%;
+  animation: harx-bar-sheen 9s ease-in-out infinite;
+  pointer-events: none;
+}
+.harx-bar::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 190, 120, 0.9), rgba(255, 255, 255, 0.95), rgba(196, 140, 255, 0.9), transparent);
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.6));
+  pointer-events: none;
+}
+.harx-bar-logo img { filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.45)); transition: transform 0.3s ease, filter 0.3s ease; }
+.harx-bar-logo:hover img { transform: scale(1.04); filter: drop-shadow(0 4px 16px rgba(255, 255, 255, 0.35)); }
+@keyframes harx-bar-sheen { 0% { background-position: 150% 0; } 55%, 100% { background-position: -50% 0; } }
+@media (prefers-reduced-motion: reduce) { .harx-bar::before { animation: none; } }
+
+/* Accueil TAAS : tout tient dans l'écran, les tailles suivent la hauteur disponible (en dessous de 768 px de large la page défile). */
+.taas-home { padding-top: 5.5rem; padding-bottom: 1rem; }
+.taas-home__stack { gap: clamp(.4rem, 1.5vh, 1rem); }
+.taas-home__mascot { height: clamp(3.25rem, 11vh, 8.5rem); }
+.taas-home__meets { font-size: clamp(.9rem, 2.8vh, 2rem); }
+.taas-home__brand { font-weight: 800; font-size: clamp(1.4rem, 5.4vh, 3.6rem); line-height: 1.1; }
+.taas-home__lines { font-size: clamp(.78rem, 1.9vh, 1.1rem); line-height: 1.35; }
+.taas-home__lines p + p { margin-top: .15rem; }
+.taas-home__doors { margin-top: clamp(.3rem, 1.4vh, 1rem); }
+.taas-home__door { min-height: clamp(11rem, 29vh, 19rem); }
+.taas-home__door-title { font-size: clamp(1rem, 2.6vh, 1.6rem); }
+@media (min-width: 768px) and (max-height: 820px) {
+  .taas-home__points { display: none; }
+  .taas-home__door { min-height: clamp(8rem, 24vh, 14rem); }
+}
+@media (max-width: 767px) {
+  .taas-home__mascot { height: 5rem; }
+  .taas-home__door { min-height: 14rem; }
+}
+
+/* ===== TAAS : commutateur COMPANY / REPS, animations d'ouverture, cartes à projecteur ===== */
+.taas-switch { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: .3rem; border-radius: 1.25rem; background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .18); backdrop-filter: blur(10px); box-shadow: 0 18px 50px -20px rgba(0, 0, 0, .8); }
+.taas-switch__glider { position: absolute; top: .3rem; bottom: .3rem; left: .3rem; width: calc(50% - .3rem); border-radius: 1rem; background: linear-gradient(135deg, #ff4d4d, #ec4899 60%, #a855f7); box-shadow: 0 10px 30px -8px rgba(255, 77, 109, .8); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.taas-switch__glider[data-pos='reps'] { transform: translateX(100%); }
+.taas-switch__item { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; gap: .65rem; min-width: 11.5rem; padding: .7rem 1.2rem; border-radius: 1rem; color: rgba(255, 255, 255, .75); transition: color .3s ease; }
+.taas-switch__item[aria-selected='true'] { color: #fff; }
+.taas-switch__item:hover { color: #fff; }
+.taas-switch__item:focus-visible { outline: 3px solid #ffd0da; outline-offset: 2px; }
+
+@keyframes taas-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes taas-marquee { to { transform: translateX(-50%); } }
+@keyframes taas-spin { to { transform: rotate(360deg); } }
+@keyframes taas-pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, .55); } 100% { box-shadow: 0 0 0 18px rgba(236, 72, 153, 0); } }
+@keyframes taas-shine { to { background-position: 200% center; } }
+.taas-float { animation: taas-float 7s ease-in-out infinite; }
+.taas-float--slow { animation-duration: 9s; animation-delay: -3s; }
+.taas-marquee { display: flex; width: max-content; animation: taas-marquee 38s linear infinite; }
+.taas-marquee:hover { animation-play-state: paused; }
+.taas-shine-text { background: linear-gradient(100deg, #ff6b6b, #ff4d8d 35%, #f59e0b 60%, #ff4d8d 85%, #ff6b6b); background-size: 200% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: taas-shine 8s linear infinite; }
+.taas-glow-border { position: relative; border-radius: 1.5rem; }
+.taas-glow-border::before { content: ''; position: absolute; inset: -2px; z-index: -1; border-radius: inherit; background: conic-gradient(from 0deg, #ff4d4d, #f59e0b, #ec4899, #a855f7, #ff4d4d); animation: taas-spin 6s linear infinite; filter: blur(6px); opacity: .85; }
+.taas-spot { position: relative; overflow: hidden; }
+.taas-spot::after { content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity .3s ease; background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 110, 150, .22), transparent 60%); }
+.taas-spot:hover::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .taas-float, .taas-marquee, .taas-shine-text, .taas-glow-border::before { animation: none !important; }
+  .taas-switch__glider { transition: none; }
+}
+@media (max-width: 520px) { .taas-switch__item { min-width: 0; padding: .6rem .8rem; } }
+
+/* Écrans de connexion et d'inscription : même langage visuel que les pages d'accueil (verre, aurores, dégradé rose). */
+.auth-card { position: relative; border: 1px solid rgba(255, 255, 255, .1); box-shadow: 0 40px 100px -40px rgba(0, 0, 0, .9), 0 0 80px -30px rgba(236, 72, 153, .35); }
+.auth-card::before { content: ''; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none; background: linear-gradient(135deg, rgba(255, 77, 77, .55), rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 70%, rgba(168, 85, 247, .55)); -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0); }
+.auth-card .input-premium-glow { background: rgba(255, 255, 255, .06); border: 1px solid rgba(255, 255, 255, .14); border-radius: 1rem; color: #fff; padding-top: 1rem; padding-bottom: 1rem; backdrop-filter: blur(6px); }
+.auth-card .input-premium-glow::placeholder { color: rgba(203, 213, 225, .55); }
+.auth-card .input-premium-glow:hover { background: rgba(255, 255, 255, .09); border-color: rgba(255, 255, 255, .26); }
+.auth-card .input-premium-glow:focus { background: rgba(255, 255, 255, .1); border-color: #ff4d6d; box-shadow: 0 0 0 4px rgba(255, 77, 109, .18), 0 10px 30px -12px rgba(255, 77, 109, .6); }
+.auth-card .btn-primary { border-radius: 1rem; position: relative; overflow: hidden; box-shadow: 0 18px 44px -16px rgba(255, 77, 109, .9); }
+.auth-card .btn-primary::after { content: ''; position: absolute; inset: 0; width: 40%; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .35), transparent); animation: harx-auth-shine 3.4s ease-in-out infinite; }
+@keyframes harx-auth-shine { 0% { transform: translateX(-120%) skewX(-20deg); } 55%, 100% { transform: translateX(260%) skewX(-20deg); } }
+.auth-stepper { display: flex; align-items: center; }
+.auth-stepper__dot { display: inline-flex; height: 2rem; width: 2rem; flex-shrink: 0; align-items: center; justify-content: center; border-radius: 9999px; border: 1px solid rgba(255, 255, 255, .15); background: rgba(255, 255, 255, .05); color: rgba(255, 255, 255, .5); transition: all .4s ease; }
+.auth-stepper__dot[data-state='done'] { background: linear-gradient(135deg, #34d399, #14b8a6); border-color: transparent; color: #06251e; }
+.auth-stepper__dot[data-state='active'] { background: linear-gradient(135deg, #ff4d4d, #ec4899); border-color: transparent; color: #fff; box-shadow: 0 0 0 5px rgba(255, 77, 109, .22); }
+.auth-stepper__bar { height: 2px; flex: 1; margin: 0 .35rem; border-radius: 9999px; background: rgba(255, 255, 255, .12); overflow: hidden; }
+.auth-stepper__bar > span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #34d399, #14b8a6); transition: width .5s ease; }
+.auth-stepper__bar[data-done='true'] > span { width: 100%; }
+@media (prefers-reduced-motion: reduce) { .auth-card .btn-primary::after { animation: none; } }
+
+/* Illustration Téléphonie des écrans d'inscription : barres de voix et anneau d'appel. */
+@keyframes auth-wave { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+@keyframes auth-ring { 0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, .6); } 100% { box-shadow: 0 0 0 12px rgba(52, 211, 153, 0); } }
+.auth-wave-bar { transform-origin: center; animation: auth-wave 1.2s ease-in-out infinite; }
+.auth-ring { animation: auth-ring 1.6s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) { .auth-wave-bar { animation: none; transform: scaleY(.6); } .auth-ring { animation: none; } }

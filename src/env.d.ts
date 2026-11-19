@@ -11,6 +11,8 @@ interface ImportMetaEnv {
   readonly VITE_REP_CREATION_PROFILE_URL: string;
   readonly VITE_REP_DASHBOARD_URL: string;
   readonly VITE_REP_ORCHESTRATOR_URL: string;
+  /** Recette seulement : « true » ouvre Company, Full Scope et Multi-clients (absent en production = « Bientôt disponible »). */
+  readonly VITE_RECETTE_UNLOCK_OFFERS?: string;
 }
 
 interface ImportMeta {

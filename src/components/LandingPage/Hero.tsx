@@ -7,9 +7,11 @@ import { useTranslation } from 'react-i18next';
 
 interface HeroProps {
   onGetStarted: () => void;
+  /** Affiche l'onglet Company puis fait défiler jusqu'à « Comment ça marche ». */
+  onSeeHow?: () => void;
 }
 
-export function Hero({ onGetStarted }: HeroProps) {
+export function Hero({ onGetStarted, onSeeHow }: HeroProps) {
   const { t } = useTranslation();
   const titleContainerRef = useRef<HTMLDivElement>(null);
   const titleTextRef = useRef<HTMLSpanElement>(null);
@@ -64,7 +66,7 @@ export function Hero({ onGetStarted }: HeroProps) {
           <div className="mb-6 animate-fade-in">
             <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/10 backdrop-blur-md text-slate-200 text-sm font-semibold mb-4 hover:border-harx-400/50 transition-all duration-300">
               <Sparkles className="h-4 w-4 text-harx-400" />
-              {t('hero.badge', 'AI-Powered • 60,000+ Expert Agents • Transaction-as-a-Service')}
+              {t('hero.badge', 'AI-Powered • 64,000+ Expert Agents • Transaction-as-a-Service')}
             </span>
           </div>
 
@@ -207,7 +209,7 @@ export function Hero({ onGetStarted }: HeroProps) {
                 </li>
               </ul>
               <div className="mt-8 pt-6 border-t border-harx-alt-500/20">
-                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => scrollToSection('how-it-works')}>
+                <Button className="w-full h-11 bg-gradient-to-r from-harx-alt-500/30 to-harx-500/25 border border-harx-alt-400/40 hover:border-harx-alt-300 hover:from-harx-alt-500/45 hover:to-harx-500/35 text-white font-semibold shadow-lg shadow-harx-alt-500/20 transition-all duration-300" onClick={() => (onSeeHow ? onSeeHow() : scrollToSection('how-it-works'))}>
                   {t('hero.taas.cta', 'See How It Works')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
@@ -236,7 +238,7 @@ export function Hero({ onGetStarted }: HeroProps) {
               <div className="w-11 h-11 bg-gradient-harx rounded-xl flex items-center justify-center mb-4 mx-auto shadow-md shadow-harx-500/20">
                 <Users2 className="h-5 w-5 text-white" />
               </div>
-              <h3 className="text-lg font-bold mb-1">{t('hero.stats.stat2Title', '60,000+ AI-Enhanced Agents')}</h3>
+              <h3 className="text-lg font-bold mb-1">{t('hero.stats.stat2Title', '64,000+ AI-Enhanced Agents')}</h3>
               <p className="text-sm text-harx-200">{t('hero.stats.stat2Desc', 'Powered by intelligent technology')}</p>
             </div>
             <div className="p-6 glass-card-premium rounded-2xl hover:border-harx-500/50 transition-colors">

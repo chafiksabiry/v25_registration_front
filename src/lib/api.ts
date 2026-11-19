@@ -25,7 +25,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const auth = {
-  register: async (data: { fullName: string; email: string; password: string; phone: string }) => {
+  register: async (data: { fullName: string; email: string; password: string; phone?: string }) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   },
@@ -85,8 +85,9 @@ export const auth = {
       return { error: true, message };
     }
   },
-  verifyAccount: async (userId: string)=> {
-    const response= await api.post('/auth/verify-account', {userId});
+  /** Le service exige le jeton du compte (reçu après le code e-mail / SMS), pas encore enregistré à ce stade. */
+  verifyAccount: async (userId: string, token?: string)=> {
+    const response= await api.post('/auth/verify-account', {userId}, token ? { headers: { Authorization: `Bearer ${token}` } } : undefined);
     return response.data;
   },
   generateVerificationCode: async (email: string) => {
@@ -376,7 +377,11 @@ function mapStripeCompanyPlan(p: Record<string, unknown>) {
 }
 
 export const publicPlansApi = {
-  companyPlans: async () => {
+  /**
+   * Forfaits entreprise. `currency` (déduite du pays du visiteur) est demandée au serveur : il renvoie les prix dans cette
+   * devise quand le prix Stripe la propose, sinon en EUR ; `plan.currency` dit la devise réellement affichée.
+   */
+  companyPlans: async (currency?: string) => {
     // Prefer company orchestrator — live Stripe Catalog (marketing_features + description).
     const companyBack = (
       import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
@@ -386,6 +391,7 @@ export const publicPlansApi = {
     try {
       const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {
         timeout: 15000,
+        ...(currency ? { params: { currency } } : {}),
       });
       const plans = Array.isArray(response.data)
         ? response.data

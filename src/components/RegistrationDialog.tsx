@@ -1,8 +1,10 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, KeyRound } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
+import { AuthBackdrop } from './layout/AuthBackdrop';
+import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import {
   REGISTER_FORM_STEPS,
@@ -16,10 +18,10 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
-import { BrandText } from './BrandText';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion } from '../lib/tracking/conversions';
+import { isMissingPhoneError, isValidOptionalPhone, phonePlaceholder } from '../lib/phoneField';
 
 type Step = RegisterFormStep | 'success';
 
@@ -53,6 +55,8 @@ export default function RegistrationDialog({
   const step = stepFromSearch(readBrowserSearchStep() || searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  // Confirmation du mot de passe : saisie locale, jamais envoyée au serveur.
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -70,7 +74,15 @@ export default function RegistrationDialog({
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [legalPart, setLegalPart] = useState<number | null>(null);
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  // Exemple de numéro selon le pays du visiteur (plus de numéro américain pour tous).
+  const phoneExample = useMemo(
+    () => phonePlaceholder({ browser: typeof navigator === 'undefined' ? [] : navigator.languages ?? [navigator.language], siteLang: i18n.language }),
+    [i18n.language]
+  );
+  // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
+  // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
+  const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
 
@@ -141,7 +153,8 @@ export default function RegistrationDialog({
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
-  const validatePhone = (phone: string) => /^\+?[\d\s-]{10,}$/.test(phone);
+  // Téléphone facultatif à l'inscription (l'appel de test de la mise en route le redemande) ; s'il est saisi, il doit être plausible.
+  const validatePhone = (phone: string) => isValidOptionalPhone(phone);
 
   const getFirstIncompleteStep = (): RegisterFormStep | null => {
     if (formData.fullName.trim().length < 3) return 'name';
@@ -157,7 +170,7 @@ export default function RegistrationDialog({
     newErrors: Record<string, string>
   ): Promise<boolean> => {
     try {
-      const accountVerificationResult = await auth.verifyAccount(storedUserId);
+      const accountVerificationResult = await auth.verifyAccount(storedUserId, token);
       if (!accountVerificationResult.success) {
         newErrors.general = accountVerificationResult.message || t('register.errGeneralFailed', 'Account verification failed');
         return false;
@@ -188,7 +201,7 @@ export default function RegistrationDialog({
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
-      if (isCallcentreProduct()) {
+      if (telephonyContext) {
         setTimeout(() => hardNavigate(CALLCENTRE_PATH), 1500);
       } else {
         setTimeout(() => onSignIn(), 1500);
@@ -277,6 +290,8 @@ export default function RegistrationDialog({
         case 'password':
           if (!validatePassword(formData.password)) {
             newErrors.password = t('register.errPassword', 'Password must be at least 8 characters with letters and numbers');
+          } else if (confirmPassword !== formData.password) {
+            newErrors.confirmPassword = t('register.errPasswordMismatch', 'Passwords do not match');
           } else {
             pushStep('phone');
           }
@@ -285,6 +300,8 @@ export default function RegistrationDialog({
         case 'phone':
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
+          } else if (formData.phone.trim() === '') {
+            pushStep('terms');
           } else {
             setIsLoading(true);
             try {
@@ -324,11 +341,12 @@ export default function RegistrationDialog({
 
             let RegisterResult: any;
             try {
+              const phone = formData.phone.trim();
               RegisterResult = await auth.register({
                 fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password,
-                phone: formData.phone
+                ...(phone ? { phone } : {}),
               });
 
               if (RegisterResult?.data?._id) {
@@ -360,6 +378,13 @@ export default function RegistrationDialog({
                 setErrors(newErrors);
                 return;
               }
+              if (!formData.phone.trim() && isMissingPhoneError(apiMessage)) {
+                // Le serveur exige encore un numéro : on revient à l'étape téléphone avec un message clair.
+                newErrors.phone = t('register.errPhoneNeededServer', 'Please enter your phone number to finish creating your account.');
+                pushStep('phone');
+                setErrors(newErrors);
+                return;
+              }
               newErrors.general =
                 apiMessage || t('register.errGeneralFailed', 'Registration failed, please try again');
               setErrors(newErrors);
@@ -385,14 +410,10 @@ export default function RegistrationDialog({
 
             // Backend sends the verification email itself now (register()
             // no longer echoes the code back for us to re-send).
+            // Plus d'envoi automatique de SMS : la vérification se fait par e-mail (le SMS reste proposé, facultatif,
+            // quand un numéro a été saisi). Évite l'encart « SMS temporairement indisponible » affiché à tous.
             setSmsOtpAvailable(false);
             setSmsNotice(null);
-            try {
-              await auth.sendOTP(RegisterResult.data._id, formData.phone);
-              setSmsOtpAvailable(true);
-            } catch {
-              setSmsNotice(t('register.smsNoticeTempUnavailable', 'SMS verification is temporarily unavailable. Use the email code to complete registration.'));
-            }
 
             pushStep('verification');
           }
@@ -463,37 +484,21 @@ export default function RegistrationDialog({
         onSignIn={onSignIn}
         onGetStarted={onGetStarted || (() => {})}
         onNavigateToSection={onNavigateToSection}
-        telephony={defaultUserType === 'call-center' || isCallcentreProduct()}
+        telephony={telephonyContext}
       />
+      <AuthBackdrop />
 
-      {/* Immersive background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-        <div className="absolute top-[10%] left-[20%] w-[40%] h-[40%] bg-harx-400/10 blur-[120px] rounded-full animate-float"></div>
-        <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-harx-alt-400/10 blur-[150px] rounded-full animate-float" style={{ animationDelay: '3s' }}></div>
-      </div>
-
-      <div className="flex-1 flex items-center justify-center p-4 py-20 relative z-10">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/10 overflow-hidden relative z-10">
+      <div className="flex-1 flex items-center justify-center p-4 py-20 [@media(min-width:1024px)_and_(max-height:1000px)]:!pt-24 [@media(min-width:1024px)_and_(max-height:1000px)]:!pb-6 relative z-10">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-5 auth-card bg-slate-900/60 backdrop-blur-2xl rounded-3xl shadow-2xl overflow-hidden relative z-10">
 
           {/* Left Side - Brand Section */}
-          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-12 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 text-white relative border-r border-white/10">
-            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.02]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }}></div>
-            <div className="relative z-10 text-center lg:text-left flex flex-col justify-center h-full">
-              <div className="relative w-full max-w-[150px] mx-auto mb-8 animate-float">
-                <img
-                  src={`${import.meta.env.BASE_URL || '/'}mascotte.png`}
-                  alt="HARX Mascotte"
-                  className="w-full h-auto object-contain drop-shadow-[0_10px_25px_rgba(255,77,77,0.2)]"
-                  loading="eager"
-                />
-                <div className="absolute -inset-3 bg-gradient-to-r from-harx-500/25 to-harx-alt-500/25 rounded-full blur-xl -z-10 animate-pulse-slow" />
-              </div>
-              <BrandText callCentre={defaultUserType === 'call-center' || isCallcentreProduct()} />
-            </div>
+          <div className="hidden lg:flex lg:col-span-2 flex-col justify-between p-10 xl:p-12 bg-gradient-to-b from-[#0a0a18] via-[#0d0d1f] to-[#0a0a18] text-white relative border-r border-white/10">
+            <div className="absolute inset-0 bg-[length:32px_32px] opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)' }} />
+            <AuthSidePanel journey kind={telephonyContext ? 'telephony' : defaultUserType === 'rep' ? 'rep' : defaultUserType === 'company' ? 'company' : 'neutral'} />
           </div>
 
           {/* Right Side - Form Section */}
-          <div className="lg:col-span-3 bg-slate-900/40 p-8 lg:p-14 flex flex-col justify-center relative">
+          <div className="lg:col-span-3 bg-slate-900/40 p-8 lg:p-14 [@media(min-width:1024px)_and_(max-height:1000px)]:!py-8 flex flex-col justify-center relative">
             <div className="max-w-md mx-auto w-full">
               {step !== 'success' && (
                 <button onClick={goBack} className="flex items-center text-sm text-slate-450 hover:text-white mb-6 transition-colors">
@@ -502,22 +507,20 @@ export default function RegistrationDialog({
                 </button>
               )}
 
-              {/* Visual Step Progress Indicator */}
+              {/* Indicateur d'avancement : une pastille par étape, reliées par une barre qui se remplit */}
               {step !== 'success' && (
-                <div className="flex items-center gap-2 mb-8 justify-center lg:justify-start">
-                  {['name', 'email', 'password', 'phone', 'terms', 'verification'].map((s, idx) => {
-                    const stepsList = ['name', 'email', 'password', 'phone', 'terms', 'verification'];
-                    const currentIdx = stepsList.indexOf(step);
-                    const isCompleted = idx < currentIdx;
-                    const isActive = step === s;
+                <div className="auth-stepper mb-8" data-testid="register-stepper" aria-label={t('register.progress', 'Progress')}>
+                  {(['name', 'email', 'password', 'phone', 'terms', 'verification'] as const).map((s, idx, all) => {
+                    const currentIdx = all.indexOf(step as (typeof all)[number]);
+                    const StepIcon = { name: User, email: Mail, password: Lock, phone: Phone, terms: ShieldCheck, verification: KeyRound }[s];
+                    const state = idx < currentIdx ? 'done' : idx === currentIdx ? 'active' : 'todo';
                     return (
-                      <div
-                        key={s}
-                        className={`h-1.5 rounded-full transition-all duration-350 ${
-                          isCompleted ? 'w-6 bg-gradient-harx' :
-                          isActive ? 'w-8 bg-harx-500 shadow-md shadow-harx-500/30' : 'w-2 bg-white/10'
-                        }`}
-                      />
+                      <React.Fragment key={s}>
+                        <span className="auth-stepper__dot" data-state={state} aria-current={state === 'active' ? 'step' : undefined}>
+                          {state === 'done' ? <Check className="h-4 w-4" /> : <StepIcon className="h-4 w-4" />}
+                        </span>
+                        {idx < all.length - 1 && <span className="auth-stepper__bar" data-done={idx < currentIdx}><span /></span>}
+                      </React.Fragment>
                     );
                   })}
                 </div>
@@ -528,7 +531,7 @@ export default function RegistrationDialog({
                   {step === 'name' ? t('register.titleName', 'Create Account') :
                     step === 'email' ? t('register.titleEmail', 'Contact Details') :
                       step === 'password' ? t('register.titlePassword', 'Secure Account') :
-                        step === 'phone' ? t('register.titlePhone', 'Phone Verification') :
+                        step === 'phone' ? t('register.titlePhoneOptional', 'Your phone (optional)') :
                           step === 'terms' ? t('register.titleTerms', 'Final Step') :
                             step === 'verification' ? t('register.titleVerification', 'Verify Account') : t('register.titleSuccess', 'Success')}
                 </h2>
@@ -536,7 +539,7 @@ export default function RegistrationDialog({
                   {step === 'name' ? t('register.descName', "Let's get to know you.") :
                     step === 'email' ? t('register.descEmail', 'Where should we send updates?') :
                       step === 'password' ? t('register.descPassword', 'Protect your account.') :
-                        step === 'phone' ? t('register.descPhone', 'For account security.') :
+                        step === 'phone' ? t('register.descPhoneOptional', 'To call you during your test call.') :
                           step === 'terms' ? t('register.descTerms', 'Review our policies.') :
                             step === 'verification'
                               ? (smsOtpAvailable ? t('register.descVerificationBoth', 'Check your email and phone for codes.') : t('register.descVerificationEmail', 'Check your email for the verification code.'))
@@ -609,6 +612,29 @@ export default function RegistrationDialog({
                     </div>
                     <p className="text-xs text-slate-500 pl-2">{t('register.passwordHint', 'Must be at least 8 characters with letters and numbers.')}</p>
                     {errors.password && <p className="text-red-400 text-sm pl-2">{errors.password}</p>}
+                    <div className="relative group">
+                      <Lock className="absolute left-4 top-3.5 h-5 w-5 text-slate-400 group-focus-within:text-harx-400 transition-colors" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="input-premium-glow pr-12"
+                        placeholder={t('register.placeholderConfirmPassword', 'Confirm your password')}
+                        autoComplete="new-password"
+                        aria-invalid={Boolean(errors.confirmPassword) || (confirmPassword.length > 0 && confirmPassword !== formData.password)}
+                        data-testid="confirm-password"
+                      />
+                      {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                        <Check className="absolute right-4 top-3.5 h-5 w-5 text-emerald-400" aria-hidden="true" />
+                      ) : null}
+                    </div>
+                    {confirmPassword.length > 0 && confirmPassword !== formData.password && !errors.confirmPassword ? (
+                      <p className="text-amber-300 text-xs pl-2">{t('register.errPasswordMismatch', 'Passwords do not match')}</p>
+                    ) : null}
+                    {confirmPassword.length > 0 && confirmPassword === formData.password ? (
+                      <p className="text-emerald-400 text-xs pl-2">{t('register.passwordMatch', 'Passwords match')}</p>
+                    ) : null}
+                    {errors.confirmPassword && <p className="text-red-400 text-sm pl-2">{errors.confirmPassword}</p>}
                   </div>
                 )}
 
@@ -621,10 +647,15 @@ export default function RegistrationDialog({
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="input-premium-glow"
-                        placeholder={t('register.placeholderPhone', '+1 (555) 000-0000')}
+                        placeholder={phoneExample}
+                        autoComplete="tel"
                         autoFocus
+                        data-testid="register-phone"
                       />
                     </div>
+                    <p className="text-xs text-slate-500 pl-2" data-testid="register-phone-optional">
+                      {t('register.phoneOptionalHint', 'Optional. It is used for your test call during setup; you can leave it empty and add it later.')}
+                    </p>
                     {errors.phone && <p className="text-red-400 text-sm pl-2">{errors.phone}</p>}
                   </div>
                 )}
@@ -757,7 +788,7 @@ export default function RegistrationDialog({
                           {t('register.resendSmsCode', 'Resend SMS code')}
                         </button>
                       </div>
-                    ) : (
+                    ) : formData.phone.trim() ? (
                       <button
                         type="button"
                         onClick={handleSendSmsOtp}
@@ -766,7 +797,7 @@ export default function RegistrationDialog({
                       >
                         {t('register.trySms', 'Try SMS verification (optional)')}
                       </button>
-                    )}
+                    ) : null}
                     {errors.verification && <p className="text-red-400 text-sm pl-2">{errors.verification}</p>}
                   </div>
                 )}
