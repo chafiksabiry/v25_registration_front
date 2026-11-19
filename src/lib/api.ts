@@ -517,6 +517,10 @@ const supportInboxBase = () =>
       'https://v25comporchestratorback-production.up.railway.app',
   ).replace(/\/$/, '')}/api/whatsapp/admin`;
 
+/** URL du WebSocket temps réel de l'Inbox (https -> wss, http -> ws) ; le jeton passe en sous-protocole, jamais dans l'URL. */
+export const supportInboxSocketUrl = (base: string = supportInboxBase()): string =>
+  base.replace(/^http/i, 'ws').replace(/\/api\/whatsapp\/admin\/?$/, '') + '/support-inbox';
+
 const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: string, data?: unknown): Promise<T> => {
   const token = localStorage.getItem('token');
   const response = await axios.request<T>({

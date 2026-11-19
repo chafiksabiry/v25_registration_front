@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowDown,
   ArrowLeft,
   CheckCheck,
   Globe,
@@ -21,10 +22,13 @@ import {
   type SupportTicket,
 } from '../../lib/api';
 import { AdminPageHeader } from './adminPageShell';
+import { useSupportInboxSocket, type InboxSignal } from './useSupportInboxSocket';
 
 type Filter = 'all' | 'todo' | 'whatsapp' | 'web';
 
-const REFRESH_MS = 15000;
+/** Relecture de secours : rapide quand le temps réel est coupé, rare quand il est actif (le serveur signale chaque changement). */
+const POLL_OFFLINE_MS = 15000;
+const POLL_LIVE_MS = 120000;
 const isWeb = (id: string) => id.startsWith('web:');
 const labelOf = (c: { waId: string; profileName?: string }) =>
   isWeb(c.waId) ? 'Visiteur du site' : c.profileName || `+${c.waId}`;
@@ -102,6 +106,10 @@ export default function AdminInboxPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastSync, setLastSync] = useState<number | null>(null);
   const [, setTick] = useState(0);
+  const [unread, setUnread] = useState<Set<string>>(new Set());
+  const [newBelow, setNewBelow] = useState(false);
+  const messageCount = useRef(0);
+  const debounce = useRef<number | undefined>(undefined);
   const logRef = useRef<HTMLDivElement>(null);
   const stickToBottom = useRef(true);
   const openedId = useRef<string | null>(null);
@@ -145,25 +153,67 @@ export default function AdminInboxPage() {
     void loadList();
   }, [loadList]);
 
+  // Temps réel : chaque signal du serveur relit la liste (et la conversation ouverte), regroupés sur 300 ms.
+  const onSignal = useCallback(
+    (signal: InboxSignal) => {
+      if (signal.reason === 'deleted' && signal.waId === openedId.current) {
+        openedId.current = null;
+        setSelected(null);
+        setDetail(null);
+        setTicket(null);
+        setConfirmDelete(false);
+      }
+      if (signal.reason === 'message' && signal.waId !== openedId.current) {
+        setUnread((prev) => (prev.has(signal.waId) ? prev : new Set(prev).add(signal.waId)));
+      }
+      window.clearTimeout(debounce.current);
+      debounce.current = window.setTimeout(() => {
+        void loadList();
+        if (openedId.current) void loadDetail(openedId.current);
+      }, 300);
+    },
+    [loadList, loadDetail],
+  );
+  const socketStatus = useSupportInboxSocket(onSignal);
+  useEffect(() => () => window.clearTimeout(debounce.current), []);
+
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      void loadList();
-      if (openedId.current) void loadDetail(openedId.current);
-      setTick((n) => n + 1);
-    }, REFRESH_MS);
+    const timer = window.setInterval(
+      () => {
+        void loadList();
+        if (openedId.current) void loadDetail(openedId.current);
+        setTick((n) => n + 1);
+      },
+      socketStatus === 'live' ? POLL_LIVE_MS : POLL_OFFLINE_MS,
+    );
     return () => window.clearInterval(timer);
-  }, [loadList, loadDetail]);
+  }, [loadList, loadDetail, socketStatus]);
 
   // Défilement : on suit les nouveaux messages seulement si l'on était déjà en bas ; à l'ouverture, toujours en bas.
   // `ticket` est dans les dépendances : la bannière et la zone de réponse apparaissent après le chargement et réduisent la fenêtre.
   useEffect(() => {
     const el = logRef.current;
-    if (el && stickToBottom.current) el.scrollTo({ top: el.scrollHeight });
+    const count = detail?.messages.length ?? 0;
+    if (el && stickToBottom.current) {
+      el.scrollTo({ top: el.scrollHeight });
+      setNewBelow(false);
+    } else if (el && count > messageCount.current && messageCount.current > 0) {
+      setNewBelow(true); // l'on lit plus haut : on signale les nouveaux messages sans faire sauter la lecture
+    }
+    messageCount.current = count;
   }, [detail, ticket]);
 
   const open = (id: string) => {
     openedId.current = id;
     stickToBottom.current = true;
+    messageCount.current = 0;
+    setNewBelow(false);
+    setUnread((prev) => {
+      if (!prev.has(id)) return prev;
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
     setSelected(id);
     setDetail(null);
     setTicket(null);
@@ -269,7 +319,22 @@ export default function AdminInboxPage() {
           subtitle="Conversations de l'assistant IA HARX : WhatsApp Business et chat du site."
         />
         <div className="flex items-center gap-3 sm:pt-2">
-          {syncLabel && <span className="hidden text-xs text-slate-500 sm:inline">{syncLabel}</span>}
+          <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
+              socketStatus === 'live' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
+            }`}
+            role="status"
+            aria-live="polite"
+            title={socketStatus === 'live' ? 'Les nouveaux messages apparaissent instantanément.' : 'Temps réel indisponible : relecture toutes les 15 secondes.'}
+          >
+            <span
+              className={`h-2 w-2 rounded-full ${
+                socketStatus === 'live' ? 'bg-emerald-500' : 'animate-pulse bg-amber-500'
+              }`}
+            />
+            {socketStatus === 'live' ? 'En direct' : socketStatus === 'connecting' ? 'Connexion…' : 'Reconnexion…'}
+          </span>
+          {syncLabel && socketStatus !== 'live' && <span className="hidden text-xs text-slate-500 sm:inline">{syncLabel}</span>}
           <button
             type="button"
             onClick={() => void refresh()}
@@ -362,7 +427,10 @@ export default function AdminInboxPage() {
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center justify-between gap-2">
                       <span className="flex min-w-0 items-center gap-1.5 text-sm font-semibold text-slate-900">
-                        <span className="truncate">{labelOf(c)}</span>
+                        <span className={`truncate ${unread.has(c.waId) ? 'font-bold' : ''}`}>{labelOf(c)}</span>
+                        {unread.has(c.waId) && (
+                          <span className="h-2 w-2 shrink-0 rounded-full bg-violet-600" role="img" aria-label="Nouveau message" />
+                        )}
                         {c.linked && <UserCheck className="h-3.5 w-3.5 shrink-0 text-slate-400" aria-label="Compte lié" />}
                       </span>
                       <span className="shrink-0 text-[11px] text-slate-400">{relativeTime(c.updatedAt)}</span>
@@ -459,11 +527,13 @@ export default function AdminInboxPage() {
                 </div>
               )}
 
+              <div className="relative flex min-h-0 flex-1 flex-col">
               <div
                 ref={logRef}
                 onScroll={(e) => {
                   const el = e.currentTarget;
                   stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+                  if (stickToBottom.current) setNewBelow(false);
                 }}
                 className="min-h-0 flex-1 space-y-1 overflow-y-auto bg-slate-50/80 px-4 py-3"
                 role="log"
@@ -501,6 +571,21 @@ export default function AdminInboxPage() {
                     })}
                   </div>
                 ))}
+              </div>
+              {newBelow && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = logRef.current;
+                    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+                    setNewBelow(false);
+                  }}
+                  className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-violet-600 px-3.5 py-1.5 text-xs font-semibold text-white shadow-lg hover:bg-violet-700"
+                >
+                  <ArrowDown className="h-3.5 w-3.5" />
+                  Nouveaux messages
+                </button>
+              )}
               </div>
 
               {ticket ? (
