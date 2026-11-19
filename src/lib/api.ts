@@ -523,7 +523,7 @@ const supportInboxBase = () =>
       'https://v25comporchestratorback-production.up.railway.app',
   ).replace(/\/$/, '')}/api/whatsapp/admin`;
 
-const supportInboxCall = async <T>(method: 'get' | 'post', path: string, data?: unknown): Promise<T> => {
+const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: string, data?: unknown): Promise<T> => {
   const token = localStorage.getItem('token');
   const response = await axios.request<T>({
     method,
@@ -541,6 +541,8 @@ export const supportInboxApi = {
   conversation: (id: string) =>
     supportInboxCall<SupportConversationDetail>('get', `/conversations/${encodeURIComponent(id)}`),
   tickets: () => supportInboxCall<{ tickets: SupportTicket[] }>('get', '/tickets'),
+  deleteConversation: (id: string) =>
+    supportInboxCall<{ deleted: boolean }>('delete', `/conversations/${encodeURIComponent(id)}`),
   reply: (ticketId: string, text: string, resolve: boolean) =>
     supportInboxCall<{ sent: boolean }>('post', `/tickets/${ticketId}/reply`, { text, resolve }),
 };

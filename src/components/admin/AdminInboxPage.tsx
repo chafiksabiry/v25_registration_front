@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Globe, Inbox, MessageCircle, RefreshCw, Send, UserCheck } from 'lucide-react';
+import { Globe, Inbox, MessageCircle, RefreshCw, Send, Trash2, UserCheck } from 'lucide-react';
 import {
   supportInboxApi,
   type SupportConversationDetail,
@@ -29,6 +29,7 @@ export default function AdminInboxPage() {
   const [ticket, setTicket] = useState<SupportTicket | null>(null);
   const [reply, setReply] = useState('');
   const [busy, setBusy] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -75,7 +76,26 @@ export default function AdminInboxPage() {
   const open = (id: string) => {
     setSelected(id);
     setReply('');
+    setConfirmDelete(false);
     void loadDetail(id);
+  };
+
+  const remove = async () => {
+    if (!selected || busy) return;
+    setBusy(true);
+    try {
+      await supportInboxApi.deleteConversation(selected);
+      setList((prev) => prev.filter((c) => c.waId !== selected));
+      setSelected(null);
+      setDetail(null);
+      setTicket(null);
+      setConfirmDelete(false);
+      setError(null);
+    } catch {
+      setError('La suppression a échoué.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const send = async (resolve: boolean) => {
@@ -174,7 +194,8 @@ export default function AdminInboxPage() {
             <p className="p-4 text-sm text-slate-500">Sélectionnez une conversation.</p>
           ) : (
             <>
-              <div className="border-b border-violet-50 px-4 py-3 text-sm text-slate-700">
+              <div className="flex items-start justify-between gap-3 border-b border-violet-50 px-4 py-3 text-sm text-slate-700">
+                <div className="min-w-0">
                 <b>{labelOf(detail)}</b>
                 {detail.notes.length > 0 && (
                   <span className="text-slate-500"> · notes : {detail.notes.map((n) => `${n.key}=${n.value}`).join(', ')}</span>
@@ -183,6 +204,37 @@ export default function AdminInboxPage() {
                   <div className="mt-0.5 text-xs text-amber-700">
                     Ticket {ticket.urgency} : {ticket.reason}
                   </div>
+                )}
+                </div>
+                {confirmDelete ? (
+                  <div className="flex shrink-0 items-center gap-2" role="alertdialog" aria-label="Confirmer la suppression">
+                    <span className="text-xs text-red-700">Supprimer définitivement ?</span>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => void remove()}
+                      className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+                    >
+                      Oui, supprimer
+                    </button>
+                    <button
+                      type="button"
+                      disabled={busy}
+                      onClick={() => setConfirmDelete(false)}
+                      className="rounded-lg border border-slate-200 px-3 py-1.5 text-xs"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(true)}
+                    className="inline-flex shrink-0 items-center gap-1 rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Supprimer
+                  </button>
                 )}
               </div>
               <div className="flex flex-1 flex-col gap-2 overflow-auto bg-slate-50/70 p-4">
