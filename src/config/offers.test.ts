@@ -57,8 +57,11 @@ describe('accueil : trois offres', () => {
       'cloud/accueil': { type: 'href', href: '/telephony/start?plan=accueil' },
       'cloud/full_scope': { type: 'href', href: '/telephony/start?plan=full_scope' },
       'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
+      'nomad/nomad_solo': { type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' },
     });
-    expect(byId.nomad.children).toEqual([]);
+    // N1 (audit du 19/11) : lien direct « Nomad Solo », vers le départ Solo de l'application Téléphonie.
+    expect(byId.nomad.children.map((c) => c.id)).toEqual(['nomad_solo']);
+    expect(resolveChildTarget(byId.nomad.children[0], 'en')).toEqual({ type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' });
     expect(Object.values(table).some((t) => t.type === 'href' && /^\/(\w\w\/)?company(\/|$)/.test(t.href))).toBe(false);
   });
 });
@@ -92,8 +95,8 @@ describe('« Bientôt disponible » piloté par VITE_RECETTE_UNLOCK_OFFERS', () 
     expect(isRoleComingSoon('company', false)).toBe(true);
     expect(isRoleComingSoon('company', true)).toBe(false);
     const state = (unlocked: boolean) => Object.fromEntries(OFFERS.flatMap((o) => o.children.map((c) => [`${o.id}/${c.id}`, isChildComingSoon(c, unlocked)])));
-    expect(state(false)).toEqual({ 'taas/company': true, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false });
-    expect(state(true)).toEqual({ 'taas/company': false, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false });
+    expect(state(false)).toEqual({ 'taas/company': true, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false, 'nomad/nomad_solo': false });
+    expect(state(true)).toEqual({ 'taas/company': false, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false, 'nomad/nomad_solo': false });
   });
 
   it('sans paramètre : lit le réglage de construction', () => {
