@@ -208,7 +208,7 @@
     "loading": "Chargement…"
   },
   "hero": {
-    "badge": "Propulsé par l'IA • +60 000 professionnels du service client • Transaction-as-a-Service",
+    "badge": "Propulsé par l'IA • +64 000 professionnels du service client • Transaction-as-a-Service",
     "title1": "L'Engagement Client Propulsé par l'IA",
     "title2": "Rencontre le",
     "title3": "Transaction-as-a-Service",
@@ -244,7 +244,7 @@
     "stats": {
       "stat1Title": "Plateforme centrée sur l'IA",
       "stat1Desc": "Intelligence artificielle de pointe",
-      "stat2Title": "+60 000 Agents Assistés par IA",
+      "stat2Title": "+64 000 Agents Assistés par IA",
       "stat2Desc": "Propulsé par une technologie intelligente",
       "stat3Title": "Réseau IA Mondial",
       "stat3Desc": "Un service intelligent dans le monde entier"
@@ -393,6 +393,8 @@
     "btnCreateAccount": "Créer un compte",
     "btnVerifyComplete": "Vérifier et terminer",
     "btnContinue": "Continuer",
+    "legalMustRead": "Vous devez lire ce document jusqu'en bas.",
+    "legalReadOther": "Lisez aussi l'autre document avant de pouvoir accepter.",
     "successTitle": "Inscription Réussie !",
     "redirectingLogin": "Redirection vers la connexion...",
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
@@ -479,7 +481,7 @@
     "step5Desc5": "Au-delà de la performance, trois coûts simples : Votre abonnement. Vos numéros. Vos minutes.",
     "step6Title": "Évaluation par l'IA à chaque appel",
     "step6Desc": "Transcrit, analysé et évalué en quelques secondes par l'IA : Fraude détectée, Sentiment mesuré, Transaction confirmée.",
-    "step7Title": "Évoluez à l'échelle mondiale — plus de 60 000 agents certifiés dans plus de 70 pays",
+    "step7Title": "Évoluez à l'échelle mondiale — plus de 64 000 agents certifiés dans plus de 70 pays",
     "step7Desc": "Harx travaille avec des agents humains aujourd'hui, des agents IA demain, et toute combinaison entre les deux.",
     "ctaTitle": "Vous avez des leads. Nous avons des agents. Vous payez au résultat. HARX la plateforme Transaction as a Service™ propulsée par l'IA"
   },
@@ -655,7 +657,7 @@
     "rights": "© {{year}} HARX Technologies Inc. Tous droits réservés."
   },
   "hero": {
-    "badge": "Propulsé par l'IA • Plus de 60 000 professionnels du service client • Transaction-as-a-Service",
+    "badge": "Propulsé par l'IA • Plus de 64 000 professionnels du service client • Transaction-as-a-Service",
     "title1": "L'Engagement Client Propulsé par l'IA",
     "title2": "Rencontre",
     "title3": "Transaction-as-a-Service",
@@ -691,7 +693,7 @@
     "stats": {
       "stat1Title": "Plateforme centrée sur l'IA",
       "stat1Desc": "Intelligence artificielle de pointe",
-      "stat2Title": "60 000+ Agents augmentés par l'IA",
+      "stat2Title": "64 000+ Agents augmentés par l'IA",
       "stat2Desc": "Propulsé par une technologie intelligente",
       "stat3Title": "Réseau IA Mondial",
       "stat3Desc": "Service intelligent dans le monde entier"
@@ -915,13 +917,31 @@
     "call-center": "Centre d'appels",
     "admin": "Admin"
   },
+  "invite": {
+    "loading": "Ouverture de votre espace HARX…",
+    "expiredTitle": "Ce lien a expiré",
+    "invalidTitle": "Ce lien n’est pas valide",
+    "help": "Connectez-vous avec votre e-mail et votre mot de passe. Si vous n’en avez pas encore, demandez à la personne qui vous a invité(e) de vous renvoyer l’invitation, ou utilisez « Mot de passe oublié ».",
+    "signIn": "Se connecter",
+    "forgot": "Mot de passe oublié"
+  },
   "reactivate": {
     "loading": "Ouverture de votre espace HARX...",
     "expiredTitle": "Ce lien a expiré",
     "invalidTitle": "Ce lien n’est pas valide",
     "help": "Connectez-vous avec votre e-mail pour continuer. Si vous n’avez pas encore de mot de passe, utilisez « Mot de passe oublié ».",
     "signIn": "Se connecter",
-    "forgot": "Mot de passe oublié"
+    "forgot": "Mot de passe oublié",
+    "requestTitle": "Recevez votre lien personnel",
+    "requestIntro": "Saisissez l’adresse e-mail à laquelle vous avez reçu notre message. Nous vous envoyons un lien en un clic vers votre espace HARX.",
+    "emailLabel": "Adresse e-mail",
+    "emailPlaceholder": "vous@exemple.com",
+    "send": "Recevoir mon lien",
+    "sending": "Envoi en cours...",
+    "sentTitle": "Consultez votre boîte mail",
+    "sentText": "Si cette adresse est enregistrée, vous recevrez votre lien personnel dans quelques minutes. Pensez à regarder vos courriers indésirables.",
+    "sendAgain": "Utiliser une autre adresse",
+    "requestError": "Cela n’a pas fonctionné. Vérifiez l’adresse et réessayez."
   },
   "invitations": {
     "title": "Vous avez été invité",

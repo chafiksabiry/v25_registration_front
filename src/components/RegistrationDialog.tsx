@@ -20,7 +20,8 @@ import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
-import { trackSignUpConversion } from '../lib/tracking/conversions';
+import { trackSignUpConversion, metaSignUpContext } from '../lib/tracking/conversions';
+import { signUpAttribution, utmFromSearch } from '../lib/tracking/attribution';
 
 type Step = RegisterFormStep | 'success';
 
@@ -73,12 +74,21 @@ export default function RegistrationDialog({
   const [isResendingEmail, setIsResendingEmail] = useState(false);
   const [registeredUserId, setRegisteredUserId] = useState<string | null>(null);
   const [legalPart, setLegalPart] = useState<number | null>(null);
+  // Read-gating (production fix): the legal documents must be scrolled to the end before they can be accepted.
+  const [legalDocsRead, setLegalDocsRead] = useState(false);
   const { t } = useTranslation();
   // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
   // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
   const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
+  // Origine de la visite (utm_ du lien de campagne) : lue une fois à l'ouverture, jointe à l'inscription avec le consentement.
+  const capturedOrigin = useRef<Record<string, string>>(utmFromSearch(window.location.search));
+
+  useEffect(() => {
+    if (legalDocsRead || !formData.termsAccepted) return;
+    setFormData((current) => ({ ...current, termsAccepted: false }));
+  }, [legalDocsRead, formData.termsAccepted]);
 
   useEffect(() => {
     if (defaultUserType) {
@@ -190,7 +200,9 @@ export default function RegistrationDialog({
       } catch {
         /* ignore */
       }
-      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown');
+      let metaEventId: string | undefined;
+      try { metaEventId = sessionStorage.getItem('harx_meta_event_id') ?? undefined; sessionStorage.removeItem('harx_meta_event_id'); } catch { /* ignore */ }
+      trackSignUpConversion(pendingUserType ?? defaultUserType ?? 'unknown', metaEventId);
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
@@ -294,27 +306,19 @@ export default function RegistrationDialog({
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
           } else {
-            setIsLoading(true);
-            try {
-              await auth.checkPhone(formData.phone.trim());
-              pushStep('terms');
-            } catch (error) {
-              const apiMessage = (error as { response?: { data?: { message?: string } } }).response?.data?.message;
-              if (apiMessage === 'Phone already registered') {
-                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
-              } else {
-                newErrors.phone =
-                  apiMessage || t('register.errPhone', 'Please enter a valid phone number');
-              }
-            } finally {
-              setIsLoading(false);
-            }
+            pushStep('terms');
           }
           break;
 
         case 'terms':
+          if (!legalDocsRead) {
+            newErrors.terms = t(
+              'register.errLegalScroll',
+              'You must read the Terms of Service and the Privacy Policy.'
+            );
+          }
           if (!formData.termsAccepted) {
-            newErrors.terms = t('register.errTerms', 'Please accept the terms and conditions');
+            newErrors.terms = newErrors.terms || t('register.errTerms', 'Please accept the terms and conditions');
           }
           if (newErrors.terms) {
             break;
@@ -331,13 +335,17 @@ export default function RegistrationDialog({
             setIsLoading(true);
 
             let RegisterResult: any;
+            const metaCtx = metaSignUpContext();
             try {
               RegisterResult = await auth.register({
                 fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password,
-                phone: formData.phone
+                phone: formData.phone,
+                ...metaCtx,
+                attribution: signUpAttribution(capturedOrigin.current),
               });
+              try { sessionStorage.setItem('harx_meta_event_id', metaCtx.metaEventId); } catch { /* ignore */ }
 
               if (RegisterResult?.data?._id) {
                 setRegisteredUserId(RegisterResult.data._id as string);
@@ -359,12 +367,6 @@ export default function RegistrationDialog({
               if (apiMessage === 'Email already registered') {
                 newErrors.email = t('register.errEmailTaken', 'This email is already registered');
                 pushStep('email');
-                setErrors(newErrors);
-                return;
-              }
-              if (apiMessage === 'Phone already registered') {
-                newErrors.phone = t('register.errPhoneTaken', 'This phone number is already registered');
-                pushStep('phone');
                 setErrors(newErrors);
                 return;
               }
@@ -658,15 +660,16 @@ export default function RegistrationDialog({
                     </div>
 
                     <label
-                      className={`flex items-start space-x-3 p-4 rounded-xl border transition-colors cursor-pointer hover:bg-slate-800/40 ${
+                      className={`flex items-start space-x-3 p-4 rounded-xl border transition-colors ${
                         errors.terms
                           ? 'border-red-500 bg-red-950/30 ring-1 ring-red-500/40'
                           : 'border-white/[0.08]'
-                      }`}
+                      } ${!legalDocsRead ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-slate-800/40'}`}
                     >
                       <input
                         type="checkbox"
                         checked={formData.termsAccepted}
+                        disabled={!legalDocsRead}
                         onChange={(e) => {
                           const checked = e.target.checked;
                           setFormData({ ...formData, termsAccepted: checked });
@@ -708,13 +711,28 @@ export default function RegistrationDialog({
                     </label>
                     {errors.terms && <p className="text-red-400 text-sm pl-2 font-medium">{errors.terms}</p>}
                     <p className="text-xs text-slate-400 pl-2">
-                      {t('register.termsOpenHint', 'The documents open in a window, in French or English.')}
+                      {t('register.termsOpenHint', 'The documents open in a window, in French or English.')}{' '}
+                      {t('register.legalIntro', 'You must read the Terms of Service and the Privacy Policy before you accept.')}
                     </p>
+                    {legalDocsRead ? (
+                      <p className="text-xs font-medium text-emerald-300 pl-2">
+                        {t('register.legalBothReached', 'Both documents have been read. You can accept the terms.')}
+                      </p>
+                    ) : null}
                     <LegalViewerModal
                       open={legalPart !== null}
                       audience={legalAudience}
                       initialPart={legalPart ?? 0}
                       onClose={() => setLegalPart(null)}
+                      onReachedEnd={() => {
+                        setLegalDocsRead(true);
+                        setErrors((current) => {
+                          if (!current.terms) return current;
+                          const next = { ...current };
+                          delete next.terms;
+                          return next;
+                        });
+                      }}
                     />
                   </div>
                 )}

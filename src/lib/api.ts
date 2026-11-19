@@ -25,7 +25,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const auth = {
-  register: async (data: { fullName: string; email: string; password: string; phone: string }) => {
+  register: async (data: { fullName: string; email: string; password: string; phone: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string> }) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   },
@@ -53,6 +53,18 @@ export const auth = {
   reengageLogin: async (token: string) => {
     const response = await api.post('/auth/reengage-login', { token });
     return response.data as { token: string };
+  },
+
+  /** Échange le jeton du lien d'une invitation (secrétaire invitée) contre une session. */
+  inviteLogin: async (token: string) => {
+    const response = await api.post('/auth/invite-login', { token });
+    return response.data as { token: string };
+  },
+
+  /** Asks for the personal one-click link to be e-mailed to this address (always answers "sent"). */
+  reengageRequest: async (email: string) => {
+    const response = await api.post('/auth/reengage-request', { email });
+    return response.data as { sent: boolean };
   },
 
   resendVerification: async (email: string) => {
@@ -380,7 +392,7 @@ export const publicPlansApi = {
     const companyBack = (
       import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
       import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
-      'https://v25comporchestratorback-recette.up.railway.app'
+      'https://v25comporchestratorback-production.up.railway.app'
     ).replace(/\/$/, '');
     try {
       const response = await axios.get(`${companyBack}/api/subscriptions/plans`, {

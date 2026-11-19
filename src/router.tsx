@@ -38,6 +38,7 @@ import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 import InvitationsPage from './components/InvitationsPage';
+import InviteLogin from './components/InviteLogin';
 import { LegalPage } from './components/legal/LegalPage';
 
 function RootLayout() {
@@ -71,6 +72,7 @@ const routes: RouteObject[] = [
       ),
       children: [
         { path: 'auth/reactivate', element: <ReactivateAccount /> },
+        { path: 'auth/invite', element: <InviteLogin /> },
         {
           path: 'auth/invitations',
           element: (

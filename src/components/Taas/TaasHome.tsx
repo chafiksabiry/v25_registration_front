@@ -75,7 +75,7 @@ export function TaasHome() {
       <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center text-center taas-home__stack">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-1.5 text-xs font-semibold text-slate-200 backdrop-blur-md md:text-sm">
           <Sparkles className="h-4 w-4 shrink-0 text-harx-400" aria-hidden="true" />
-          {t('hero.badge', 'AI-Powered • 60,000+ Expert Agents • Transaction-as-a-Service')}
+          {t('hero.badge', 'AI-Powered • 64,000+ Expert Agents • Transaction-as-a-Service')}
         </span>
 
         <div className="relative taas-home__mascot-wrap">

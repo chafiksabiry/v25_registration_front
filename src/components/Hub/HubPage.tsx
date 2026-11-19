@@ -19,6 +19,7 @@ import {
   type OfferLang,
 } from '../../config/offers';
 import { normalizeSiteLang } from '../../lib/langRoutes';
+import { TAAS_REPS } from '../../lib/taasPaths';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { hubPageTitle } from '../../lib/tracking/hubMeta';
 import './hub.css';
@@ -108,7 +109,7 @@ function OfferCard({ offer, lang, onSelectRole }: { offer: OfferConfig; lang: Of
                 return (
                   <li key={child.id}>
                     <a
-                      href={target.type === 'href' ? target.href : '#'}
+                      href={target.type === 'href' ? target.href : target.role === 'rep' ? `/${lang}${TAAS_REPS}` : '#'}
                       data-testid={`offer-child-${offer.id}-${child.id}`}
                       onClick={(e) => openChild(e, child)}
                       className="hub-pill"
@@ -157,6 +158,9 @@ export function ThinFooter() {
       {links.map((l) => (
         <Link key={l.to} to={l.to} data-testid={`legal-${l.to.slice(1)}`}>{l.label}</Link>
       ))}
+      <button type="button" className="hub-foot-link" data-testid="legal-manage-cookies" onClick={() => window.dispatchEvent(new Event('harx:open-consent'))}>
+        {t('footer.manageCookies', 'Manage cookies')}
+      </button>
       <span>{t('footer.rights', '© {{year}} HARX Technologies Inc. All rights reserved.', { year: new Date().getFullYear() })}</span>
     </footer>
   );

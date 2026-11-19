@@ -15,19 +15,22 @@ const LABELS: Record<SignupLanguage, { title: string; close: string; language: s
 
 /**
  * Read-only viewer for the sign-up legal documents: one scrollable document with a section
- * menu and a French/English switch. Reading is optional; acceptance happens on the form.
+ * menu and a French/English switch. Acceptance happens on the form, enabled once the document has been scrolled to the end.
  */
 export function LegalViewerModal({
   open,
   audience,
   initialPart,
   onClose,
+  onReachedEnd,
 }: {
   open: boolean;
   audience: SignupAudience;
   /** Index of the part to scroll to when opening (0 = general terms, 1 = role terms, 2 = privacy). */
   initialPart: number;
   onClose: () => void;
+  /** Called once the reader has scrolled to the end of the document (read-gating of the acceptance). */
+  onReachedEnd?: () => void;
 }) {
   const { i18n } = useTranslation();
   const [lang, setLang] = useState<SignupLanguage>(signupLanguage(i18n.language));
@@ -36,6 +39,17 @@ export function LegalViewerModal({
   useEffect(() => {
     if (open) setLang(signupLanguage(i18n.language));
   }, [open, i18n.language]);
+
+  const reachedRef = useRef(false);
+  const markReached = () => {
+    if (reachedRef.current) return;
+    reachedRef.current = true;
+    onReachedEnd?.();
+  };
+  const onScroll = () => {
+    const el = scrollerRef.current;
+    if (el && el.scrollTop + el.clientHeight >= el.scrollHeight - 48) markReached();
+  };
 
   const pack = signupLegalPack(lang, audience);
   const labels = LABELS[lang];
@@ -110,7 +124,7 @@ export function LegalViewerModal({
             ))}
           </nav>
         </div>
-        <div ref={scrollerRef} className="relative overflow-y-auto overscroll-contain [overflow-anchor:none]">
+        <div ref={scrollerRef} onScroll={onScroll} className="relative overflow-y-auto overscroll-contain [overflow-anchor:none]">
           <LegalPackView pack={pack} language={lang} partIdPrefix={PART_PREFIX} />
         </div>
         <div className="border-t border-[#e5e7eb] bg-white px-4 py-3 text-right sm:px-6">
