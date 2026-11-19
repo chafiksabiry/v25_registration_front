@@ -103,7 +103,7 @@ export function HowItWorks(_props: HowItWorksProps) {
       number: 7,
       icon: Globe2,
       tone: 'from-harx-alt-500 to-purple-500',
-      title: t('howItWorks.step7Title', 'Scale globally — 60,000+ certified agents across 70+ countries'),
+      title: t('howItWorks.step7Title', 'Scale globally — 64,000+ certified agents across 70+ countries'),
       body: <p>{t('howItWorks.step7Desc', 'Harx works with human agents today, AI agents tomorrow, and any mix in between.')}</p>,
     },
   ];
@@ -148,7 +148,7 @@ export function HowItWorks(_props: HowItWorksProps) {
               <div className="absolute inset-0 bg-gradient-to-t from-[#070711]/70 via-transparent to-transparent" aria-hidden="true" />
               <div className="absolute inset-x-4 bottom-4 grid grid-cols-3 gap-3" data-testid="how-photo-stats">
                 {[
-                  { icon: Users, value: '60 000+', label: t('howItWorks.statPros', 'professionals') },
+                  { icon: Users, value: '64 000+', label: t('howItWorks.statPros', 'professionals') },
                   { icon: Globe2, value: '70+', label: t('howItWorks.statCountries', 'countries') },
                   { icon: ScanSearch, value: '100 %', label: t('howItWorks.statScored', 'calls scored by AI') },
                 ].map(({ icon: Icon, value, label }) => (
