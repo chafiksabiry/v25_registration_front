@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "Appel entrant",
-    "country": "Numéro de votre pays"
+    "country": "Numéro de votre pays",
+    "ai": "IA"
   },
   "callcentreJourney": {
     "name": "Nom",
@@ -96,7 +97,8 @@
         "target": "Gardez votre numéro, même en voyage.",
         "benefit1": "Un numéro qui fonctionne partout dans le monde",
         "benefit2": "Sans roaming",
-        "benefit3": "Application iPhone HARX Nomad"
+        "benefit3": "Application iPhone HARX Nomad",
+        "solo": "Nomad Solo"
       }
     }
   },
@@ -200,7 +202,7 @@
     "pricing": "Tarifs",
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les professionnels",
-    "signIn": "Se Connecter",
+    "signIn": "Se connecter",
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
@@ -294,7 +296,7 @@
     "tryEmailInstead": "Essayer plutôt la vérification par Email",
     "successTitle": "Connexion Réussie !",
     "successRedirect": "Redirection vers votre tableau de bord...",
-    "signInBtn": "Se Connecter",
+    "signInBtn": "Se connecter",
     "verifyBtn": "Vérifier",
     "noAccount": "Vous n'avez pas de compte ?",
     "signUp": "S'inscrire",
@@ -303,7 +305,7 @@
     "errInvalidEmailCode": "Code de vérification par email invalide ou expiré",
     "errInvalidSmsCode": "Code de vérification SMS invalide",
     "errInvalidCredentials": "Email ou mot de passe incorrect.",
-    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Vérifiez votre email et votre téléphone pour obtenir les codes.",
+    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Saisissez le code reçu par e-mail pour l'activer.",
     "errInvalidEmail": "Cet email ne correspond à aucun compte.",
     "errInvalidPassword": "Mot de passe incorrect.",
     "errMissingEmail": "Veuillez saisir votre email.",
@@ -319,6 +321,10 @@
     "errUnexpected": "La connexion a échoué. Vérifiez vos informations et réessayez."
   },
   "register": {
+    "titlePhoneOptional": "Votre téléphone (facultatif)",
+    "descPhoneOptional": "Pour vous appeler lors de l’appel de test.",
+    "phoneOptionalHint": "Facultatif. Il sert à l’appel de test pendant la mise en route ; vous pouvez le laisser vide et l’ajouter plus tard.",
+    "errPhoneNeededServer": "Indiquez votre numéro de téléphone pour terminer la création du compte.",
     "errName": "Veuillez entrer votre nom complet",
     "errEmail": "Veuillez entrer une adresse email valide",
     "errPassword": "Le mot de passe doit comporter au moins 8 caractères, dont des lettres et des chiffres",
@@ -704,7 +710,7 @@
     "pricing": "Tarification",
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les professionnels",
-    "signIn": "Se Connecter",
+    "signIn": "Se connecter",
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
@@ -715,7 +721,7 @@
     "errUnexpected": "La connexion a échoué. Vérifiez vos informations et réessayez.",
     "errGeneric": "La connexion a échoué. Vérifiez vos informations et réessayez.",
     "errInvalidCredentials": "Email ou mot de passe incorrect.",
-    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Vérifiez votre email et votre téléphone pour obtenir les codes.",
+    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Saisissez le code reçu par e-mail pour l'activer.",
     "errInvalidEmail": "Cet email ne correspond à aucun compte.",
     "errInvalidPassword": "Mot de passe incorrect.",
     "errMissingEmail": "Veuillez saisir votre email.",
@@ -766,6 +772,10 @@
     "signUp": "S'inscrire"
   },
   "register": {
+    "titlePhoneOptional": "Votre téléphone (facultatif)",
+    "descPhoneOptional": "Pour vous appeler lors de l’appel de test.",
+    "phoneOptionalHint": "Facultatif. Il sert à l’appel de test pendant la mise en route ; vous pouvez le laisser vide et l’ajouter plus tard.",
+    "errPhoneNeededServer": "Indiquez votre numéro de téléphone pour terminer la création du compte.",
     "errGeneralFailed": "La vérification du compte a échoué",
     "smsNoticeSent": "Code SMS envoyé. Vérifiez votre téléphone.",
     "smsNoticeUnavailable": "SMS indisponible. Continuez avec la vérification par e-mail uniquement.",
@@ -909,7 +919,7 @@
     "onboardingMissing": "Manquant"
   },
   "authScreens": {
-    "registerCallCenter": "Inscription centre d'appels"
+    "registerCallCenter": "Inscription HARX Téléphonie"
   },
   "userTypes": {
     "company": "Entreprise",
@@ -951,5 +961,15 @@
     "decline": "Refuser",
     "later": "Décider plus tard",
     "error": "Cela n’a pas fonctionné. Veuillez réessayer."
+  },
+  "notFound": {
+    "docTitle": "HARX — Page introuvable",
+    "docTitleError": "HARX — Erreur d’affichage",
+    "title": "Cette page n’existe pas",
+    "titleError": "Cette page n’a pas pu s’afficher",
+    "desc": "Le lien est peut-être ancien ou mal saisi. Voici où continuer.",
+    "descError": "Un problème est survenu de notre côté. Rechargez la page, ou continuez depuis l’un des liens ci-dessous.",
+    "home": "Accueil HARX",
+    "telephony": "HARX Téléphonie"
   }
 }

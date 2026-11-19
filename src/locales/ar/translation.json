@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "مكالمة واردة",
-    "country": "رقم من بلدك"
+    "country": "رقم من بلدك",
+    "ai": "ذكاء اصطناعي"
   },
   "callcentreJourney": {
     "name": "الاسم",
@@ -96,7 +97,8 @@
         "target": "احتفظ برقمك، حتى أثناء السفر.",
         "benefit1": "رقم يعمل في أي مكان في العالم",
         "benefit2": "بدون تجوال (رومينغ)",
-        "benefit3": "تطبيق HARX Nomad لآيفون"
+        "benefit3": "تطبيق HARX Nomad لآيفون",
+        "solo": "Nomad Solo"
       }
     }
   },
@@ -275,7 +277,7 @@
     "errUnexpected": "فشل تسجيل الدخول. تحقق من بياناتك وأعد المحاولة.",
     "errGeneric": "فشل تسجيل الدخول. تحقق من بياناتك وأعد المحاولة.",
     "errInvalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-    "errAccountNotVerified": "لم يتم التحقق من هذا الحساب بعد. تحقق من بريدك الإلكتروني وهاتفك للحصول على الرموز.",
+    "errAccountNotVerified": "لم يتم التحقق من هذا الحساب بعد. أدخل الرمز الذي أرسلناه إليك عبر البريد الإلكتروني لتفعيله.",
     "errInvalidEmail": "لا يوجد حساب بهذا البريد الإلكتروني.",
     "errInvalidPassword": "كلمة المرور غير صحيحة.",
     "errMissingEmail": "يرجى إدخال بريدك الإلكتروني.",
@@ -326,6 +328,10 @@
     "signUp": "إنشاء حساب"
   },
   "register": {
+    "titlePhoneOptional": "هاتفك (اختياري)",
+    "descPhoneOptional": "للاتصال بك أثناء المكالمة التجريبية.",
+    "phoneOptionalHint": "اختياري. يُستخدم للمكالمة التجريبية أثناء الإعداد؛ يمكنك تركه فارغًا وإضافته لاحقًا.",
+    "errPhoneNeededServer": "أدخل رقم هاتفك لإكمال إنشاء الحساب.",
     "errGeneralFailed": "فشل التحقق من الحساب",
     "smsNoticeSent": "تم إرسال رمز الرسالة النصية. تحقق من هاتفك.",
     "smsNoticeUnavailable": "الرسائل النصية غير متاحة. تابع بالتحقق عبر البريد الإلكتروني فقط.",
@@ -368,7 +374,7 @@
     "placeholderConfirmPassword": "أكّد كلمة المرور",
     "errPasswordMismatch": "كلمتا المرور غير متطابقتين",
     "passwordMatch": "كلمتا المرور متطابقتان",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+212 6 12 34 56 78",
     "termsAgreeText": "بإنشاء حساب، فإنك توافق على الالتزام بـ",
     "termsLink": "شروط الخدمة",
     "termsAnd": "وتقرّ باطلاعك على",
@@ -728,7 +734,7 @@
     "onboardingMissing": "ناقص"
   },
   "authScreens": {
-    "registerCallCenter": "تسجيل مركز اتصال"
+    "registerCallCenter": "التسجيل في HARX للاتصالات"
   },
   "userTypes": {
     "company": "Company",
@@ -752,5 +758,15 @@
     "decline": "رفض",
     "later": "القرار لاحقًا",
     "error": "لم تنجح العملية. يرجى المحاولة مرة أخرى."
+  },
+  "notFound": {
+    "docTitle": "HARX — الصفحة غير موجودة",
+    "docTitleError": "HARX — خطأ في العرض",
+    "title": "هذه الصفحة غير موجودة",
+    "titleError": "تعذّر عرض هذه الصفحة",
+    "desc": "ربما يكون الرابط قديمًا أو مكتوبًا بشكل خاطئ. يمكنك المتابعة من هنا.",
+    "descError": "حدث خطأ من جهتنا. أعد تحميل الصفحة أو تابع من أحد الروابط أدناه.",
+    "home": "الصفحة الرئيسية لـ HARX",
+    "telephony": "HARX للاتصالات"
   }
 }

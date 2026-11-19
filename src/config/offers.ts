@@ -141,7 +141,10 @@ export const OFFERS: readonly OfferConfig[] = [
     ctaKey: 'hub.offers.nomad.cta',
     targetKey: 'hub.offers.nomad.target',
     benefitKeys: ['hub.offers.nomad.benefit1', 'hub.offers.nomad.benefit2', 'hub.offers.nomad.benefit3'],
-    children: [],
+    // Lien direct vers l'abonnement Nomad Solo (planStartPath de l'application Téléphonie), comme les offres CLOUD.
+    children: [
+      { id: 'nomad_solo', labelKey: 'hub.offers.nomad.solo', kind: 'route', route: '/telephony/start?profil=solo&plan=nomad_solo', langPrefixed: false },
+    ],
     signIn: TELEPHONY_SIGN_IN,
   },
 ];

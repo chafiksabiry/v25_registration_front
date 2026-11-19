@@ -1,16 +1,19 @@
 import React, { useLayoutEffect, useRef } from 'react';
-import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, Headphones, Lock, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import harxMascotte from '../LandingPage/assets/harx-mascotte.webp';
 import companyBanner from '../assets/choice-company.jpg';
 import repBanner from '../assets/choice-rep.jpg';
 import { TAAS_COMPANY, TAAS_REPS } from '../../lib/taasPaths';
+import { isRoleComingSoon } from '../../config/offers';
 
 /** Accueil TAAS : tout tient dans un écran (message, puis deux portes vers l'espace COMPANY et l'espace REPS). */
 export function TaasHome() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // T1 (audit du 19/11) : « Publier un gig » est annoncé « Bientôt disponible » dès cet écran, pas deux écrans plus loin.
+  const companySoon = isRoleComingSoon('company');
   const titleContainerRef = useRef<HTMLDivElement>(null);
   const titleTextRef = useRef<HTMLSpanElement>(null);
 
@@ -51,6 +54,7 @@ export function TaasHome() {
       cta: t('taasHome.companyCta', 'List your Gig'),
       path: TAAS_COMPANY,
       accent: 'from-harx-500 to-amber-400',
+      soon: companySoon,
     },
     {
       id: 'reps' as const,
@@ -62,6 +66,7 @@ export function TaasHome() {
       cta: t('taasHome.repsCta', 'Find a Gig'),
       path: TAAS_REPS,
       accent: 'from-harx-alt-500 to-violet-500',
+      soon: false,
     },
   ];
 
@@ -100,7 +105,7 @@ export function TaasHome() {
         </div>
 
         <div className="taas-home__doors grid w-full max-w-4xl gap-4 md:grid-cols-2" data-testid="taas-doors">
-          {doors.map(({ id, icon: Icon, image, tag, title, points, cta, path, accent }) => (
+          {doors.map(({ id, icon: Icon, image, tag, title, points, cta, path, accent, soon }) => (
             <a
               key={id}
               href={path}
@@ -124,10 +129,17 @@ export function TaasHome() {
                     <li key={p} className="flex items-center gap-2"><span className="h-1.5 w-1.5 shrink-0 rounded-full bg-harx-400" />{p}</li>
                   ))}
                 </ul>
-                <span className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-harx px-5 text-sm font-bold text-white shadow-lg shadow-harx-500/30 transition-all group-hover:shadow-harx-500/50">
-                  {cta}
-                  <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
-                </span>
+                {soon ? (
+                  <span className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl border border-white/25 bg-white/10 px-5 text-sm font-bold text-white/85 backdrop-blur" data-testid={`taas-door-${id}-soon`}>
+                    <Lock className="h-4 w-4" aria-hidden="true" />
+                    {cta} · {t('choicePage.comingSoon', 'Coming soon')}
+                  </span>
+                ) : (
+                  <span className="mt-3 inline-flex h-11 items-center gap-2 rounded-xl bg-gradient-harx px-5 text-sm font-bold text-white shadow-lg shadow-harx-500/30 transition-all group-hover:shadow-harx-500/50">
+                    {cta}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </span>
+                )}
               </div>
             </a>
           ))}
