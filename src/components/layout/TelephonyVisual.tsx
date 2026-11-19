@@ -25,7 +25,7 @@ export function TelephonyVisual() {
         </div>
         <div className="mt-3 flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-[11px] font-bold text-white">
           <span className="flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5 text-amber-300" />{t('telephonyVisual.country', 'A number from your country')}</span>
-          <span className="flex items-center gap-1 rounded-md bg-violet-400/25 px-1.5 py-0.5 text-violet-200"><Bot className="h-3 w-3" />IA</span>
+          <span className="flex items-center gap-1 rounded-md bg-violet-400/25 px-1.5 py-0.5 text-violet-200"><Bot className="h-3 w-3" />{t('telephonyVisual.ai', 'AI')}</span>
         </div>
       </div>
     </div>

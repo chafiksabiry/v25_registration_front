@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "Llamada entrante",
-    "country": "Un número de su país"
+    "country": "Un número de su país",
+    "ai": "IA"
   },
   "callcentreJourney": {
     "name": "Nombre",
@@ -85,7 +86,7 @@
         "benefit1": "Llamadas entrantes y salientes, desde cualquier lugar",
         "benefit2": "Recepción, secretaría y contestador con IA",
         "benefit3": "Titular, gerentes, agentes, secretarias",
-        "accueil": "Accueil / Secrétariat",
+        "accueil": "Recepción / Secretaría",
         "fullScope": "Full Scope",
         "multiClients": "Multi-clients"
       },
@@ -96,7 +97,8 @@
         "target": "Conserve su número, incluso de viaje.",
         "benefit1": "Un número que funciona en todo el mundo",
         "benefit2": "Sin roaming",
-        "benefit3": "Aplicación HARX Nomad para iPhone"
+        "benefit3": "Aplicación HARX Nomad para iPhone",
+        "solo": "Nomad Solo"
       }
     }
   },
@@ -208,7 +210,7 @@
     "loading": "Cargando…"
   },
   "hero": {
-    "badge": "Impulsado por IA • Más de 60 000 profesionales del servicio al cliente • Transaction-as-a-Service",
+    "badge": "Impulsado por IA • Más de 64 000 profesionales del servicio al cliente • Transaction-as-a-Service",
     "title1": "La atención al cliente impulsada por IA",
     "title2": "se une a",
     "title3": "Transaction-as-a-Service",
@@ -244,7 +246,7 @@
     "stats": {
       "stat1Title": "Plataforma con IA como prioridad",
       "stat1Desc": "Inteligencia artificial de vanguardia",
-      "stat2Title": "Más de 60 000 agentes potenciados por IA",
+      "stat2Title": "Más de 64 000 agentes potenciados por IA",
       "stat2Desc": "Impulsados por tecnología inteligente",
       "stat3Title": "Red global de IA",
       "stat3Desc": "Servicio inteligente en todo el mundo"
@@ -275,7 +277,7 @@
     "errUnexpected": "No se pudo iniciar sesión. Verifique sus datos e inténtelo de nuevo.",
     "errGeneric": "No se pudo iniciar sesión. Verifique sus datos e inténtelo de nuevo.",
     "errInvalidCredentials": "Correo electrónico o contraseña incorrectos.",
-    "errAccountNotVerified": "Esta cuenta aún no está verificada. Revise su correo electrónico y su teléfono para ver los códigos.",
+    "errAccountNotVerified": "Esta cuenta aún no está verificada. Introduzca el código que le enviamos por correo electrónico para activarla.",
     "errInvalidEmail": "No se encontró ninguna cuenta con este correo electrónico.",
     "errInvalidPassword": "Contraseña incorrecta.",
     "errMissingEmail": "Ingrese su correo electrónico.",
@@ -326,6 +328,10 @@
     "signUp": "Registrarse"
   },
   "register": {
+    "titlePhoneOptional": "Su teléfono (opcional)",
+    "descPhoneOptional": "Para llamarle durante la llamada de prueba.",
+    "phoneOptionalHint": "Opcional. Sirve para la llamada de prueba durante la puesta en marcha; puede dejarlo vacío y añadirlo más tarde.",
+    "errPhoneNeededServer": "Indique su número de teléfono para terminar de crear la cuenta.",
     "errGeneralFailed": "Error en la verificación de la cuenta",
     "smsNoticeSent": "Código SMS enviado. Revise su teléfono.",
     "smsNoticeUnavailable": "SMS no disponible. Continúe solo con la verificación por correo electrónico.",
@@ -368,7 +374,7 @@
     "placeholderConfirmPassword": "Confirme su contraseña",
     "errPasswordMismatch": "Las contraseñas no coinciden",
     "passwordMatch": "Las contraseñas coinciden",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+34 612 34 56 78",
     "termsAgreeText": "Al crear una cuenta, usted se compromete a cumplir nuestros",
     "termsLink": "Términos del servicio",
     "termsAnd": "y reconoce nuestra",
@@ -503,7 +509,7 @@
     "step5Desc5": "Más allá del rendimiento, tres costos simples: su plan, sus números, sus minutos.",
     "step6Title": "Puntuación por IA en cada llamada",
     "step6Desc": "Transcrita, analizada y puntuada en segundos por la IA: fraude detectado, sentimiento medido, transacción confirmada.",
-    "step7Title": "Escale globalmente: más de 60 000 agentes certificados en más de 70 países",
+    "step7Title": "Escale globalmente: más de 64 000 agentes certificados en más de 70 países",
     "step7Desc": "Harx trabaja con agentes humanos hoy, agentes de IA mañana y cualquier combinación intermedia.",
     "ctaTitle": "Usted tiene leads. Nosotros tenemos agentes. Usted paga por resultado. HARX, la plataforma Transaction as a Service™ impulsada por IA"
   },
@@ -728,7 +734,7 @@
     "onboardingMissing": "Faltante"
   },
   "authScreens": {
-    "registerCallCenter": "Registro de centro de llamadas"
+    "registerCallCenter": "Registro en HARX Telefonía"
   },
   "userTypes": {
     "company": "Empresa",
@@ -752,5 +758,15 @@
     "decline": "Rechazar",
     "later": "Decidir más tarde",
     "error": "No funcionó. Inténtelo de nuevo."
+  },
+  "notFound": {
+    "docTitle": "HARX — Página no encontrada",
+    "docTitleError": "HARX — Error de visualización",
+    "title": "Esta página no existe",
+    "titleError": "No se ha podido mostrar esta página",
+    "desc": "Puede que el enlace sea antiguo o esté mal escrito. Puede continuar desde aquí.",
+    "descError": "Algo ha fallado por nuestra parte. Vuelva a cargar la página o continúe desde uno de los enlaces de abajo.",
+    "home": "Inicio HARX",
+    "telephony": "HARX Telefonía"
   }
 }

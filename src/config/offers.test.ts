@@ -57,8 +57,11 @@ describe('accueil : trois offres', () => {
       'cloud/accueil': { type: 'href', href: '/telephony/start?plan=accueil' },
       'cloud/full_scope': { type: 'href', href: '/telephony/start?plan=full_scope' },
       'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
+      'nomad/nomad_solo': { type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' },
     });
-    expect(byId.nomad.children).toEqual([]);
+    // N1 (audit du 19/11) : lien direct « Nomad Solo », vers le départ Solo de l'application Téléphonie.
+    expect(byId.nomad.children.map((c) => c.id)).toEqual(['nomad_solo']);
+    expect(resolveChildTarget(byId.nomad.children[0], 'en')).toEqual({ type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' });
     expect(Object.values(table).some((t) => t.type === 'href' && /^\/(\w\w\/)?company(\/|$)/.test(t.href))).toBe(false);
   });
 });
@@ -67,8 +70,11 @@ describe('« Bientôt disponible » piloté par VITE_RECETTE_UNLOCK_OFFERS', () 
   afterEach(() => vi.unstubAllEnvs());
   const soonKeys = ['company', 'full_scope', 'multi_clients'] as const;
 
-  it('production (réglage absent ou différent de « true ») : Company, Full Scope et Multi-clients sont « bientôt »', () => {
-    for (const k of soonKeys) expect(isOfferComingSoon(k, false)).toBe(true);
+  it('production (réglage absent ou différent de « true ») : seul Company (TAAS) est « bientôt »', () => {
+    expect(isOfferComingSoon('company', false)).toBe(true);
+    // Full Scope et Multi-clients : ouverts à la vente depuis le 19/11/2026.
+    expect(isOfferComingSoon('full_scope', false)).toBe(false);
+    expect(isOfferComingSoon('multi_clients', false)).toBe(false);
     expect(offersUnlocked({})).toBe(false);
     expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: 'false' })).toBe(false);
     expect(offersUnlocked({ VITE_RECETTE_UNLOCK_OFFERS: '1' })).toBe(false);
@@ -89,8 +95,8 @@ describe('« Bientôt disponible » piloté par VITE_RECETTE_UNLOCK_OFFERS', () 
     expect(isRoleComingSoon('company', false)).toBe(true);
     expect(isRoleComingSoon('company', true)).toBe(false);
     const state = (unlocked: boolean) => Object.fromEntries(OFFERS.flatMap((o) => o.children.map((c) => [`${o.id}/${c.id}`, isChildComingSoon(c, unlocked)])));
-    expect(state(false)).toEqual({ 'taas/company': true, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': true, 'cloud/multi_clients': true });
-    expect(state(true)).toEqual({ 'taas/company': false, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false });
+    expect(state(false)).toEqual({ 'taas/company': true, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false, 'nomad/nomad_solo': false });
+    expect(state(true)).toEqual({ 'taas/company': false, 'taas/reps': false, 'cloud/accueil': false, 'cloud/full_scope': false, 'cloud/multi_clients': false, 'nomad/nomad_solo': false });
   });
 
   it('sans paramètre : lit le réglage de construction', () => {
@@ -99,7 +105,7 @@ describe('« Bientôt disponible » piloté par VITE_RECETTE_UNLOCK_OFFERS', () 
     expect(isOfferComingSoon('full_scope')).toBe(false);
     vi.stubEnv('VITE_RECETTE_UNLOCK_OFFERS', '');
     expect(isRoleComingSoon('company')).toBe(true);
-    expect(isOfferComingSoon('multi_clients')).toBe(true);
+    expect(isOfferComingSoon('multi_clients')).toBe(false);
   });
 
   it('la pastille « Bientôt disponible » est traduite dans les 4 langues', () => {
