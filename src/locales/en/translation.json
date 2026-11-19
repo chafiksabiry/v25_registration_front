@@ -931,5 +931,15 @@
     "decline": "Decline",
     "later": "Decide later",
     "error": "This did not work. Please try again."
+  },
+  "notFound": {
+    "docTitle": "HARX — Page not found",
+    "docTitleError": "HARX — Display error",
+    "title": "This page does not exist",
+    "titleError": "This page could not be displayed",
+    "desc": "The link may be outdated or mistyped. Here is where you can continue.",
+    "descError": "Something went wrong on our side. Reload the page, or continue from one of the links below.",
+    "home": "HARX home",
+    "telephony": "HARX Telephony"
   }
 }

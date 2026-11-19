@@ -931,5 +931,15 @@
     "decline": "Refuser",
     "later": "Décider plus tard",
     "error": "Cela n’a pas fonctionné. Veuillez réessayer."
+  },
+  "notFound": {
+    "docTitle": "HARX — Page introuvable",
+    "docTitleError": "HARX — Erreur d’affichage",
+    "title": "Cette page n’existe pas",
+    "titleError": "Cette page n’a pas pu s’afficher",
+    "desc": "Le lien est peut-être ancien ou mal saisi. Voici où continuer.",
+    "descError": "Un problème est survenu de notre côté. Rechargez la page, ou continuez depuis l’un des liens ci-dessous.",
+    "home": "Accueil HARX",
+    "telephony": "HARX Téléphonie"
   }
 }
