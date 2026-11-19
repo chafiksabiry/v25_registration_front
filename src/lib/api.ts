@@ -536,8 +536,8 @@ const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: stri
 };
 
 export const supportInboxApi = {
-  conversations: (channel: '' | 'whatsapp' | 'web') =>
-    supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}`),
+  conversations: (channel: '' | 'whatsapp' | 'web' = '', limit = 100) =>
+    supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}&limit=${limit}`),
   conversation: (id: string) =>
     supportInboxCall<SupportConversationDetail>('get', `/conversations/${encodeURIComponent(id)}`),
   tickets: () => supportInboxCall<{ tickets: SupportTicket[] }>('get', '/tickets'),
