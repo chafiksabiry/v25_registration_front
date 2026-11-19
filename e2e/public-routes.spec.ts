@@ -88,7 +88,23 @@ test('n° 7 : téléphone facultatif, aucun SMS envoyé, exemple de numéro selo
   await expect(page.getByTestId('register-phone-optional')).toBeVisible();
   await page.locator('button.btn-primary').click(); // champ vide : on passe
 
-  await page.locator('input[type="checkbox"]').check();
+  // Production : les documents doivent être lus jusqu'au bout avant de pouvoir être acceptés (case désactivée d'ici là).
+  const terms = page.locator('input[type="checkbox"]');
+  if (await terms.isDisabled()) {
+    await page.locator('label button').first().click();
+    await page.locator('[role="dialog"]').waitFor();
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]')!;
+      for (const el of Array.from(dialog.querySelectorAll<HTMLElement>('*'))) {
+        if (el.scrollHeight > el.clientHeight + 10 && getComputedStyle(el).overflowY !== 'visible') {
+          el.scrollTop = el.scrollHeight;
+          el.dispatchEvent(new Event('scroll'));
+        }
+      }
+    });
+    await page.keyboard.press('Escape');
+  }
+  await terms.check();
   await page.locator('button.btn-primary').click();
   await expect(page.locator('input[maxlength="6"]').first()).toBeVisible({ timeout: 20_000 });
 
