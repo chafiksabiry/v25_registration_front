@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "Appel entrant",
-    "country": "Numéro de votre pays"
+    "country": "Numéro de votre pays",
+    "ai": "IA"
   },
   "callcentreJourney": {
     "name": "Nom",
@@ -58,47 +59,48 @@
     "alreadyClient": "Déjà client ?",
     "signIn": "Se connecter",
     "offersAria": "Les offres HARX",
-    "tabsAria": "Choisir l'offre à présenter",
     "legalAria": "Informations légales",
+    "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "Tous vos appels,",
+      "title2": "où que vous soyez.",
+      "sub": "Recevez et passez vos appels avec vos équipes, nos experts ou l'IA."
+    },
     "offers": {
       "taas": {
-        "title": "Transaction-as-a-Service",
+        "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Découvrir TAAS",
+        "target": "Des professionnels du service client, payés au résultat.",
+        "benefit1": "Vous ne payez que le résultat défini",
+        "benefit2": "Humains ou IA, à la demande",
+        "benefit3": "Les REPS trouvent des missions à leur mesure",
         "company": "Company : Publier un gig",
-        "reps": "REPS : Trouver des gigs",
-        "hero": {
-          "def": "Des professionnels du service client, de la télévente et du support, humains ou IA, travaillent pour vous : vous ne payez que le résultat que vous avez défini.",
-          "support": "« Uber vous connecte aux chauffeurs. Airbnb, aux logements. HARX vous connecte à des professionnels du service client, et ne vous facture que lorsqu'ils livrent un résultat. »",
-          "note": "TAAS = Transaction-as-a-Service : vous payez à la transaction réussie. Un gig est une mission.",
-          "flow1": "Votre entreprise",
-          "flow2": "Des professionnels du service client (humains ou IA)",
-          "flow3": "Un résultat que vous avez défini",
-          "flow4": "Vous payez ce résultat"
-        },
-        "companyHint": "Vous cherchez des professionnels du service client",
-        "repsHint": "Vous êtes professionnel du service client et cherchez des missions"
+        "reps": "REPS : Trouver des gigs"
       },
-      "telephony": {
-        "title": "HARX Téléphonie",
-        "nav": "Téléphonie",
-        "cta": "Ouvrir HARX Téléphonie",
-        "nomadSolo": "Nomad Solo",
+      "cloud": {
+        "title": "Telephony In The Cloud",
+        "nav": "CLOUD",
+        "cta": "Découvrir CLOUD",
+        "target": "La téléphonie des entreprises et des équipes.",
+        "benefit1": "Appels entrants et sortants, partout",
+        "benefit2": "Accueil, secrétariat et répondeur IA",
+        "benefit3": "Titulaire, managers, agents, secrétaires",
         "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients",
-        "hero": {
-          "def": "Un numéro de votre pays, vos appels entrants et sortants, un accueil / secrétariat et une IA pour vous assister.",
-          "support": "Votre téléphonie, opérationnelle en 5 minutes.",
-          "note": "Quatre offres selon votre situation, une ligne incluse dans chacune.",
-          "flow1": "Un numéro de votre pays",
-          "flow2": "Appels entrants et sortants",
-          "flow3": "Accueil / secrétariat et répondeur",
-          "flow4": "L'IA vous assiste"
-        }
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
+      },
+      "nomad": {
+        "title": "Telephony for Digital Workers",
+        "nav": "NOMAD",
+        "cta": "Découvrir NOMAD",
+        "target": "Gardez votre numéro, même en voyage.",
+        "benefit1": "Un numéro qui fonctionne partout dans le monde",
+        "benefit2": "Sans roaming",
+        "benefit3": "Application iPhone HARX Nomad",
+        "solo": "Nomad Solo"
       }
-    },
-    "definition": "HARX vous aide à gérer votre relation client : des professionnels qui livrent des résultats, et une téléphonie opérationnelle en 5 minutes."
+    }
   },
   "telephonyHeader": {
     "signIn": "Se connecter",
@@ -200,7 +202,7 @@
     "pricing": "Tarifs",
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les professionnels",
-    "signIn": "Se Connecter",
+    "signIn": "Se connecter",
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
@@ -208,7 +210,7 @@
     "loading": "Chargement…"
   },
   "hero": {
-    "badge": "Propulsé par l'IA • +60 000 professionnels du service client • Transaction-as-a-Service",
+    "badge": "Propulsé par l'IA • +64 000 professionnels du service client • Transaction-as-a-Service",
     "title1": "L'Engagement Client Propulsé par l'IA",
     "title2": "Rencontre le",
     "title3": "Transaction-as-a-Service",
@@ -244,7 +246,7 @@
     "stats": {
       "stat1Title": "Plateforme centrée sur l'IA",
       "stat1Desc": "Intelligence artificielle de pointe",
-      "stat2Title": "+60 000 Agents Assistés par IA",
+      "stat2Title": "+64 000 Agents Assistés par IA",
       "stat2Desc": "Propulsé par une technologie intelligente",
       "stat3Title": "Réseau IA Mondial",
       "stat3Desc": "Un service intelligent dans le monde entier"
@@ -294,7 +296,7 @@
     "tryEmailInstead": "Essayer plutôt la vérification par Email",
     "successTitle": "Connexion Réussie !",
     "successRedirect": "Redirection vers votre tableau de bord...",
-    "signInBtn": "Se Connecter",
+    "signInBtn": "Se connecter",
     "verifyBtn": "Vérifier",
     "noAccount": "Vous n'avez pas de compte ?",
     "signUp": "S'inscrire",
@@ -303,7 +305,7 @@
     "errInvalidEmailCode": "Code de vérification par email invalide ou expiré",
     "errInvalidSmsCode": "Code de vérification SMS invalide",
     "errInvalidCredentials": "Email ou mot de passe incorrect.",
-    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Vérifiez votre email et votre téléphone pour obtenir les codes.",
+    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Saisissez le code reçu par e-mail pour l'activer.",
     "errInvalidEmail": "Cet email ne correspond à aucun compte.",
     "errInvalidPassword": "Mot de passe incorrect.",
     "errMissingEmail": "Veuillez saisir votre email.",
@@ -319,6 +321,10 @@
     "errUnexpected": "La connexion a échoué. Vérifiez vos informations et réessayez."
   },
   "register": {
+    "titlePhoneOptional": "Votre téléphone (facultatif)",
+    "descPhoneOptional": "Pour vous appeler lors de l’appel de test.",
+    "phoneOptionalHint": "Facultatif. Il sert à l’appel de test pendant la mise en route ; vous pouvez le laisser vide et l’ajouter plus tard.",
+    "errPhoneNeededServer": "Indiquez votre numéro de téléphone pour terminer la création du compte.",
     "errName": "Veuillez entrer votre nom complet",
     "errEmail": "Veuillez entrer une adresse email valide",
     "errPassword": "Le mot de passe doit comporter au moins 8 caractères, dont des lettres et des chiffres",
@@ -479,7 +485,7 @@
     "step5Desc5": "Au-delà de la performance, trois coûts simples : Votre abonnement. Vos numéros. Vos minutes.",
     "step6Title": "Évaluation par l'IA à chaque appel",
     "step6Desc": "Transcrit, analysé et évalué en quelques secondes par l'IA : Fraude détectée, Sentiment mesuré, Transaction confirmée.",
-    "step7Title": "Évoluez à l'échelle mondiale — plus de 60 000 agents certifiés dans plus de 70 pays",
+    "step7Title": "Évoluez à l'échelle mondiale — plus de 64 000 agents certifiés dans plus de 70 pays",
     "step7Desc": "Harx travaille avec des agents humains aujourd'hui, des agents IA demain, et toute combinaison entre les deux.",
     "ctaTitle": "Vous avez des leads. Nous avons des agents. Vous payez au résultat. HARX la plateforme Transaction as a Service™ propulsée par l'IA"
   },
@@ -655,7 +661,7 @@
     "rights": "© {{year}} HARX Technologies Inc. Tous droits réservés."
   },
   "hero": {
-    "badge": "Propulsé par l'IA • Plus de 60 000 professionnels du service client • Transaction-as-a-Service",
+    "badge": "Propulsé par l'IA • Plus de 64 000 professionnels du service client • Transaction-as-a-Service",
     "title1": "L'Engagement Client Propulsé par l'IA",
     "title2": "Rencontre",
     "title3": "Transaction-as-a-Service",
@@ -691,7 +697,7 @@
     "stats": {
       "stat1Title": "Plateforme centrée sur l'IA",
       "stat1Desc": "Intelligence artificielle de pointe",
-      "stat2Title": "60 000+ Agents augmentés par l'IA",
+      "stat2Title": "64 000+ Agents augmentés par l'IA",
       "stat2Desc": "Propulsé par une technologie intelligente",
       "stat3Title": "Réseau IA Mondial",
       "stat3Desc": "Service intelligent dans le monde entier"
@@ -702,7 +708,7 @@
     "pricing": "Tarification",
     "forCompanies": "Pour les Entreprises",
     "forReps": "Pour les professionnels",
-    "signIn": "Se Connecter",
+    "signIn": "Se connecter",
     "getStarted": "Démarrer",
     "dashboard": "Tableau de bord",
     "logout": "Déconnexion",
@@ -713,7 +719,7 @@
     "errUnexpected": "La connexion a échoué. Vérifiez vos informations et réessayez.",
     "errGeneric": "La connexion a échoué. Vérifiez vos informations et réessayez.",
     "errInvalidCredentials": "Email ou mot de passe incorrect.",
-    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Vérifiez votre email et votre téléphone pour obtenir les codes.",
+    "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Saisissez le code reçu par e-mail pour l'activer.",
     "errInvalidEmail": "Cet email ne correspond à aucun compte.",
     "errInvalidPassword": "Mot de passe incorrect.",
     "errMissingEmail": "Veuillez saisir votre email.",
@@ -764,6 +770,10 @@
     "signUp": "S'inscrire"
   },
   "register": {
+    "titlePhoneOptional": "Votre téléphone (facultatif)",
+    "descPhoneOptional": "Pour vous appeler lors de l’appel de test.",
+    "phoneOptionalHint": "Facultatif. Il sert à l’appel de test pendant la mise en route ; vous pouvez le laisser vide et l’ajouter plus tard.",
+    "errPhoneNeededServer": "Indiquez votre numéro de téléphone pour terminer la création du compte.",
     "errGeneralFailed": "La vérification du compte a échoué",
     "smsNoticeSent": "Code SMS envoyé. Vérifiez votre téléphone.",
     "smsNoticeUnavailable": "SMS indisponible. Continuez avec la vérification par e-mail uniquement.",
@@ -907,7 +917,7 @@
     "onboardingMissing": "Manquant"
   },
   "authScreens": {
-    "registerCallCenter": "Inscription centre d'appels"
+    "registerCallCenter": "Inscription HARX Téléphonie"
   },
   "userTypes": {
     "company": "Entreprise",
@@ -931,5 +941,15 @@
     "decline": "Refuser",
     "later": "Décider plus tard",
     "error": "Cela n’a pas fonctionné. Veuillez réessayer."
+  },
+  "notFound": {
+    "docTitle": "HARX — Page introuvable",
+    "docTitleError": "HARX — Erreur d’affichage",
+    "title": "Cette page n’existe pas",
+    "titleError": "Cette page n’a pas pu s’afficher",
+    "desc": "Le lien est peut-être ancien ou mal saisi. Voici où continuer.",
+    "descError": "Un problème est survenu de notre côté. Rechargez la page, ou continuez depuis l’un des liens ci-dessous.",
+    "home": "Accueil HARX",
+    "telephony": "HARX Téléphonie"
   }
 }

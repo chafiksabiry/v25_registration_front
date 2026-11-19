@@ -1,8 +1,8 @@
 import React from 'react';
-import { ArrowRight, Building2, Globe2, Headphones, Lock, ShieldCheck, Users2 } from 'lucide-react';
+import { ArrowRight, Building2, Globe2, Headphones, ShieldCheck, Users2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { isRoleComingSoon } from '../../config/offers';
+import { PostGigCta } from './PostGigCta';
 import { TAAS_COMPANY, TAAS_REPS } from '../../lib/taasPaths';
 
 interface TaasBannerProps {
@@ -20,7 +20,6 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const company = kind === 'company';
-  const soon = company && isRoleComingSoon('company');
   const Icon = company ? Building2 : Headphones;
   const other = company ? TAAS_REPS : TAAS_COMPANY;
 
@@ -45,14 +44,11 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             {company ? (
               <>
-                <span
-                  className="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 text-sm font-bold text-slate-200"
-                  aria-disabled={soon || undefined}
+                <PostGigCta
+                  soonClassName="inline-flex h-12 cursor-not-allowed items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 text-sm font-bold text-slate-200"
+                  openClassName="inline-flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 text-sm font-bold text-white transition-colors hover:bg-white/20"
                   data-testid="taas-company-cta"
-                >
-                  <Lock className="h-4 w-4" aria-hidden="true" />
-                  {t('choicePage.companyTitle', 'Post a Gig')} · {t('choicePage.comingSoon', 'Coming soon')}
-                </span>
+                />
                 <button type="button" onClick={bookDemo} className="inline-flex h-12 items-center gap-2 rounded-xl border border-white/20 px-6 text-sm font-bold text-white transition-colors hover:bg-white/10">
                   {t('hero.bookDemo', 'Book a Demo')}
                 </button>
@@ -79,7 +75,7 @@ export function TaasBanner({ kind, onJoin }: TaasBannerProps) {
           {company ? (
             <ul className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3" data-testid="company-stats">
               {[
-                { icon: Users2, value: '60 000+', label: t('taasPages.statPros', 'customer service professionals') },
+                { icon: Users2, value: '64 000+', label: t('taasPages.statPros', 'customer service professionals') },
                 { icon: Globe2, value: '70+', label: t('taasPages.statCountries', 'countries covered') },
                 { icon: ShieldCheck, value: 'RGPD', label: t('taasPages.statGdpr', 'compliant, encrypted data') },
               ].map(({ icon: Icon, value, label }) => (

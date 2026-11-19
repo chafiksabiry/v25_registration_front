@@ -1,0 +1,20 @@
+/* Bandeau commun : sélecteur segmenté TAAS / CLOUD / NOMAD, logo agrandi. Chargé avec le sélecteur (tous les écrans). */
+/* Bandeau : sélecteur segmenté (verre sombre, 3 onglets de même largeur) */
+.harx-logo-xl { transform: scale(1.4); transform-origin: left center; margin-inline-end: 2.5rem; margin-inline-start: .5rem; }
+[dir="rtl"] .harx-logo-xl { transform-origin: right center; }
+.seg-nav { display: flex; padding: 4px; border-radius: 16px; background: rgba(7, 10, 26, .28); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22); }
+.seg-nav__tab { display: flex; align-items: center; justify-content: center; gap: 10px; flex: 1 1 0; min-width: 0; height: 44px; padding: 0 22px; border-radius: 12px; color: #fff; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: .18em; transition: background .2s ease, color .2s ease, box-shadow .2s ease; }
+.seg-nav__icon { width: 18px; height: 18px; flex: none; stroke: currentColor; stroke-width: 1.8; fill: none; }
+.seg-nav__tab:hover, .seg-nav__tab:focus-visible, .seg-nav__tab.is-active { background: #fff; color: #1a1033; box-shadow: 0 6px 18px -6px rgba(0, 0, 0, .45); }
+.seg-nav__tab:hover .seg-nav__icon, .seg-nav__tab:focus-visible .seg-nav__icon, .seg-nav__tab.is-active .seg-nav__icon { stroke: #c0125f; }
+.seg-nav--labels { width: 100%; }
+@media (max-width: 1099px) {
+  .seg-nav:not(.seg-nav--labels) .seg-nav__tab { padding: 0 14px; }
+  .seg-nav:not(.seg-nav--labels) .seg-nav__label { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+}
+
+/* Menu mobile : trois onglets pleine largeur, resserrés pour tenir à 320 px */
+.seg-nav--labels .seg-nav__tab { gap: 6px; padding: 0 8px; letter-spacing: .1em; font-size: 12px; }
+.seg-nav--labels .seg-nav__icon { width: 16px; height: 16px; }
+@media (max-width: 359px) { .seg-nav--labels .seg-nav__tab { gap: 4px; padding: 0 4px; letter-spacing: .06em; font-size: 11px; } .seg-nav--labels .seg-nav__icon { width: 14px; height: 14px; } }
+.seg-nav__tab:focus-visible { outline: 3px solid #ffd0da; outline-offset: 2px; }

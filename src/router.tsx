@@ -39,6 +39,11 @@ import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
 import InvitationsPage from './components/InvitationsPage';
 import { LegalPage } from './components/legal/LegalPage';
+import NotFoundPage from './components/NotFoundPage';
+import { isRoleComingSoon } from './config/offers';
+import { hardNavigate } from './lib/appNavigation';
+import { registerCompanyFallback, rememberExplicitLang, telephonyHandoff } from './lib/publicRoutes';
+import { AuthSpinner } from './components/layout/guards';
 
 function RootLayout() {
   return (
@@ -58,6 +63,30 @@ function GuestAuthLayout() {
   );
 }
 
+/**
+ * `/:lang/telephony*` (ex. /en/telephony) appartient à l'application Téléphonie. Si l'hôte a quand même monté ce module,
+ * on part vers /telephony* avec la langue de l'adresse (chargement complet : l'hôte monte alors la bonne application).
+ */
+function TelephonyHandoff() {
+  const target = typeof window === 'undefined' ? null : telephonyHandoff(window.location);
+  React.useEffect(() => {
+    if (!target) return;
+    let storage: Storage | null = null;
+    try { storage = window.localStorage; } catch { storage = null; }
+    rememberExplicitLang(target.lang, storage);
+    hardNavigate(target.url);
+  }, [target?.url, target?.lang]);
+  if (!target) return <NotFoundPage />;
+  return <AuthSpinner />;
+}
+
+/** T2 : inscription entreprise fermée tant que l'offre Company (TAAS) est « bientôt », même par adresse directe. */
+function RegisterCompanyGate() {
+  const fallback = registerCompanyFallback(isRoleComingSoon('company'));
+  if (fallback) return <Navigate to={fallback} replace />;
+  return <RegisterCompanyScreen />;
+}
+
 function AuthProviders({ children }: { children: React.ReactNode }) {
   return <AuthProvider>{children}</AuthProvider>;
 }
@@ -69,8 +98,11 @@ const routes: RouteObject[] = [
           <RootLayout />
         </AuthProviders>
       ),
+      errorElement: <NotFoundPage variant="error" />,
       children: [
         { path: 'auth/reactivate', element: <ReactivateAccount /> },
+        { path: 'telephony', element: <TelephonyHandoff /> },
+        { path: 'telephony/*', element: <TelephonyHandoff /> },
         {
           path: 'auth/invitations',
           element: (
@@ -144,12 +176,14 @@ const routes: RouteObject[] = [
             { path: 'auth/choice', element: <ChoiceScreen /> },
             { path: 'auth/signin', element: <SignInScreen /> },
             { path: 'auth/register', element: <RegisterScreen /> },
-            { path: 'auth/register-company', element: <RegisterCompanyScreen /> },
+            { path: 'auth/register-company', element: <RegisterCompanyGate /> },
             { path: 'auth/register-rep', element: <RegisterRepScreen /> },
             { path: 'auth/register-call-center', element: <RegisterCallCenterScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },
+        // Toute autre adresse : page 404 propre, à la charte HARX (plus la page de développeur de React Router).
+        { path: '*', element: <NotFoundPage /> },
       ],
     },
 ];

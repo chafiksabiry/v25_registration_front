@@ -1,7 +1,8 @@
 {
   "telephonyVisual": {
     "incoming": "Incoming call",
-    "country": "A number from your country"
+    "country": "A number from your country",
+    "ai": "AI"
   },
   "callcentreJourney": {
     "name": "Name",
@@ -58,47 +59,48 @@
     "alreadyClient": "Already a client?",
     "signIn": "Sign in",
     "offersAria": "HARX offers",
-    "tabsAria": "Choose the offer to present",
     "legalAria": "Legal information",
+    "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "All your calls,",
+      "title2": "wherever you are.",
+      "sub": "Make and take calls with your team, our experts, or AI."
+    },
     "offers": {
       "taas": {
-        "title": "Transaction-as-a-Service",
+        "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Discover TAAS",
+        "target": "Customer service professionals, paid for results.",
+        "benefit1": "You only pay for the result you define",
+        "benefit2": "Humans or AI, on demand",
+        "benefit3": "REPS find missions that fit them",
         "company": "Company: Post a gig",
-        "reps": "REPS: Find gigs",
-        "hero": {
-          "def": "Customer service, telesales and support professionals, human or AI, work for you: you only pay for the result you defined.",
-          "support": "“Uber connects you to drivers. Airbnb, to places to stay. HARX connects you to customer service professionals, and only charges you when they deliver a result.”",
-          "note": "TAAS = Transaction-as-a-Service: you pay per successful transaction. A gig is a mission.",
-          "flow1": "Your company",
-          "flow2": "Customer service professionals (human or AI)",
-          "flow3": "A result you defined",
-          "flow4": "You pay for that result"
-        },
-        "companyHint": "You are looking for customer service professionals",
-        "repsHint": "You are a customer service professional looking for missions"
+        "reps": "REPS: Find gigs"
       },
-      "telephony": {
-        "title": "HARX Telephony",
-        "nav": "Telephony",
-        "cta": "Open HARX Telephony",
-        "nomadSolo": "Nomad Solo",
-        "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients",
-        "hero": {
-          "def": "A number from your country, your inbound and outbound calls, reception / secretarial and an AI to assist you.",
-          "support": "Your telephony, up and running in 5 minutes.",
-          "note": "Four offers depending on your situation, one line included in each.",
-          "flow1": "A number from your country",
-          "flow2": "Inbound and outbound calls",
-          "flow3": "Reception / secretarial and voicemail",
-          "flow4": "The AI assists you"
-        }
+      "cloud": {
+        "title": "Telephony In The Cloud",
+        "nav": "CLOUD",
+        "cta": "Discover CLOUD",
+        "target": "Business telephony for companies and teams.",
+        "benefit1": "Inbound and outbound calls, anywhere",
+        "benefit2": "Reception, secretarial service and AI voicemail",
+        "benefit3": "Owner, managers, agents, secretaries",
+        "accueil": "Reception / Secretarial",
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
+      },
+      "nomad": {
+        "title": "Telephony for Digital Workers",
+        "nav": "NOMAD",
+        "cta": "Discover NOMAD",
+        "target": "Keep your number, even when you travel.",
+        "benefit1": "One number that works anywhere in the world",
+        "benefit2": "No roaming",
+        "benefit3": "HARX Nomad iPhone app",
+        "solo": "Nomad Solo"
       }
-    },
-    "definition": "HARX helps you manage your customer relationship: professionals who deliver results, and telephony up and running in 5 minutes."
+    }
   },
   "telephonyHeader": {
     "signIn": "Sign in",
@@ -208,7 +210,7 @@
     "loading": "Loading…"
   },
   "hero": {
-    "badge": "AI-Powered • 60,000+ Customer Service Professionals • Transaction-as-a-Service",
+    "badge": "AI-Powered • 64,000+ Customer Service Professionals • Transaction-as-a-Service",
     "title1": "AI-Powered Customer Engagement",
     "title2": "Meets",
     "title3": "Transaction-as-a-Service",
@@ -244,7 +246,7 @@
     "stats": {
       "stat1Title": "AI-First Platform",
       "stat1Desc": "Cutting-edge artificial intelligence",
-      "stat2Title": "60,000+ AI-Enhanced Agents",
+      "stat2Title": "64,000+ AI-Enhanced Agents",
       "stat2Desc": "Powered by intelligent technology",
       "stat3Title": "Global AI Network",
       "stat3Desc": "Intelligent service worldwide"
@@ -303,7 +305,7 @@
     "errInvalidEmailCode": "Invalid or expired email verification code",
     "errInvalidSmsCode": "Invalid SMS verification code",
     "errInvalidCredentials": "Incorrect email or password.",
-    "errAccountNotVerified": "This account is not verified yet. Check your email and phone for the codes.",
+    "errAccountNotVerified": "This account is not verified yet. Enter the code we sent you by email to activate it.",
     "errInvalidEmail": "No account found with this email.",
     "errInvalidPassword": "Incorrect password.",
     "errMissingEmail": "Please enter your email.",
@@ -319,6 +321,10 @@
     "errUnexpected": "Sign-in failed. Check your details and try again."
   },
   "register": {
+    "titlePhoneOptional": "Your phone (optional)",
+    "descPhoneOptional": "To call you during your test call.",
+    "phoneOptionalHint": "Optional. It is used for your test call during setup; you can leave it empty and add it later.",
+    "errPhoneNeededServer": "Please enter your phone number to finish creating your account.",
     "errName": "Please enter your full name",
     "errEmail": "Please enter a valid email address",
     "errPassword": "Password must be at least 8 characters with letters and numbers",
@@ -354,7 +360,7 @@
     "placeholderName": "Full Name",
     "placeholderEmail": "Work Email",
     "placeholderPassword": "Choose a strong password",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+44 7700 900123",
     "passwordHint": "Must be at least 8 characters with letters and numbers.",
     "placeholderConfirmPassword": "Confirm your password",
     "errPasswordMismatch": "Passwords do not match",
@@ -479,7 +485,7 @@
     "step5Desc5": "Beyond performance, three simple costs : Your plan. Your numbers. Your minutes.",
     "step6Title": "AI scoring on every call",
     "step6Desc": "Transcribed, analyzed and scored in seconds by AI : Fraud detected, Sentiment measured, Transaction confirmed.",
-    "step7Title": "Scale globally — 60,000+ certified agents across 70+ countries",
+    "step7Title": "Scale globally — 64,000+ certified agents across 70+ countries",
     "step7Desc": "Harx works with human agents today, AI agents tomorrow, and any mix in between.",
     "ctaTitle": "You have leads. We have agents. You pay per result. HARX the Transaction as a Service™ Platform powered by AI"
   },
@@ -655,7 +661,7 @@
     "rights": "© {{year}} HARX Technologies Inc. All rights reserved."
   },
   "hero": {
-    "badge": "AI-Powered • 60,000+ Customer Service Professionals • Transaction-as-a-Service",
+    "badge": "AI-Powered • 64,000+ Customer Service Professionals • Transaction-as-a-Service",
     "title1": "AI-Powered Customer Engagement",
     "title2": "Meets",
     "title3": "Transaction-as-a-Service",
@@ -691,7 +697,7 @@
     "stats": {
       "stat1Title": "AI-First Platform",
       "stat1Desc": "Cutting-edge artificial intelligence",
-      "stat2Title": "60,000+ AI-Enhanced Agents",
+      "stat2Title": "64,000+ AI-Enhanced Agents",
       "stat2Desc": "Powered by intelligent technology",
       "stat3Title": "Global AI Network",
       "stat3Desc": "Intelligent service worldwide"
@@ -713,7 +719,7 @@
     "errUnexpected": "Sign-in failed. Check your details and try again.",
     "errGeneric": "Sign-in failed. Check your details and try again.",
     "errInvalidCredentials": "Incorrect email or password.",
-    "errAccountNotVerified": "This account is not verified yet. Check your email and phone for the codes.",
+    "errAccountNotVerified": "This account is not verified yet. Enter the code we sent you by email to activate it.",
     "errInvalidEmail": "No account found with this email.",
     "errInvalidPassword": "Incorrect password.",
     "errMissingEmail": "Please enter your email.",
@@ -764,6 +770,10 @@
     "signUp": "Sign up"
   },
   "register": {
+    "titlePhoneOptional": "Your phone (optional)",
+    "descPhoneOptional": "To call you during your test call.",
+    "phoneOptionalHint": "Optional. It is used for your test call during setup; you can leave it empty and add it later.",
+    "errPhoneNeededServer": "Please enter your phone number to finish creating your account.",
     "errGeneralFailed": "Account verification failed",
     "smsNoticeSent": "SMS code sent. Check your phone.",
     "smsNoticeUnavailable": "SMS unavailable. Continue with email verification only.",
@@ -806,7 +816,7 @@
     "placeholderConfirmPassword": "Confirm your password",
     "errPasswordMismatch": "Passwords do not match",
     "passwordMatch": "Passwords match",
-    "placeholderPhone": "+1 (555) 000-0000",
+    "placeholderPhone": "+44 7700 900123",
     "termsAgreeText": "By creating an account, you agree to comply with our",
     "termsLink": "Terms of Service",
     "termsAnd": "and acknowledge our",
@@ -907,7 +917,7 @@
     "onboardingMissing": "Missing"
   },
   "authScreens": {
-    "registerCallCenter": "Call center signup"
+    "registerCallCenter": "HARX Telephony signup"
   },
   "userTypes": {
     "company": "Company",
@@ -931,5 +941,15 @@
     "decline": "Decline",
     "later": "Decide later",
     "error": "This did not work. Please try again."
+  },
+  "notFound": {
+    "docTitle": "HARX — Page not found",
+    "docTitleError": "HARX — Display error",
+    "title": "This page does not exist",
+    "titleError": "This page could not be displayed",
+    "desc": "The link may be outdated or mistyped. Here is where you can continue.",
+    "descError": "Something went wrong on our side. Reload the page, or continue from one of the links below.",
+    "home": "HARX home",
+    "telephony": "HARX Telephony"
   }
 }

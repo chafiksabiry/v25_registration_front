@@ -27,3 +27,8 @@ env.json
 
 # Local Netlify folder
 .netlify
+
+# Playwright
+dist-e2e
+test-results
+playwright-report

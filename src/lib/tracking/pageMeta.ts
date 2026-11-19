@@ -2,7 +2,7 @@ import { resolveAdminTabTitle } from '../../components/admin/adminSections';
 import { DEFAULT_PAGE_DESCRIPTION, HARX_SITE_URL } from './constants';
 import { isAuthPortalPath, resolveAuthTabTitle } from './registrationSections';
 import { HUB_DESCRIPTION_EN, HUB_DESCRIPTION_FR, hubPageTitle } from './hubMeta';
-import { getLangFromPath, stripLangPrefix, withLangPrefix, type SiteLang } from '../langRoutes';
+import { DEFAULT_SITE_LANG, getLangFromPath, stripLangPrefix, withLangPrefix, type SiteLang } from '../langRoutes';
 
 export type PageMeta = {
   title: string;
@@ -140,7 +140,7 @@ export function resolvePageMeta(rawPath: string): PageMeta {
   const suffix = rest.length ? `?${rest.join('?')}` : '';
   const meta = resolveUnprefixedPageMeta(`${stripped}${suffix}`);
   const pathname = normalizeTrackingPath(stripped);
-  const lang: SiteLang = urlLang ?? 'fr';
+  const lang: SiteLang = urlLang ?? DEFAULT_SITE_LANG;
 
   if (!isLocalizedIndexablePath(pathname)) {
     return urlLang ? { ...meta, lang, canonical: meta.canonical ? `${HARX_SITE_URL}${normalizeTrackingPath(pathOnly.split('#')[0])}` : undefined } : meta;
@@ -154,7 +154,7 @@ export function resolvePageMeta(rawPath: string): PageMeta {
     alternates: [
       { hreflang: 'fr', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'fr')}` },
       { hreflang: 'en', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'en')}` },
-      ...(pathname === '/' ? [{ hreflang: 'x-default', href: `${HARX_SITE_URL}/fr` }] : []),
+      ...(pathname === '/' ? [{ hreflang: 'x-default', href: `${HARX_SITE_URL}/${DEFAULT_SITE_LANG}` }] : []),
     ],
   };
 }
