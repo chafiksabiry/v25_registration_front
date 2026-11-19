@@ -24,7 +24,7 @@
     "desc": "Créez votre compte, choisissez Nomad Solo, achetez un numéro de votre pays et passez ou recevez vos appels, avec l'IA pour vous assister.",
     "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Vos appels dans le navigateur, application installable sur ordinateur et mobile",
-    "point3": "Journal de vos appels, transcription et analyse par l'IA",
+    "point3": "Journal de vos appels, répondeur avec transcription et résumé des messages par l'IA",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
   "callcentreBrandAccueil": {
@@ -887,7 +887,7 @@
     "callCenterCta": "Ouvrir HARX Téléphonie",
     "ccFeat1": "Un numéro de votre pays et vos appels dans le navigateur",
     "ccFeat2": "Appels entrants et sortants, accueil et répondeur",
-    "ccFeat3": "Journal d'appels, transcription et analyse par l'IA",
+    "ccFeat3": "Journal d'appels, enregistrement et analyse par l'IA selon l'offre",
     "ccFeat4": "De l'indépendant au centre multi-clients",
     "repTitle": "Trouver des gigs",
     "repDesc": "Pour les professionnels des centres de contact",
