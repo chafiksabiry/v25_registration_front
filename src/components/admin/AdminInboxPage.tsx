@@ -6,6 +6,7 @@ import {
   Globe,
   Inbox,
   Info,
+  LifeBuoy,
   Loader2,
   MessageCircle,
   RefreshCw,
@@ -24,16 +25,22 @@ import {
 import { AdminPageHeader } from './adminPageShell';
 import { useSupportInboxSocket, type InboxSignal } from './useSupportInboxSocket';
 
-type Filter = 'all' | 'todo' | 'whatsapp' | 'web';
+type Filter = 'all' | 'todo' | 'whatsapp' | 'web' | 'salesiq';
+type Channel = 'whatsapp' | 'web' | 'salesiq';
 
 /** Relecture de secours : rapide quand le temps réel est coupé, rare quand il est actif (le serveur signale chaque changement). */
 const POLL_OFFLINE_MS = 15000;
 const POLL_LIVE_MS = 120000;
-const isWeb = (id: string) => id.startsWith('web:');
-const labelOf = (c: { waId: string; profileName?: string }) =>
-  isWeb(c.waId) ? 'Visiteur du site' : c.profileName || `+${c.waId}`;
-const initialOf = (c: { waId: string; profileName?: string }) =>
-  isWeb(c.waId) ? 'V' : (c.profileName || '#').trim().charAt(0).toUpperCase();
+const channelOf = (id: string): Channel => (id.startsWith('web:') ? 'web' : id.startsWith('salesiq:') ? 'salesiq' : 'whatsapp');
+const CHANNEL_LABEL: Record<Channel, string> = { whatsapp: 'WhatsApp', web: 'Chat du site', salesiq: 'SalesIQ' };
+const labelOf = (c: { waId: string; profileName?: string }) => {
+  const ch = channelOf(c.waId);
+  return ch === 'web' ? 'Visiteur du site' : ch === 'salesiq' ? 'Visiteur SalesIQ' : c.profileName || `+${c.waId}`;
+};
+const initialOf = (c: { waId: string; profileName?: string }) => {
+  const ch = channelOf(c.waId);
+  return ch === 'web' ? 'V' : ch === 'salesiq' ? 'S' : (c.profileName || '#').trim().charAt(0).toUpperCase();
+};
 const roleLabel = (role: string) => (role === 'user' ? 'Visiteur' : role === 'human_agent' ? 'Équipe HARX' : 'Assistant IA');
 
 function relativeTime(iso: string, now = Date.now()): string {
@@ -70,18 +77,23 @@ function renderText(text: string): React.ReactNode[] {
 }
 
 function Avatar({ c, size = 40 }: { c: { waId: string; profileName?: string }; size?: number }) {
-  const web = isWeb(c.waId);
+  const ch = channelOf(c.waId);
+  const bg = ch === 'web' ? 'bg-sky-500' : ch === 'salesiq' ? 'bg-fuchsia-500' : 'bg-emerald-500';
   return (
     <span
-      className={`relative inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white ${
-        web ? 'bg-sky-500' : 'bg-emerald-500'
-      }`}
+      className={`relative inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white ${bg}`}
       style={{ width: size, height: size, fontSize: size * 0.4 }}
       aria-hidden="true"
     >
       {initialOf(c)}
       <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white ring-1 ring-slate-200">
-        {web ? <Globe className="h-2.5 w-2.5 text-sky-600" /> : <MessageCircle className="h-2.5 w-2.5 text-emerald-600" />}
+        {ch === 'web' ? (
+          <Globe className="h-2.5 w-2.5 text-sky-600" />
+        ) : ch === 'salesiq' ? (
+          <LifeBuoy className="h-2.5 w-2.5 text-fuchsia-600" />
+        ) : (
+          <MessageCircle className="h-2.5 w-2.5 text-emerald-600" />
+        )}
       </span>
     </span>
   );
@@ -242,8 +254,9 @@ export default function AdminInboxPage() {
     () => ({
       all: all.length,
       todo: all.filter((c) => c.handoff).length,
-      whatsapp: all.filter((c) => !isWeb(c.waId)).length,
-      web: all.filter((c) => isWeb(c.waId)).length,
+      whatsapp: all.filter((c) => channelOf(c.waId) === 'whatsapp').length,
+      web: all.filter((c) => channelOf(c.waId) === 'web').length,
+      salesiq: all.filter((c) => channelOf(c.waId) === 'salesiq').length,
     }),
     [all],
   );
@@ -252,8 +265,7 @@ export default function AdminInboxPage() {
     const q = query.trim().toLowerCase();
     return all.filter((c) => {
       if (filter === 'todo' && !c.handoff) return false;
-      if (filter === 'whatsapp' && isWeb(c.waId)) return false;
-      if (filter === 'web' && !isWeb(c.waId)) return false;
+      if ((filter === 'whatsapp' || filter === 'web' || filter === 'salesiq') && channelOf(c.waId) !== filter) return false;
       if (!q) return true;
       return `${labelOf(c)} ${c.waId} ${c.last?.text ?? ''}`.toLowerCase().includes(q);
     });
@@ -306,6 +318,7 @@ export default function AdminInboxPage() {
     { id: 'todo', label: 'À traiter', n: counts.todo, tone: 'amber' },
     { id: 'whatsapp', label: 'WhatsApp', n: counts.whatsapp },
     { id: 'web', label: 'Site', n: counts.web },
+    { id: 'salesiq', label: 'SalesIQ', n: counts.salesiq },
   ];
 
   const syncLabel = lastSync ? `Actualisé ${relativeTime(new Date(lastSync).toISOString())}` : '';
@@ -316,7 +329,7 @@ export default function AdminInboxPage() {
         <AdminPageHeader
           icon={Inbox}
           title="Inbox support"
-          subtitle="Conversations de l'assistant IA HARX : WhatsApp Business et chat du site."
+          subtitle="Conversations de l'assistant IA HARX : WhatsApp Business, chat du site et SalesIQ."
         />
         <div className="flex items-center gap-3 sm:pt-2">
           <span
@@ -484,7 +497,7 @@ export default function AdminInboxPage() {
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-semibold text-slate-900">{labelOf(detail)}</p>
                   <p className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500">
-                    <span>{isWeb(detail.waId) ? 'Chat du site' : `WhatsApp · +${detail.waId}`}</span>
+                    <span>{channelOf(detail.waId) === 'whatsapp' ? `WhatsApp · +${detail.waId}` : CHANNEL_LABEL[channelOf(detail.waId)]}</span>
                     {detail.language && <span>· {detail.language}</span>}
                     {detail.linked && <span>· compte lié</span>}
                     {detail.notes.length > 0 && <span className="truncate">· {detail.notes.map((n) => `${n.key} : ${n.value}`).join(', ')}</span>}
@@ -638,7 +651,11 @@ export default function AdminInboxPage() {
               ) : (
                 <div className="flex items-center gap-2 border-t border-violet-50 bg-white px-4 py-3 text-xs text-slate-500">
                   <Info className="h-3.5 w-3.5 shrink-0" />
-                  Aucun ticket ouvert : l'assistant IA répond seul à cette conversation.
+                  {channelOf(detail.waId) === 'salesiq'
+                    ? detail.handoff?.active
+                      ? 'Demande à traiter par l’équipe : répondez au visiteur depuis Zoho SalesIQ (cette copie est en lecture seule).'
+                      : 'Conversation SalesIQ en lecture seule : pour répondre au visiteur, utilisez Zoho SalesIQ.'
+                    : "Aucun ticket ouvert : l'assistant IA répond seul à cette conversation."}
                 </div>
               )}
             </>
