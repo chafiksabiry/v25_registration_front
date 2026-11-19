@@ -523,7 +523,11 @@ const supportInboxBase = () =>
       'https://v25comporchestratorback-production.up.railway.app',
   ).replace(/\/$/, '')}/api/whatsapp/admin`;
 
-const supportInboxCall = async <T>(method: 'get' | 'post', path: string, data?: unknown): Promise<T> => {
+/** URL du WebSocket temps réel de l'Inbox (https -> wss, http -> ws) ; le jeton passe en sous-protocole, jamais dans l'URL. */
+export const supportInboxSocketUrl = (base: string = supportInboxBase()): string =>
+  base.replace(/^http/i, 'ws').replace(/\/api\/whatsapp\/admin\/?$/, '') + '/support-inbox';
+
+const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: string, data?: unknown): Promise<T> => {
   const token = localStorage.getItem('token');
   const response = await axios.request<T>({
     method,
@@ -536,11 +540,13 @@ const supportInboxCall = async <T>(method: 'get' | 'post', path: string, data?: 
 };
 
 export const supportInboxApi = {
-  conversations: (channel: '' | 'whatsapp' | 'web') =>
-    supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}`),
+  conversations: (channel: '' | 'whatsapp' | 'web' = '', limit = 100) =>
+    supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}&limit=${limit}`),
   conversation: (id: string) =>
     supportInboxCall<SupportConversationDetail>('get', `/conversations/${encodeURIComponent(id)}`),
   tickets: () => supportInboxCall<{ tickets: SupportTicket[] }>('get', '/tickets'),
+  deleteConversation: (id: string) =>
+    supportInboxCall<{ deleted: boolean }>('delete', `/conversations/${encodeURIComponent(id)}`),
   reply: (ticketId: string, text: string, resolve: boolean) =>
     supportInboxCall<{ sent: boolean }>('post', `/tickets/${ticketId}/reply`, { text, resolve }),
 };
