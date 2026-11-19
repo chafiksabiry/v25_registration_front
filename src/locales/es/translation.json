@@ -58,47 +58,47 @@
     "alreadyClient": "¿Ya es cliente?",
     "signIn": "Iniciar sesión",
     "offersAria": "Ofertas de HARX",
-    "tabsAria": "Elija la oferta que desea presentar",
     "legalAria": "Información legal",
+    "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "Todas sus llamadas,",
+      "title2": "esté donde esté.",
+      "sub": "Reciba y haga sus llamadas con sus equipos, nuestros expertos o la IA."
+    },
     "offers": {
       "taas": {
-        "title": "Transaction-as-a-Service",
+        "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "Descubrir TAAS",
+        "target": "Profesionales de atención al cliente, pagados por resultados.",
+        "benefit1": "Solo paga el resultado que define",
+        "benefit2": "Humanos o IA, a demanda",
+        "benefit3": "Los REPS encuentran misiones a su medida",
         "company": "Company: Publicar una misión",
-        "reps": "REPS: Encontrar misiones",
-        "hero": {
-          "def": "Profesionales del servicio al cliente, la televenta y el soporte, humanos o IA, trabajan para usted: usted solo paga por el resultado que haya definido.",
-          "support": "“Uber le conecta con conductores. Airbnb, con alojamientos. HARX le conecta con profesionales del servicio al cliente, y solo le cobra cuando entregan un resultado.”",
-          "note": "TAAS = Transaction-as-a-Service: se paga por cada transacción exitosa. Un gig es una misión.",
-          "flow1": "Su empresa",
-          "flow2": "Profesionales del servicio al cliente (humanos o IA)",
-          "flow3": "Un resultado que usted definió",
-          "flow4": "Usted paga por ese resultado"
-        },
-        "companyHint": "Usted busca profesionales del servicio al cliente",
-        "repsHint": "Usted es profesional del servicio al cliente y busca misiones"
+        "reps": "REPS: Encontrar misiones"
       },
-      "telephony": {
-        "title": "HARX Telephony",
-        "nav": "Telephony",
-        "cta": "Abrir HARX Telephony",
-        "nomadSolo": "Nomad Solo",
+      "cloud": {
+        "title": "Telephony In The Cloud",
+        "nav": "CLOUD",
+        "cta": "Descubrir CLOUD",
+        "target": "La telefonía de empresas y equipos.",
+        "benefit1": "Llamadas entrantes y salientes, desde cualquier lugar",
+        "benefit2": "Recepción, secretaría y contestador con IA",
+        "benefit3": "Titular, gerentes, agentes, secretarias",
         "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients",
-        "hero": {
-          "def": "Un número de su país, sus llamadas entrantes y salientes, recepción / secretaría y una IA para asistirle.",
-          "support": "Su telefonía, en marcha en 5 minutos.",
-          "note": "Cuatro ofertas según su situación, una línea incluida en cada una.",
-          "flow1": "Un número de su país",
-          "flow2": "Llamadas entrantes y salientes",
-          "flow3": "Recepción / secretaría y buzón de voz",
-          "flow4": "La IA le asiste"
-        }
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
+      },
+      "nomad": {
+        "title": "Telephony for Digital Workers",
+        "nav": "NOMAD",
+        "cta": "Descubrir NOMAD",
+        "target": "Conserve su número, incluso de viaje.",
+        "benefit1": "Un número que funciona en todo el mundo",
+        "benefit2": "Sin roaming",
+        "benefit3": "Aplicación HARX Nomad para iPhone"
       }
-    },
-    "definition": "HARX le ayuda a gestionar su relación con los clientes: profesionales que entregan resultados y telefonía en marcha en 5 minutos."
+    }
   },
   "telephonyHeader": {
     "signIn": "Iniciar sesión",

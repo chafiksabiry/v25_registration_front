@@ -1,10 +1,10 @@
 import React from 'react';
 import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
-import { OfferMark, type OfferMarkId } from '../Brand/OfferMarks';
 import { LanguageIcons } from '../Brand/LanguageIcons';
+import { HubSegmentedNav } from '../Brand/HubSegmentedNav';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { TAAS_HOME } from '../../lib/taasPaths';
 import { normalizeSiteLang, withLangPrefix } from '../../lib/langRoutes';
@@ -17,13 +17,15 @@ import {
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
+import { MARK_IDS, activeMark, resolveMarkHref, type MarkId } from '../../config/offers';
+import { isNomadVisitor } from '../../lib/product';
 
 interface HeaderProps {
   onSignIn: () => void;
   onGetStarted: () => void;
   /** Conservé pour compatibilité : le bandeau commun n'a plus de menu de sections. */
   onNavigateToSection?: (sectionId: string) => void;
-  /** Parcours Téléphonie (connexion, inscription) : l'offre courante est TELEPHONY. */
+  /** Parcours Téléphonie (connexion, inscription) : l'offre courante est CLOUD, ou NOMAD pour un parcours Nomad Solo. */
   telephony?: boolean;
   /** Accueil de l'ensemble HARX : aucune offre courante, pas de connexion dans le bandeau. */
   hub?: boolean;
@@ -32,18 +34,19 @@ interface HeaderProps {
 }
 
 /**
- * Bandeau commun à tous les écrans HARX : le logo toujours en haut à gauche, les deux offres (TAAS, TELEPHONY) en pastilles,
+ * Bandeau commun à tous les écrans HARX : le logo toujours en haut à gauche, les trois offres (TAAS, CLOUD, NOMAD) en sélecteur segmenté avec la pastille de l'offre courante,
  * l'espace courant de TAAS (Company / REPS), le choix de la langue en icônes, puis la connexion.
  */
 export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, taas }: HeaderProps) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
   const [dashboardLoading, setDashboardLoading] = React.useState(false);
   const [sessionTick, setSessionTick] = React.useState(0);
   const { t, i18n } = useTranslation();
   const { token, setToken, loading: authLoading } = useAuth();
   const siteLang = normalizeSiteLang(i18n.language);
-  const offer: OfferMarkId | null = hub ? null : telephony ? 'telephony' : 'taas';
+  const offer: MarkId | null = activeMark({ hub, taas, telephony, nomad: telephony && isNomadVisitor(), pathname });
   const homeHref = withLangPrefix('/', siteLang);
 
   React.useEffect(() => subscribeAuthChanged(() => setSessionTick((n) => n + 1)), []);
@@ -64,7 +67,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     navigate('/');
   };
 
-  const goOffer = (e: React.MouseEvent<HTMLAnchorElement>, target: OfferMarkId) => {
+  const goOffer = (e: React.MouseEvent<HTMLAnchorElement>, target: MarkId) => {
     e.preventDefault();
     setIsMenuOpen(false);
     if (target === 'taas') {
@@ -72,7 +75,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
       return;
     }
     persistLang();
-    hardNavigate('/telephony');
+    hardNavigate(resolveMarkHref(target, siteLang));
   };
 
   const goToDashboard = async () => {
@@ -139,27 +142,21 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
   };
 
   const offerMarks = (mobile = false) => (
-    <div className={mobile ? 'flex flex-wrap gap-2' : 'flex items-center gap-2'} data-testid="offer-marks">
-      {(['taas', 'telephony'] as OfferMarkId[]).map((o) => (
-        <OfferMark
-          key={o}
-          offer={o}
-          active={offer === o}
-          href={o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : '/telephony'}
-          onClick={(e) => goOffer(e, o)}
-          data-testid={`offer-mark-${o}`}
-        />
-      ))}
-    </div>
+    <HubSegmentedNav
+      ids={MARK_IDS}
+      active={offer}
+      hrefFor={(o) => (o === 'taas' ? withLangPrefix(TAAS_HOME, siteLang) : resolveMarkHref(o, siteLang))}
+      onSelect={goOffer}
+      showLabels={mobile}
+    />
   );
-
 
   return (
     <header className="harx-bar fixed left-0 right-0 top-0 z-50" data-testid="harx-bar">
       <nav className="relative flex h-20 w-full items-center justify-between gap-4 pl-4 pr-4 md:pl-6 md:pr-8">
         <div className="flex min-w-0 items-center gap-5 lg:gap-7">
           <a href={homeHref} onClick={goHome} className="harx-bar-logo flex shrink-0 items-center" aria-label={t('header.allOffers', 'All HARX offers')} data-testid="harx-logo">
-            <Logo className="h-14 w-auto md:h-[4.25rem]" />
+            <Logo className="harx-logo-xl h-14 w-auto md:h-[4.25rem]" />
           </a>
           <span className="hidden h-9 w-px bg-white/25 md:block" aria-hidden="true" />
           <div className="hidden items-center gap-4 md:flex">

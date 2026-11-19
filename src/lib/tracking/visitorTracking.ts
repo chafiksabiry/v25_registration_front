@@ -1,6 +1,7 @@
 import { qiankunWindow } from 'vite-plugin-qiankun/dist/helper';
 import { GA_MEASUREMENT_ID } from './constants';
 import { buildTrackingPath, resolvePageMeta, type PageMeta } from './pageMeta';
+import { getLangFromPath } from '../langRoutes';
 
 declare global {
   interface Window {
@@ -56,7 +57,8 @@ export function updatePageHead(meta: PageMeta): void {
     upsertMeta('og:url', meta.canonical, 'property');
     upsertCanonical(meta.canonical);
   }
-  if (meta.lang) document.documentElement.lang = meta.lang;
+  // Page préfixée (/fr, /en…) : la langue de l'URL. Sans préfixe, la langue affichée (choix, navigateur, anglais) est posée par applyDocumentLanguage.
+  if (meta.lang && getLangFromPath(window.location.pathname)) document.documentElement.lang = meta.lang;
   if (meta.alternates) upsertAlternates(meta.alternates);
   else if (meta.canonical) upsertAlternates([]);
 }

@@ -58,47 +58,47 @@
     "alreadyClient": "هل أنت عميل لدينا؟",
     "signIn": "تسجيل الدخول",
     "offersAria": "عروض HARX",
-    "tabsAria": "اختر العرض المراد تقديمه",
     "legalAria": "المعلومات القانونية",
+    "aiPowered": "AI POWERED",
+    "hero": {
+      "title1": "جميع مكالماتك،",
+      "title2": "أينما كنت.",
+      "sub": "استقبل مكالماتك وأجرِها مع فرقك أو خبرائنا أو الذكاء الاصطناعي."
+    },
     "offers": {
       "taas": {
-        "title": "Transaction-as-a-Service",
+        "title": "Transaction As A Service",
         "nav": "TAAS",
         "cta": "اكتشف TAAS",
+        "target": "محترفو خدمة العملاء، بالدفع مقابل النتائج.",
+        "benefit1": "تدفع فقط مقابل النتيجة التي تحددها",
+        "benefit2": "بشر أو ذكاء اصطناعي، عند الطلب",
+        "benefit3": "يجد محترفو REPS مهام تناسبهم",
         "company": "Company: انشر مهمة",
-        "reps": "REPS: ابحث عن مهام",
-        "hero": {
-          "def": "محترفو خدمة العملاء والمبيعات الهاتفية والدعم، بشريون أو من الذكاء الاصطناعي، يعملون لصالحك: وتدفع فقط مقابل النتيجة التي حددتها.",
-          "support": "“تربطك Uber بالسائقين. وتربطك Airbnb بأماكن الإقامة. أما HARX فتربطك بمحترفي خدمة العملاء، ولا تتقاضى منك إلا عندما يحققون نتيجة.”",
-          "note": "TAAS = Transaction-as-a-Service: تدفع مقابل كل معاملة ناجحة. المهمة هي مهمة عمل.",
-          "flow1": "شركتك",
-          "flow2": "محترفو خدمة العملاء (بشريون أو من الذكاء الاصطناعي)",
-          "flow3": "نتيجة حددتها",
-          "flow4": "تدفع مقابل هذه النتيجة"
-        },
-        "companyHint": "أنت تبحث عن محترفي خدمة العملاء",
-        "repsHint": "أنت من محترفي خدمة العملاء وتبحث عن مهام"
+        "reps": "REPS: ابحث عن مهام"
       },
-      "telephony": {
-        "title": "HARX Telephony",
-        "nav": "Telephony",
-        "cta": "افتح HARX Telephony",
-        "nomadSolo": "Nomad Solo",
+      "cloud": {
+        "title": "Telephony In The Cloud",
+        "nav": "CLOUD",
+        "cta": "اكتشف CLOUD",
+        "target": "الهاتف المؤسسي للشركات والفرق.",
+        "benefit1": "مكالمات واردة وصادرة من أي مكان",
+        "benefit2": "استقبال وسكرتارية وبريد صوتي بالذكاء الاصطناعي",
+        "benefit3": "المالك والمديرون والوكلاء والسكرتارية",
         "accueil": "Accueil / Secrétariat",
-        "fullScope": "Company Full Scope In & Out",
-        "multiClients": "Contact Centre Multi-clients",
-        "hero": {
-          "def": "رقم من بلدك، ومكالماتك الواردة والصادرة، والاستقبال / السكرتارية، وذكاء اصطناعي يساعدك.",
-          "support": "اتصالاتك الهاتفية، جاهزة للعمل في 5 دقائق.",
-          "note": "أربعة عروض بحسب وضعك، مع خط هاتفي مشمول في كل منها.",
-          "flow1": "رقم من بلدك",
-          "flow2": "مكالمات واردة وصادرة",
-          "flow3": "الاستقبال / السكرتارية والبريد الصوتي",
-          "flow4": "الذكاء الاصطناعي يساعدك"
-        }
+        "fullScope": "Full Scope",
+        "multiClients": "Multi-clients"
+      },
+      "nomad": {
+        "title": "Telephony for Digital Workers",
+        "nav": "NOMAD",
+        "cta": "اكتشف NOMAD",
+        "target": "احتفظ برقمك، حتى أثناء السفر.",
+        "benefit1": "رقم يعمل في أي مكان في العالم",
+        "benefit2": "بدون تجوال (رومينغ)",
+        "benefit3": "تطبيق HARX Nomad لآيفون"
       }
-    },
-    "definition": "تساعدك HARX في إدارة علاقتك بالعملاء: محترفون يحققون النتائج، واتصالات هاتفية جاهزة للعمل في 5 دقائق."
+    }
   },
   "telephonyHeader": {
     "signIn": "تسجيل الدخول",
