@@ -5,7 +5,7 @@ import { auth } from "./api";
 import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
-import { CALLCENTRE_PATH, clearProduct, isCallcentreProduct } from "./product";
+import { CALLCENTRE_PATH, clearProduct, companyWorkspacePath, isCallcentreProduct } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -295,7 +295,7 @@ async function computePostLoginRedirectUrl(
       return "/admin";
     }
 
-    // Call centers get a dedicated host entry that mounts the company orchestrator.
+    // Call centers land on the /telephony application.
     if (
       checkUserType.userType === "company" ||
       checkUserType.userType === "call-center"
@@ -307,11 +307,8 @@ async function computePostLoginRedirectUrl(
         // Compte créé avant que le produit soit porté par le compte : on le rattache pour les prochaines connexions.
         auth.setProduct("callcentre", token).catch(() => undefined);
       }
-      const dest = callcentre
-        ? CALLCENTRE_PATH
-        : checkUserType.userType === "call-center"
-          ? "/call-center"
-          : "/company";
+      // Compte Call Center : application /telephony (l'ancienne /call-center est retirée, arbitrage 12).
+      const dest = companyWorkspacePath(checkUserType.userType, callcentre);
       try {
         localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
