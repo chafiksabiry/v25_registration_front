@@ -20,29 +20,14 @@ export function normalizeSiteLang(raw: string | null | undefined): SiteLang {
 }
 
 /**
- * Fuseaux horaires (IANA) des pays francophones (FR BE CH LU MC, Afrique francophone, Maghreb) et des territoires français : c'est le pays
- * « détecté » d'un visiteur du site public, qui n'a pas encore de société. Le Canada n'y est pas (anglais, Québec non détectable).
- */
-export const FRENCH_TIME_ZONES: readonly string[] = [
-  'Europe/Paris', 'Europe/Brussels', 'Europe/Zurich', 'Europe/Luxembourg', 'Europe/Monaco',
-  'Africa/Dakar', 'Africa/Abidjan', 'Africa/Douala', 'Africa/Bamako', 'Africa/Ouagadougou', 'Africa/Niamey', 'Africa/Lome', 'Africa/Porto-Novo',
-  'Africa/Conakry', 'Africa/Kinshasa', 'Africa/Lubumbashi', 'Africa/Brazzaville', 'Africa/Libreville', 'Indian/Antananarivo',
-  'Africa/Tunis', 'Africa/Algiers', 'Africa/Casablanca', 'Africa/El_Aaiun',
-  'Indian/Reunion', 'Indian/Mayotte', 'America/Guadeloupe', 'America/Martinique', 'America/Cayenne', 'America/Miquelon', 'Pacific/Noumea', 'Pacific/Tahiti',
-];
-
-/**
- * Choix de la langue (règle du fondateur du 21/11/2026 : « English must be the native language and French only for French-speaking
- * countries ») et « langue de l'appareil d'abord », par ordre de priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite)
- * > langue principale du navigateur si c'est en, fr, es ou ar (un navigateur anglais en France reste en anglais) > seulement pour un
- * navigateur dans une autre langue : français si le pays détecté (fuseau horaire) est francophone (Maghreb compris), sinon anglais.
+ * Choix de la langue. Décision du fondateur (21/11/2026) : « on gère 4 langues et pour le reste des langues c'est l'anglais ». Par ordre de
+ * priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite) > première langue de la liste du navigateur qui fait partie de
+ * en, fr, es, ar > anglais. Le pays et le fuseau horaire ne servent pas à choisir la langue.
  */
 export function resolveSiteLanguage(input: {
   urlLang: string | null | undefined;
   storedExplicit: string | null | undefined;
   browser: readonly string[] | undefined;
-  /** Fuseau horaire du navigateur (`Intl.DateTimeFormat().resolvedOptions().timeZone`), pour le pays détecté. */
-  timeZone?: string | null;
 }): SiteLang {
   const supported = (raw: string | null | undefined): SiteLang | null => {
     const code = (raw || '').toLowerCase().slice(0, 2);
@@ -52,11 +37,10 @@ export function resolveSiteLanguage(input: {
   if (fromUrl) return fromUrl;
   const stored = supported(input.storedExplicit);
   if (stored) return stored;
-  // Langue de l'appareil d'abord : la langue PRINCIPALE du navigateur, si c'est en, fr, es ou ar.
-  const browser = supported(input.browser?.[0]);
-  if (browser) return browser;
-  // Appareil dans une autre langue : français pour un pays francophone (fuseau horaire), sinon anglais.
-  if (FRENCH_TIME_ZONES.includes(String(input.timeZone ?? '').trim())) return 'fr';
+  for (const candidate of input.browser ?? []) {
+    const lang = supported(candidate);
+    if (lang) return lang;
+  }
   return DEFAULT_SITE_LANG;
 }
 
