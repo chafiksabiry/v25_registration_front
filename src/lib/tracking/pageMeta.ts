@@ -2,7 +2,7 @@ import { resolveAdminTabTitle } from '../../components/admin/adminSections';
 import { DEFAULT_PAGE_DESCRIPTION, HARX_SITE_URL } from './constants';
 import { isAuthPortalPath, resolveAuthTabTitle } from './registrationSections';
 import { HUB_DESCRIPTION_EN, HUB_DESCRIPTION_FR, hubPageTitle } from './hubMeta';
-import { DEFAULT_SITE_LANG, getLangFromPath, stripLangPrefix, withLangPrefix, type SiteLang } from '../langRoutes';
+import { DEFAULT_SITE_LANG, getLangFromPath, SITE_LANGS, stripLangPrefix, withLangPrefix, type SiteLang } from '../langRoutes';
 
 export type PageMeta = {
   title: string;
@@ -152,8 +152,8 @@ export function resolvePageMeta(rawPath: string): PageMeta {
     lang,
     canonical: `${HARX_SITE_URL}${withLangPrefix(pathname, lang)}`,
     alternates: [
-      { hreflang: 'fr', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'fr')}` },
-      { hreflang: 'en', href: `${HARX_SITE_URL}${withLangPrefix(pathname, 'en')}` },
+      // Les quatre versions du site (comme le sitemap de harx.ai) ; x-default : l'anglais, langue par défaut.
+      ...SITE_LANGS.map((l) => ({ hreflang: l, href: `${HARX_SITE_URL}${withLangPrefix(pathname, l)}` })),
       ...(pathname === '/' ? [{ hreflang: 'x-default', href: `${HARX_SITE_URL}/${DEFAULT_SITE_LANG}` }] : []),
     ],
   };

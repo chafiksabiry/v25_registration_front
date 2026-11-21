@@ -50,6 +50,7 @@ describe('SEO : racine sans préférence en anglais, /fr /es /ar inchangés', ()
     expect(m.lang).toBe('en');
     expect(m.canonical).toMatch(/\/en$/);
     expect(m.alternates?.find((a) => a.hreflang === 'x-default')?.href).toMatch(/\/en$/);
+    expect(m.alternates?.map((a) => a.hreflang)).toEqual(['fr', 'en', 'es', 'ar', 'x-default']);
   });
   it('/fr reste français, canonical /fr', () => {
     const m = resolvePageMeta('/fr');
