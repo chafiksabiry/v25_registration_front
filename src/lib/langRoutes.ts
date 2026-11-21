@@ -33,9 +33,9 @@ export const FRENCH_TIME_ZONES: readonly string[] = [
 
 /**
  * Choix de la langue (règle du fondateur du 21/11/2026 : « English must be the native language and French only for French-speaking
- * countries »), par ordre de priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite) > première langue du navigateur
- * parmi fr, en, es, ar si c'est fr, es ou ar > français si le pays détecté (fuseau horaire) est francophone > anglais.
- * Maroc, Tunisie, Algérie : français, sauf navigateur en arabe. L'espagnol et l'arabe ne viennent que de l'appareil ou du choix.
+ * countries ») et « langue de l'appareil d'abord », par ordre de priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite)
+ * > langue principale du navigateur si c'est en, fr, es ou ar (un navigateur anglais en France reste en anglais) > seulement pour un
+ * navigateur dans une autre langue : français si le pays détecté (fuseau horaire) est francophone (Maghreb compris), sinon anglais.
  */
 export function resolveSiteLanguage(input: {
   urlLang: string | null | undefined;
@@ -52,14 +52,12 @@ export function resolveSiteLanguage(input: {
   if (fromUrl) return fromUrl;
   const stored = supported(input.storedExplicit);
   if (stored) return stored;
-  let browser: SiteLang | null = null;
-  for (const candidate of input.browser ?? []) {
-    browser = supported(candidate);
-    if (browser) break;
-  }
-  if (browser && browser !== 'en') return browser;
+  // Langue de l'appareil d'abord : la langue PRINCIPALE du navigateur, si c'est en, fr, es ou ar.
+  const browser = supported(input.browser?.[0]);
+  if (browser) return browser;
+  // Appareil dans une autre langue : français pour un pays francophone (fuseau horaire), sinon anglais.
   if (FRENCH_TIME_ZONES.includes(String(input.timeZone ?? '').trim())) return 'fr';
-  return browser ?? DEFAULT_SITE_LANG;
+  return DEFAULT_SITE_LANG;
 }
 
 const LANG_PREFIX_RE = /^\/(fr|en|es|ar)(?=\/|$)/;

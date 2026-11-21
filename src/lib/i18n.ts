@@ -34,7 +34,7 @@ export function detectBrowserLanguage(): SiteLang | null {
 
 /**
  * Langue à afficher : préfixe d'URL (/fr, /en, /es, /ar) > choix explicite mémorisé (icônes de langue)
- * > langue du navigateur (fr, es, ar) > français si le fuseau horaire est celui d'un pays francophone > anglais.
+ * > langue principale du navigateur (en, fr, es, ar) > français si le fuseau horaire est celui d'un pays francophone > anglais.
  * Voir resolveSiteLanguage (src/lib/langRoutes.ts).
  */
 export function readHarxLanguage(): SiteLang {
