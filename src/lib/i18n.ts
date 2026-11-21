@@ -34,7 +34,8 @@ export function detectBrowserLanguage(): SiteLang | null {
 
 /**
  * Langue à afficher : préfixe d'URL (/fr, /en, /es, /ar) > choix explicite mémorisé (icônes de langue)
- * > langue du navigateur (fr, en, es, ar) > anglais. Voir resolveSiteLanguage (src/lib/langRoutes.ts).
+ * > langue du navigateur (fr, es, ar) > français si le fuseau horaire est celui d'un pays francophone > anglais.
+ * Voir resolveSiteLanguage (src/lib/langRoutes.ts).
  */
 export function readHarxLanguage(): SiteLang {
   let storedExplicit: string | null = null;
@@ -46,7 +47,13 @@ export function readHarxLanguage(): SiteLang {
     /* ignore */
   }
   const urlLang = typeof window !== 'undefined' ? getLangFromPath(window.location.pathname) : null;
-  return resolveSiteLanguage({ urlLang, storedExplicit, browser: browserLanguages() });
+  let timeZone: string | null = null;
+  try {
+    timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone ?? null;
+  } catch {
+    /* ignore */
+  }
+  return resolveSiteLanguage({ urlLang, storedExplicit, browser: browserLanguages(), timeZone });
 }
 
 export function persistHarxLanguage(lang: string, opts?: { explicit?: boolean }): void {

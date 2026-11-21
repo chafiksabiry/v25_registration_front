@@ -20,6 +20,20 @@ describe('choix de la langue : préfixe d\'URL > choix mémorisé > navigateur >
   ];
   for (const [name, input, expected] of cases) it(name, () => expect(resolveSiteLanguage(input)).toBe(expected));
 
+  it('règle du fondateur : navigateur en-US → anglais, fr-FR → français, pays MA + navigateur ar → arabe', () => {
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['en-US'], timeZone: 'America/New_York' })).toBe('en');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['fr-FR'], timeZone: 'America/New_York' })).toBe('fr');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['ar-MA'], timeZone: 'Africa/Casablanca' })).toBe('ar');
+  });
+  it('pays francophone détecté (fuseau) : français si le navigateur n’est ni fr, ni es, ni ar', () => {
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['en-US'], timeZone: 'Africa/Casablanca' })).toBe('fr');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['de-DE'], timeZone: 'Europe/Paris' })).toBe('fr');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['es-ES'], timeZone: 'Europe/Paris' })).toBe('es');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: 'en', browser: ['en'], timeZone: 'Europe/Paris' })).toBe('en');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['en-CA'], timeZone: 'America/Toronto' })).toBe('en');
+    expect(resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser: ['en-GB'], timeZone: 'Europe/Madrid' })).toBe('en');
+  });
+
   it('le repli par défaut est l\'anglais', () => {
     expect(DEFAULT_SITE_LANG).toBe('en');
     expect(normalizeSiteLang('')).toBe('en');

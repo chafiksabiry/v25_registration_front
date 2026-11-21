@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getPostLoginRedirectUrl, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
 import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
+import { normalizeSiteLang } from '../lib/langRoutes';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 
 type Status = 'loading' | 'invalid' | 'expired' | 'request' | 'sent';
@@ -19,7 +20,7 @@ type Status = 'loading' | 'invalid' | 'expired' | 'request' | 'sent';
  *   address and the personal one-click link is e-mailed to it.
  */
 export default function ReactivateAccount() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { setToken } = useAuth();
   const [status, setStatus] = useState<Status>('loading');
   const [email, setEmail] = useState('');
@@ -27,7 +28,7 @@ export default function ReactivateAccount() {
   const [requestError, setRequestError] = useState(false);
   const started = useRef(false);
 
-  usePageTitle(buildAuthPageTitle('Reprise du compte'));
+  usePageTitle(buildAuthPageTitle('Reprise du compte', normalizeSiteLang(i18n.language)));
 
   useEffect(() => {
     if (started.current) return;
