@@ -21,9 +21,9 @@
   "callcentreBrandSolo": {
     "title1": "Your call station,",
     "title2": "open in a few minutes",
-    "desc": "Create your account, choose Nomad Solo, buy a number from your country and make or receive calls, with AI to assist you.",
+    "desc": "Create your account, choose Nomad, buy a number from your country and make or receive calls, with AI to assist you.",
     "point1": "A number from your country, tested before your first call",
-    "point2": "Your calls in the browser, installable on computer and mobile",
+    "point2": "Your calls in the HARX Nomad app (iPhone and Android) and from your browser",
     "point3": "Your call log, transcription and AI analysis",
     "point4": "One subscription, then pay for what you use"
   },
@@ -97,8 +97,8 @@
         "target": "Keep your number, even when you travel.",
         "benefit1": "One number that works anywhere in the world",
         "benefit2": "No roaming",
-        "benefit3": "HARX Nomad app for iPhone and Android",
-        "solo": "Nomad Solo"
+        "benefit3": "HARX Nomad app for iPhone and Android, and browser",
+        "solo": "Nomad"
       }
     }
   },
