@@ -176,7 +176,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
           <ChoiceCard
             icon={Building2}
             image={companyBanner}
-            imageAlt="Équipe en entreprise"
+            imageAlt={t('choicePage.companyImageAlt', 'Company team at work')}
             title={t('choicePage.companyTitle', 'Post a Gig')}
             description={t('choicePage.companyDesc', 'For companies seeking customer service talent')}
             badge={companySoon ? t('choicePage.comingSoon', 'Coming soon') : t('choicePage.available', 'Available')}
@@ -190,7 +190,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
           <ChoiceCard
             icon={Headphones}
             image={repBanner}
-            imageAlt="Professionnels en centre de contact"
+            imageAlt={t('choicePage.callCenterImageAlt', 'Contact center professionals')}
             title={t('choicePage.repTitle', 'Find Gigs')}
             description={t('choicePage.repDesc', 'For contact center professionals')}
             badge={t('choicePage.available', 'Available')}

@@ -18,6 +18,6 @@ const HUB_TITLES: Record<SiteLang, string> = {
   ar: 'جميع مكالماتك، أينما كنت',
 };
 
-export function hubPageTitle(lang: SiteLang = 'fr'): string {
+export function hubPageTitle(lang: SiteLang = 'en'): string {
   return `${BASE_TITLE} — ${HUB_TITLES[lang] ?? HUB_TITLES.en}`;
 }
