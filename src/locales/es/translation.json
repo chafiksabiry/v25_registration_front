@@ -744,6 +744,14 @@
     "call-center": "Centro de llamadas",
     "admin": "Administrador"
   },
+  "invite": {
+    "loading": "Abriendo su espacio HARX…",
+    "expiredTitle": "Este enlace ha caducado",
+    "invalidTitle": "Este enlace no es válido",
+    "help": "Inicie sesión con su correo electrónico y su contraseña. Si aún no tiene una, pida a la persona que le invitó que le reenvíe la invitación, o utilice “¿Olvidó su contraseña?”.",
+    "signIn": "Iniciar sesión",
+    "forgot": "¿Olvidó su contraseña?"
+  },
   "reactivate": {
     "loading": "Abriendo su espacio HARX...",
     "expiredTitle": "Este enlace ha caducado",
