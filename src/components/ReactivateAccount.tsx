@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getPostLoginRedirectUrl, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { hardNavigate } from '../lib/appNavigation';
 import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
+import { normalizeSiteLang } from '../lib/langRoutes';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 import { ReactivateShell } from './reactivate/ReactivateShell';
 import { REACTIVATE_COPY, reactivateLangFor } from './reactivate/reactivateCopy';
@@ -32,7 +33,7 @@ export default function ReactivateAccount() {
   const [requestError, setRequestError] = useState(false);
   const started = useRef(false);
 
-  usePageTitle(buildAuthPageTitle('Reprise du compte'));
+  usePageTitle(buildAuthPageTitle('Reprise du compte', normalizeSiteLang(i18n.language)));
 
   useEffect(() => {
     if (started.current) return;

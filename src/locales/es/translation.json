@@ -715,7 +715,9 @@
     "repFeat5": "Obtenga ingresos adicionales",
     "trust1": "Sin gastos de instalación",
     "trust2": "Profesionales verificados",
-    "trust3": "Asignación basada en IA"
+    "trust3": "Asignación basada en IA",
+    "companyImageAlt": "Equipo en una empresa",
+    "callCenterImageAlt": "Profesionales de un centro de contacto"
   },
   "adminFilters": {
     "searchPlaceholder": "Buscar nombre, correo, empresa, REP, teléfono…",
@@ -742,13 +744,31 @@
     "call-center": "Centro de llamadas",
     "admin": "Administrador"
   },
+  "invite": {
+    "loading": "Abriendo su espacio HARX…",
+    "expiredTitle": "Este enlace ha caducado",
+    "invalidTitle": "Este enlace no es válido",
+    "help": "Inicie sesión con su correo electrónico y su contraseña. Si aún no tiene una, pida a la persona que le invitó que le reenvíe la invitación, o utilice “¿Olvidó su contraseña?”.",
+    "signIn": "Iniciar sesión",
+    "forgot": "¿Olvidó su contraseña?"
+  },
   "reactivate": {
     "loading": "Abriendo su espacio HARX...",
     "expiredTitle": "Este enlace ha caducado",
     "invalidTitle": "Este enlace no es válido",
     "help": "Inicie sesión con su correo electrónico para continuar. Si aún no tiene contraseña, utilice “¿Olvidó su contraseña?”.",
     "signIn": "Iniciar sesión",
-    "forgot": "¿Olvidó su contraseña?"
+    "forgot": "¿Olvidó su contraseña?",
+    "requestTitle": "Reciba su enlace personal",
+    "requestIntro": "Introduzca la dirección de correo en la que recibió nuestro mensaje. Le enviaremos un enlace de un solo clic a su espacio HARX.",
+    "emailLabel": "Dirección de correo electrónico",
+    "emailPlaceholder": "usted@ejemplo.com",
+    "send": "Recibir mi enlace",
+    "sending": "Enviando...",
+    "sentTitle": "Revise su bandeja de entrada",
+    "sentText": "Si esta dirección está registrada, recibirá su enlace personal en unos minutos. Revise también la carpeta de correo no deseado.",
+    "sendAgain": "Usar otra dirección",
+    "requestError": "No ha funcionado. Compruebe la dirección y vuelva a intentarlo."
   },
   "invitations": {
     "title": "Ha recibido una invitación",

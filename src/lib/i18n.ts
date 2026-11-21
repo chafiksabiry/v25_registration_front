@@ -20,7 +20,8 @@ export const HARX_SITE_LANG_KEY = 'harxSiteLang';
 /** Langues préférées du navigateur (dans l'ordre), vide hors navigateur. */
 function browserLanguages(): string[] {
   if (typeof navigator === 'undefined') return [];
-  return navigator.languages?.length ? [...navigator.languages] : navigator.language ? [navigator.language] : [];
+  // `navigator.languages`, puis `navigator.language` (certains navigateurs ne remplissent que l'un des deux).
+  return [...(navigator.languages ?? []), ...(navigator.language ? [navigator.language] : [])];
 }
 
 /** Première langue prise en charge (fr, en, es, ar) parmi les préférences du navigateur, sinon null. */
@@ -34,7 +35,8 @@ export function detectBrowserLanguage(): SiteLang | null {
 
 /**
  * Langue à afficher : préfixe d'URL (/fr, /en, /es, /ar) > choix explicite mémorisé (icônes de langue)
- * > langue du navigateur (fr, en, es, ar) > anglais. Voir resolveSiteLanguage (src/lib/langRoutes.ts).
+ * > première langue du navigateur parmi en, fr, es, ar > anglais.
+ * Voir resolveSiteLanguage (src/lib/langRoutes.ts).
  */
 export function readHarxLanguage(): SiteLang {
   let storedExplicit: string | null = null;

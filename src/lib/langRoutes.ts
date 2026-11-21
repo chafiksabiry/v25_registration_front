@@ -20,8 +20,9 @@ export function normalizeSiteLang(raw: string | null | undefined): SiteLang {
 }
 
 /**
- * Choix de la langue, par ordre de priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite) >
- * première langue du navigateur parmi fr, en, es, ar > anglais.
+ * Choix de la langue. Décision du fondateur (21/11/2026) : « on gère 4 langues et pour le reste des langues c'est l'anglais ». Par ordre de
+ * priorité : préfixe d'URL (/fr, /en, /es, /ar) > choix mémorisé (explicite) > première langue de la liste du navigateur qui fait partie de
+ * en, fr, es, ar > anglais. Le pays et le fuseau horaire ne servent pas à choisir la langue.
  */
 export function resolveSiteLanguage(input: {
   urlLang: string | null | undefined;
