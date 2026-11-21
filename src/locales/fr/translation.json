@@ -23,7 +23,7 @@
     "title2": "ouvert en quelques minutes",
     "desc": "Créez votre compte, choisissez Nomad, achetez un numéro de votre pays et passez ou recevez vos appels, avec l'IA pour vous assister.",
     "point1": "Un numéro de votre pays testé avant votre premier appel",
-    "point2": "Vos appels dans l’app HARX Nomad (iPhone et Android)",
+    "point2": "Vos appels dans l’app HARX Nomad (iPhone et Android) et depuis votre navigateur",
     "point3": "Journal de vos appels, répondeur avec transcription et résumé des messages par l'IA",
     "point4": "Un abonnement, puis vous payez ce que vous consommez"
   },
@@ -97,7 +97,7 @@
         "target": "Gardez votre numéro, même en voyage.",
         "benefit1": "Un numéro qui fonctionne partout dans le monde",
         "benefit2": "Sans roaming",
-        "benefit3": "Application HARX Nomad pour iPhone et Android",
+        "benefit3": "App HARX Nomad pour iPhone et Android, et navigateur",
         "solo": "Nomad"
       }
     }
