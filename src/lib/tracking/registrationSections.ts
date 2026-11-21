@@ -31,9 +31,14 @@ const AUTH_LABELS_EN: Record<string, string> = {
   'Inscription entreprise': 'Company sign-up',
   'Inscription rep': 'Rep sign-up',
   'Récupération de compte': 'Account recovery',
+  'Reprise du compte': 'Account reactivation',
+  Authentification: 'Authentication',
+  'Connexion LinkedIn': 'LinkedIn sign-in',
+  'Inscription LinkedIn': 'LinkedIn sign-up',
+  'Complétion du profil': 'Profile completion',
 };
 
-export function buildAuthPageTitle(label: string, lang: SiteLang = 'fr'): string {
+export function buildAuthPageTitle(label: string, lang: SiteLang = 'en'): string {
   if (lang !== 'fr') return `HARX — Account · ${AUTH_LABELS_EN[label] ?? label}`;
   return `HARX — Compte · ${label}`;
 }

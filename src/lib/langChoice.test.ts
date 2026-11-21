@@ -20,6 +20,17 @@ describe('choix de la langue : préfixe d\'URL > choix mémorisé > navigateur >
   ];
   for (const [name, input, expected] of cases) it(name, () => expect(resolveSiteLanguage(input)).toBe(expected));
 
+  it('4 langues gérées, l’anglais pour les autres ; ni pays ni fuseau (décision du fondateur)', () => {
+    const r = (...browser: string[]) => resolveSiteLanguage({ urlLang: null, storedExplicit: null, browser });
+    expect(r('en-US')).toBe('en'); // en-US en France
+    expect(r('fr-FR')).toBe('fr');
+    expect(r('ar')).toBe('ar'); // ar au Maroc
+    expect(r('de-DE')).toBe('en'); // de-DE en France
+    expect(r('de-DE', 'fr-FR')).toBe('fr');
+    expect(r('de-DE', 'en')).toBe('en');
+    expect(r('es-MX')).toBe('es');
+    expect(r()).toBe('en'); // liste vide (robot)
+  });
   it('le repli par défaut est l\'anglais', () => {
     expect(DEFAULT_SITE_LANG).toBe('en');
     expect(normalizeSiteLang('')).toBe('en');
@@ -36,6 +47,7 @@ describe('SEO : racine sans préférence en anglais, /fr /es /ar inchangés', ()
     expect(m.lang).toBe('en');
     expect(m.canonical).toMatch(/\/en$/);
     expect(m.alternates?.find((a) => a.hreflang === 'x-default')?.href).toMatch(/\/en$/);
+    expect(m.alternates?.map((a) => a.hreflang)).toEqual(['fr', 'en', 'es', 'ar', 'x-default']);
   });
   it('/fr reste français, canonical /fr', () => {
     const m = resolvePageMeta('/fr');
