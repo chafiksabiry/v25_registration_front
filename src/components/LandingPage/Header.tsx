@@ -3,7 +3,7 @@ import { ArrowRight, LayoutDashboard, LogOut, Menu, X } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Logo } from './Logo';
-import { LanguageIcons } from '../Brand/LanguageIcons';
+import { LanguageMenu } from '../Brand/LanguageMenu';
 import { HubSegmentedNav } from '../Brand/HubSegmentedNav';
 import { persistHarxLanguage } from '../../lib/i18n';
 import { TAAS_HOME } from '../../lib/taasPaths';
@@ -35,7 +35,7 @@ interface HeaderProps {
 
 /**
  * Bandeau commun à tous les écrans HARX : le logo toujours en haut à gauche, les trois offres (TAAS, CLOUD, NOMAD) en sélecteur segmenté avec la pastille de l'offre courante,
- * l'espace courant de TAAS (Company / REPS), le choix de la langue en icônes, puis la connexion.
+ * l'espace courant de TAAS (Company / REPS), le menu de langue (globe et nom de la langue, sans drapeau), puis la connexion.
  */
 export function Header({ onSignIn, onGetStarted, telephony = false, hub = false, taas }: HeaderProps) {
   const navigate = useNavigate();
@@ -165,7 +165,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <LanguageIcons />
+          <LanguageMenu />
           {authActions(false)}
         </div>
 
@@ -178,7 +178,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
         <div className="harx-bar absolute left-0 right-0 top-full border-t border-white/15 p-6 shadow-xl animate-fade-in md:hidden">
           <div className="flex flex-col gap-4">
             {offerMarks(true)}
-            <div className="flex justify-center"><LanguageIcons /></div>
+            <div className="flex justify-center"><LanguageMenu /></div>
             <div className="space-y-3 border-t border-white/15 pt-4">{authActions(true)}</div>
           </div>
         </div>
