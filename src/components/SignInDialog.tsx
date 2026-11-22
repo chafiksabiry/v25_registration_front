@@ -10,7 +10,9 @@ import { AuthBackdrop } from './layout/AuthBackdrop';
 import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import { useTranslation } from 'react-i18next';
-import { isCallcentreProduct } from '../lib/product';
+import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { OFFERS, activeMark } from '../config/offers';
+import { OfferWordmark } from './Hub/OfferWordmark';
 import { mapSignInError } from '../lib/authErrors';
 import { audienceMismatchKey, readAudience, saveAudience, type Audience } from '../lib/signInAudience';
 import { readRememberedEmail, rememberLoginEmail } from '../lib/authSync';
@@ -41,6 +43,11 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   });
   const [audience, setAudience] = useState<Audience>(() => readAudience());
   const telephony = isCallcentreProduct();
+  // Connexion Nomad : même détection que la pastille NOMAD active du bandeau. Nomad = une seule personne (le titulaire,
+  // compte entreprise) : pas de choix « Entreprise / Équipe », le contrôle reste celui de l'onglet par défaut « Entreprise ».
+  const nomad = activeMark({ telephony, nomad: telephony && isNomadVisitor() }) === 'nomad';
+  const nomadWord = OFFERS.find((o) => o.id === 'nomad')?.acronym ?? 'NOMAD';
+  const effectiveAudience: Audience = nomad ? 'company' : audience;
   const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
   const [error, setError] = useState<string | null>(null);
@@ -168,7 +175,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
         if (telephony) {
           try {
             const info = await auth.checkUserType(result.data.userId);
-            const mismatch = audienceMismatchKey(audience, info?.userType);
+            const mismatch = audienceMismatchKey(effectiveAudience, info?.userType);
             if (mismatch) {
               setError(
                 mismatch === 'accountIsCompany'
@@ -280,12 +287,13 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
                 </div>
               ) : (
                 <>
+                  {nomad ? <div className="mb-6 flex justify-center text-white [&_svg]:h-10 [&_svg]:w-auto [&_svg]:max-w-full [&_svg]:overflow-visible" data-testid="signin-offer-word"><OfferWordmark offer="nomad" label={nomadWord} /></div> : null}
                   <div className="text-center mb-8 lg:text-left">
                     <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
                     <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>
                   </div>
 
-                  {step === 'credentials' && telephony && (
+                  {step === 'credentials' && telephony && !nomad && (
                     <div className="mb-6" data-testid="signin-audience">
                       <div role="tablist" aria-label={t('signIn.audienceLabel', 'Type de compte')} className="grid grid-cols-2 gap-1 rounded-2xl bg-slate-800/70 p-1 border border-white/10">
                         {([
