@@ -74,6 +74,12 @@ function currentPathname(): string {
  */
 export function isNomadVisitor(pathname: string = currentPathname()): boolean {
   if (isNomadRegisterPath(pathname)) return true;
+  // Lien « Se connecter » de la page Nomad : /auth/signin?product=nomad (porte NOMAD).
+  try {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('product') === 'nomad') return true;
+  } catch {
+    /* ignore */
+  }
   const plan = readPendingPlan();
   if (plan) return plan === 'nomad_solo';
   try {
