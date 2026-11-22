@@ -18,6 +18,7 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { OFFERS, activeMark } from '../config/offers';
 import { OFFER_RETURN_KEY, readNomadReturn, resolveRegisterBack } from '../lib/offerRegister';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
@@ -83,6 +84,8 @@ export default function RegistrationDialog({
   // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
   // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
   const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
+  // Mot de l'offre au-dessus du titre de chaque étape (TAAS, CLOUD ou NOMAD) : le même que la pastille active du bandeau.
+  const offerWord = OFFERS.find((o) => o.id === activeMark({ telephony: telephonyContext, nomad: telephonyContext && isNomadVisitor() }))?.acronym ?? null;
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
 
@@ -523,6 +526,9 @@ export default function RegistrationDialog({
                   {t('register.back', 'Back')}
                 </button>
               )}
+
+              {/* Marque de l'offre (TAAS, CLOUD ou NOMAD), centrée et bien visible au-dessus des étapes (retour du fondateur 22/11 : « une marque »). */}
+              {offerWord && step !== 'success' ? <p dir="ltr" className="harx-brand mb-6 text-center text-[34px] font-light leading-none tracking-[0.34em] text-white [padding-left:0.34em]" data-testid="register-offer-word">{offerWord}</p> : null}
 
               {/* Indicateur d'avancement : une pastille par étape, reliées par une barre qui se remplit */}
               {step !== 'success' && (
