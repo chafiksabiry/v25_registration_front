@@ -48,9 +48,10 @@ describe('refus du serveur faute de téléphone', () => {
 
 describe('RegistrationDialog.tsx', () => {
   const src = readFileSync(fileURLToPath(new URL('../components/RegistrationDialog.tsx', import.meta.url)), 'utf8');
-  it('n’exige plus le téléphone et n’envoie plus de SMS automatiquement à l’inscription', () => {
-    expect(src).toContain('isValidOptionalPhone');
-    expect(src).not.toMatch(/await auth\.sendOTP\(RegisterResult/);
+  it('exige le téléphone et envoie le SMS automatiquement à l’inscription (double validation e-mail + SMS, retour du fondateur 22/11)', () => {
+    expect(src).toContain("phone.trim() !== '' && isValidOptionalPhone(phone)");
+    expect(src).toMatch(/await auth\.sendOTP\(RegisterResult/);
+    expect(src).toContain('errBothCodes');
   });
   it('n’affiche plus le numéro américain fixe', () => {
     expect(src).not.toContain('+1 (555) 000-0000');
