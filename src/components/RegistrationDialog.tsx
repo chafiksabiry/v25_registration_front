@@ -160,7 +160,8 @@ export default function RegistrationDialog({
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   const validatePassword = (password: string) => password.length >= 8 && /[A-Za-z]/.test(password) && /[0-9]/.test(password);
   // Téléphone facultatif à l'inscription (l'appel de test de la mise en route le redemande) ; s'il est saisi, il doit être plausible.
-  const validatePhone = (phone: string) => isValidOptionalPhone(phone);
+  // Téléphone obligatoire et vérifié par SMS à l'inscription (comme avant le 19/11 ; retour du fondateur 22/11 : double validation e-mail + SMS).
+  const validatePhone = (phone: string) => phone.trim() !== '' && isValidOptionalPhone(phone);
 
   const getFirstIncompleteStep = (): RegisterFormStep | null => {
     if (formData.fullName.trim().length < 3) return 'name';
@@ -306,8 +307,6 @@ export default function RegistrationDialog({
         case 'phone':
           if (!validatePhone(formData.phone)) {
             newErrors.phone = t('register.errPhone', 'Please enter a valid phone number');
-          } else if (formData.phone.trim() === '') {
-            pushStep('terms');
           } else {
             setIsLoading(true);
             try {
@@ -352,7 +351,7 @@ export default function RegistrationDialog({
                 fullName: formData.fullName,
                 email: formData.email,
                 password: formData.password,
-                ...(phone ? { phone } : {}),
+                phone,
               });
 
               if (RegisterResult?.data?._id) {
@@ -416,10 +415,14 @@ export default function RegistrationDialog({
 
             // Backend sends the verification email itself now (register()
             // no longer echoes the code back for us to re-send).
-            // Plus d'envoi automatique de SMS : la vérification se fait par e-mail (le SMS reste proposé, facultatif,
-            // quand un numéro a été saisi). Évite l'encart « SMS temporairement indisponible » affiché à tous.
             setSmsOtpAvailable(false);
             setSmsNotice(null);
+            try {
+              await auth.sendOTP(RegisterResult.data._id, formData.phone);
+              setSmsOtpAvailable(true);
+            } catch {
+              setSmsNotice(t('register.smsNoticeTempUnavailable', 'SMS verification is temporarily unavailable. Use the email code to complete registration.'));
+            }
 
             pushStep('verification');
           }
@@ -557,7 +560,7 @@ export default function RegistrationDialog({
                   {step === 'name' ? t('register.titleName', 'Create Account') :
                     step === 'email' ? t('register.titleEmail', 'Contact Details') :
                       step === 'password' ? t('register.titlePassword', 'Secure Account') :
-                        step === 'phone' ? t('register.titlePhoneOptional', 'Your phone (optional)') :
+                        step === 'phone' ? t('register.titlePhone', 'Phone Verification') :
                           step === 'terms' ? t('register.titleTerms', 'Final Step') :
                             step === 'verification' ? t('register.titleVerification', 'Verify Account') : t('register.titleSuccess', 'Success')}
                 </h2>
@@ -565,7 +568,7 @@ export default function RegistrationDialog({
                   {step === 'name' ? t('register.descName', "Let's get to know you.") :
                     step === 'email' ? t('register.descEmail', 'Where should we send updates?') :
                       step === 'password' ? t('register.descPassword', 'Protect your account.') :
-                        step === 'phone' ? t('register.descPhoneOptional', 'To call you during your test call.') :
+                        step === 'phone' ? t('register.descPhone', 'For account security.') :
                           step === 'terms' ? t('register.descTerms', 'Review our policies.') :
                             step === 'verification'
                               ? (smsOtpAvailable ? t('register.descVerificationBoth', 'Check your email and phone for codes.') : t('register.descVerificationEmail', 'Check your email for the verification code.'))
@@ -679,9 +682,6 @@ export default function RegistrationDialog({
                         data-testid="register-phone"
                       />
                     </div>
-                    <p className="text-xs text-slate-500 pl-2" data-testid="register-phone-optional">
-                      {t('register.phoneOptionalHint', 'Optional. It is used for your test call during setup; you can leave it empty and add it later.')}
-                    </p>
                     {errors.phone && <p className="text-red-400 text-sm pl-2">{errors.phone}</p>}
                   </div>
                 )}
