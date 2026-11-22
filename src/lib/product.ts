@@ -22,7 +22,8 @@ export function companyWorkspacePath(userType: string | null | undefined, callce
 export function captureProductFromUrl(search: string = window.location.search): void {
   try {
     const product = new URLSearchParams(search).get('product');
-    if (product === CALLCENTRE_PRODUCT) localStorage.setItem(PRODUCT_KEY, product);
+    // `?product=nomad` (connexion depuis la page Nomad) : compte du produit Téléphonie, comme `callcentre`.
+    if (product === CALLCENTRE_PRODUCT || product === 'nomad') localStorage.setItem(PRODUCT_KEY, CALLCENTRE_PRODUCT);
   } catch {
     /* ignore storage errors */
   }
@@ -59,6 +60,12 @@ export function readPendingPlan(): TelephonyPlan | null {
 
 /** Visiteur d'un parcours Nomad Solo (offre choisie ou profil « solo » mémorisé par l'application Téléphonie) : pastille NOMAD du bandeau. */
 export function isNomadVisitor(): boolean {
+  // Lien « Se connecter » de la page Nomad : /auth/signin?product=nomad (porte NOMAD).
+  try {
+    if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('product') === 'nomad') return true;
+  } catch {
+    /* ignore */
+  }
   const plan = readPendingPlan();
   if (plan) return plan === 'nomad_solo';
   try {
