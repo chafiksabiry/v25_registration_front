@@ -15,7 +15,7 @@ import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
 import { useAuthContext } from '../components/layout/AuthShell';
 import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
-import { isNomadVisitor } from '../lib/product';
+import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
 import { NOMAD_REGISTER_PATH, nomadRegisterSearch } from '../lib/offerRegister';
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
@@ -110,7 +110,8 @@ export function SignInScreen() {
   return (
     <AuthScreen title="Connexion">
       <SignInDialog
-        onRegister={() => navigate('/auth/choice')}
+        // « S'inscrire » mène à l'inscription de l'offre de la porte (NOMAD, CLOUD), jamais à la page TAAS depuis une autre offre.
+        onRegister={() => navigate(isNomadVisitor() ? `${NOMAD_REGISTER_PATH}?product=nomad` : isCallcentreProduct() ? '/auth/register-call-center?product=callcentre' : '/auth/choice')}
         onForgotPassword={() => navigate('/auth/recovery')}
         onGetStarted={() => navigate('/auth/choice')}
         onNavigateToSection={handleNavigateToSection}
