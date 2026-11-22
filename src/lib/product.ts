@@ -3,6 +3,8 @@
  * remembered from the link the visitor came from (`?product=callcentre`) so
  * sign-in and sign-up can land on that product instead of the marketplace.
  */
+import { NOMAD_PRODUCT, isNomadRegisterPath } from './offerRegister';
+
 const PRODUCT_KEY = 'harx_product';
 
 export const CALLCENTRE_PRODUCT = 'callcentre';
@@ -22,7 +24,8 @@ export function companyWorkspacePath(userType: string | null | undefined, callce
 export function captureProductFromUrl(search: string = window.location.search): void {
   try {
     const product = new URLSearchParams(search).get('product');
-    if (product === CALLCENTRE_PRODUCT) localStorage.setItem(PRODUCT_KEY, product);
+    // `?product=nomad` (inscription Nomad, /auth/register-nomad) : compte du produit Téléphonie, comme `callcentre`.
+    if (product === CALLCENTRE_PRODUCT || product === NOMAD_PRODUCT) localStorage.setItem(PRODUCT_KEY, CALLCENTRE_PRODUCT);
   } catch {
     /* ignore storage errors */
   }
@@ -57,8 +60,20 @@ export function readPendingPlan(): TelephonyPlan | null {
   }
 }
 
-/** Visiteur d'un parcours Nomad Solo (offre choisie ou profil « solo » mémorisé par l'application Téléphonie) : pastille NOMAD du bandeau. */
-export function isNomadVisitor(): boolean {
+function currentPathname(): string {
+  try {
+    return typeof window === 'undefined' ? '' : window.location.pathname;
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * Visiteur d'un parcours Nomad Solo : adresse d'inscription Nomad (/auth/register-nomad, prioritaire), sinon offre choisie ou
+ * profil « solo » mémorisé par l'application Téléphonie. Pastille NOMAD du bandeau, panneau de gauche, adresse et bouton Retour.
+ */
+export function isNomadVisitor(pathname: string = currentPathname()): boolean {
+  if (isNomadRegisterPath(pathname)) return true;
   const plan = readPendingPlan();
   if (plan) return plan === 'nomad_solo';
   try {

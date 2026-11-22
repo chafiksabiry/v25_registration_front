@@ -20,6 +20,7 @@ import {
   RegisterCompanyScreen,
   RegisterRepScreen,
   RegisterCallCenterScreen,
+  RegisterNomadScreen,
   RecoveryScreen,
 } from './routes/AuthRoutes';
 import AdminLayout from './components/admin/AdminLayout';
@@ -179,6 +180,7 @@ const routes: RouteObject[] = [
             { path: 'auth/register-company', element: <RegisterCompanyGate /> },
             { path: 'auth/register-rep', element: <RegisterRepScreen /> },
             { path: 'auth/register-call-center', element: <RegisterCallCenterScreen /> },
+            { path: 'auth/register-nomad', element: <RegisterNomadScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },
