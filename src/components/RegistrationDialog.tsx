@@ -17,7 +17,9 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { useHistoryBack } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
-import { CALLCENTRE_PATH, isCallcentreProduct } from '../lib/product';
+import { CALLCENTRE_PATH, isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { OFFERS, activeMark } from '../config/offers';
+import { OfferWordmark } from './Hub/OfferWordmark';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion, metaSignUpContext } from '../lib/tracking/conversions';
@@ -86,6 +88,10 @@ export default function RegistrationDialog({
   // Le produit Téléphonie ne s'applique qu'au parcours centre d'appels, ou à l'inscription générique venue d'un lien Téléphonie :
   // un candidat REPS ou une entreprise TAAS ne doit jamais voir (ni être redirigé vers) Téléphonie à cause d'un reste en mémoire.
   const telephonyContext = defaultUserType === 'call-center' || (defaultUserType === undefined && isCallcentreProduct());
+  // Logo de l'offre au-dessus des étapes (TAAS, CLOUD ou NOMAD) : le même que la pastille active du bandeau et que la page d'accueil harx.ai.
+  const activeOffer = OFFERS.find((o) => o.id === activeMark({ telephony: telephonyContext, nomad: telephonyContext && isNomadVisitor() }));
+  const offerWord = activeOffer?.acronym ?? null;
+  const offerId = activeOffer && ['taas', 'cloud', 'nomad'].includes(activeOffer.id) ? (activeOffer.id as 'taas' | 'cloud' | 'nomad') : null;
   const legalAudience = defaultUserType === 'rep' ? 'rep' : defaultUserType === 'call-center' ? 'callcenter' : 'company';
   const syncedBrowserStep = useRef(false);
   // Origine de la visite (utm_ du lien de campagne) : lue une fois à l'ouverture, jointe à l'inscription avec le consentement.
@@ -506,6 +512,9 @@ export default function RegistrationDialog({
                   {t('register.back', 'Back')}
                 </button>
               )}
+
+              {/* Logo de l'offre (TAAS, CLOUD ou NOMAD), le même que sur la première page harx.ai, centré au-dessus des étapes (retour du fondateur 22/11). */}
+              {offerId && step !== 'success' ? <div className="mb-6 flex justify-center text-white [&_svg]:h-10 [&_svg]:w-auto [&_svg]:max-w-full [&_svg]:overflow-visible" data-testid="register-offer-word"><OfferWordmark offer={offerId} label={offerWord ?? ''} /></div> : null}
 
               {/* Indicateur d'avancement : une pastille par étape, reliées par une barre qui se remplit */}
               {step !== 'success' && (
