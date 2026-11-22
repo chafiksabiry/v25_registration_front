@@ -1,15 +1,7 @@
 import React from 'react';
 import { Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { readPendingPlan } from '../lib/product';
-
-/**
- * Profil d'entrée mémorisé par l'application Téléphonie (même origine que ce site) : « solo » = Nomad Solo, un poste d'appel pour
- * une seule personne. Lecture seule, tolérante : sans stockage ou sans valeur, c'est le texte d'entreprise.
- */
-function isSoloVisitor(): boolean {
-  try { return localStorage.getItem('harx_cc_pending_profile') === 'solo'; } catch { return false; }
-}
+import { isNomadVisitor, readPendingPlan } from '../lib/product';
 
 /** Texte du panneau de gauche des écrans de connexion et d'inscription. Propre à HARX Téléphonie quand le visiteur vient de ce produit (variante Nomad Solo si c'est son profil). */
 export type BrandKind = 'telephony' | 'rep' | 'company' | 'neutral';
@@ -52,7 +44,8 @@ export function BrandText({ callCentre = false, kind }: { callCentre?: boolean; 
   }
   // Texte propre à l'offre choisie sur la page d'accueil ; sans offre connue, Nomad Solo (profil mémorisé) ou le texte d'entreprise.
   const plan = readPendingPlan();
-  const ns = plan === 'nomad_solo' || (!plan && isSoloVisitor()) ? 'callcentreBrandSolo'
+  // Adresse /auth/register-nomad : texte Nomad Solo quelle que soit l'offre mémorisée (isNomadVisitor lit l'adresse d'abord).
+  const ns = isNomadVisitor() ? 'callcentreBrandSolo'
     : plan === 'accueil' ? 'callcentreBrandAccueil'
     : plan === 'full_scope' ? 'callcentreBrandFullScope'
     : plan === 'multi_clients' ? 'callcentreBrandMulti'
