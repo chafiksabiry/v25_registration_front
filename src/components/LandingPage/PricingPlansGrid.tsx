@@ -8,14 +8,12 @@ type PricingPlansGridProps = {
   columns?: 3 | 4;
   showCta?: boolean;
   onCtaClick?: () => void;
-  /** Pastille de promotion affichée sous le prix (ex. « −50 % pendant 3 mois »). */
-  promoLabel?: string;
   /** Offre pas encore ouverte : remplace le bouton par « Bientôt disponible ». */
   comingSoon?: boolean;
 };
 
 /** Cartes de forfaits sur fond sombre : forfait recommandé en dégradé et surélevé, prix en grand, liste des inclus. */
-export function PricingPlansGrid({ plans, columns = 3, showCta = false, onCtaClick, promoLabel, comingSoon = false }: PricingPlansGridProps) {
+export function PricingPlansGrid({ plans, columns = 3, showCta = false, onCtaClick, comingSoon = false }: PricingPlansGridProps) {
   const { t } = useTranslation();
   const cols = columns === 4 ? 'lg:grid-cols-4 md:grid-cols-2' : 'md:grid-cols-3';
 
@@ -47,11 +45,6 @@ export function PricingPlansGrid({ plans, columns = 3, showCta = false, onCtaCli
               <span className="text-5xl font-black leading-none tracking-tight text-white">{getPlanPriceLabel(plan)}</span>
               <span className="pb-1 text-sm font-semibold text-white/60">{t('pricing.perMonth', 'per month')}</span>
             </p>
-            <div className="mt-3 min-h-[1.75rem]">
-              {promoLabel ? (
-                <span className="inline-flex rounded-full bg-harx-500/25 px-3 py-1 text-xs font-black text-harx-200 ring-1 ring-harx-300/40" data-testid="plan-promo">{promoLabel}</span>
-              ) : null}
-            </div>
           </div>
 
           {showCta && onCtaClick ? (
