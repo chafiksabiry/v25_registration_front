@@ -15,11 +15,12 @@ import {
   resolveRegisterPath,
 } from '../lib/registerNavigation';
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
-import { useHistoryBack } from '../hooks/useHistoryBack';
+import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { CALLCENTRE_PATH, isCallcentreProduct, isNomadVisitor } from '../lib/product';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
+import { OFFER_RETURN_KEY, readNomadReturn, resolveRegisterBack } from '../lib/offerRegister';
 import { Trans, useTranslation } from 'react-i18next';
 import { LegalViewerModal } from './legal/LegalViewerModal';
 import { trackSignUpConversion, metaSignUpContext } from '../lib/tracking/conversions';
@@ -53,7 +54,6 @@ export default function RegistrationDialog({
   const location = useLocation();
   const navState = (location.state as RegisterNavState | null) ?? null;
   const registerPath = useMemo(() => resolveRegisterPath(location.pathname), [location.pathname]);
-  const historyBack = useHistoryBack(navState?.returnTo ?? '/auth/choice');
   const [searchParams] = useSearchParams();
   const step = stepFromSearch(readBrowserSearchStep() || searchParams.get('step'));
   const [showProfilePrompt, setShowProfilePrompt] = useState(false);
@@ -486,7 +486,27 @@ export default function RegistrationDialog({
       onNavigateToSection(navState.scrollTo);
       return;
     }
-    historyBack();
+    // Retour à la page d'origine de l'offre : jamais /auth/choice (page TAAS) depuis Nomad. TAAS et CLOUD : inchangé.
+    let nomadReturn: string | null = null;
+    try {
+      nomadReturn = readNomadReturn(sessionStorage.getItem(OFFER_RETURN_KEY));
+    } catch {
+      /* stockage indisponible */
+    }
+    const nomadBack = defaultUserType === 'call-center' && isNomadVisitor();
+    const action = resolveRegisterBack({
+      canGoBack: canGoBackInHistory(),
+      nomad: nomadBack,
+      returnTo: navState?.returnTo,
+      nomadReturn,
+      pathname: window.location.pathname,
+    });
+    // Nomad : l'historique interne du module ne recule pas toujours (constaté depuis la connexion NOMAD) ; l'historique du
+    // navigateur, lui, ramène bien à la page précédente (connexion, page Nomad).
+    if (action.type === 'history') { if (nomadBack) window.history.back(); else navigate(-1); }
+    else if (action.type === 'browser-back') window.history.back();
+    else if (action.type === 'hard') hardNavigate(action.url);
+    else navigate(action.to);
   };
 
   return (

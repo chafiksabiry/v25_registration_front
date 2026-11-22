@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Navigate, useLocation } from 'react-router-dom';
 import { TaasShell } from '../components/Taas/TaasShell';
 import { TaasHome } from '../components/Taas/TaasHome';
 import { TaasCompanyPage } from '../components/Taas/TaasCompanyPage';
@@ -14,6 +15,8 @@ import PasswordRecoveryDialog from '../components/PasswordRecoveryDialog';
 import { useAuthContext } from '../components/layout/AuthShell';
 import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
+import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { NOMAD_REGISTER_PATH, nomadRegisterSearch } from '../lib/offerRegister';
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
   const { i18n } = useTranslation();
@@ -107,7 +110,8 @@ export function SignInScreen() {
   return (
     <AuthScreen title="Connexion">
       <SignInDialog
-        onRegister={() => navigate('/auth/choice')}
+        // « S'inscrire » mène à l'inscription de l'offre de la porte (NOMAD, CLOUD), jamais à la page TAAS depuis une autre offre.
+        onRegister={() => navigate(isNomadVisitor() ? `${NOMAD_REGISTER_PATH}?product=nomad` : isCallcentreProduct() ? '/auth/register-call-center?product=callcentre' : '/auth/choice')}
         onForgotPassword={() => navigate('/auth/recovery')}
         onGetStarted={() => navigate('/auth/choice')}
         onNavigateToSection={handleNavigateToSection}
@@ -158,6 +162,28 @@ export function RegisterRepScreen() {
 }
 
 export function RegisterCallCenterScreen() {
+  const { t } = useTranslation();
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  const location = useLocation();
+  // Ancienne adresse (/auth/register-call-center?product=callcentre) dans un parcours Nomad : remplacée par l'adresse de l'offre,
+  // étape et autres paramètres gardés. Les offres CLOUD restent ici.
+  if (isNomadVisitor(location.pathname)) {
+    return <Navigate replace to={{ pathname: NOMAD_REGISTER_PATH, search: nomadRegisterSearch(location.search || window.location.search) }} state={location.state} />;
+  }
+  return (
+    <AuthScreen title={t('authScreens.registerCallCenter', 'Call center signup')}>
+      <RegistrationDialog
+        defaultUserType="call-center"
+        onSignIn={() => navigate('/auth/signin')}
+        onGetStarted={() => navigate('/auth/choice')}
+        onNavigateToSection={handleNavigateToSection}
+      />
+    </AuthScreen>
+  );
+}
+
+/** `/auth/register-nomad?product=nomad` : inscription de l'offre NOMAD (Nomad Solo), même formulaire que l'inscription Téléphonie. */
+export function RegisterNomadScreen() {
   const { t } = useTranslation();
   const { navigate, handleNavigateToSection } = useAuthContext();
   return (

@@ -7,6 +7,8 @@ import './index.css';
 import { initVisitorTrackingScripts } from './lib/initVisitorTracking';
 import { syncVisitorTracking } from './lib/tracking/visitorTracking';
 import { syncLanguageFromPath } from './lib/i18n';
+import { nomadRegisterRedirect } from './lib/offerRegister';
+import { isNomadVisitor } from './lib/product';
 
 initVisitorTrackingScripts();
 
@@ -38,6 +40,14 @@ function render(props: { container?: HTMLElement } = {}) {
     return;
   }
 
+  // Parcours Nomad arrivé sur l'ancienne adresse d'inscription : adresse de l'offre, avant la création du routeur
+  // (une redirection après coup laissait parfois une entrée en double dans l'historique).
+  try {
+    const nomadTarget = nomadRegisterRedirect(window.location, isNomadVisitor(window.location.pathname));
+    if (nomadTarget) window.history.replaceState(window.history.state, '', nomadTarget);
+  } catch {
+    /* adresse inchangée : le routeur redirige quand même (RegisterCallCenterScreen) */
+  }
   syncLanguageFromPath(window.location.pathname);
   syncVisitorTracking();
   if (!root) {

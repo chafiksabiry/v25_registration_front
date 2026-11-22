@@ -47,6 +47,7 @@ export const REGISTER_ROUTE_PATHS = [
   '/auth/register-company',
   '/auth/register-rep',
   '/auth/register-call-center',
+  '/auth/register-nomad',
 ] as const;
 
 export type RegisterRoutePath = (typeof REGISTER_ROUTE_PATHS)[number];
