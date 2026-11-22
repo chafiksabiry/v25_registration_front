@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, Building2, Headphones, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, Headphones } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { publicPlansApi } from '../../lib/api';
 import { useCurrency } from '../../hooks/useCurrency';
@@ -72,17 +72,8 @@ export function Pricing({ onGetStarted, only }: PricingProps) {
     <div className="mx-auto max-w-[90rem]" data-testid="pricing-card">
       <div className="relative">
         <div className="mx-auto mb-6 max-w-3xl text-center">
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-black uppercase tracking-widest text-white">
-            <Sparkles className="h-4 w-4 text-harx-300" aria-hidden="true" />
-            {t('pricing.limitedTime', 'Limited Time Offer')}
-          </span>
-          <h2 className="mt-5 text-4xl font-black tracking-tight text-white md:text-5xl">{t('pricing.title', 'Subscription Plans')}</h2>
-          {audience === 'company' ? (
-            <>
-              <p className="mt-3 text-lg font-medium text-white/80">{t('pricing.discount', 'Get 50% off company plans when you subscribe today!')}</p>
-              <p className="mt-1 text-xs font-semibold text-white/50">{t('pricing.validity', '*Offer valid for the first 3 months')}</p>
-            </>
-          ) : (
+          <h2 className="text-4xl font-black tracking-tight text-white md:text-5xl">{t('pricing.title', 'Subscription Plans')}</h2>
+          {audience === 'company' ? null : (
             <p className="mt-3 text-lg font-medium text-white/80">{t('pricing.repHintDesc', 'Find gigs, work remotely, and grow your earnings.')}</p>
           )}
 
@@ -117,7 +108,7 @@ export function Pricing({ onGetStarted, only }: PricingProps) {
                 <p className="py-10 text-center text-sm font-medium text-white/60">{t('pricing.empty', 'No plans available yet.')}</p>
               ) : (
                 // AUTH-14 : l'inscription entreprise est « Bientôt disponible » sur toute la plateforme — pas de bouton d'achat.
-                <PricingPlansGrid plans={companyPlans} columns={3} comingSoon promoLabel={t('pricing.promoPill', '−50% for 3 months')} />
+                <PricingPlansGrid plans={companyPlans} columns={3} comingSoon />
               )}
             </div>
           ) : (
