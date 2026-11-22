@@ -493,14 +493,17 @@ export default function RegistrationDialog({
     } catch {
       /* stockage indisponible */
     }
+    const nomadBack = defaultUserType === 'call-center' && isNomadVisitor();
     const action = resolveRegisterBack({
       canGoBack: canGoBackInHistory(),
-      nomad: defaultUserType === 'call-center' && isNomadVisitor(),
+      nomad: nomadBack,
       returnTo: navState?.returnTo,
       nomadReturn,
       pathname: window.location.pathname,
     });
-    if (action.type === 'history') navigate(-1);
+    // Nomad : l'historique interne du module ne recule pas toujours (constaté depuis la connexion NOMAD) ; l'historique du
+    // navigateur, lui, ramène bien à la page précédente (connexion, page Nomad).
+    if (action.type === 'history') { if (nomadBack) window.history.back(); else navigate(-1); }
     else if (action.type === 'browser-back') window.history.back();
     else if (action.type === 'hard') hardNavigate(action.url);
     else navigate(action.to);
