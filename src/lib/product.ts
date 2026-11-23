@@ -26,6 +26,27 @@ export function captureProductFromUrl(search: string = window.location.search): 
     const product = new URLSearchParams(search).get('product');
     // `?product=nomad` (inscription Nomad, /auth/register-nomad) : compte du produit Téléphonie, comme `callcentre`.
     if (product === CALLCENTRE_PRODUCT || product === NOMAD_PRODUCT) localStorage.setItem(PRODUCT_KEY, CALLCENTRE_PRODUCT);
+    // Porte NOMAD : retenue pour cet onglet jusqu'à la connexion, puis transmise au portail (voir `handNomadProfileToPortal`).
+    // La porte Téléphonie l'efface. Le produit, lui, reste « callcentre » dans les deux cas.
+    if (product === NOMAD_PRODUCT) sessionStorage.setItem(NOMAD_DOOR_KEY, '1');
+    else if (product === CALLCENTRE_PRODUCT) sessionStorage.removeItem(NOMAD_DOOR_KEY);
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
+/** Marqueur de session : la personne est entrée par la porte NOMAD (`?product=nomad`). */
+const NOMAD_DOOR_KEY = 'harx_nomad_door';
+/** Clé du portail Téléphonie (même origine, v25_callcenter_front src/lib/session.ts) : profil « solo » = parcours Nomad. */
+const PORTAL_PROFILE_KEY = 'harx_cc_pending_profile';
+
+/**
+ * Après la connexion d'un compte Téléphonie entré par la porte NOMAD : le portail reçoit le profil « solo » (parcours Nomad), même
+ * dans un navigateur neuf ou après une déconnexion, en appoint du profil conservé côté serveur. Sans porte NOMAD, rien n'est écrit.
+ */
+export function handNomadProfileToPortal(): void {
+  try {
+    if (sessionStorage.getItem(NOMAD_DOOR_KEY) === '1') localStorage.setItem(PORTAL_PROFILE_KEY, 'solo');
   } catch {
     /* ignore storage errors */
   }
