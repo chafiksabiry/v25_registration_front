@@ -1,0 +1,72 @@
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+/**
+ * Défaut validé par le fondateur (23/11/2026) : la porte NOMAD (`/auth/signin?product=nomad`) enregistrait seulement le produit
+ * Téléphonie ; le portail, dans un navigateur neuf ou après déconnexion, ouvrait alors le parcours Entreprise d'un compte Nomad.
+ * La porte transmet maintenant « nomad » au portail (profil « solo », clé partagée de même origine), sans changer le produit.
+ */
+
+const checkUserType = vi.fn();
+vi.mock('./api', () => ({ auth: { checkUserType: (id: string) => checkUserType(id), setProduct: vi.fn(() => Promise.resolve()) } }));
+vi.mock('./agentInvitations', () => ({ INVITATIONS_SEEN_KEY: 'seen', fetchPendingInvitations: vi.fn(() => Promise.resolve([])) }));
+vi.mock('./appNavigation', () => ({ hardNavigate: vi.fn() }));
+vi.mock('./authSync', () => ({ readStoredAuthToken: vi.fn(() => null) }));
+vi.mock('axios', () => ({ default: { get: vi.fn(() => Promise.reject({ response: { status: 404 } })) } }));
+vi.mock('js-cookie', () => ({ default: { set: vi.fn(), remove: vi.fn(), get: vi.fn() } }));
+
+import { getPostLoginRedirectUrl } from './authRedirect';
+import { captureProductFromUrl, isCallcentreProduct } from './product';
+
+function memoryStorage() {
+  const m = new Map<string, string>();
+  return {
+    getItem: (k: string) => (m.has(k) ? m.get(k)! : null),
+    setItem: (k: string, v: string) => void m.set(k, String(v)),
+    removeItem: (k: string) => void m.delete(k),
+    clear: () => m.clear(),
+  };
+}
+
+beforeEach(() => {
+  vi.stubGlobal('localStorage', memoryStorage());
+  vi.stubGlobal('sessionStorage', memoryStorage());
+  checkUserType.mockReset();
+});
+afterEach(() => vi.unstubAllGlobals());
+
+const login = () => getPostLoginRedirectUrl('u1', 'tok');
+
+describe('porte NOMAD → portail', () => {
+  it('navigateur neuf : connexion par la porte NOMAD → /telephony, profil « solo » transmis, produit toujours « callcentre »', async () => {
+    captureProductFromUrl('?product=nomad');
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
+    expect(await login()).toBe('/telephony');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBe('solo');
+    expect(localStorage.getItem('harx_product')).toBe('callcentre');
+    expect(isCallcentreProduct()).toBe(true);
+  });
+
+  it('rien n’est écrit pour le portail avant la connexion (écrans d’inscription inchangés)', () => {
+    captureProductFromUrl('?product=nomad');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+
+  it('porte Téléphonie (?product=callcentre) : aucun profil « solo » ; elle efface une porte NOMAD prise plus tôt dans l’onglet', async () => {
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
+    captureProductFromUrl('?product=callcentre');
+    expect(await login()).toBe('/telephony');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+    captureProductFromUrl('?product=nomad');
+    captureProductFromUrl('?product=callcentre');
+    await login();
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+
+  it('compte hors Téléphonie (TAAS) entré par la porte NOMAD : rien n’est transmis', async () => {
+    captureProductFromUrl('?product=nomad');
+    localStorage.removeItem('harx_product');
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'taas' });
+    await login();
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+});
