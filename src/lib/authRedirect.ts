@@ -5,7 +5,7 @@ import { auth } from "./api";
 import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
-import { CALLCENTRE_PATH, clearProduct, companyWorkspacePath, isCallcentreProduct } from "./product";
+import { CALLCENTRE_PATH, clearProduct, companyWorkspacePath, handNomadProfileToPortal, isCallcentreProduct } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -309,6 +309,8 @@ async function computePostLoginRedirectUrl(
       }
       // Compte Call Center : application /telephony (l'ancienne /call-center est retirée, arbitrage 12).
       const dest = companyWorkspacePath(checkUserType.userType, callcentre);
+      // Porte NOMAD : le portail ouvre le parcours Nomad (profil « solo »), même dans un navigateur neuf.
+      if (callcentre) handNomadProfileToPortal();
       try {
         localStorage.setItem("userType", checkUserType.userType);
         const { data: onboardingProgress } = await axios.get(
