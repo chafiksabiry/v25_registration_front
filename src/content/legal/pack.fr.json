@@ -8,7 +8,7 @@
       "1. Conditions Générales d'Utilisation",
       "2. Conditions REP",
       "3. Conditions Company",
-      "4. Conditions Centre d'appels",
+      "4. Conditions Contact Centre",
       "5. Politique de confidentialité",
       "6. Accord de traitement des données"
     ],
@@ -963,7 +963,7 @@
       ]
     },
     {
-      "title": "Conditions Centre d'appels",
+      "title": "Conditions Contact Centre",
       "blocks": [
         {
           "type": "meta",
@@ -975,15 +975,15 @@
         },
         {
           "type": "paragraph",
-          "text": "1.1. Les présentes Conditions Centre d'appels s'appliquent à toute personne morale ou professionnel inscrit sur la Plateforme pour utiliser le service HARX Call Centre, c'est-à-dire l'infrastructure d'un centre d'appels (téléphonie, files d'attente, scripts, planning, suivi de la qualité, messagerie, agenda, visioconférence, intégrations) destinée à ses propres équipes ou à celles de ses clients (le « Client »). Elles complètent les CGU, dont elles reprennent les définitions."
+          "text": "1.1. Les présentes Conditions Contact Centre s'appliquent à toute personne morale ou professionnel inscrit sur la Plateforme pour utiliser le service HARX Contact Centre, c'est-à-dire l'infrastructure d'un centre d'appels (téléphonie, files d'attente, scripts, planning, suivi de la qualité, messagerie, agenda, visioconférence, intégrations) destinée à ses propres équipes ou à celles de ses clients (le « Client »). Elles complètent les CGU, dont elles reprennent les définitions."
         },
         {
           "type": "paragraph",
-          "text": "1.2. Le service Call Centre ne passe pas par la publication de Gigs : les articles des CGU relatifs aux Gigs, aux REPs, à la Commission HARX, au Compte de Séquestre et au non-contournement ne s'appliquent pas au Client pour ce service. Ils ne s'appliquent que si le Client utilise aussi la place de marché, dans les conditions des Conditions Company."
+          "text": "1.2. Le service Contact Centre ne passe pas par la publication de Gigs : les articles des CGU relatifs aux Gigs, aux REPs, à la Commission HARX, au Compte de Séquestre et au non-contournement ne s'appliquent pas au Client pour ce service. Ils ne s'appliquent que si le Client utilise aussi la place de marché, dans les conditions des Conditions Company."
         },
         {
           "type": "paragraph",
-          "text": "1.3. Pour le Client, les Conditions Centre d'appels tiennent la place des Conditions Company dans l'ordre de priorité de l'article 1.3 des CGU."
+          "text": "1.3. Pour le Client, les Conditions Contact Centre tiennent la place des Conditions Company dans l'ordre de priorité de l'article 1.3 des CGU."
         },
         {
           "type": "paragraph",
@@ -1011,7 +1011,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.1. Le service est proposé en quatre offres : « Nomad » (usage par un seul utilisateur), « Accueil / Secrétariat », « Company Full Scope In & Out » et « Contact Centre Multi-clients ». Le contenu de chaque offre (fonctionnalités, accès à l'intelligence artificielle) et son prix sont affichés dans l'application avant tout paiement ; seul le contenu affiché au moment de la souscription fait foi."
+          "text": "3.1. Le service est proposé en quatre offres : « Nomad » (usage par un seul utilisateur), « Receptionist », « Entreprise » et « Contact Centre ». Le contenu de chaque offre (fonctionnalités, accès à l'intelligence artificielle) et son prix sont affichés dans l'application avant tout paiement ; seul le contenu affiché au moment de la souscription fait foi."
         },
         {
           "type": "paragraph",
@@ -1373,7 +1373,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Traitements supplémentaires liés au service Centre d'appels (version 1.5). Les durées marquées [À CONFIRMER] dépendent d'une décision de HARX."
+          "text": "Traitements supplémentaires liés au service Contact Centre (version 1.5). Les durées marquées [À CONFIRMER] dépendent d'une décision de HARX."
         },
         {
           "type": "table",
@@ -1672,7 +1672,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Conclu en application de l'article 28 du règlement (UE) 2016/679 — fait partie des Conditions Company et des Conditions Centre d'appels"
+          "text": "Conclu en application de l'article 28 du règlement (UE) 2016/679 — fait partie des Conditions Company et des Conditions Contact Centre"
         },
         {
           "type": "heading",
@@ -1825,7 +1825,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Compléments pour le service Centre d'appels. Nature du traitement : en plus de ce qui précède, répondeur et messagerie vocale, analyse par intelligence artificielle des messages et plan d'action proposé (sans action automatique), synchronisation avec les CRM, API et webhooks choisis par le Client, envoi d'e-mails au nom du centre, notifications, liens de visioconférence, portail client à marque blanche (lecture seule). Catégories de données supplémentaires : messages vocaux, contenu des e-mails, contacts et notes issus du CRM, rendez-vous. Personnes concernées supplémentaires : clients du centre accédant au portail. Durées : messages vocaux 6 mois [À CONFIRMER] ; autres données selon les instructions du Client."
+          "text": "Compléments pour le service Contact Centre. Nature du traitement : en plus de ce qui précède, répondeur et messagerie vocale, analyse par intelligence artificielle des messages et plan d'action proposé (sans action automatique), synchronisation avec les CRM, API et webhooks choisis par le Client, envoi d'e-mails au nom du centre, notifications, liens de visioconférence, portail client à marque blanche (lecture seule). Catégories de données supplémentaires : messages vocaux, contenu des e-mails, contacts et notes issus du CRM, rendez-vous. Personnes concernées supplémentaires : clients du centre accédant au portail. Durées : messages vocaux 6 mois [À CONFIRMER] ; autres données selon les instructions du Client."
         },
         {
           "type": "subheading",
