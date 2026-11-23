@@ -25,9 +25,9 @@ describe('enregistrement des appels : textes de l’inscription', () => {
   it('conditions Centre d’appels (8.5) : la règle par offre, Accueil sur option du client avec message en début d’appel', () => {
     const fr = JSON.stringify(read('src/content/legal/pack.fr.json'));
     const en = JSON.stringify(read('src/content/legal/pack.en.json'));
-    expect(fr).toMatch(/Nomad, jamais ; Company Full Scope In & Out et Contact Centre Multi-clients, toujours/);
-    expect(fr).toMatch(/Accueil \/ Secrétariat, sur option, activée par le Client ; l'appelant est informé par un message en début d'appel/);
-    expect(en).toMatch(/Nomad, never; Company Full Scope In & Out and Multi-client Contact Centre, always/);
-    expect(en).toMatch(/Reception \/ Secretarial, optional, turned on by the Customer; the caller is informed by a message at the start of the call/);
+    expect(fr).toMatch(/Nomad, jamais ; Entreprise et Contact Centre, toujours/);
+    expect(fr).toMatch(/Receptionist, sur option, activée par le Client ; l'appelant est informé par un message en début d'appel/);
+    expect(en).toMatch(/Nomad, never; Entreprise and Contact Centre, always/);
+    expect(en).toMatch(/Receptionist, optional, turned on by the Customer; the caller is informed by a message at the start of the call/);
   });
 });

@@ -45,7 +45,7 @@ const PART_TITLES = {
     general: 'Terms of Use',
     rep: 'REP Terms',
     company: 'Company Terms',
-    callcenter: 'Contact Center Terms',
+    callcenter: 'Contact Centre Terms',
     privacy: 'Privacy Policy',
     dpa: 'Data Processing Agreement',
   },

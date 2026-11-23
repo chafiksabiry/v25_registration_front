@@ -18,7 +18,7 @@ export const TYPE_FILTERS: { value: TypeFilter; labelKey: string; fallback: stri
   { value: 'all', labelKey: 'adminFilters.typeAll', fallback: 'All' },
   { value: 'rep', labelKey: 'adminFilters.typeRep', fallback: 'REPs' },
   { value: 'company', labelKey: 'adminFilters.typeCompany', fallback: 'Companies' },
-  { value: 'call-center', labelKey: 'adminFilters.typeCallCenter', fallback: 'Call Centers' },
+  { value: 'call-center', labelKey: 'adminFilters.typeCallCenter', fallback: 'Contact Centres' },
 ];
 
 export const VERIFIED_FILTERS: { value: VerifiedFilter; labelKey: string; fallback: string }[] = [
