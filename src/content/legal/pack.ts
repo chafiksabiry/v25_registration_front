@@ -37,7 +37,7 @@ const PART_TITLES = {
     general: "Conditions Générales d'Utilisation",
     rep: 'Conditions REP',
     company: 'Conditions Company',
-    callcenter: "Conditions Centre d'appels",
+    callcenter: 'Conditions Contact Centre',
     privacy: 'Politique de confidentialité',
     dpa: 'Accord de traitement des données',
   },
