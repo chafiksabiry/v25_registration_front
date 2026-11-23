@@ -30,7 +30,7 @@
   "callcentreBrandAccueil": {
     "title1": "Your company's phone reception,",
     "title2": "up and running in minutes",
-    "desc": "Create your account, choose Reception / Secretarial, buy a number from your country: callers hear your greeting, and the messages they leave are sorted and ready to handle.",
+    "desc": "Create your account, choose Receptionist, buy a number from your country: callers hear your greeting, and the messages they leave are sorted and ready to handle.",
     "point1": "A number from your country, tested before your first call",
     "point2": "A greeting and voicemail in your company's image",
     "point3": "Several secretaries, each with their own schedule",
@@ -39,7 +39,7 @@
   "callcentreBrandFullScope": {
     "title1": "Telephony for all your services,",
     "title2": "up and running in 10 minutes",
-    "desc": "Sales, customer relations, collections, recruitment: create your account, choose Company Full Scope, buy a number from your country, invite your colleagues and start your inbound or outbound calls, with AI to assist you.",
+    "desc": "Sales, customer relations, collections, recruitment: create your account, choose Entreprise, buy a number from your country, invite your colleagues and start your inbound or outbound calls, with AI to assist you.",
     "point1": "A number from your country, tested before your first call",
     "point2": "Colleagues invited by e-mail and trained before their first calls",
     "point3": "Contacts, AI-written scripts and a knowledge base for each activity",
@@ -48,7 +48,7 @@
   "callcentreBrandMulti": {
     "title1": "Your contact centre,",
     "title2": "one control room for all your clients",
-    "desc": "Create your account, choose Contact Centre Multi-clients, attach each operation to a client with its numbers, indicators and reports, and launch your agents' calls, on-site or remote.",
+    "desc": "Create your account, choose Contact Centre, attach each operation to a client with its numbers, indicators and reports, and launch your agents' calls, on-site or remote.",
     "point1": "Operations, numbers and reports per client",
     "point2": "On-site or remote agents, shared between clients",
     "point3": "A client portal under your brand, read-only",
@@ -84,11 +84,11 @@
         "cta": "Discover CLOUD",
         "target": "Business telephony for companies and teams.",
         "benefit1": "Inbound and outbound calls, anywhere",
-        "benefit2": "Reception, secretarial service and AI voicemail",
+        "benefit2": "Receptionist and AI voicemail",
         "benefit3": "Owner, managers, agents, secretaries",
-        "accueil": "Reception / Secretarial",
-        "fullScope": "Full Scope",
-        "multiClients": "Multi-clients"
+        "accueil": "Receptionist",
+        "fullScope": "Entreprise",
+        "multiClients": "Contact Centre"
       },
       "nomad": {
         "title": "Telephony for Digital Workers",
@@ -683,7 +683,7 @@
   "choicePage": {
     "marketplace": "TAAS",
     "title1": "Transform Your",
-    "title2": "Contact Center",
+    "title2": "Contact Centre",
     "subtitle": "Connect with opportunities or find the perfect talent for your customer service needs.",
     "companyTitle": "Post a Gig",
     "companyDesc": "For companies seeking customer service talent",
@@ -720,7 +720,7 @@
     "typeAll": "All",
     "typeRep": "REPs",
     "typeCompany": "Companies",
-    "typeCallCenter": "Call Centers",
+    "typeCallCenter": "Contact Centres",
     "verifiedAll": "All statuses",
     "verifiedYes": "Verified",
     "verifiedNo": "Not verified",
@@ -737,7 +737,7 @@
   "userTypes": {
     "company": "Company",
     "rep": "REP",
-    "call-center": "Call Center",
+    "call-center": "Contact Centre",
     "admin": "Admin"
   },
   "reactivate": {

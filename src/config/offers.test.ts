@@ -220,14 +220,15 @@ describe('textes (i18n)', () => {
 
   it('liens secondaires courts, comme la maquette', () => {
     for (const lang of LANGS) {
-      expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Full Scope');
-      expect(lookup(locale(lang), 'hub.offers.cloud.multiClients')).toBe('Multi-clients');
+      expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Entreprise');
+      expect(lookup(locale(lang), 'hub.offers.cloud.multiClients')).toBe('Contact Centre');
     }
   });
 
+  // MAQUETTE renommage 22/11 : « Contact Centre » est un nom d'offre identique dans toutes les langues (décision du fondateur), exclu du contrôle US.
   it('anglais : orthographe US', () => {
     const json = locale('en');
-    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys, ...o.children.map((c) => c.labelKey)]) expect(lookup(json, key), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
+    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys, ...o.children.map((c) => c.labelKey)]) expect(lookup(json, key).replace(/\bContact Centre\b/g, ''), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
   });
 
   it('les noms complets et la mention AI POWERED', () => {

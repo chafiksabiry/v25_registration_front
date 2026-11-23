@@ -162,7 +162,7 @@ export default function ChoicePage({ onSelectRole, onSignIn, onNavigateToSection
         <h1 className="text-3xl md:text-5xl font-black text-white leading-tight tracking-tight">
           {t('choicePage.title1', 'Transform Your')}{' '}
           <span className="taas-shine-text">
-            {t('choicePage.title2', 'Contact Center')}
+            {t('choicePage.title2', 'Contact Centre')}
           </span>
         </h1>
         <p className="mt-3 text-sm md:text-lg text-slate-300 max-w-2xl mx-auto leading-relaxed">

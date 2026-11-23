@@ -30,7 +30,7 @@
   "callcentreBrandAccueil": {
     "title1": "La recepción telefónica de su empresa,",
     "title2": "en marcha en minutos",
-    "desc": "Cree su cuenta, elija Recepción / Secretaría, compre un número de su país: quienes llaman escuchan su saludo, y los mensajes que dejan se clasifican y quedan listos para gestionar.",
+    "desc": "Cree su cuenta, elija Receptionist, compre un número de su país: quienes llaman escuchan su saludo, y los mensajes que dejan se clasifican y quedan listos para gestionar.",
     "point1": "Un número de su país, probado antes de su primera llamada",
     "point2": "Un saludo y un buzón de voz a imagen de su empresa",
     "point3": "Varias secretarias, cada una con su propio horario",
@@ -39,7 +39,7 @@
   "callcentreBrandFullScope": {
     "title1": "Telefonía para todos sus servicios,",
     "title2": "en marcha en 10 minutos",
-    "desc": "Ventas, relación con clientes, cobros, selección de personal: cree su cuenta, elija Company Full Scope, compre un número de su país, invite a sus colegas y comience sus llamadas entrantes o salientes, con IA para asistirle.",
+    "desc": "Ventas, relación con clientes, cobros, selección de personal: cree su cuenta, elija Entreprise, compre un número de su país, invite a sus colegas y comience sus llamadas entrantes o salientes, con IA para asistirle.",
     "point1": "Un número de su país, probado antes de su primera llamada",
     "point2": "Colegas invitados por correo electrónico y formados antes de sus primeras llamadas",
     "point3": "Contactos, guiones redactados por IA y una base de conocimientos para cada actividad",
@@ -48,7 +48,7 @@
   "callcentreBrandMulti": {
     "title1": "Su centro de contacto,",
     "title2": "una sala de control para todos sus clientes",
-    "desc": "Cree su cuenta, elija Contact Centre Multi-clients, asocie cada operación a un cliente con sus números, indicadores e informes, y lance las llamadas de sus agentes, presenciales o remotos.",
+    "desc": "Cree su cuenta, elija Contact Centre, asocie cada operación a un cliente con sus números, indicadores e informes, y lance las llamadas de sus agentes, presenciales o remotos.",
     "point1": "Operaciones, números e informes por cliente",
     "point2": "Agentes presenciales o remotos, compartidos entre clientes",
     "point3": "Un portal de clientes con su marca, de solo lectura",
@@ -84,11 +84,11 @@
         "cta": "Descubrir CLOUD",
         "target": "La telefonía de empresas y equipos.",
         "benefit1": "Llamadas entrantes y salientes, desde cualquier lugar",
-        "benefit2": "Recepción, secretaría y contestador con IA",
+        "benefit2": "Receptionist y contestador con IA",
         "benefit3": "Titular, gerentes, agentes, secretarias",
-        "accueil": "Recepción / Secretaría",
-        "fullScope": "Full Scope",
-        "multiClients": "Multi-clients"
+        "accueil": "Receptionist",
+        "fullScope": "Entreprise",
+        "multiClients": "Contact Centre"
       },
       "nomad": {
         "title": "Telephony for Digital Workers",
@@ -683,7 +683,7 @@
   "choicePage": {
     "marketplace": "TAAS",
     "title1": "Transforme su",
-    "title2": "centro de contacto",
+    "title2": "Contact Centre",
     "subtitle": "Conecte con oportunidades o encuentre el talento ideal para sus necesidades de servicio al cliente.",
     "companyTitle": "Publicar una misión",
     "companyDesc": "Para empresas que buscan talento en servicio al cliente",
