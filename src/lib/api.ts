@@ -491,7 +491,7 @@ export type SupportConversationSummary = {
   last: { role: string; text: string; ts: string } | null;
 };
 
-export type SupportMessage = { role: 'user' | 'assistant' | 'human_agent'; text: string; ts: string };
+export type SupportMessage = { role: 'user' | 'assistant' | 'human_agent' | 'system'; text: string; ts: string };
 
 export type SupportConversationDetail = {
   waId: string;
@@ -523,6 +523,9 @@ const supportInboxBase = () =>
       'https://v25comporchestratorback-production.up.railway.app',
   ).replace(/\/$/, '')}/api/whatsapp/admin`;
 
+/** Base des routes JSON de revue des pièces d'identité de l'orchestrateur (/admin/identity/*), appelées par la page Admin › Identité du portail. */
+export const identityAdminUrl = (base: string = supportInboxBase()): string => base.replace(/\/api\/whatsapp\/admin\/?$/, '') + '/admin/identity';
+
 /** URL du WebSocket temps réel de l'Inbox (https -> wss, http -> ws) ; le jeton passe en sous-protocole, jamais dans l'URL. */
 export const supportInboxSocketUrl = (base: string = supportInboxBase()): string =>
   base.replace(/^http/i, 'ws').replace(/\/api\/whatsapp\/admin\/?$/, '') + '/support-inbox';
@@ -540,7 +543,7 @@ const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: stri
 };
 
 export const supportInboxApi = {
-  conversations: (channel: '' | 'whatsapp' | 'web' | 'salesiq' = '', limit = 100) =>
+  conversations: (channel: '' | 'whatsapp' | 'web' | 'salesiq' | 'identity' = '', limit = 100) =>
     supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}&limit=${limit}`),
   conversation: (id: string) =>
     supportInboxCall<SupportConversationDetail>('get', `/conversations/${encodeURIComponent(id)}`),

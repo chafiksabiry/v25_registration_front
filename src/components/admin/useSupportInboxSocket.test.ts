@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { supportInboxSocketUrl } from '../../lib/api';
+import { identityAdminUrl, supportInboxSocketUrl } from '../../lib/api';
 import { backoffMs } from './useSupportInboxSocket';
 
 describe('supportInboxSocketUrl', () => {
@@ -8,6 +8,13 @@ describe('supportInboxSocketUrl', () => {
   });
   it('http -> ws et barre finale ignorée', () => {
     expect(supportInboxSocketUrl('http://127.0.0.1:4599/api/whatsapp/admin/')).toBe('ws://127.0.0.1:4599/support-inbox');
+  });
+});
+
+describe('identityAdminUrl', () => {
+  it('base des routes JSON de revue des pièces de l’orchestrateur', () => {
+    expect(identityAdminUrl('https://api.example.com/api/whatsapp/admin')).toBe('https://api.example.com/admin/identity');
+    expect(identityAdminUrl('http://127.0.0.1:4599/api/whatsapp/admin/')).toBe('http://127.0.0.1:4599/admin/identity');
   });
 });
 

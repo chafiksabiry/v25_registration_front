@@ -36,14 +36,17 @@ describe('accueil : trois offres', () => {
     expect(resolveOfferHref(byId.taas, 'en')).toBe('/en/taas');
     expect(resolveOfferHref(byId.taas, 'fr')).toBe('/fr/taas');
     expect(resolveOfferHref(byId.cloud, 'es')).toBe('/telephony');
-    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/telephony/nomad');
-    expect(NOMAD_PAGE).toBe('/telephony/nomad');
+    // Adresses NOMAD (24/11/2026) : page de l'offre /nomad, jamais /telephony.
+    expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/nomad');
+    expect(NOMAD_PAGE).toBe('/nomad');
   });
 
   it('« Déjà client ? » : connexions existantes inchangées', () => {
     expect(resolveOfferSignInHref(byId.taas, 'en')).toBe('/en/auth/signin');
     expect(resolveOfferSignInHref(byId.cloud, 'en')).toBe('/auth/signin?product=callcentre');
-    expect(resolveOfferSignInHref(byId.nomad, 'fr')).toBe('/auth/signin?product=callcentre');
+    // NOMAD : connexion NOMAD (porte NOMAD), plus la connexion CLOUD.
+    expect(resolveOfferSignInHref(byId.nomad, 'fr')).toBe('/nomad/connexion');
+    expect(resolveOfferSignInHref(byId.nomad, 'ar')).toBe('/nomad/connexion');
   });
 
   it('liens de l\'accueil (offres ouvertes) : un vrai lien pour chaque entrée', () => {
@@ -57,11 +60,12 @@ describe('accueil : trois offres', () => {
       'cloud/accueil': { type: 'href', href: '/telephony/start?plan=accueil' },
       'cloud/full_scope': { type: 'href', href: '/telephony/start?plan=full_scope' },
       'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
-      'nomad/nomad_solo': { type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' },
+      'nomad/nomad_solo': { type: 'href', href: '/nomad/inscription' },
     });
-    // N1 (audit du 19/11) : lien direct « Nomad Solo », vers le départ Solo de l'application Téléphonie.
+    // N1 (audit du 19/11) : lien direct « Nomad Solo » ; adresses NOMAD (24/11/2026) : inscription NOMAD /nomad/inscription.
     expect(byId.nomad.children.map((c) => c.id)).toEqual(['nomad_solo']);
-    expect(resolveChildTarget(byId.nomad.children[0], 'en')).toEqual({ type: 'href', href: '/telephony/start?profil=solo&plan=nomad_solo' });
+    expect(resolveChildTarget(byId.nomad.children[0], 'en')).toEqual({ type: 'href', href: '/nomad/inscription' });
+    expect(Object.values(table).some((t) => t.type === 'href' && t.href.startsWith('/telephony/nomad'))).toBe(false);
     expect(Object.values(table).some((t) => t.type === 'href' && /^\/(\w\w\/)?company(\/|$)/.test(t.href))).toBe(false);
   });
 });
@@ -136,6 +140,12 @@ describe('bandeau à trois pastilles sur tous les écrans', () => {
     expect(activeMark({ pathname: '/fr/telephony/nomad' })).toBe('nomad');
     expect(activeMark({ pathname: '/telephony/nomad', telephony: true })).toBe('nomad');
     expect(activeMark({ pathname: '/telephony/nomad', hub: true })).toBe('nomad');
+    // adresses NOMAD (24/11/2026) : /nomad, /nomad/connexion, /nomad/inscription
+    for (const p of ['/nomad', '/nomad/', '/fr/nomad', '/nomad/connexion', '/nomad/inscription']) {
+      expect(activeMark({ pathname: p }), p).toBe('nomad');
+      expect(activeMark({ pathname: p, telephony: true }), p).toBe('nomad');
+    }
+    expect(activeMark({ pathname: '/nomadic' })).toBe('taas');
     // CLOUD et TAAS restent actifs ailleurs ; un chemin voisin n'active pas NOMAD
     expect(activeMark({ pathname: '/telephony', telephony: true })).toBe('cloud');
     expect(activeMark({ pathname: '/telephony/nomadic' })).toBe('taas');
@@ -146,8 +156,8 @@ describe('bandeau à trois pastilles sur tous les écrans', () => {
     expect(resolveMarkHref('taas', 'en')).toBe('/en/taas');
     expect(resolveMarkHref('taas', 'ar')).toBe('/ar/taas');
     expect(resolveMarkHref('cloud', 'fr')).toBe('/telephony');
-    expect(resolveMarkHref('nomad', 'fr')).toBe('/telephony/nomad');
-    expect(resolveMarkHref('nomad', 'ar')).toBe('/telephony/nomad');
+    expect(resolveMarkHref('nomad', 'fr')).toBe('/nomad');
+    expect(resolveMarkHref('nomad', 'ar')).toBe('/nomad');
   });
 });
 
@@ -220,14 +230,15 @@ describe('textes (i18n)', () => {
 
   it('liens secondaires courts, comme la maquette', () => {
     for (const lang of LANGS) {
-      expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Full Scope');
-      expect(lookup(locale(lang), 'hub.offers.cloud.multiClients')).toBe('Multi-clients');
+      expect(lookup(locale(lang), 'hub.offers.cloud.fullScope')).toBe('Entreprise');
+      expect(lookup(locale(lang), 'hub.offers.cloud.multiClients')).toBe('Contact Centre');
     }
   });
 
+  // MAQUETTE renommage 22/11 : « Contact Centre » est un nom d'offre identique dans toutes les langues (décision du fondateur), exclu du contrôle US.
   it('anglais : orthographe US', () => {
     const json = locale('en');
-    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys, ...o.children.map((c) => c.labelKey)]) expect(lookup(json, key), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
+    for (const o of OFFERS) for (const key of [o.titleKey, o.targetKey, o.ctaKey, ...o.benefitKeys, ...o.children.map((c) => c.labelKey)]) expect(lookup(json, key).replace(/\bContact Centre\b/g, ''), key).not.toMatch(/\b(centre|colour|organis\w+|favour\w*|programme)\b/i);
   });
 
   it('les noms complets et la mention AI POWERED', () => {

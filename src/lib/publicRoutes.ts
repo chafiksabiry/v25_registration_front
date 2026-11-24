@@ -17,7 +17,23 @@ export type HandoffLang = 'fr' | 'en' | 'es' | 'ar';
 export function telephonyHandoff(loc: { pathname: string; search?: string; hash?: string }): { lang: HandoffLang; url: string } | null {
   const match = LANG_TELEPHONY_RE.exec(loc.pathname);
   if (!match) return null;
-  const path = match[2].replace(/\/+$/, '') || '/telephony';
+  const rest = match[2].replace(/\/+$/, '') || '/telephony';
+  // Page de l'offre NOMAD : adresse NOMAD `/nomad` (24/11/2026), jamais `/telephony/nomad`.
+  const path = rest === '/telephony/nomad' ? '/nomad' : rest;
+  return { lang: match[1] as HandoffLang, url: `${path}${loc.search || ''}${loc.hash || ''}` };
+}
+
+const LANG_NOMAD_RE = /^\/(fr|en|es|ar)(\/nomad(?:\/.*)?)$/;
+
+/**
+ * `/:lang/nomad*` : les adresses NOMAD (24/11/2026) n'ont pas de préfixe de langue (`/nomad`, `/nomad/connexion`, `/nomad/poste`…).
+ * Normalement l'hôte redirige avant de monter ce module ; sinon ce module renvoie vers `/nomad*` (requête et ancre gardées) avec la
+ * langue de l'adresse, au lieu d'une page 404.
+ */
+export function nomadHandoff(loc: { pathname: string; search?: string; hash?: string }): { lang: HandoffLang; url: string } | null {
+  const match = LANG_NOMAD_RE.exec(loc.pathname);
+  if (!match) return null;
+  const path = match[2].replace(/\/+$/, '') || '/nomad';
   return { lang: match[1] as HandoffLang, url: `${path}${loc.search || ''}${loc.hash || ''}` };
 }
 

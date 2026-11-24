@@ -8,7 +8,7 @@
       "1. Terms of Use",
       "2. REP Terms",
       "3. Company Terms",
-      "4. Contact Center Terms",
+      "4. Contact Centre Terms",
       "5. Privacy Policy",
       "6. Data Processing Agreement"
     ],
@@ -178,9 +178,7 @@
           "type": "bullets",
           "items": [
             "general information and public authorities: contact@harx.ai;",
-            "general support: support@harx.ai;",
-            "REP support: reps-support@harx.ai;",
-            "Company support: comp-support@harx.ai;",
+            "support (REPs and Companies): support@harx.ai;",
             "sales inquiries and Company subscriptions: sales@harx.ai;",
             "reporting of unlawful content or conduct: abuse-support@harx.ai. HARX responds in French and English. Where the law of a country requires HARX to appoint a local representative, its identity and contact details are indicated on the Platform."
           ]
@@ -352,7 +350,7 @@
         },
         {
           "type": "paragraph",
-          "text": "12.3. The User may challenge a decision through the Platform's internal complaint system or at repssupport@harx.ai for REPs and comp-support@harx.ai for Companies, within six (6) months. The complaint is reviewed by a person who did not take the initial decision. HARX responds with a statement of reasons within thirty (30) days."
+          "text": "12.3. The User may challenge a decision through the Platform's internal complaint system or at support@harx.ai, within six (6) months. The complaint is reviewed by a person who did not take the initial decision. HARX responds with a statement of reasons within thirty (30) days."
         },
         {
           "type": "paragraph",
@@ -535,7 +533,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.4. The REP may view the results of their assessment, request explanations, submit their comments and request a review at reps-support@harx.ai."
+          "text": "3.4. The REP may view the results of their assessment, request explanations, submit their comments and request a review at support@harx.ai."
         },
         {
           "type": "heading",
@@ -963,7 +961,7 @@
       ]
     },
     {
-      "title": "Contact Center Terms",
+      "title": "Contact Centre Terms",
       "blocks": [
         {
           "type": "meta",
@@ -975,15 +973,15 @@
         },
         {
           "type": "paragraph",
-          "text": "1.1. These Contact Center Terms apply to any legal entity or professional registered on the Platform to use the HARX Call Centre service, meaning the infrastructure of a contact center (telephony, queues, scripts, planning, quality monitoring, messaging, calendar, video conferencing, integrations) for its own teams or for those of its clients (the “Customer”). They supplement the Terms of Use and use their definitions."
+          "text": "1.1. These Contact Centre Terms apply to any legal entity or professional registered on the Platform to use the HARX Contact Centre service, meaning the infrastructure of a contact center (telephony, queues, scripts, planning, quality monitoring, messaging, calendar, video conferencing, integrations) for its own teams or for those of its clients (the “Customer”). They supplement the Terms of Use and use their definitions."
         },
         {
           "type": "paragraph",
-          "text": "1.2. The Call Centre service does not involve publishing Gigs: the articles of the Terms of Use on Gigs, REPs, the HARX Commission, the Escrow Account and non-circumvention do not apply to the Customer for this service. They apply only if the Customer also uses the marketplace, under the Company Terms."
+          "text": "1.2. The Contact Centre service does not involve publishing Gigs: the articles of the Terms of Use on Gigs, REPs, the HARX Commission, the Escrow Account and non-circumvention do not apply to the Customer for this service. They apply only if the Customer also uses the marketplace, under the Company Terms."
         },
         {
           "type": "paragraph",
-          "text": "1.3. For the Customer, the Contact Center Terms take the place of the Company Terms in the order of precedence set out in article 1.3 of the Terms of Use."
+          "text": "1.3. For the Customer, the Contact Centre Terms take the place of the Company Terms in the order of precedence set out in article 1.3 of the Terms of Use."
         },
         {
           "type": "paragraph",
@@ -1011,7 +1009,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.1. The service is offered in four plans: “Nomad” (single-user use), “Reception / Secretarial”, “Company Full Scope In & Out” and “Multi-client Contact Centre”. The content of each plan (features, access to artificial intelligence) and its price are shown in the application before any payment; only the content shown at the time of subscription applies."
+          "text": "3.1. The service is offered in four plans: “Nomad” (single-user use), “Receptionist”, “Entreprise” and “Contact Centre”. The content of each plan (features, access to artificial intelligence) and its price are shown in the application before any payment; only the content shown at the time of subscription applies."
         },
         {
           "type": "paragraph",
@@ -1292,7 +1290,7 @@
         },
         {
           "type": "paragraph",
-          "text": "15.4. Requests are made at contact@harx.ai. Refunds are made by the same payment method."
+          "text": "15.4. Requests are made at support@harx.ai. Refunds are made by the same payment method."
         },
         {
           "type": "heading",
@@ -1373,7 +1371,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Additional processing linked to the Contact Center service (version 1.5). Retention periods marked [TO BE CONFIRMED] depend on a HARX decision."
+          "text": "Additional processing linked to the Contact Centre service (version 1.5). Retention periods marked [TO BE CONFIRMED] depend on a HARX decision."
         },
         {
           "type": "table",
@@ -1434,7 +1432,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.3. Automated decisions and human review. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a call, may be taken automatically on the basis of these scores, where this is necessary for the performance of the contract. You may request the intervention of a member of the HARX team, express your point of view and contest the decision at contact@harx.ai, or at repssupport@harx.ai if you are a REP."
+          "text": "3.3. Automated decisions and human review. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a call, may be taken automatically on the basis of these scores, where this is necessary for the performance of the contract. You may request the intervention of a member of the HARX team, express your point of view and contest the decision at contact@harx.ai, or at support@harx.ai if you are a REP."
         },
         {
           "type": "paragraph",
@@ -1672,7 +1670,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Entered into pursuant to Article 28 of Regulation (EU) 2016/679 — forms part of the Company Terms and the Contact Center Terms"
+          "text": "Entered into pursuant to Article 28 of Regulation (EU) 2016/679 — forms part of the Company Terms and the Contact Centre Terms"
         },
         {
           "type": "heading",
@@ -1825,7 +1823,7 @@
         },
         {
           "type": "paragraph",
-          "text": "Additions for the Contact Center service. Nature of the processing: in addition to the above, answering machine and voicemail, AI analysis of messages and proposed action plan (no automatic action), synchronisation with the CRMs, API and webhooks chosen by the Customer, sending emails in the name of the centre, notifications, video conference links, white-label client portal (read-only). Additional data categories: voice messages, email content, CRM contacts and notes, appointments. Additional data subjects: centre clients using the portal. Retention: voice messages 6 months [TO BE CONFIRMED]; other data as instructed by the Customer."
+          "text": "Additions for the Contact Centre service. Nature of the processing: in addition to the above, answering machine and voicemail, AI analysis of messages and proposed action plan (no automatic action), synchronisation with the CRMs, API and webhooks chosen by the Customer, sending emails in the name of the centre, notifications, video conference links, white-label client portal (read-only). Additional data categories: voice messages, email content, CRM contacts and notes, appointments. Additional data subjects: centre clients using the portal. Retention: voice messages 6 months [TO BE CONFIRMED]; other data as instructed by the Customer."
         },
         {
           "type": "subheading",

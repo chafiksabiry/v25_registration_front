@@ -30,7 +30,7 @@
   "callcentreBrandAccueil": {
     "title1": "L'accueil téléphonique de votre entreprise,",
     "title2": "assuré en quelques minutes",
-    "desc": "Créez votre compte, choisissez Accueil / Secrétariat, achetez un numéro de votre pays : vos appelants entendent votre message d'accueil, les messages laissés sont classés et à traiter.",
+    "desc": "Créez votre compte, choisissez Receptionist, achetez un numéro de votre pays : vos appelants entendent votre message d'accueil, les messages laissés sont classés et à traiter.",
     "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Message d'accueil et répondeur à l'image de votre entreprise",
     "point3": "Plusieurs secrétaires, chacune avec son planning",
@@ -39,7 +39,7 @@
   "callcentreBrandFullScope": {
     "title1": "La téléphonie de tous vos services,",
     "title2": "opérationnelle en 10 minutes",
-    "desc": "Ventes, relation client, recouvrement, recrutement : créez votre compte, choisissez Company Full Scope, achetez un numéro de votre pays, invitez vos collaborateurs et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
+    "desc": "Ventes, relation client, recouvrement, recrutement : créez votre compte, choisissez Entreprise, achetez un numéro de votre pays, invitez vos collaborateurs et lancez vos appels entrants ou sortants, avec l'IA pour vous assister.",
     "point1": "Un numéro de votre pays testé avant votre premier appel",
     "point2": "Vos collaborateurs invités par e-mail, formés avant leurs premiers appels",
     "point3": "Contacts, scripts rédigés par l'IA et base de connaissance de chaque activité",
@@ -48,7 +48,7 @@
   "callcentreBrandMulti": {
     "title1": "Votre centre d'appels,",
     "title2": "un seul poste de pilotage pour tous vos clients",
-    "desc": "Créez votre compte, choisissez Contact Centre Multi-clients, rattachez chaque opération à un client avec ses numéros, ses indicateurs et ses rapports, et lancez les appels de vos agents, sur plateau ou à distance.",
+    "desc": "Créez votre compte, choisissez Contact Centre, rattachez chaque opération à un client avec ses numéros, ses indicateurs et ses rapports, et lancez les appels de vos agents, sur plateau ou à distance.",
     "point1": "Une opération, des numéros et des rapports par client",
     "point2": "Agents sur plateau ou à distance, partagés entre clients",
     "point3": "Portail client à votre marque, en lecture",
@@ -84,11 +84,11 @@
         "cta": "Découvrir CLOUD",
         "target": "La téléphonie des entreprises et des équipes.",
         "benefit1": "Appels entrants et sortants, partout",
-        "benefit2": "Accueil, secrétariat et répondeur IA",
+        "benefit2": "Receptionist et répondeur IA",
         "benefit3": "Titulaire, managers, agents, secrétaires",
-        "accueil": "Accueil / Secrétariat",
-        "fullScope": "Full Scope",
-        "multiClients": "Multi-clients"
+        "accueil": "Receptionist",
+        "fullScope": "Entreprise",
+        "multiClients": "Contact Centre"
       },
       "nomad": {
         "title": "Telephony for Digital Workers",
@@ -683,7 +683,7 @@
   "choicePage": {
     "marketplace": "TAAS",
     "title1": "Transformez Votre",
-    "title2": "Centre de Contact",
+    "title2": "Contact Centre",
     "subtitle": "Connectez-vous à des opportunités ou trouvez le talent idéal pour vos besoins en service client.",
     "companyTitle": "Publier un gig",
     "companyDesc": "Pour les entreprises recherchant des talents en service client",
@@ -784,5 +784,14 @@
     "descError": "Un problème est survenu de notre côté. Rechargez la page, ou continuez depuis l’un des liens ci-dessous.",
     "home": "Accueil HARX",
     "telephony": "HARX Téléphonie"
+  },
+  "support": {
+    "title": "Besoin d’aide ?",
+    "intro": "Écrivez-nous : le code ci-dessous est déjà dans le message.",
+    "whatsapp": "Contacter le support sur WhatsApp",
+    "writeTo": "Écrire à",
+    "code": "Code",
+    "hello": "Bonjour, j’ai besoin d’aide sur HARX.",
+    "errorCode": "Code d’erreur"
   }
 }

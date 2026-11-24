@@ -40,15 +40,17 @@ function render(props: { container?: HTMLElement } = {}) {
     return;
   }
 
-  // Parcours Nomad arrivé sur l'ancienne adresse d'inscription : adresse de l'offre, avant la création du routeur
-  // (une redirection après coup laissait parfois une entrée en double dans l'historique).
+  // Parcours Nomad arrivé sur une ancienne adresse (/auth/register-nomad, /auth/register-call-center, /auth/signin?product=nomad,
+  // /:lang/nomad/…) : adresse NOMAD (/nomad/inscription, /nomad/connexion), avant la création du routeur (une redirection après
+  // coup laissait parfois une entrée en double dans l'historique). Les adresses NOMAD n'ont pas de préfixe de langue : la langue
+  // de l'ancienne adresse est mémorisée d'abord (choix explicite).
+  syncLanguageFromPath(window.location.pathname);
   try {
     const nomadTarget = nomadRegisterRedirect(window.location, isNomadVisitor(window.location.pathname));
     if (nomadTarget) window.history.replaceState(window.history.state, '', nomadTarget);
   } catch {
-    /* adresse inchangée : le routeur redirige quand même (RegisterCallCenterScreen) */
+    /* adresse inchangée : le routeur redirige quand même (RegisterCallCenterScreen, SignInScreen) */
   }
-  syncLanguageFromPath(window.location.pathname);
   syncVisitorTracking();
   if (!root) {
     root = createRoot(rootElement);

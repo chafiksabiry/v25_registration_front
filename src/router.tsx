@@ -21,6 +21,8 @@ import {
   RegisterRepScreen,
   RegisterCallCenterScreen,
   RegisterNomadScreen,
+  NomadSignInScreen,
+  LegacyRegisterNomadRedirect,
   RecoveryScreen,
 } from './routes/AuthRoutes';
 import AdminLayout from './components/admin/AdminLayout';
@@ -36,6 +38,7 @@ import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
 import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
 import AdminInboxPage from './components/admin/AdminInboxPage';
+import AdminIdentityPage from './components/admin/AdminIdentityPage';
 import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
@@ -45,7 +48,7 @@ import { LegalPage } from './components/legal/LegalPage';
 import NotFoundPage from './components/NotFoundPage';
 import { isRoleComingSoon } from './config/offers';
 import { hardNavigate } from './lib/appNavigation';
-import { registerCompanyFallback, rememberExplicitLang, telephonyHandoff } from './lib/publicRoutes';
+import { nomadHandoff, registerCompanyFallback, rememberExplicitLang, telephonyHandoff } from './lib/publicRoutes';
 import { AuthSpinner } from './components/layout/guards';
 
 function RootLayout() {
@@ -83,6 +86,24 @@ function TelephonyHandoff() {
   return <AuthSpinner />;
 }
 
+/**
+ * `/:lang/nomad*` (ex. /en/nomad, /en/nomad/poste) : les adresses NOMAD n'ont pas de préfixe de langue. Normalement l'hôte redirige
+ * avant de monter ce module ; s'il est monté quand même, on part vers /nomad* avec la langue de l'adresse (chargement complet : l'hôte
+ * monte alors la bonne application). La connexion et l'inscription NOMAD ont leurs propres routes ci-dessous.
+ */
+function NomadHandoff() {
+  const target = typeof window === 'undefined' ? null : nomadHandoff(window.location);
+  React.useEffect(() => {
+    if (!target) return;
+    let storage: Storage | null = null;
+    try { storage = window.localStorage; } catch { storage = null; }
+    rememberExplicitLang(target.lang, storage);
+    hardNavigate(target.url);
+  }, [target?.url, target?.lang]);
+  if (!target) return <NotFoundPage />;
+  return <AuthSpinner />;
+}
+
 /** T2 : inscription entreprise fermée tant que l'offre Company (TAAS) est « bientôt », même par adresse directe. */
 function RegisterCompanyGate() {
   const fallback = registerCompanyFallback(isRoleComingSoon('company'));
@@ -107,6 +128,8 @@ const routes: RouteObject[] = [
         { path: 'auth/invite', element: <InviteLogin /> },
         { path: 'telephony', element: <TelephonyHandoff /> },
         { path: 'telephony/*', element: <TelephonyHandoff /> },
+        { path: 'nomad', element: <NomadHandoff /> },
+        { path: 'nomad/*', element: <NomadHandoff /> },
         {
           path: 'auth/invitations',
           element: (
@@ -160,6 +183,7 @@ const routes: RouteObject[] = [
             { path: 'ai-tokens', element: <AdminAiTokensPage /> },
             { path: 'objectives', element: <AdminObjectivesPage /> },
             { path: 'inbox', element: <AdminInboxPage /> },
+            { path: 'identity', element: <AdminIdentityPage /> },
             { path: 'pricing/minutes', element: <AdminPricingMinutesPage /> },
             { path: 'pricing/phone-line', element: <AdminPricingPhonePage /> },
             { path: 'plans/company', element: <AdminCompanyPlansPage /> },
@@ -184,7 +208,10 @@ const routes: RouteObject[] = [
             { path: 'auth/register-company', element: <RegisterCompanyGate /> },
             { path: 'auth/register-rep', element: <RegisterRepScreen /> },
             { path: 'auth/register-call-center', element: <RegisterCallCenterScreen /> },
-            { path: 'auth/register-nomad', element: <RegisterNomadScreen /> },
+            // Adresses NOMAD (24/11/2026) : connexion et inscription NOMAD ; l'ancienne inscription NOMAD y est redirigée.
+            { path: 'nomad/connexion', element: <NomadSignInScreen /> },
+            { path: 'nomad/inscription', element: <RegisterNomadScreen /> },
+            { path: 'auth/register-nomad', element: <LegacyRegisterNomadRedirect /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },

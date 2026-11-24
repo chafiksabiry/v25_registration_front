@@ -17,7 +17,7 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
-import { CALLCENTRE_PATH, isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { isCallcentreProduct, isNomadVisitor, telephonySignupDestination } from '../lib/product';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
 import { OFFER_RETURN_KEY, readNomadReturn, resolveRegisterBack } from '../lib/offerRegister';
@@ -220,8 +220,10 @@ export default function RegistrationDialog({
       navigate({ pathname: registerPath, search: '?step=success' });
       setShowProfilePrompt(true);
       // Call Centre product: the account is already signed in, go straight to its onboarding.
+      // NOMAD (adresses NOMAD du 24/11/2026) : mise en route NOMAD /nomad/mise-en-route ; CLOUD inchangé (/telephony).
       if (telephonyContext) {
-        setTimeout(() => hardNavigate(CALLCENTRE_PATH), 1500);
+        const dest = telephonySignupDestination();
+        setTimeout(() => hardNavigate(dest), 1500);
       } else {
         setTimeout(() => onSignIn(), 1500);
       }
