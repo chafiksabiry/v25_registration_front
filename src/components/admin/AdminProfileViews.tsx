@@ -944,6 +944,7 @@ export function ProfileHero({
   onboardingStatus,
   photoUrl,
   accountDisabled,
+  offerBadge,
 }: {
   fullName: string;
   email: string;
@@ -953,6 +954,8 @@ export function ProfileHero({
   photoUrl?: string;
   /** Statut du compte (maquettes A2, A2b) : pastille « Actif » / « Désactivé ». Absent : pas de pastille. */
   accountDisabled?: boolean;
+  /** Offre réelle du compte (logo NOMAD / CLOUD + produit) : remplace la pastille du type historique quand elle est fournie. */
+  offerBadge?: React.ReactNode;
 }) {
   const Icon = typeUser === 'company' ? Building2 : typeUser === 'rep' ? User : Globe;
 
@@ -978,9 +981,15 @@ export function ProfileHero({
           <h1 className="text-2xl sm:text-3xl font-black truncate drop-shadow-sm">{fullName}</h1>
           <p className="text-white/90 mt-1 truncate">{email}</p>
           <div className="flex flex-wrap gap-2 mt-3">
-            <span className="admin-tag">
-              {typeUser || 'compte'}
-            </span>
+            {offerBadge ? (
+              <span className="admin-tag" data-testid="hero-offer">
+                {offerBadge}
+              </span>
+            ) : (
+              <span className="admin-tag">
+                {typeUser || 'compte'}
+              </span>
+            )}
             {onboardingDisplay && (
               <span className="admin-tag">
                 {onboardingDisplay}

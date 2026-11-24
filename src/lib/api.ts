@@ -163,6 +163,8 @@ export const adminApi = {
     planName?: string;
     /** Statut du compte : actif ou désactivé (maquette A1). */
     status?: 'active' | 'disabled';
+    /** Offre réelle du compte : nomad, cloud ou unknown (offre inconnue). */
+    offer?: 'nomad' | 'cloud' | 'unknown';
   }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
