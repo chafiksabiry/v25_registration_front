@@ -178,9 +178,7 @@
           "type": "bullets",
           "items": [
             "informations générales et autorités publiques : contact@harx.ai ;",
-            "support général : support@harx.ai ;",
-            "support des REPs : support@harx.ai ;",
-            "support des Companies : support@harx.ai ;",
+            "support (REPs et Companies) : support@harx.ai ;",
             "demandes commerciales et abonnements Company : sales@harx.ai ;",
             "signalement de contenus ou de comportements illicites : abuse-support@harx.ai. HARX répond en français et en anglais. Lorsque la loi d'un pays impose à HARX de désigner un représentant local, son identité et ses coordonnées sont indiquées sur la Plateforme."
           ]
@@ -352,7 +350,7 @@
         },
         {
           "type": "paragraph",
-          "text": "12.3. L'Utilisateur peut contester une décision par le système interne de réclamation de la Plateforme ou à l'adresse support@harx.ai pour les REPs et support@harx.ai pour les Companies, dans un délai de six (6) mois. La réclamation est examinée par une personne qui n'a pas pris la décision initiale. HARX répond de manière motivée dans un délai de trente (30) jours."
+          "text": "12.3. L'Utilisateur peut contester une décision par le système interne de réclamation de la Plateforme ou à l'adresse support@harx.ai, dans un délai de six (6) mois. La réclamation est examinée par une personne qui n'a pas pris la décision initiale. HARX répond de manière motivée dans un délai de trente (30) jours."
         },
         {
           "type": "paragraph",
