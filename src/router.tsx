@@ -22,6 +22,8 @@ import {
   RegisterCallCenterScreen,
   RegisterNomadScreen,
   NomadSignInScreen,
+  CloudReceptionistSignInScreen,
+  RegisterCloudReceptionistScreen,
   LegacyRegisterNomadRedirect,
   RecoveryScreen,
 } from './routes/AuthRoutes';
@@ -210,6 +212,9 @@ const routes: RouteObject[] = [
             { path: 'nomad/connexion', element: <NomadSignInScreen /> },
             { path: 'nomad/inscription', element: <RegisterNomadScreen /> },
             { path: 'auth/register-nomad', element: <LegacyRegisterNomadRedirect /> },
+            // Adresses CLOUD Receptionist (24/11/2026) : connexion et étape 2 de l'inscription (l'étape 1 est dans l'application Téléphonie).
+            { path: 'cloud/receptionist/connexion', element: <CloudReceptionistSignInScreen /> },
+            { path: 'cloud/receptionist/inscription/compte', element: <RegisterCloudReceptionistScreen /> },
             { path: 'auth/recovery', element: <RecoveryScreen /> },
           ],
         },

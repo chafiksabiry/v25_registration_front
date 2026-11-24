@@ -35,7 +35,8 @@ describe('accueil : trois offres', () => {
   it('boutons principaux : TAAS et CLOUD vers l\'existant, NOMAD vers Nomad Solo', () => {
     expect(resolveOfferHref(byId.taas, 'en')).toBe('/en/taas');
     expect(resolveOfferHref(byId.taas, 'fr')).toBe('/fr/taas');
-    expect(resolveOfferHref(byId.cloud, 'es')).toBe('/telephony');
+    // Adresses CLOUD Receptionist (24/11/2026) : page CLOUD /cloud (ancienne adresse /telephony).
+    expect(resolveOfferHref(byId.cloud, 'es')).toBe('/cloud');
     // Adresses NOMAD (24/11/2026) : page de l'offre /nomad, jamais /telephony.
     expect(resolveOfferHref(byId.nomad, 'ar')).toBe('/nomad');
     expect(NOMAD_PAGE).toBe('/nomad');
@@ -57,7 +58,8 @@ describe('accueil : trois offres', () => {
       // Company : point d'entrée entreprise TAAS (inscription entreprise), jamais /company/ en direct.
       'taas/company': { type: 'href', href: '/en/auth/register-company' },
       'taas/reps': { type: 'role', role: 'rep' },
-      'cloud/accueil': { type: 'href', href: '/telephony/start?plan=accueil' },
+      // Receptionist : étape 1 /cloud/receptionist/inscription (24/11/2026) ; Entreprise et Contact Centre inchangés.
+      'cloud/accueil': { type: 'href', href: '/cloud/receptionist/inscription' },
       'cloud/full_scope': { type: 'href', href: '/telephony/start?plan=full_scope' },
       'cloud/multi_clients': { type: 'href', href: '/telephony/start?plan=multi_clients' },
       'nomad/nomad_solo': { type: 'href', href: '/nomad/inscription' },
@@ -155,7 +157,7 @@ describe('bandeau à trois pastilles sur tous les écrans', () => {
   it('liens des pastilles', () => {
     expect(resolveMarkHref('taas', 'en')).toBe('/en/taas');
     expect(resolveMarkHref('taas', 'ar')).toBe('/ar/taas');
-    expect(resolveMarkHref('cloud', 'fr')).toBe('/telephony');
+    expect(resolveMarkHref('cloud', 'fr')).toBe('/cloud');
     expect(resolveMarkHref('nomad', 'fr')).toBe('/nomad');
     expect(resolveMarkHref('nomad', 'ar')).toBe('/nomad');
   });

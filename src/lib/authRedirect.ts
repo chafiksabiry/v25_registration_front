@@ -5,7 +5,7 @@ import { auth } from "./api";
 import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
-import { CALLCENTRE_PATH, NOMAD_POST_LOGIN_PATH, clearProduct, companyWorkspacePath, handNomadProfileToPortal, isCallcentreProduct, isNomadAccountHint } from "./product";
+import { NOMAD_POST_LOGIN_PATH, callcentreHome, clearProduct, companyWorkspacePath, handNomadProfileToPortal, isCallcentreProduct, isNomadAccountHint } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -352,10 +352,10 @@ async function computePostLoginRedirectUrl(
       if (checkUserType.mustChangePassword) {
         localStorage.setItem("mustChangePassword", "1");
         // Telephony shows its own forced-password screen.
-        return callcentreMember ? CALLCENTRE_PATH : "/company/#/dashboard/account-settings?changePassword=1";
+        return callcentreMember ? callcentreHome() : "/company/#/dashboard/account-settings?changePassword=1";
       }
       localStorage.removeItem("mustChangePassword");
-      return callcentreMember ? CALLCENTRE_PATH : "/company/#/dashboard/main";
+      return callcentreMember ? callcentreHome() : "/company/#/dashboard/main";
     }
 
     // Always prefer live profile so login resumes the real onboarding step
@@ -377,11 +377,11 @@ async function computePostLoginRedirectUrl(
           // pas dans l'espace des agents REPS, qui reste réservé aux agents du marketplace.
           if (checkUserType.product === 'callcentre' || isCallcentreProduct()) {
             if (checkUserType.product !== 'callcentre') auth.setProduct('callcentre', token).catch(() => undefined);
-            return CALLCENTRE_PATH;
+            return callcentreHome();
           }
           return toRepAbsoluteUrl('/account-settings?changePassword=1');
         }
-        return checkUserType.product === 'callcentre' || isCallcentreProduct() ? CALLCENTRE_PATH : toRepAbsoluteUrl('/dashboard');
+        return checkUserType.product === 'callcentre' || isCallcentreProduct() ? callcentreHome() : toRepAbsoluteUrl('/dashboard');
       }
 
       const { data: profileData } = await axios.get(

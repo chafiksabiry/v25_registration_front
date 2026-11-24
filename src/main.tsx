@@ -9,6 +9,7 @@ import { syncVisitorTracking } from './lib/tracking/visitorTracking';
 import { syncLanguageFromPath } from './lib/i18n';
 import { nomadRegisterRedirect } from './lib/offerRegister';
 import { isNomadVisitor } from './lib/product';
+import { cloudReceptionistRedirect } from './lib/cloudReceptionist';
 
 initVisitorTrackingScripts();
 
@@ -48,6 +49,12 @@ function render(props: { container?: HTMLElement } = {}) {
   try {
     const nomadTarget = nomadRegisterRedirect(window.location, isNomadVisitor(window.location.pathname));
     if (nomadTarget) window.history.replaceState(window.history.state, '', nomadTarget);
+    // Parcours CLOUD Receptionist (24/11/2026), après NOMAD : connexion et étape 2 à leurs adresses /cloud/receptionist/… (voir
+    // lib/cloudReceptionist.ts ; normalement déjà fait par l'hôte avant le montage).
+    else {
+      const cloudTarget = cloudReceptionistRedirect(window.location);
+      if (cloudTarget) window.history.replaceState(window.history.state, '', cloudTarget);
+    }
   } catch {
     /* adresse inchangée : le routeur redirige quand même (RegisterCallCenterScreen, SignInScreen) */
   }

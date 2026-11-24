@@ -18,6 +18,7 @@ import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '..
 import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
 import { isCallcentreProduct, isNomadVisitor, telephonySignupDestination } from '../lib/product';
+import { isCloudReceptionistAccountPath } from '../lib/cloudReceptionist';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
 import { OFFER_RETURN_KEY, readNomadReturn, resolveRegisterBack } from '../lib/offerRegister';
@@ -497,6 +498,7 @@ export default function RegistrationDialog({
     const action = resolveRegisterBack({
       canGoBack: canGoBackInHistory(),
       nomad: nomadBack,
+      receptionist: isCloudReceptionistAccountPath(window.location.pathname),
       returnTo: navState?.returnTo,
       nomadReturn,
       pathname: window.location.pathname,

@@ -4,6 +4,13 @@
  * sign-in and sign-up can land on that product instead of the marketplace.
  */
 import { NOMAD_PRODUCT, isNomadDoorPath, isNomadRegisterPath } from './offerRegister';
+import {
+  CLOUD_RECEPTIONIST_POST_LOGIN_PATH,
+  CLOUD_RECEPTIONIST_POST_SIGNUP_PATH,
+  isCloudReceptionistDoorPath,
+  isCloudReceptionistVisitor,
+  rememberCloudReceptionistDoor,
+} from './cloudReceptionist';
 
 const PRODUCT_KEY = 'harx_product';
 
@@ -15,7 +22,17 @@ export const NOMAD_POST_SIGNUP_PATH = '/nomad/mise-en-route';
 
 /** Arrivée après l'inscription d'un compte Téléphonie : mise en route NOMAD pour un visiteur NOMAD, sinon `/telephony` (CLOUD, inchangé). */
 export function telephonySignupDestination(pathname: string = currentPathname()): string {
-  return isNomadVisitor(pathname) ? NOMAD_POST_SIGNUP_PATH : CALLCENTRE_PATH;
+  if (isNomadVisitor(pathname)) return NOMAD_POST_SIGNUP_PATH;
+  // Porte CLOUD Receptionist (24/11/2026) : la mise en route à son adresse /cloud/receptionist/mise-en-route.
+  return isCloudReceptionistVisitor(pathname) ? CLOUD_RECEPTIONIST_POST_SIGNUP_PATH : CALLCENTRE_PATH;
+}
+
+/**
+ * Arrivée d'un compte Téléphonie (CLOUD) : `/cloud/receptionist` pour la porte Receptionist (le portail ouvre l'écran d'arrivée du
+ * compte, et renvoie un compte d'une autre offre vers ses adresses `/telephony`), sinon `/telephony` (inchangé).
+ */
+export function callcentreHome(pathname: string = currentPathname()): string {
+  return isCloudReceptionistVisitor(pathname) ? CLOUD_RECEPTIONIST_POST_LOGIN_PATH : CALLCENTRE_PATH;
 }
 
 /**
@@ -24,7 +41,7 @@ export function telephonySignupDestination(pathname: string = currentPathname())
  * application `/call-center` étant retirée. Les autres comptes entreprise vont vers `/company`.
  */
 export function companyWorkspacePath(userType: string | null | undefined, callcentreProduct: boolean): string {
-  if (callcentreProduct || userType === 'call-center') return CALLCENTRE_PATH;
+  if (callcentreProduct || userType === 'call-center') return callcentreHome();
   return '/company';
 }
 
@@ -36,7 +53,12 @@ export function companyWorkspacePath(userType: string | null | undefined, callce
 export function captureProductFromUrl(search: string = window.location.search, pathname: string = currentPathname()): void {
   try {
     const nomadDoor = isNomadDoorPath(pathname);
-    const product = nomadDoor ? NOMAD_PRODUCT : new URLSearchParams(search).get('product');
+    // Porte CLOUD Receptionist (/cloud/receptionist/connexion, /cloud/receptionist/inscription/compte) : produit Téléphonie.
+    const receptionistDoor = isCloudReceptionistDoorPath(pathname);
+    const product = nomadDoor ? NOMAD_PRODUCT : receptionistDoor ? CALLCENTRE_PRODUCT : new URLSearchParams(search).get('product');
+    // Porte Receptionist retenue pour cet onglet ; toute autre porte d'un produit l'efface.
+    if (receptionistDoor) rememberCloudReceptionistDoor(true);
+    else if (product === CALLCENTRE_PRODUCT || product === NOMAD_PRODUCT) rememberCloudReceptionistDoor(false);
     // `?product=nomad` (porte NOMAD : /nomad/connexion, /nomad/inscription) : compte du produit Téléphonie, comme `callcentre`.
     if (product === CALLCENTRE_PRODUCT || product === NOMAD_PRODUCT) localStorage.setItem(PRODUCT_KEY, CALLCENTRE_PRODUCT);
     // Porte NOMAD : retenue pour cet onglet jusqu'à la connexion, puis transmise au portail (voir `handNomadProfileToPortal`).
@@ -151,6 +173,8 @@ function currentPathname(): string {
  */
 export function isNomadVisitor(pathname: string = currentPathname()): boolean {
   if (isNomadDoorPath(pathname)) return true;
+  // Porte CLOUD Receptionist (adresse prioritaire, 24/11/2026) : jamais le parcours Nomad, quoi qu'il reste en mémoire.
+  if (isCloudReceptionistDoorPath(pathname)) return false;
   // Ancien lien « Se connecter » de la page Nomad : /auth/signin?product=nomad (porte NOMAD).
   try {
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('product') === 'nomad') return true;
