@@ -5,6 +5,8 @@ import { HARX_NAVBAR_BG } from '../../lib/harxBrand';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import AdminSidebar from './AdminSidebar';
 import AdminTopBar from './AdminTopBar';
+import { RecetteStrip } from '../RecetteMarker';
+import { isRecette } from '../../lib/appEnv';
 import { buildAdminPageTitle, resolveAdminTabTitle } from './adminSections';
 import './adminTheme.css';
 
@@ -37,6 +39,9 @@ export default function AdminLayout() {
         setIsSidebarOpen={setIsSidebarOpen}
         onLogout={logout}
       />
+
+      {/* Hors production seulement : fine bande ambre en haut (lib/appEnv.ts). */}
+      {isRecette() ? <RecetteStrip /> : null}
 
       {isSidebarOpen && (
         <div
