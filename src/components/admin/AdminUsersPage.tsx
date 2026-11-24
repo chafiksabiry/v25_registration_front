@@ -12,6 +12,16 @@ import { Info } from 'lucide-react';
 import { formatDay, isAccountDisabled, type AccountStatusFilter } from './accountClosureUtils';
 import AccountOfferBadge from './AccountOfferBadge';
 import { showsAccountOffer, type AccountOffer, type OfferFilter } from './accountOfferUtils';
+import { BulkDeleteDialog, BulkDeleteResults, BulkSelectionBar } from './AdminBulkDelete';
+import {
+  bulkLockReason,
+  pageSelectionState,
+  toggleRow,
+  togglePage,
+  BULK_DELETE_MAX,
+  type BulkResponse,
+  type Selection,
+} from './bulkDeleteUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -31,6 +41,8 @@ type UserRow = {
   createdAt?: string;
   disabled?: boolean;
   disabledAt?: string | null;
+  /** Compte protégé (démonstration Apple…) : jamais sélectionnable pour la suppression en masse. */
+  protectedAccount?: boolean;
   /** Offre réelle du compte (NOMAD / CLOUD + produit), lue par le serveur. */
   accountOffer?: AccountOffer | null;
   onboarding?: OnboardingInfo | null;
@@ -87,6 +99,15 @@ export default function AdminUsersPage() {
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Suppression en masse : sélection (gardée d'une page à l'autre, vidée quand un filtre change), confirmation, résultat.
+  const [selection, setSelection] = useState<Selection>(() => new Map());
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkResult, setBulkResult] = useState<{ response: BulkResponse; names: Record<string, string> } | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    setSelection(new Map());
+  }, [search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter]);
 
   useEffect(() => {
     setLoading(true);
@@ -107,7 +128,18 @@ export default function AdminUsersPage() {
       })
       .catch(() => setError('Impossible de charger la liste des utilisateurs.'))
       .finally(() => setLoading(false));
-  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter, reloadKey]);
+
+  const pageState = pageSelectionState(selection, users);
+  const pageHasSelectable = users.some((u) => bulkLockReason(u) === null);
+  const onBulkDone = (response: BulkResponse) => {
+    const names: Record<string, string> = {};
+    selection.forEach((row, id) => { names[id] = row.displayName || row.fullName || ''; });
+    setBulkResult({ response, names });
+    setBulkOpen(false);
+    setSelection(new Map());
+    setReloadKey((k) => k + 1);
+  };
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -149,6 +181,15 @@ export default function AdminUsersPage() {
         }}
       />
 
+      {bulkResult ? (
+        <BulkDeleteResults response={bulkResult.response} names={bulkResult.names} onClose={() => setBulkResult(null)} />
+      ) : null}
+
+      <BulkSelectionBar count={selection.size} onClear={() => setSelection(new Map())} onDelete={() => setBulkOpen(true)} />
+      {bulkOpen && selection.size > 0 ? (
+        <BulkDeleteDialog rows={[...selection.values()]} onClose={() => setBulkOpen(false)} onDone={onBulkDone} />
+      ) : null}
+
       {loading ? (
         <p className="text-violet-600/70 animate-pulse">Chargement…</p>
       ) : error ? (
@@ -159,6 +200,19 @@ export default function AdminUsersPage() {
             <table className="admin-table min-w-full text-sm">
               <thead className="text-left text-slate-500">
                 <tr>
+                  <th className="pl-6 pr-2 py-3 w-10">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-red-600 cursor-pointer disabled:cursor-not-allowed"
+                      aria-label="Tout sélectionner (page)"
+                      title={selection.size >= BULK_DELETE_MAX && pageState !== 'all' ? `Maximum ${BULK_DELETE_MAX} comptes par suppression` : 'Tout sélectionner (page)'}
+                      checked={pageState === 'all'}
+                      ref={(el) => { if (el) el.indeterminate = pageState === 'some'; }}
+                      disabled={!pageHasSelectable}
+                      onChange={() => setSelection((current) => togglePage(current, users))}
+                      data-testid="bulk-select-page"
+                    />
+                  </th>
                   <th className="px-6 py-3 font-semibold">Nom / Entreprise</th>
                   <th className="px-6 py-3 font-semibold">Email</th>
                   <th className="px-6 py-3 font-semibold">Téléphone</th>
@@ -175,8 +229,27 @@ export default function AdminUsersPage() {
                   <tr
                     key={user._id}
                     onClick={() => navigate(`/admin/users/${user._id}`)}
-                    className={`border-t border-violet-50/80 cursor-pointer transition-colors ${isAccountDisabled(user) ? 'bg-slate-50/70' : ''}`}
+                    className={`border-t border-violet-50/80 cursor-pointer transition-colors ${selection.has(user._id) ? 'bg-red-50/60' : isAccountDisabled(user) ? 'bg-slate-50/70' : ''}`}
                   >
+                    <td className="pl-6 pr-2 py-3 w-10" onClick={(e) => e.stopPropagation()}>
+                      {(() => {
+                        const lock = bulkLockReason(user);
+                        const full = !selection.has(user._id) && selection.size >= BULK_DELETE_MAX;
+                        return (
+                          <span title={lock || (full ? `Maximum ${BULK_DELETE_MAX} comptes par suppression` : undefined)} className="inline-flex">
+                            <input
+                              type="checkbox"
+                              className="h-4 w-4 accent-red-600 cursor-pointer disabled:cursor-not-allowed disabled:opacity-40"
+                              aria-label={lock ? `${rowName(user)} : ${lock}` : `Sélectionner ${rowName(user)}`}
+                              checked={selection.has(user._id)}
+                              disabled={Boolean(lock) || full}
+                              onChange={() => setSelection((current) => toggleRow(current, user))}
+                              data-testid="bulk-select-row"
+                            />
+                          </span>
+                        );
+                      })()}
+                    </td>
                     <td className={`px-6 py-3 font-medium ${isAccountDisabled(user) ? 'text-slate-500' : 'text-slate-900'}`}>
                       <div>{rowName(user)}</div>
                       {user.typeUser === 'company' && user.industry && (

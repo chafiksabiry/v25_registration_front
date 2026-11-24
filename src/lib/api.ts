@@ -189,6 +189,11 @@ export const adminApi = {
       data: { userId: string; deletedAt: string; subscriptionsCanceled: number; numbersReturned: number; emailFreed: boolean };
     };
   },
+  /** Suppression en masse (≤ 50 comptes) ; `confirmText` = « SUPPRIMER N » tapé par l'admin. Résultat par compte. */
+  bulkDeleteUsers: async (userIds: string[], confirmText: string) => {
+    const response = await api.post('/admin/users/bulk-delete', { userIds, confirmText });
+    return response.data as { success: boolean; data: import('../components/admin/bulkDeleteUtils').BulkResponse };
+  },
   updateFinancials: async (
     userId: string,
     payload: {
