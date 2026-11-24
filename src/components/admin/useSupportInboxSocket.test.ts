@@ -12,7 +12,7 @@ describe('supportInboxSocketUrl', () => {
 });
 
 describe('identityAdminUrl', () => {
-  it('page Admin › Identité de l’orchestrateur (demande « Identité » de l’Inbox)', () => {
+  it('base des routes JSON de revue des pièces de l’orchestrateur', () => {
     expect(identityAdminUrl('https://api.example.com/api/whatsapp/admin')).toBe('https://api.example.com/admin/identity');
     expect(identityAdminUrl('http://127.0.0.1:4599/api/whatsapp/admin/')).toBe('http://127.0.0.1:4599/admin/identity');
   });
