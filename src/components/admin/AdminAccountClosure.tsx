@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   AlertTriangle,
   Ban,
@@ -202,7 +203,8 @@ export function DeleteAccountDialog({
     </li>
   );
 
-  return (
+  // Rendue dans <body> : les animations de la fiche (transform) ne doivent pas enfermer la fenêtre dans la page.
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/55 backdrop-blur-sm p-6" role="dialog" aria-modal="true" aria-labelledby="delete-account-title">
       <div className="w-full max-w-[600px] max-h-full overflow-y-auto rounded-3xl bg-white shadow-2xl">
         <div className="flex items-start gap-4 border-b border-slate-100 px-7 pt-6 pb-5">
@@ -244,6 +246,7 @@ export function DeleteAccountDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
