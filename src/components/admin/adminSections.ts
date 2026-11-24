@@ -1,4 +1,4 @@
-import { Building2, Clock, Inbox, LayoutDashboard, Phone, Sparkles, Star, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
+import { Building2, Clock, Inbox, LayoutDashboard, Phone, ShieldCheck, Sparkles, Star, Target, Users, Wallet, type LucideIcon } from 'lucide-react';
 
 export type AdminSection = {
   to: string;
@@ -38,6 +38,12 @@ export const ADMIN_SECTIONS: AdminSection[] = [
     label: 'Inbox support',
     shortLabel: 'Inbox',
     icon: Inbox,
+  },
+  {
+    to: '/admin/identity',
+    label: 'Identité',
+    shortLabel: 'Identité',
+    icon: ShieldCheck,
   },
   {
     to: '/admin/wallet',
@@ -86,11 +92,11 @@ export const ADMIN_SECTIONS: AdminSection[] = [
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     label: 'Plateforme',
-    items: ADMIN_SECTIONS.slice(0, 7),
+    items: ADMIN_SECTIONS.slice(0, 8),
   },
   {
     label: 'Tarification',
-    items: ADMIN_SECTIONS.slice(7),
+    items: ADMIN_SECTIONS.slice(8),
   },
 ];
 
