@@ -776,5 +776,14 @@
     "descError": "Algo ha fallado por nuestra parte. Vuelva a cargar la página o continúe desde uno de los enlaces de abajo.",
     "home": "Inicio HARX",
     "telephony": "HARX Telefonía"
+  },
+  "support": {
+    "title": "¿Necesita ayuda?",
+    "intro": "Escríbanos: el código de abajo ya está en el mensaje.",
+    "whatsapp": "Contactar con el soporte por WhatsApp",
+    "writeTo": "Escribir a",
+    "code": "Código",
+    "hello": "Hola, necesito ayuda con HARX.",
+    "errorCode": "Código de error"
   }
 }

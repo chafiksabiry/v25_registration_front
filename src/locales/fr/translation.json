@@ -776,5 +776,14 @@
     "descError": "Un problème est survenu de notre côté. Rechargez la page, ou continuez depuis l’un des liens ci-dessous.",
     "home": "Accueil HARX",
     "telephony": "HARX Téléphonie"
+  },
+  "support": {
+    "title": "Besoin d’aide ?",
+    "intro": "Écrivez-nous : le code ci-dessous est déjà dans le message.",
+    "whatsapp": "Contacter le support sur WhatsApp",
+    "writeTo": "Écrire à",
+    "code": "Code",
+    "hello": "Bonjour, j’ai besoin d’aide sur HARX.",
+    "errorCode": "Code d’erreur"
   }
 }
