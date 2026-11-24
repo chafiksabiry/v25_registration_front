@@ -6,7 +6,8 @@ import { TaasHome } from '../components/Taas/TaasHome';
 import { TaasCompanyPage } from '../components/Taas/TaasCompanyPage';
 import { TaasRepsPage } from '../components/Taas/TaasRepsPage';
 import { taasPageTitle } from '../lib/tracking/landingPageMeta';
-import { normalizeSiteLang } from '../lib/langRoutes';
+import { getLangFromPath, normalizeSiteLang } from '../lib/langRoutes';
+import { hardNavigate } from '../lib/appNavigation';
 import ChoicePage from '../components/ChoicePage';
 import { HubPage } from '../components/Hub/HubPage';
 import SignInDialog from '../components/SignInDialog';
@@ -16,7 +17,16 @@ import { useAuthContext } from '../components/layout/AuthShell';
 import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
-import { NOMAD_REGISTER_PATH, nomadRegisterSearch } from '../lib/offerRegister';
+import { NOMAD_PRODUCT, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH, nomadRegisterSearch } from '../lib/offerRegister';
+
+/**
+ * Adresse NOMAD (/nomad/connexion, /nomad/inscription) : sans préfixe de langue. Depuis une page préfixée (/fr/auth/signin), le
+ * routeur garderait le préfixe : chargement complet (la langue est déjà mémorisée) ; sinon navigation interne.
+ */
+function goNomadAddress(navigate: (to: string) => void, path: string): void {
+  if (typeof window !== 'undefined' && getLangFromPath(window.location.pathname)) hardNavigate(path);
+  else navigate(path);
+}
 
 function AuthScreen({ title, children }: { title: string; children: React.ReactNode }) {
   const { i18n } = useTranslation();
@@ -107,11 +117,26 @@ export function ChoiceScreen() {
 
 export function SignInScreen() {
   const { navigate, handleNavigateToSection } = useAuthContext();
+  const location = useLocation();
+  // Ancienne connexion NOMAD (/auth/signin?product=nomad) : adresse NOMAD /nomad/connexion (24/11/2026), autres paramètres gardés.
+  if (new URLSearchParams(location.search || window.location.search).get('product') === NOMAD_PRODUCT) {
+    return <Navigate replace to={{ pathname: NOMAD_SIGN_IN_PATH, search: nomadRegisterSearch(location.search || window.location.search) }} state={location.state} />;
+  }
+  return <SignInScreenContent navigate={navigate} handleNavigateToSection={handleNavigateToSection} />;
+}
+
+/** `/nomad/connexion` : connexion NOMAD (porte NOMAD), même écran que la connexion Téléphonie. */
+export function NomadSignInScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  return <SignInScreenContent navigate={navigate} handleNavigateToSection={handleNavigateToSection} />;
+}
+
+function SignInScreenContent({ navigate, handleNavigateToSection }: Pick<ReturnType<typeof useAuthContext>, 'navigate' | 'handleNavigateToSection'>) {
   return (
     <AuthScreen title="Connexion">
       <SignInDialog
         // « S'inscrire » mène à l'inscription de l'offre de la porte (NOMAD, CLOUD), jamais à la page TAAS depuis une autre offre.
-        onRegister={() => navigate(isNomadVisitor() ? `${NOMAD_REGISTER_PATH}?product=nomad` : isCallcentreProduct() ? '/auth/register-call-center?product=callcentre' : '/auth/choice')}
+        onRegister={() => (isNomadVisitor() ? goNomadAddress(navigate, NOMAD_REGISTER_PATH) : navigate(isCallcentreProduct() ? '/auth/register-call-center?product=callcentre' : '/auth/choice'))}
         onForgotPassword={() => navigate('/auth/recovery')}
         onGetStarted={() => navigate('/auth/choice')}
         onNavigateToSection={handleNavigateToSection}
@@ -165,8 +190,8 @@ export function RegisterCallCenterScreen() {
   const { t } = useTranslation();
   const { navigate, handleNavigateToSection } = useAuthContext();
   const location = useLocation();
-  // Ancienne adresse (/auth/register-call-center?product=callcentre) dans un parcours Nomad : remplacée par l'adresse de l'offre,
-  // étape et autres paramètres gardés. Les offres CLOUD restent ici.
+  // Ancienne adresse (/auth/register-call-center?product=callcentre) dans un parcours Nomad : remplacée par l'adresse NOMAD
+  // /nomad/inscription, étape et autres paramètres gardés. Les offres CLOUD restent ici.
   if (isNomadVisitor(location.pathname)) {
     return <Navigate replace to={{ pathname: NOMAD_REGISTER_PATH, search: nomadRegisterSearch(location.search || window.location.search) }} state={location.state} />;
   }
@@ -182,7 +207,10 @@ export function RegisterCallCenterScreen() {
   );
 }
 
-/** `/auth/register-nomad?product=nomad` : inscription de l'offre NOMAD (Nomad Solo), même formulaire que l'inscription Téléphonie. */
+/**
+ * `/nomad/inscription` : inscription de l'offre NOMAD (Nomad Solo), même formulaire que l'inscription Téléphonie.
+ * L'ancienne adresse `/auth/register-nomad?product=nomad` y est redirigée (voir `LegacyRegisterNomadRedirect`).
+ */
 export function RegisterNomadScreen() {
   const { t } = useTranslation();
   const { navigate, handleNavigateToSection } = useAuthContext();
@@ -190,12 +218,19 @@ export function RegisterNomadScreen() {
     <AuthScreen title={t('authScreens.registerCallCenter', 'Call center signup')}>
       <RegistrationDialog
         defaultUserType="call-center"
-        onSignIn={() => navigate('/auth/signin')}
+        // « Se connecter » : connexion NOMAD (porte NOMAD), plus la connexion générale.
+        onSignIn={() => goNomadAddress(navigate, NOMAD_SIGN_IN_PATH)}
         onGetStarted={() => navigate('/auth/choice')}
         onNavigateToSection={handleNavigateToSection}
       />
     </AuthScreen>
   );
+}
+
+/** Ancienne inscription NOMAD (`/auth/register-nomad?product=nomad`) : adresse NOMAD `/nomad/inscription`, étape et autres paramètres gardés. */
+export function LegacyRegisterNomadRedirect() {
+  const location = useLocation();
+  return <Navigate replace to={{ pathname: NOMAD_REGISTER_PATH, search: nomadRegisterSearch(location.search || window.location.search) }} state={location.state} />;
 }
 
 export function RecoveryScreen() {
