@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ArrowLeft, RefreshCw, Wallet } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { adminApi } from '../../lib/api';
 import { usePageTitle } from '../../lib/tracking/usePageTitle';
 import { CompanyProfileView, ProfileHero, RepProfileView } from './AdminProfileViews';
 import { rowTypeUserLabel } from './adminUserRowUtils';
 import { InfoCard, SectionCard, formatDate } from './adminUiUtils';
+import AdminAccountClosure, { DisabledAccountBanner } from './AdminAccountClosure';
+import { companyNumbers, isAccountDisabled } from './accountClosureUtils';
 
 type UserDetail = {
   user: {
@@ -17,6 +19,10 @@ type UserDetail = {
     typeUser?: string | null;
     isVerified?: boolean;
     createdAt?: string;
+    disabled?: boolean;
+    disabledAt?: string | null;
+    disabledReason?: string | null;
+    disabledBy?: { name?: string | null } | null;
   };
   onboarding?: {
     display: string;
@@ -29,11 +35,12 @@ type UserDetail = {
     company?: Record<string, unknown> | null;
     onboardingProgress?: Record<string, unknown> | null;
   } | null;
-  financials?: { gigsCount?: number } | null;
+  financials?: { gigsCount?: number; phoneNumbers?: Array<{ phoneNumber?: string }> } | null;
 };
 
 export default function AdminUserDetailPage() {
   const { userId = '' } = useParams();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const [detail, setDetail] = useState<UserDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -132,6 +139,8 @@ export default function AdminUserDetailPage() {
         </div>
       </div>
 
+      <DisabledAccountBanner user={detail.user} onChanged={loadDetail} />
+
       <ProfileHero
         fullName={heroName}
         email={heroEmail}
@@ -139,6 +148,7 @@ export default function AdminUserDetailPage() {
         onboardingDisplay={detail.onboarding?.display}
         onboardingStatus={detail.onboarding?.statusLabel}
         photoUrl={photoUrl}
+        accountDisabled={isAccountDisabled(detail.user)}
       />
 
       {isCompany && company ? (
@@ -179,6 +189,16 @@ export default function AdminUserDetailPage() {
             </div>
           </SectionCard>
         </>
+      )}
+
+      {detail.user.typeUser !== 'admin' && (
+        <AdminAccountClosure
+          user={detail.user}
+          name={heroName}
+          numbers={companyNumbers(detail.financials)}
+          onChanged={loadDetail}
+          onDeleted={() => navigate('/admin/users', { replace: true })}
+        />
       )}
 
       {isRep && profile?.agent && (

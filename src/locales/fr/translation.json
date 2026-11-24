@@ -278,6 +278,7 @@
     "errGeneric": "La connexion a échoué. Vérifiez vos informations et réessayez.",
     "errInvalidCredentials": "Email ou mot de passe incorrect.",
     "errAccountNotVerified": "Ce compte n'est pas encore vérifié. Saisissez le code reçu par e-mail pour l'activer.",
+    "errAccountDisabled": "Ce compte est désactivé. Pour en savoir plus, écrivez à support@harx.ai.",
     "errInvalidEmail": "Cet email ne correspond à aucun compte.",
     "errInvalidPassword": "Mot de passe incorrect.",
     "errMissingEmail": "Veuillez saisir votre email.",

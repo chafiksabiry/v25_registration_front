@@ -278,6 +278,7 @@
     "errGeneric": "Sign-in failed. Check your details and try again.",
     "errInvalidCredentials": "Incorrect email or password.",
     "errAccountNotVerified": "This account is not verified yet. Enter the code we sent you by email to activate it.",
+    "errAccountDisabled": "This account has been disabled. To find out more, email support@harx.ai.",
     "errInvalidEmail": "No account found with this email.",
     "errInvalidPassword": "Incorrect password.",
     "errMissingEmail": "Please enter your email.",
