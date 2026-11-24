@@ -5,6 +5,8 @@ import { Mail, Lock, KeyRound, AlertCircle, CheckCircle, Eye, EyeOff, ArrowLeft 
 import { auth } from '../lib/api';
 import { clearAuthSession } from '../lib/authRedirect';
 import { useTranslation } from 'react-i18next';
+import SupportHelp from './SupportHelp';
+import { recoveryErrorCode, type RecoveryHelpCode } from '../lib/supportHelp';
 import { AuthBackdrop } from './layout/AuthBackdrop';
 import { Header } from './LandingPage/Header';
 
@@ -99,6 +101,8 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // « Besoin d'aide ? » sous une erreur du serveur (jamais sous une erreur de saisie) : code stable de l'erreur.
+  const [errorCode, setErrorCode] = useState<RecoveryHelpCode | null>(null);
   const { t } = useTranslation();
 
   const pushStep = (next: RecoveryStep, patch?: Partial<RecoverySession>) => {
@@ -136,6 +140,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
 
   const handleContinue = async () => {
     setError(null);
+    setErrorCode(null);
 
     switch (step) {
       case 'email':
@@ -149,6 +154,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           await auth.generateVerificationCode(formData.email);
           pushStep('verification', { email: formData.email });
         } catch (err: unknown) {
+          setErrorCode(recoveryErrorCode(err, 'email'));
           setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
@@ -164,6 +170,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
             code: formData.verificationCode,
           });
           if (resultverificationEmail.result && resultverificationEmail.result.error) {
+            setErrorCode('PWD-CODE');
             setError(t('recovery.errInvalidCode', 'Invalid email verification code'));
           } else if (resultverificationEmail.token) {
             // Keep recovery token in session only — NOT localStorage.token.
@@ -171,9 +178,11 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
             setRecoveryToken(resultverificationEmail.token);
             pushStep('new-password', { recoveryToken: resultverificationEmail.token });
           } else {
+            setErrorCode('PWD-SERVER');
             setError(t('recovery.errNoToken', 'Verification failed: No token received'));
           }
         } catch (err: unknown) {
+          setErrorCode(recoveryErrorCode(err, 'verification'));
           setError(recoveryErrorText(err, t, t('recovery.errUnexpected', 'Verification failed')));
         }
         break;
@@ -197,6 +206,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
           clearRecoveryFlow();
           pushStep('success');
         } catch (err: unknown) {
+          setErrorCode(recoveryErrorCode(err, 'new-password'));
           setError(recoveryErrorText(err, t, t('recovery.errServer', 'La réinitialisation a échoué. Réessayez dans un instant.')));
         }
         break;
@@ -332,6 +342,7 @@ export default function PasswordRecoveryDialog({ onBack, onGetStarted, onNavigat
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
+          {error && errorCode ? <SupportHelp code={errorCode} /> : null}
 
           <button type="button" onClick={handleContinue} className="btn-primary mt-6">
             {step === 'success' ? t('recovery.btnBack', 'Back to Sign In') : t('recovery.btnContinue', 'Continue')}

@@ -784,5 +784,14 @@
     "descError": "Something went wrong on our side. Reload the page, or continue from one of the links below.",
     "home": "HARX home",
     "telephony": "HARX Telephony"
+  },
+  "support": {
+    "title": "Need help?",
+    "intro": "Write to us: the code below is already in the message.",
+    "whatsapp": "Contact support on WhatsApp",
+    "writeTo": "Email",
+    "code": "Code",
+    "hello": "Hello, I need help with HARX.",
+    "errorCode": "Error code"
   }
 }
