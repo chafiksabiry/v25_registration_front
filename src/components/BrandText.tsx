@@ -44,7 +44,7 @@ export function BrandText({ callCentre = false, kind }: { callCentre?: boolean; 
   }
   // Texte propre à l'offre choisie sur la page d'accueil ; sans offre connue, Nomad Solo (profil mémorisé) ou le texte d'entreprise.
   const plan = readPendingPlan();
-  // Adresse /auth/register-nomad : texte Nomad Solo quelle que soit l'offre mémorisée (isNomadVisitor lit l'adresse d'abord).
+  // Adresse NOMAD (/nomad/inscription, /nomad/connexion) : texte Nomad Solo quelle que soit l'offre mémorisée (isNomadVisitor lit l'adresse d'abord).
   const ns = isNomadVisitor() ? 'callcentreBrandSolo'
     : plan === 'accueil' ? 'callcentreBrandAccueil'
     : plan === 'full_scope' ? 'callcentreBrandFullScope'

@@ -1,13 +1,14 @@
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { langPrefixOf, registerCompanyFallback, rememberExplicitLang, telephonyHandoff } from './publicRoutes';
+import { langPrefixOf, nomadHandoff, registerCompanyFallback, rememberExplicitLang, telephonyHandoff } from './publicRoutes';
 
 describe('telephonyHandoff (/:lang/telephony*)', () => {
   it('renvoie vers /telephony* avec la langue de l’adresse', () => {
     expect(telephonyHandoff({ pathname: '/en/telephony' })).toEqual({ lang: 'en', url: '/telephony' });
     expect(telephonyHandoff({ pathname: '/en/telephony/' })).toEqual({ lang: 'en', url: '/telephony' });
-    expect(telephonyHandoff({ pathname: '/en/telephony/nomad' })).toEqual({ lang: 'en', url: '/telephony/nomad' });
+    // Page NOMAD : adresse NOMAD /nomad (24/11/2026).
+    expect(telephonyHandoff({ pathname: '/en/telephony/nomad' })).toEqual({ lang: 'en', url: '/nomad' });
     expect(telephonyHandoff({ pathname: '/fr/telephony' })).toEqual({ lang: 'fr', url: '/telephony' });
     expect(telephonyHandoff({ pathname: '/es/telephony', search: '?situation=tpe', hash: '#prix' })).toEqual({
       lang: 'es',
@@ -41,6 +42,16 @@ describe('registerCompanyFallback (T2)', () => {
   });
 });
 
+describe('nomadHandoff (/:lang/nomad* → /nomad*, adresses NOMAD du 24/11/2026)', () => {
+  it('retire le préfixe de langue, requête et ancre gardées', () => {
+    expect(nomadHandoff({ pathname: '/en/nomad' })).toEqual({ lang: 'en', url: '/nomad' });
+    expect(nomadHandoff({ pathname: '/ar/nomad/poste/', search: '?x=1', hash: '#h' })).toEqual({ lang: 'ar', url: '/nomad/poste?x=1#h' });
+  });
+  it('ignore les autres adresses', () => {
+    for (const p of ['/nomad', '/nomad/connexion', '/en/nomadic', '/en/telephony/nomad', '/de/nomad', '/en/taas']) expect(nomadHandoff({ pathname: p }), p).toBeNull();
+  });
+});
+
 describe('langPrefixOf', () => {
   it('lit le préfixe', () => {
     expect(langPrefixOf('/en/xyz')).toBe('en');
@@ -58,5 +69,12 @@ describe('router.tsx', () => {
     expect(src).toMatch(/path:\s*'telephony\/\*'/);
     expect(src).toMatch(/path:\s*'telephony'/);
     expect(src).toMatch(/path:\s*'auth\/register-company',\s*element:\s*<RegisterCompanyGate/);
+  });
+  it('sert /nomad/connexion et /nomad/inscription, redirige /auth/register-nomad, et passe la main pour /:lang/nomad*', () => {
+    expect(src).toMatch(/path:\s*'nomad\/connexion',\s*element:\s*<NomadSignInScreen/);
+    expect(src).toMatch(/path:\s*'nomad\/inscription',\s*element:\s*<RegisterNomadScreen/);
+    expect(src).toMatch(/path:\s*'auth\/register-nomad',\s*element:\s*<LegacyRegisterNomadRedirect/);
+    expect(src).toMatch(/path:\s*'nomad\/\*',\s*element:\s*<NomadHandoff/);
+    expect(src).toMatch(/path:\s*'auth\/signin',\s*element:\s*<SignInScreen/);
   });
 });

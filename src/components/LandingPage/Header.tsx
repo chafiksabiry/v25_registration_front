@@ -17,7 +17,7 @@ import {
 } from '../../lib/authRedirect';
 import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
-import { MARK_IDS, activeMark, resolveMarkHref, type MarkId } from '../../config/offers';
+import { MARK_IDS, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH, activeMark, resolveMarkHref, type MarkId } from '../../config/offers';
 import { isNomadVisitor } from '../../lib/product';
 
 interface HeaderProps {
@@ -103,8 +103,16 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     hardNavigate('/');
   };
 
-  const signInTelephony = () => hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
-  const signUpTelephony = () => hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
+  // Contexte NOMAD (pastille NOMAD) : connexion et inscription NOMAD (/nomad/connexion, /nomad/inscription, sans préfixe de
+  // langue : la langue est mémorisée). CLOUD inchangé.
+  const goNomad = (path: string) => {
+    persistLang();
+    hardNavigate(path);
+  };
+  const signInTelephony = () =>
+    offer === 'nomad' ? goNomad(NOMAD_SIGN_IN_PATH) : hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
+  const signUpTelephony = () =>
+    offer === 'nomad' ? goNomad(NOMAD_REGISTER_PATH) : hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
 
   const authActions = (full: boolean) => {
     const full_ = full ? ' nav-cta--full' : '';

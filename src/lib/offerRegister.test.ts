@@ -1,15 +1,18 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   NOMAD_REGISTER_PATH,
+  NOMAD_SIGN_IN_PATH,
   OFFER_RETURN_KEY,
+  isNomadDoorPath,
   isNomadRegisterPath,
+  isNomadSignInPath,
   nomadPageUrl,
   nomadRegisterRedirect,
   nomadRegisterSearch,
   readNomadReturn,
   resolveRegisterBack,
 } from './offerRegister';
-import { captureProductFromUrl, isCallcentreProduct, isNomadVisitor } from './product';
+import { captureProductFromUrl, isCallcentreProduct, isNomadVisitor, rememberNomadSoloOffer } from './product';
 import { REGISTER_ROUTE_PATHS, resolveRegisterPath } from './registerNavigation';
 import { languageSwitchUrl } from './languageMenu';
 
@@ -27,41 +30,64 @@ function memoryStorage(initial: Record<string, string> = {}) {
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('adresse d’inscription nommée selon l’offre (Nomad)', () => {
-  it('/auth/register-nomad est une route d’inscription, avec ou sans préfixe de langue (en, fr, es, ar)', () => {
-    expect(NOMAD_REGISTER_PATH).toBe('/auth/register-nomad');
+describe('adresses NOMAD de connexion et d’inscription (24/11/2026)', () => {
+  it('/nomad/inscription est la route d’inscription NOMAD ; l’ancienne /auth/register-nomad reste reconnue', () => {
+    expect(NOMAD_REGISTER_PATH).toBe('/nomad/inscription');
+    expect(NOMAD_SIGN_IN_PATH).toBe('/nomad/connexion');
+    expect(REGISTER_ROUTE_PATHS).toContain('/nomad/inscription');
+    expect(resolveRegisterPath('/nomad/inscription')).toBe('/nomad/inscription');
     expect(REGISTER_ROUTE_PATHS).toContain('/auth/register-nomad');
-    expect(resolveRegisterPath('/auth/register-nomad')).toBe('/auth/register-nomad');
-    for (const p of ['/auth/register-nomad', '/auth/register-nomad/', '/en/auth/register-nomad', '/fr/auth/register-nomad', '/es/auth/register-nomad', '/ar/auth/register-nomad']) {
-      expect(isNomadRegisterPath(p)).toBe(true);
+    for (const p of ['/nomad/inscription', '/nomad/inscription/', '/auth/register-nomad', '/en/auth/register-nomad', '/fr/auth/register-nomad', '/es/auth/register-nomad', '/ar/auth/register-nomad']) {
+      expect(isNomadRegisterPath(p), p).toBe(true);
     }
-    for (const p of ['/auth/register-call-center', '/auth/register', '/auth/register-company', '/telephony/nomad']) expect(isNomadRegisterPath(p)).toBe(false);
+    for (const p of ['/auth/register-call-center', '/auth/register', '/auth/register-company', '/telephony/nomad', '/nomad', '/nomad/connexion']) expect(isNomadRegisterPath(p), p).toBe(false);
   });
 
-  it('ancienne adresse → nouvelle : ?product=nomad, étape et autres paramètres gardés', () => {
-    expect(nomadRegisterSearch('?product=callcentre')).toBe('?product=nomad');
-    expect(nomadRegisterSearch('')).toBe('?product=nomad');
-    expect(nomadRegisterSearch('?product=callcentre&step=email')).toBe('?product=nomad&step=email');
-    expect(nomadRegisterSearch('?utm_source=mail')).toBe('?utm_source=mail&product=nomad');
+  it('/nomad/connexion est la connexion NOMAD ; porte NOMAD = connexion ou inscription NOMAD', () => {
+    for (const p of ['/nomad/connexion', '/nomad/connexion/']) expect(isNomadSignInPath(p)).toBe(true);
+    for (const p of ['/auth/signin', '/nomad', '/nomad/inscription']) expect(isNomadSignInPath(p)).toBe(false);
+    for (const p of ['/nomad/connexion', '/nomad/inscription', '/auth/register-nomad']) expect(isNomadDoorPath(p)).toBe(true);
+    for (const p of ['/auth/signin', '/auth/register-call-center', '/nomad', '/nomad/poste', '/telephony']) expect(isNomadDoorPath(p)).toBe(false);
   });
 
-  it('redirection de l’ancienne adresse avant le routeur : seulement pour un visiteur Nomad, préfixe de langue gardé', () => {
-    expect(nomadRegisterRedirect({ pathname: '/auth/register-call-center', search: '?product=callcentre' }, true)).toBe('/auth/register-nomad?product=nomad');
-    expect(nomadRegisterRedirect({ pathname: '/fr/auth/register-call-center/', search: '?product=callcentre&step=email', hash: '#x' }, true)).toBe('/fr/auth/register-nomad?product=nomad&step=email#x');
+  it('requête d’une adresse NOMAD : ?product= retiré (porté par l’adresse), étape et autres paramètres gardés', () => {
+    expect(nomadRegisterSearch('?product=callcentre')).toBe('');
+    expect(nomadRegisterSearch('?product=nomad')).toBe('');
+    expect(nomadRegisterSearch('')).toBe('');
+    expect(nomadRegisterSearch('?product=callcentre&step=email')).toBe('?step=email');
+    expect(nomadRegisterSearch('?utm_source=mail')).toBe('?utm_source=mail');
+  });
+
+  it('anciennes adresses → adresses NOMAD avant le routeur (sans préfixe de langue)', () => {
+    // /auth/register-nomad : toujours.
+    expect(nomadRegisterRedirect({ pathname: '/auth/register-nomad', search: '?product=nomad' }, false)).toBe('/nomad/inscription');
+    expect(nomadRegisterRedirect({ pathname: '/en/auth/register-nomad', search: '?product=nomad&step=email', hash: '#x' }, true)).toBe('/nomad/inscription?step=email#x');
+    // /auth/register-call-center : seulement pour un visiteur Nomad.
+    expect(nomadRegisterRedirect({ pathname: '/auth/register-call-center', search: '?product=callcentre' }, true)).toBe('/nomad/inscription');
+    expect(nomadRegisterRedirect({ pathname: '/fr/auth/register-call-center/', search: '?product=callcentre&step=email', hash: '#x' }, true)).toBe('/nomad/inscription?step=email#x');
     for (const lang of ['en', 'es', 'ar']) {
-      expect(nomadRegisterRedirect({ pathname: `/${lang}/auth/register-call-center`, search: '' }, true)).toBe(`/${lang}/auth/register-nomad?product=nomad`);
+      expect(nomadRegisterRedirect({ pathname: `/${lang}/auth/register-call-center`, search: '' }, true)).toBe('/nomad/inscription');
     }
-    // CLOUD (pas Nomad) : ancienne adresse gardée telle quelle.
+    // /auth/signin?product=nomad → /nomad/connexion.
+    expect(nomadRegisterRedirect({ pathname: '/auth/signin', search: '?product=nomad' }, false)).toBe('/nomad/connexion');
+    expect(nomadRegisterRedirect({ pathname: '/ar/auth/signin', search: '?product=nomad&next=x' }, false)).toBe('/nomad/connexion?next=x');
+    // /:lang/nomad/connexion, /:lang/nomad/inscription → sans préfixe.
+    expect(nomadRegisterRedirect({ pathname: '/en/nomad/inscription', search: '?step=email' }, true)).toBe('/nomad/inscription?step=email');
+    expect(nomadRegisterRedirect({ pathname: '/fr/nomad/connexion' }, false)).toBe('/nomad/connexion');
+  });
+
+  it('CLOUD et TAAS : jamais redirigés ; adresses NOMAD : stables (pas de boucle)', () => {
     expect(nomadRegisterRedirect({ pathname: '/auth/register-call-center', search: '?product=callcentre' }, false)).toBeNull();
-    // Autres écrans : jamais redirigés.
-    for (const p of ['/auth/register-company', '/auth/register-rep', '/auth/register', '/auth/register-nomad', '/auth/choice']) {
-      expect(nomadRegisterRedirect({ pathname: p, search: '' }, true)).toBeNull();
+    expect(nomadRegisterRedirect({ pathname: '/auth/signin', search: '?product=callcentre' }, false)).toBeNull();
+    expect(nomadRegisterRedirect({ pathname: '/auth/signin', search: '' }, true)).toBeNull();
+    for (const p of ['/auth/register-company', '/auth/register-rep', '/auth/register', '/auth/choice', '/nomad/inscription', '/nomad/connexion']) {
+      expect(nomadRegisterRedirect({ pathname: p, search: '' }, true), p).toBeNull();
     }
   });
 
-  it('le changement de langue garde l’adresse Nomad', () => {
-    expect(languageSwitchUrl({ pathname: '/en/auth/register-nomad', search: '?product=nomad' }, 'fr')).toBe('/fr/auth/register-nomad?product=nomad');
-    expect(languageSwitchUrl({ pathname: '/fr/auth/register-nomad', search: '?product=nomad' }, 'ar')).toBe('/ar/auth/register-nomad?product=nomad');
+  it('le changement de langue garde l’adresse NOMAD (pas de préfixe : la langue change sans rechargement)', () => {
+    expect(languageSwitchUrl({ pathname: '/nomad/inscription', search: '?step=email' }, 'fr')).toBeNull();
+    expect(languageSwitchUrl({ pathname: '/nomad/connexion' }, 'ar')).toBeNull();
   });
 
   it('?product=nomad = compte du produit Téléphonie (arrivée sur /telephony après inscription), comme ?product=callcentre', () => {
@@ -74,8 +100,50 @@ describe('adresse d’inscription nommée selon l’offre (Nomad)', () => {
     expect(isCallcentreProduct()).toBe(false);
   });
 
-  it('visiteur Nomad : adresse /auth/register-nomad (prioritaire), sinon offre ou profil mémorisés par la Téléphonie', () => {
+  it('/nomad/connexion et /nomad/inscription = porte NOMAD : produit Téléphonie et marqueur harx_nomad_door, sans ?product=', () => {
+    for (const path of ['/nomad/connexion', '/nomad/inscription']) {
+      vi.stubGlobal('localStorage', memoryStorage());
+      vi.stubGlobal('sessionStorage', memoryStorage());
+      captureProductFromUrl('', path);
+      expect(isCallcentreProduct(), path).toBe(true);
+      expect(sessionStorage.getItem('harx_nomad_door'), path).toBe('1');
+    }
+    // Porte CLOUD : marqueur NOMAD effacé (inchangé).
+    vi.stubGlobal('localStorage', memoryStorage());
+    vi.stubGlobal('sessionStorage', memoryStorage({ harx_nomad_door: '1' }));
+    captureProductFromUrl('?product=callcentre', '/auth/signin');
+    expect(sessionStorage.getItem('harx_nomad_door')).toBeNull();
+    expect(isCallcentreProduct()).toBe(true);
+  });
+
+  it('/nomad/inscription mémorise l’offre Nomad Solo comme le relais /telephony/start?profil=solo (connexion : rien)', () => {
+    vi.stubGlobal('localStorage', memoryStorage({ harx_cc_pending_plan: 'accueil', harx_cc_pending_name: 'Ancien centre', harx_cc_pending_price: 'price_old' }));
+    vi.stubGlobal('sessionStorage', memoryStorage());
+    captureProductFromUrl('?utm_source=ads', '/nomad/inscription');
+    expect(localStorage.getItem('harx_cc_pending_plan')).toBe('nomad_solo');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBe('solo');
+    expect(localStorage.getItem('harx_cc_pending_name')).toBeNull();
+    expect(localStorage.getItem('harx_cc_pending_price')).toBeNull();
+    // Étapes suivantes (?step=…) : le prix noté à l'arrivée n'est pas effacé.
+    vi.stubGlobal('localStorage', memoryStorage());
+    rememberNomadSoloOffer('?price=price_1');
+    rememberNomadSoloOffer('?step=email');
+    expect(localStorage.getItem('harx_cc_pending_price')).toBe('price_1');
+    // Connexion NOMAD : l'offre mémorisée n'est pas touchée.
     vi.stubGlobal('localStorage', memoryStorage({ harx_cc_pending_plan: 'accueil' }));
+    captureProductFromUrl('', '/nomad/connexion');
+    expect(localStorage.getItem('harx_cc_pending_plan')).toBe('accueil');
+    // CLOUD : rien n'est écrit.
+    vi.stubGlobal('localStorage', memoryStorage({ harx_cc_pending_plan: 'accueil' }));
+    captureProductFromUrl('?product=callcentre', '/auth/register-call-center');
+    expect(localStorage.getItem('harx_cc_pending_plan')).toBe('accueil');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+
+  it('visiteur Nomad : adresse NOMAD (prioritaire), sinon offre ou profil mémorisés par la Téléphonie', () => {
+    vi.stubGlobal('localStorage', memoryStorage({ harx_cc_pending_plan: 'accueil' }));
+    expect(isNomadVisitor('/nomad/inscription')).toBe(true);
+    expect(isNomadVisitor('/nomad/connexion')).toBe(true);
     expect(isNomadVisitor('/fr/auth/register-nomad')).toBe(true);
     expect(isNomadVisitor('/auth/register-call-center')).toBe(false); // CLOUD reste sur l'ancienne adresse
     vi.stubGlobal('localStorage', memoryStorage({ harx_cc_pending_plan: 'nomad_solo' }));
@@ -96,23 +164,23 @@ describe('bouton « Retour » de l’inscription', () => {
     }
   });
 
-  it('Nomad : page Nomad dans la langue de l’adresse', () => {
-    expect(resolveRegisterBack({ canGoBack: false, nomad: true, pathname: '/auth/register-nomad' })).toEqual({ type: 'hard', url: '/telephony/nomad' });
-    expect(resolveRegisterBack({ canGoBack: false, nomad: true, pathname: '/fr/auth/register-nomad' })).toEqual({ type: 'hard', url: '/fr/telephony/nomad' });
-    expect(nomadPageUrl('/ar/auth/register-nomad')).toBe('/ar/telephony/nomad');
-    expect(nomadPageUrl('/es/auth/register-nomad')).toBe('/es/telephony/nomad');
-    expect(nomadPageUrl('/en/auth/register-nomad')).toBe('/en/telephony/nomad');
+  it('Nomad : page NOMAD /nomad (adresse sans préfixe de langue : la langue est mémorisée)', () => {
+    expect(resolveRegisterBack({ canGoBack: false, nomad: true, pathname: '/nomad/inscription' })).toEqual({ type: 'hard', url: '/nomad' });
+    expect(resolveRegisterBack({ canGoBack: false, nomad: true, pathname: '/fr/auth/register-nomad' })).toEqual({ type: 'hard', url: '/nomad' });
+    expect(nomadPageUrl()).toBe('/nomad');
   });
 
   it('Nomad venu de la page Nomad (note de l’hôte) : retour navigateur, qui garde langue et pays de l’adresse', () => {
-    const nomadReturn = readNomadReturn(JSON.stringify({ url: '/telephony/nomad?pays=CA' }));
-    expect(nomadReturn).toBe('/telephony/nomad?pays=CA');
-    expect(resolveRegisterBack({ canGoBack: false, nomad: true, nomadReturn, pathname: '/auth/register-nomad' })).toEqual({ type: 'browser-back' });
+    const nomadReturn = readNomadReturn(JSON.stringify({ url: '/nomad?pays=CA' }));
+    expect(nomadReturn).toBe('/nomad?pays=CA');
+    expect(resolveRegisterBack({ canGoBack: false, nomad: true, nomadReturn, pathname: '/nomad/inscription' })).toEqual({ type: 'browser-back' });
+    // Note écrite avant le changement d'adresse : ancienne page NOMAD, toujours reconnue.
+    expect(readNomadReturn(JSON.stringify({ url: '/telephony/nomad?pays=CA' }))).toBe('/telephony/nomad?pays=CA');
   });
 
   it('note de l’hôte invalide ou étrangère à Nomad : ignorée', () => {
     expect(OFFER_RETURN_KEY).toBe('harx_offer_return');
-    for (const raw of [null, '', 'x', '{}', JSON.stringify({ url: '/telephony' }), JSON.stringify({ url: 'https://evil.test/telephony/nomad' }), JSON.stringify({ url: '/telephony/nomadic' }), JSON.stringify({ url: '//evil.test/telephony/nomad' })]) {
+    for (const raw of [null, '', 'x', '{}', JSON.stringify({ url: '/telephony' }), JSON.stringify({ url: 'https://evil.test/telephony/nomad' }), JSON.stringify({ url: '/telephony/nomadic' }), JSON.stringify({ url: '//evil.test/telephony/nomad' }), JSON.stringify({ url: '/nomadic' }), JSON.stringify({ url: '/nomad/poste' }), JSON.stringify({ url: '//evil.test/nomad' })]) {
       expect(readNomadReturn(raw)).toBeNull();
     }
     expect(readNomadReturn(JSON.stringify({ url: '/telephony/nomad/' }))).toBe('/telephony/nomad/');
