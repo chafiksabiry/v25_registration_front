@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter, Navigate, Outlet, type RouteObject } from 'react-router-dom';
+import { createBrowserRouter, Navigate, Outlet, useLocation, type RouteObject } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LinkedInCallback from './components/LinkedInCallback';
 import LinkedInSignInCallback from './components/LinkedInSignInCallback';
@@ -8,6 +8,7 @@ import { getRouterBasename } from './utils/routerBasename';
 import { PrivateRoute, GuestOnly } from './components/layout/guards';
 import HistorySync from './components/layout/HistorySync';
 import VisitorTracker from './lib/VisitorTracker';
+import RecetteMarker from './components/RecetteMarker';
 import AuthShell from './components/layout/AuthShell';
 import {
   HubScreen,
@@ -52,10 +53,14 @@ import { nomadHandoff, registerCompanyFallback, rememberExplicitLang, telephonyH
 import { AuthSpinner } from './components/layout/guards';
 
 function RootLayout() {
+  // Hors production seulement (lib/appEnv.ts) : badge « RECETTE » et titre « [RECETTE] ». Le back office (hors connexion) a sa bande et son badge.
+  const { pathname } = useLocation();
+  const inAdminShell = /^\/admin(\/|$)/.test(pathname) && !/^\/admin\/signin(\/|$)/.test(pathname);
   return (
     <>
       <HistorySync />
       <VisitorTracker />
+      <RecetteMarker showBadge={!inAdminShell} />
       <Outlet />
     </>
   );
