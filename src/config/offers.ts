@@ -92,6 +92,17 @@ export const NOMAD_PAGE = '/nomad';
 export const NOMAD_SIGN_IN_PATH = '/nomad/connexion';
 export const NOMAD_REGISTER_PATH = '/nomad/inscription';
 
+/**
+ * Adresses CLOUD Receptionist validées par le fondateur (24/11/2026, « ok ») : l'adresse porte l'offre (cloud) et le produit
+ * (receptionist), jamais « telephony ». Page CLOUD, page de l'offre et étape 1 « Nommez votre entreprise » : application Téléphonie
+ * (même origine) ; étape 2 « Compte HARX » et connexion : ce module. Entreprise et Contact Centre gardent leurs adresses /telephony.
+ */
+export const CLOUD_PAGE = '/cloud';
+export const CLOUD_RECEPTIONIST_PAGE = '/cloud/receptionist';
+export const CLOUD_RECEPTIONIST_SIGNUP_PATH = '/cloud/receptionist/inscription';
+export const CLOUD_RECEPTIONIST_ACCOUNT_PATH = '/cloud/receptionist/inscription/compte';
+export const CLOUD_RECEPTIONIST_SIGN_IN_PATH = '/cloud/receptionist/connexion';
+
 const TELEPHONY_SIGN_IN = { route: '/auth/signin?product=callcentre', langPrefixed: false } as const;
 
 export const OFFERS: readonly OfferConfig[] = [
@@ -117,7 +128,8 @@ export const OFFERS: readonly OfferConfig[] = [
   {
     id: 'cloud',
     acronym: 'CLOUD',
-    route: '/telephony',
+    // Page CLOUD : /cloud (ancienne adresse /telephony, adresses CLOUD Receptionist du 24/11/2026).
+    route: CLOUD_PAGE,
     langPrefixed: false,
     status: 'available',
     icon: 'cloud',
@@ -128,7 +140,8 @@ export const OFFERS: readonly OfferConfig[] = [
     benefitKeys: ['hub.offers.cloud.benefit1', 'hub.offers.cloud.benefit2', 'hub.offers.cloud.benefit3'],
     // Chaque offre Téléphonie s'ouvre sur son parcours de démarrage (planStartPath de l'application Téléphonie).
     children: [
-      { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: '/telephony/start?plan=accueil', langPrefixed: false },
+      // Receptionist : étape 1 à son adresse /cloud/receptionist/inscription (24/11/2026) ; Entreprise et Contact Centre inchangés.
+      { id: 'accueil', labelKey: 'hub.offers.cloud.accueil', kind: 'route', route: CLOUD_RECEPTIONIST_SIGNUP_PATH, langPrefixed: false },
       { id: 'full_scope', labelKey: 'hub.offers.cloud.fullScope', kind: 'route', route: '/telephony/start?plan=full_scope', langPrefixed: false, soonKey: 'full_scope' },
       { id: 'multi_clients', labelKey: 'hub.offers.cloud.multiClients', kind: 'route', route: '/telephony/start?plan=multi_clients', langPrefixed: false, soonKey: 'multi_clients' },
     ],
@@ -166,6 +179,8 @@ export const MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
  */
 export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: boolean; nomad?: boolean; pathname?: string }): MarkId | null {
   if (ctx.pathname && /^(\/(fr|en|es|ar))?(\/telephony\/nomad\/?|\/nomad(\/.*)?)$/.test(ctx.pathname)) return 'nomad';
+  // Adresse CLOUD (/cloud, /cloud/receptionist/connexion, /cloud/receptionist/inscription/compte…) : pastille CLOUD.
+  if (ctx.pathname && /^(\/(fr|en|es|ar))?\/cloud(\/.*)?$/.test(ctx.pathname)) return 'cloud';
   if (ctx.hub) return null;
   if (ctx.telephony) return ctx.nomad ? 'nomad' : 'cloud';
   return 'taas';
@@ -175,7 +190,7 @@ export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: bool
 export function resolveMarkHref(mark: MarkId, lang: OfferLang): string {
   if (mark === 'taas') return `/${lang}/taas`;
   if (mark === 'nomad') return NOMAD_PAGE;
-  return '/telephony';
+  return CLOUD_PAGE;
 }
 
 /** Offres ouvertes (avec une route) : cartes cliquables et liens de l'en-tête. */

@@ -19,6 +19,7 @@ import { hardNavigate } from '../../lib/appNavigation';
 import { subscribeAuthChanged } from '../../lib/authSync';
 import { MARK_IDS, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH, activeMark, resolveMarkHref, type MarkId } from '../../config/offers';
 import { isNomadVisitor } from '../../lib/product';
+import { CLOUD_RECEPTIONIST_SIGN_IN_PATH, CLOUD_RECEPTIONIST_SIGNUP_PATH, isCloudReceptionistVisitor } from '../../lib/cloudReceptionist';
 
 interface HeaderProps {
   onSignIn: () => void;
@@ -109,10 +110,13 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
     persistLang();
     hardNavigate(path);
   };
+  // Porte CLOUD Receptionist (/cloud/receptionist/connexion, /cloud/receptionist/inscription/compte, 24/11/2026) : connexion et
+  // inscription Receptionist ; la connexion commune des offres CLOUD reste celle d'Entreprise et de Contact Centre.
+  const receptionist = offer === 'cloud' && isCloudReceptionistVisitor();
   const signInTelephony = () =>
-    offer === 'nomad' ? goNomad(NOMAD_SIGN_IN_PATH) : hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
+    offer === 'nomad' ? goNomad(NOMAD_SIGN_IN_PATH) : receptionist ? goNomad(CLOUD_RECEPTIONIST_SIGN_IN_PATH) : hardNavigate(withLangPrefix('/auth/signin?product=callcentre', siteLang));
   const signUpTelephony = () =>
-    offer === 'nomad' ? goNomad(NOMAD_REGISTER_PATH) : hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
+    offer === 'nomad' ? goNomad(NOMAD_REGISTER_PATH) : receptionist ? goNomad(CLOUD_RECEPTIONIST_SIGNUP_PATH) : hardNavigate(withLangPrefix('/auth/register-call-center?product=callcentre', siteLang));
 
   const authActions = (full: boolean) => {
     const full_ = full ? ' nav-cta--full' : '';

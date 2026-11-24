@@ -1,4 +1,4 @@
-import { NOMAD_PAGE, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH } from '../config/offers';
+import { CLOUD_RECEPTIONIST_SIGNUP_PATH, NOMAD_PAGE, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH } from '../config/offers';
 import { stripLangPrefix } from './langRoutes';
 
 export { NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH };
@@ -115,11 +115,14 @@ export type RegisterBackAction =
 export function resolveRegisterBack(input: {
   canGoBack: boolean;
   nomad: boolean;
+  /** Étape 2 de l'inscription CLOUD Receptionist : « Retour » mène à l'étape 1 (application Téléphonie), jamais à /auth/choice (TAAS). */
+  receptionist?: boolean;
   returnTo?: string | null;
   nomadReturn?: string | null;
   pathname: string;
 }): RegisterBackAction {
   if (input.canGoBack) return { type: 'history' };
+  if (input.receptionist && !input.nomad) return { type: 'hard', url: CLOUD_RECEPTIONIST_SIGNUP_PATH };
   if (input.nomad) {
     if (input.nomadReturn) return { type: 'browser-back' };
     return { type: 'hard', url: nomadPageUrl() };

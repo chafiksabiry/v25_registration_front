@@ -11,6 +11,7 @@ import { AuthSidePanel } from './layout/AuthSidePanel';
 import { Header } from './LandingPage/Header';
 import { useTranslation } from 'react-i18next';
 import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
+import { isCloudReceptionistSignInPath } from '../lib/cloudReceptionist';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
 import { mapSignInError } from '../lib/authErrors';
@@ -47,6 +48,9 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
   // compte entreprise) : pas de choix « Entreprise / Équipe », le contrôle reste celui de l'onglet par défaut « Entreprise ».
   const nomad = activeMark({ telephony, nomad: telephony && isNomadVisitor() }) === 'nomad';
   const nomadWord = OFFERS.find((o) => o.id === 'nomad')?.acronym ?? 'NOMAD';
+  // Connexion CLOUD Receptionist (/cloud/receptionist/connexion, 24/11/2026) : logo CLOUD au-dessus du titre, comme NOMAD.
+  const receptionistDoor = !nomad && isCloudReceptionistSignInPath(typeof window === 'undefined' ? '' : window.location.pathname);
+  const cloudWord = OFFERS.find((o) => o.id === 'cloud')?.acronym ?? 'CLOUD';
   const effectiveAudience: Audience = nomad ? 'company' : audience;
   const [showPassword, setShowPassword] = useState(false);
   const [verificationMethod, setVerificationMethod] = useState<'email' | 'sms'>('email');
@@ -288,6 +292,7 @@ export default function SignInDialog({ onRegister, onForgotPassword, onSuccess, 
               ) : (
                 <>
                   {nomad ? <div className="mb-6 flex justify-center text-white [&_svg]:h-10 [&_svg]:w-auto [&_svg]:max-w-full [&_svg]:overflow-visible" data-testid="signin-offer-word"><OfferWordmark offer="nomad" label={nomadWord} /></div> : null}
+                  {receptionistDoor ? <div className="mb-6 flex justify-center text-white [&_svg]:h-10 [&_svg]:w-auto [&_svg]:max-w-full [&_svg]:overflow-visible" data-testid="signin-offer-word"><OfferWordmark offer="cloud" label={cloudWord} /></div> : null}
                   <div className="text-center mb-8 lg:text-left">
                     <h2 className="text-3xl font-extrabold text-white mb-2">{t('signIn.welcomeBack', 'Welcome Back')}</h2>
                     <p className="text-slate-400 text-sm">{t('signIn.signInToContinue', 'Sign in to your account to continue.')}</p>

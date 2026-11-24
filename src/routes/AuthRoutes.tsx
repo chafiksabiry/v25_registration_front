@@ -18,6 +18,10 @@ import { buildAuthPageTitle } from '../lib/tracking/registrationSections';
 import { usePageTitle } from '../lib/tracking/usePageTitle';
 import { isCallcentreProduct, isNomadVisitor } from '../lib/product';
 import { NOMAD_PRODUCT, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH, nomadRegisterSearch } from '../lib/offerRegister';
+import { CLOUD_RECEPTIONIST_SIGN_IN_PATH, CLOUD_RECEPTIONIST_SIGNUP_PATH } from '../lib/cloudReceptionist';
+
+/** Onglet du parcours CLOUD Receptionist (politique de marque du 24/11/2026) : « HARX CLOUD ». */
+export const CLOUD_TAB_TITLE = 'HARX CLOUD';
 
 /**
  * Adresse NOMAD (/nomad/connexion, /nomad/inscription) : sans préfixe de langue. Depuis une page préfixée (/fr/auth/signin), le
@@ -123,6 +127,41 @@ export function SignInScreen() {
     return <Navigate replace to={{ pathname: NOMAD_SIGN_IN_PATH, search: nomadRegisterSearch(location.search || window.location.search) }} state={location.state} />;
   }
   return <SignInScreenContent navigate={navigate} handleNavigateToSection={handleNavigateToSection} />;
+}
+
+/**
+ * `/cloud/receptionist/connexion` : connexion CLOUD Receptionist (adresses du 24/11/2026), même écran que la connexion Téléphonie, avec le
+ * logo CLOUD et l'onglet « HARX CLOUD ». « S'inscrire » mène à l'étape 1 de l'inscription Receptionist (application Téléphonie).
+ */
+export function CloudReceptionistSignInScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  usePageTitle(CLOUD_TAB_TITLE);
+  return (
+    <SignInDialog
+      onRegister={() => hardNavigate(CLOUD_RECEPTIONIST_SIGNUP_PATH)}
+      onForgotPassword={() => navigate('/auth/recovery')}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+    />
+  );
+}
+
+/**
+ * `/cloud/receptionist/inscription/compte` : étape 2 « Compte HARX » de l'inscription CLOUD Receptionist (l'étape 1 est
+ * `/cloud/receptionist/inscription`, application Téléphonie). Même formulaire que l'inscription Téléphonie ; onglet « HARX CLOUD ».
+ */
+export function RegisterCloudReceptionistScreen() {
+  const { navigate, handleNavigateToSection } = useAuthContext();
+  usePageTitle(CLOUD_TAB_TITLE);
+  return (
+    <RegistrationDialog
+      defaultUserType="call-center"
+      // « Se connecter » : connexion Receptionist (porte Receptionist).
+      onSignIn={() => goNomadAddress(navigate, CLOUD_RECEPTIONIST_SIGN_IN_PATH)}
+      onGetStarted={() => navigate('/auth/choice')}
+      onNavigateToSection={handleNavigateToSection}
+    />
+  );
 }
 
 /** `/nomad/connexion` : connexion NOMAD (porte NOMAD), même écran que la connexion Téléphonie. */
