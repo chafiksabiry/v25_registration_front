@@ -15,14 +15,15 @@ import {
   Trash2,
   UserCheck,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import {
-  identityAdminUrl,
   supportInboxApi,
   type SupportConversationDetail,
   type SupportConversationSummary,
   type SupportMessage,
   type SupportTicket,
 } from '../../lib/api';
+import { identityPagePath, verificationIdFromConversation } from '../../lib/identityReviewApi';
 import { AdminPageHeader } from './adminPageShell';
 import { useSupportInboxSocket, type InboxSignal } from './useSupportInboxSocket';
 
@@ -663,9 +664,9 @@ export default function AdminInboxPage() {
                     detail.handoff?.active ? (
                       <span>
                         Dossier d’identité à vérifier : décidez dans la{' '}
-                        <a href={identityAdminUrl()} target="_blank" rel="noreferrer" className="font-medium text-violet-700 underline">
+                        <Link to={identityPagePath(verificationIdFromConversation(detail.waId))} className="font-medium text-violet-700 underline">
                           page Identité
-                        </a>
+                        </Link>
                         . La demande se ferme d’elle-même à la décision.
                       </span>
                     ) : (

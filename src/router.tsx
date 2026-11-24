@@ -36,6 +36,7 @@ import AdminCompanyPlansPage from './components/admin/AdminCompanyPlansPage';
 import AdminRepPlansPage from './components/admin/AdminRepPlansPage';
 import AdminObjectivesPage from './components/admin/AdminObjectivesPage';
 import AdminInboxPage from './components/admin/AdminInboxPage';
+import AdminIdentityPage from './components/admin/AdminIdentityPage';
 import AdminSatisfactionPage from './components/admin/AdminSatisfactionPage';
 import AdminErrorPage from './components/admin/AdminErrorPage';
 import { AdminGuestOnly, AdminRoute } from './components/admin/adminGuards';
@@ -160,6 +161,7 @@ const routes: RouteObject[] = [
             { path: 'ai-tokens', element: <AdminAiTokensPage /> },
             { path: 'objectives', element: <AdminObjectivesPage /> },
             { path: 'inbox', element: <AdminInboxPage /> },
+            { path: 'identity', element: <AdminIdentityPage /> },
             { path: 'pricing/minutes', element: <AdminPricingMinutesPage /> },
             { path: 'pricing/phone-line', element: <AdminPricingPhonePage /> },
             { path: 'plans/company', element: <AdminCompanyPlansPage /> },
