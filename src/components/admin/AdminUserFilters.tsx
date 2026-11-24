@@ -1,6 +1,7 @@
 import React from 'react';
 import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { ACCOUNT_STATUS_FILTERS, type AccountStatusFilter } from './accountClosureUtils';
 
 export type TypeFilter = 'all' | 'rep' | 'company' | 'call-center';
 
@@ -45,6 +46,9 @@ type AdminUserFiltersProps = {
   typeFilter: TypeFilter;
   verifiedFilter?: VerifiedFilter;
   onboardingFilter?: OnboardingFilter;
+  /** Statut du compte (actif / désactivé, maquette A1) : affiché seulement si `onStatusFilterChange` est fourni. */
+  statusFilter?: AccountStatusFilter;
+  onStatusFilterChange?: (value: AccountStatusFilter) => void;
   onSearchChange: (value: string) => void;
   onTypeFilterChange: (value: TypeFilter) => void;
   onVerifiedFilterChange?: (value: VerifiedFilter) => void;
@@ -84,6 +88,8 @@ export default function AdminUserFilters({
   typeFilter,
   verifiedFilter = 'all',
   onboardingFilter = 'all',
+  statusFilter = 'all',
+  onStatusFilterChange,
   onSearchChange,
   onTypeFilterChange,
   onVerifiedFilterChange,
@@ -135,6 +141,12 @@ export default function AdminUserFilters({
             active={onboardingFilter}
             onChange={onOnboardingFilterChange}
           />
+        ) : null}
+        {onStatusFilterChange ? (
+          <div className="flex flex-wrap items-center gap-2" data-testid="account-status-filter">
+            <span className="text-xs font-bold text-slate-500 mr-1">Statut du compte</span>
+            <FilterPills filters={ACCOUNT_STATUS_FILTERS} active={statusFilter} onChange={onStatusFilterChange} />
+          </div>
         ) : null}
       </div>
     </div>

@@ -161,6 +161,8 @@ export const adminApi = {
     verified?: string;
     onboardingStatus?: string;
     planName?: string;
+    /** Statut du compte : actif ou désactivé (maquette A1). */
+    status?: 'active' | 'disabled';
   }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
@@ -168,6 +170,22 @@ export const adminApi = {
   userDetail: async (userId: string) => {
     const response = await api.get(`/admin/users/${userId}`);
     return response.data;
+  },
+  /** Désactive (réversible) ou réactive un compte : connexion refusée tout de suite, abonnement et numéro inchangés (maquettes A2, A2b). */
+  setUserStatus: async (userId: string, payload: { disabled: boolean; reason?: string }) => {
+    const response = await api.patch(`/admin/users/${encodeURIComponent(userId)}/status`, payload);
+    return response.data as {
+      success: boolean;
+      data: { userId: string; disabled: boolean; disabledAt: string | null; disabledReason: string | null; disabledBy: { name: string | null } | null };
+    };
+  },
+  /** Supprime définitivement un compte ; `confirmEmail` = l'email du compte retapé par l'admin (maquette A3). */
+  deleteUser: async (userId: string, confirmEmail: string) => {
+    const response = await api.delete(`/admin/users/${encodeURIComponent(userId)}`, { data: { confirmEmail } });
+    return response.data as {
+      success: boolean;
+      data: { userId: string; deletedAt: string; subscriptionsCanceled: number; numbersReturned: number; emailFreed: boolean };
+    };
   },
   updateFinancials: async (
     userId: string,
