@@ -8,6 +8,8 @@ import {
   Info,
   LifeBuoy,
   Loader2,
+  Mail,
+  BarChart3,
   MessageCircle,
   RefreshCw,
   Search,
@@ -25,24 +27,27 @@ import {
 } from '../../lib/api';
 import { AdminPageHeader } from './adminPageShell';
 import { useSupportInboxSocket, type InboxSignal } from './useSupportInboxSocket';
+import AgentPanel from './supportAgent/AgentPanel';
+import AgentMetrics from './supportAgent/AgentMetrics';
+import { supportAgentApi, type AgentPendingItem } from '../../lib/supportAgentApi';
 
-type Filter = 'all' | 'todo' | 'whatsapp' | 'web' | 'salesiq' | 'identity';
-type Channel = 'whatsapp' | 'web' | 'salesiq' | 'identity';
+type Filter = 'all' | 'todo' | 'whatsapp' | 'web' | 'email' | 'salesiq' | 'identity';
+type Channel = 'whatsapp' | 'web' | 'email' | 'salesiq' | 'identity';
 
 /** Relecture de secours : rapide quand le temps réel est coupé, rare quand il est actif (le serveur signale chaque changement). */
 const POLL_OFFLINE_MS = 15000;
 const POLL_LIVE_MS = 120000;
 // identity: = demande créée par le serveur quand un dossier de vérification d'identité passe en revue humaine.
 const channelOf = (id: string): Channel =>
-  id.startsWith('web:') ? 'web' : id.startsWith('salesiq:') ? 'salesiq' : id.startsWith('identity:') ? 'identity' : 'whatsapp';
-const CHANNEL_LABEL: Record<Channel, string> = { whatsapp: 'WhatsApp', web: 'Chat du site', salesiq: 'SalesIQ', identity: 'Vérification d’identité' };
+  id.startsWith('web:') ? 'web' : id.startsWith('email:') ? 'email' : id.startsWith('salesiq:') ? 'salesiq' : id.startsWith('identity:') ? 'identity' : 'whatsapp';
+const CHANNEL_LABEL: Record<Channel, string> = { whatsapp: 'WhatsApp', web: 'Chat du site', email: 'E-mail support@harx.ai', salesiq: 'SalesIQ', identity: 'Vérification d’identité' };
 const labelOf = (c: { waId: string; profileName?: string }) => {
   const ch = channelOf(c.waId);
-  return ch === 'web' ? 'Visiteur du site' : ch === 'salesiq' ? 'Visiteur SalesIQ' : ch === 'identity' ? 'Vérification d’identité' : c.profileName || `+${c.waId}`;
+  return ch === 'web' ? 'Visiteur du site' : ch === 'email' ? c.profileName || 'E-mail' : ch === 'salesiq' ? 'Visiteur SalesIQ' : ch === 'identity' ? 'Vérification d’identité' : c.profileName || `+${c.waId}`;
 };
 const initialOf = (c: { waId: string; profileName?: string }) => {
   const ch = channelOf(c.waId);
-  return ch === 'web' ? 'V' : ch === 'salesiq' ? 'S' : ch === 'identity' ? 'I' : (c.profileName || '#').trim().charAt(0).toUpperCase();
+  return ch === 'web' ? 'V' : ch === 'salesiq' ? 'S' : ch === 'identity' ? 'I' : (c.profileName || (ch === 'email' ? '@' : '#')).trim().charAt(0).toUpperCase();
 };
 const roleLabel = (role: string) =>
   role === 'user' ? 'Visiteur' : role === 'human_agent' ? 'Équipe HARX' : role === 'system' ? 'HARX (automatique)' : 'Assistant IA';
@@ -82,7 +87,7 @@ function renderText(text: string): React.ReactNode[] {
 
 function Avatar({ c, size = 40 }: { c: { waId: string; profileName?: string }; size?: number }) {
   const ch = channelOf(c.waId);
-  const bg = ch === 'web' ? 'bg-sky-500' : ch === 'salesiq' ? 'bg-fuchsia-500' : ch === 'identity' ? 'bg-amber-500' : 'bg-emerald-500';
+  const bg = ch === 'web' ? 'bg-sky-500' : ch === 'email' ? 'bg-indigo-500' : ch === 'salesiq' ? 'bg-fuchsia-500' : ch === 'identity' ? 'bg-amber-500' : 'bg-emerald-500';
   return (
     <span
       className={`relative inline-flex shrink-0 items-center justify-center rounded-full font-semibold text-white ${bg}`}
@@ -93,6 +98,8 @@ function Avatar({ c, size = 40 }: { c: { waId: string; profileName?: string }; s
       <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-white ring-1 ring-slate-200">
         {ch === 'web' ? (
           <Globe className="h-2.5 w-2.5 text-sky-600" />
+        ) : ch === 'email' ? (
+          <Mail className="h-2.5 w-2.5 text-indigo-600" />
         ) : ch === 'salesiq' ? (
           <LifeBuoy className="h-2.5 w-2.5 text-fuchsia-600" />
         ) : ch === 'identity' ? (
@@ -126,6 +133,10 @@ export default function AdminInboxPage() {
   const [, setTick] = useState(0);
   const [unread, setUnread] = useState<Set<string>>(new Set());
   const [newBelow, setNewBelow] = useState(false);
+  // Agent support IA : demandes qui attendent le fondateur (brouillon à envoyer, décision), vue « Indicateurs », relecture du panneau.
+  const [agentPending, setAgentPending] = useState<Map<string, AgentPendingItem>>(new Map());
+  const [view, setView] = useState<'inbox' | 'metrics'>('inbox');
+  const [agentTick, setAgentTick] = useState(0);
   const messageCount = useRef(0);
   const debounce = useRef<number | undefined>(undefined);
   const logRef = useRef<HTMLDivElement>(null);
@@ -138,6 +149,10 @@ export default function AdminInboxPage() {
       setAll(data.conversations);
       setError(null);
       setLastSync(Date.now());
+      supportAgentApi
+        .pending()
+        .then((p) => setAgentPending(new Map(p.items.map((x) => [x.waId, x]))))
+        .catch(() => setAgentPending(new Map()));
     } catch {
       setError('Impossible de charger les conversations.');
     } finally {
@@ -150,6 +165,7 @@ export default function AdminInboxPage() {
       const d = await supportInboxApi.conversation(id);
       if (openedId.current !== id) return;
       setDetail(d);
+      setAgentTick((n) => n + 1);
       if (d.handoff?.active) {
         const t = await supportInboxApi.tickets();
         if (openedId.current === id) setTicket(t.tickets.find((x) => x.waId === id && x.status !== 'resolved') ?? null);
@@ -262,6 +278,7 @@ export default function AdminInboxPage() {
       todo: all.filter((c) => c.handoff).length,
       whatsapp: all.filter((c) => channelOf(c.waId) === 'whatsapp').length,
       web: all.filter((c) => channelOf(c.waId) === 'web').length,
+      email: all.filter((c) => channelOf(c.waId) === 'email').length,
       salesiq: all.filter((c) => channelOf(c.waId) === 'salesiq').length,
       identity: all.filter((c) => channelOf(c.waId) === 'identity').length,
     }),
@@ -272,7 +289,7 @@ export default function AdminInboxPage() {
     const q = query.trim().toLowerCase();
     return all.filter((c) => {
       if (filter === 'todo' && !c.handoff) return false;
-      if ((filter === 'whatsapp' || filter === 'web' || filter === 'salesiq' || filter === 'identity') && channelOf(c.waId) !== filter) return false;
+      if ((filter === 'whatsapp' || filter === 'web' || filter === 'email' || filter === 'salesiq' || filter === 'identity') && channelOf(c.waId) !== filter) return false;
       if (!q) return true;
       return `${labelOf(c)} ${c.waId} ${c.last?.text ?? ''}`.toLowerCase().includes(q);
     });
@@ -325,6 +342,7 @@ export default function AdminInboxPage() {
     { id: 'todo', label: 'À traiter', n: counts.todo, tone: 'amber' },
     { id: 'whatsapp', label: 'WhatsApp', n: counts.whatsapp },
     { id: 'web', label: 'Site', n: counts.web },
+    { id: 'email', label: 'E-mail', n: counts.email },
     { id: 'salesiq', label: 'SalesIQ', n: counts.salesiq },
     { id: 'identity', label: 'Identité', n: counts.identity },
   ];
@@ -340,6 +358,16 @@ export default function AdminInboxPage() {
           subtitle="Conversations de l'assistant IA HARX : WhatsApp Business, chat du site et SalesIQ."
         />
         <div className="flex items-center gap-3 sm:pt-2">
+          <button
+            type="button"
+            onClick={() => setView((v) => (v === 'metrics' ? 'inbox' : 'metrics'))}
+            aria-pressed={view === 'metrics'}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-violet-100 bg-white px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50"
+            data-testid="toggle-metrics"
+          >
+            <BarChart3 className="h-4 w-4" />
+            {view === 'metrics' ? 'Conversations' : 'Indicateurs'}
+          </button>
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ${
               socketStatus === 'live' ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700'
@@ -376,6 +404,9 @@ export default function AdminInboxPage() {
         </div>
       )}
 
+      {view === 'metrics' ? (
+        <AgentMetrics />
+      ) : (
       <div
         className="grid h-[calc(100vh-19rem)] min-h-[460px] gap-4 lg:grid-cols-[minmax(300px,380px)_1fr]"
         data-testid="admin-inbox"
@@ -460,6 +491,11 @@ export default function AdminInboxPage() {
                       {c.handoff && (
                         <span className="shrink-0 rounded-full bg-amber-500 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-white">
                           À traiter
+                        </span>
+                      )}
+                      {agentPending.get(c.waId) && (
+                        <span className="shrink-0 rounded-full bg-violet-600 px-1.5 py-px text-[10px] font-semibold uppercase tracking-wide text-white" data-testid="agent-badge">
+                          {agentPending.get(c.waId)!.state === 'awaiting_founder' ? 'Décision IA' : 'Brouillon IA'}
                         </span>
                       )}
                       <span className="truncate text-xs text-slate-500">
@@ -556,7 +592,7 @@ export default function AdminInboxPage() {
                   stickToBottom.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
                   if (stickToBottom.current) setNewBelow(false);
                 }}
-                className="min-h-0 flex-1 space-y-1 overflow-y-auto bg-slate-50/80 px-4 py-3"
+                className="min-h-[96px] flex-1 space-y-1 overflow-y-auto bg-slate-50/80 px-4 py-3"
                 role="log"
                 aria-live="polite"
               >
@@ -608,6 +644,18 @@ export default function AdminInboxPage() {
                 </button>
               )}
               </div>
+
+              {['whatsapp', 'web', 'email'].includes(channelOf(detail.waId)) && (
+                <AgentPanel
+                  waId={detail.waId}
+                  refreshKey={agentTick}
+                  onChanged={() => {
+                    stickToBottom.current = true;
+                    void loadList();
+                    if (openedId.current) void loadDetail(openedId.current);
+                  }}
+                />
+              )}
 
               {ticket && channelOf(detail.waId) !== 'identity' ? (
                 <form
@@ -682,6 +730,7 @@ export default function AdminInboxPage() {
           )}
         </section>
       </div>
+      )}
     </div>
   );
 }
