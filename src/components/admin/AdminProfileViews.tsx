@@ -943,6 +943,7 @@ export function ProfileHero({
   onboardingDisplay,
   onboardingStatus,
   photoUrl,
+  accountDisabled,
 }: {
   fullName: string;
   email: string;
@@ -950,6 +951,8 @@ export function ProfileHero({
   onboardingDisplay?: string;
   onboardingStatus?: string;
   photoUrl?: string;
+  /** Statut du compte (maquettes A2, A2b) : pastille « Actif » / « Désactivé ». Absent : pas de pastille. */
+  accountDisabled?: boolean;
 }) {
   const Icon = typeUser === 'company' ? Building2 : typeUser === 'rep' ? User : Globe;
 
@@ -987,6 +990,11 @@ export function ProfileHero({
               <span className="admin-tag bg-black/20">
                 {onboardingStatus}
               </span>
+            )}
+            {accountDisabled === undefined ? null : accountDisabled ? (
+              <span className="admin-tag !bg-red-600/80 !border-red-300">Désactivé</span>
+            ) : (
+              <span className="admin-tag !bg-emerald-500/40">Actif</span>
             )}
           </div>
         </div>

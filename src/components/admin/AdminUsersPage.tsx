@@ -8,6 +8,8 @@ import AdminUserFilters, {
   type VerifiedFilter,
 } from './AdminUserFilters';
 import { rowCreatedAt, rowName, rowTypeUserLabel } from './adminUserRowUtils';
+import { Info } from 'lucide-react';
+import { formatDay, isAccountDisabled, type AccountStatusFilter } from './accountClosureUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -25,6 +27,8 @@ type UserRow = {
   typeUser?: string | null;
   isVerified?: boolean;
   createdAt?: string;
+  disabled?: boolean;
+  disabledAt?: string | null;
   onboarding?: OnboardingInfo | null;
   displayName?: string;
   displayEmail?: string;
@@ -73,6 +77,7 @@ export default function AdminUsersPage() {
   const [typeFilter, setTypeFilter] = useState<TypeFilter>('all');
   const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('all');
   const [onboardingFilter, setOnboardingFilter] = useState<OnboardingFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<AccountStatusFilter>('all');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -88,6 +93,7 @@ export default function AdminUsersPage() {
         typeUser: typeFilter === 'all' ? undefined : typeFilter,
         verified: verifiedFilter === 'all' ? undefined : verifiedFilter,
         onboardingStatus: onboardingFilter === 'all' ? undefined : onboardingFilter,
+        status: statusFilter === 'all' ? undefined : statusFilter,
       })
       .then((response) => {
         setUsers(response.data.users);
@@ -95,7 +101,7 @@ export default function AdminUsersPage() {
       })
       .catch(() => setError('Impossible de charger la liste des utilisateurs.'))
       .finally(() => setLoading(false));
-  }, [page, search, typeFilter, verifiedFilter, onboardingFilter]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter]);
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -125,6 +131,11 @@ export default function AdminUsersPage() {
           setPage(1);
           setOnboardingFilter(value);
         }}
+        statusFilter={statusFilter}
+        onStatusFilterChange={(value) => {
+          setPage(1);
+          setStatusFilter(value);
+        }}
       />
 
       {loading ? (
@@ -145,6 +156,7 @@ export default function AdminUsersPage() {
                   <th className="px-6 py-3 font-semibold">Onboarding</th>
                   <th className="px-6 py-3 font-semibold">Vérifié</th>
                   <th className="px-6 py-3 font-semibold">Créé le</th>
+                  <th className="px-6 py-3 font-semibold">Statut</th>
                 </tr>
               </thead>
               <tbody>
@@ -152,9 +164,9 @@ export default function AdminUsersPage() {
                   <tr
                     key={user._id}
                     onClick={() => navigate(`/admin/users/${user._id}`)}
-                    className="border-t border-violet-50/80 cursor-pointer transition-colors"
+                    className={`border-t border-violet-50/80 cursor-pointer transition-colors ${isAccountDisabled(user) ? 'bg-slate-50/70' : ''}`}
                   >
-                    <td className="px-6 py-3 font-medium text-slate-900">
+                    <td className={`px-6 py-3 font-medium ${isAccountDisabled(user) ? 'text-slate-500' : 'text-slate-900'}`}>
                       <div>{rowName(user)}</div>
                       {user.typeUser === 'company' && user.industry && (
                         <p className="text-xs text-violet-600 mt-0.5">{user.industry}</p>
@@ -208,6 +220,16 @@ export default function AdminUsersPage() {
                     </td>
                     <td className="px-6 py-3">{user.isVerified ? 'Oui' : 'Non'}</td>
                     <td className="px-6 py-3 text-slate-500">{rowCreatedAt(user)}</td>
+                    <td className="px-6 py-3">
+                      {isAccountDisabled(user) ? (
+                        <>
+                          <span className="admin-badge admin-badge--danger">Désactivé</span>
+                          {user.disabledAt ? <p className="text-[11px] text-slate-400 mt-1">le {formatDay(user.disabledAt)}</p> : null}
+                        </>
+                      ) : (
+                        <span className="admin-badge admin-badge--success">Actif</span>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -237,6 +259,10 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
+
+      <p className="text-xs text-slate-500 flex items-center gap-1.5">
+        <Info size={14} className="shrink-0" /> La recherche porte déjà sur le nom et l’email. Les comptes supprimés n’apparaissent plus dans la liste (une trace sans donnée personnelle reste dans le journal d’administration).
+      </p>
     </div>
   );
 }

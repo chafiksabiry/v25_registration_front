@@ -278,6 +278,7 @@
     "errGeneric": "No se pudo iniciar sesión. Verifique sus datos e inténtelo de nuevo.",
     "errInvalidCredentials": "Correo electrónico o contraseña incorrectos.",
     "errAccountNotVerified": "Esta cuenta aún no está verificada. Introduzca el código que le enviamos por correo electrónico para activarla.",
+    "errAccountDisabled": "Esta cuenta está desactivada. Para más información, escriba a support@harx.ai.",
     "errInvalidEmail": "No se encontró ninguna cuenta con este correo electrónico.",
     "errInvalidPassword": "Contraseña incorrecta.",
     "errMissingEmail": "Ingrese su correo electrónico.",

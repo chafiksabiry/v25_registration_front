@@ -1188,3 +1188,52 @@
   border-top: 1px solid rgba(226, 232, 240, 0.8);
   background: rgba(248, 250, 252, 0.55);
 }
+
+/* Désactivation et suppression d'un compte (maquettes A2, A2b, A3) : boutons de la fiche utilisateur. */
+.admin-btn-harx,
+.admin-btn-danger-outline,
+.admin-btn-danger-solid,
+.admin-btn-warn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.875rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition: filter 0.15s ease, opacity 0.15s ease;
+}
+.admin-btn-harx {
+  color: #fff;
+  background: linear-gradient(90deg, #f7941e 0%, #e6188d 55%, #ed1c24 100%);
+  box-shadow: 0 8px 24px rgba(230, 24, 141, 0.28);
+}
+.admin-btn-danger-outline {
+  color: #dc2626;
+  background: #fff;
+  border: 1.5px solid rgba(220, 38, 38, 0.55);
+}
+.admin-btn-danger-solid {
+  color: #fff;
+  background: #dc2626;
+  border: 1.5px solid #dc2626;
+  padding: 0.6rem 1.15rem;
+}
+.admin-btn-warn-outline {
+  color: #b45309;
+  background: #fff;
+  border: 1.5px solid rgba(217, 119, 6, 0.55);
+}
+.admin-btn-harx:hover:not(:disabled),
+.admin-btn-danger-outline:hover:not(:disabled),
+.admin-btn-danger-solid:hover:not(:disabled),
+.admin-btn-warn-outline:hover:not(:disabled) {
+  filter: brightness(0.97);
+}
+.admin-btn-harx:disabled,
+.admin-btn-danger-outline:disabled,
+.admin-btn-danger-solid:disabled,
+.admin-btn-warn-outline:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
