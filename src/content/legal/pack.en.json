@@ -179,8 +179,8 @@
           "items": [
             "general information and public authorities: contact@harx.ai;",
             "general support: support@harx.ai;",
-            "REP support: reps-support@harx.ai;",
-            "Company support: comp-support@harx.ai;",
+            "REP support: support@harx.ai;",
+            "Company support: support@harx.ai;",
             "sales inquiries and Company subscriptions: sales@harx.ai;",
             "reporting of unlawful content or conduct: abuse-support@harx.ai. HARX responds in French and English. Where the law of a country requires HARX to appoint a local representative, its identity and contact details are indicated on the Platform."
           ]
@@ -352,7 +352,7 @@
         },
         {
           "type": "paragraph",
-          "text": "12.3. The User may challenge a decision through the Platform's internal complaint system or at repssupport@harx.ai for REPs and comp-support@harx.ai for Companies, within six (6) months. The complaint is reviewed by a person who did not take the initial decision. HARX responds with a statement of reasons within thirty (30) days."
+          "text": "12.3. The User may challenge a decision through the Platform's internal complaint system or at support@harx.ai for REPs and support@harx.ai for Companies, within six (6) months. The complaint is reviewed by a person who did not take the initial decision. HARX responds with a statement of reasons within thirty (30) days."
         },
         {
           "type": "paragraph",
@@ -535,7 +535,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.4. The REP may view the results of their assessment, request explanations, submit their comments and request a review at reps-support@harx.ai."
+          "text": "3.4. The REP may view the results of their assessment, request explanations, submit their comments and request a review at support@harx.ai."
         },
         {
           "type": "heading",
@@ -1292,7 +1292,7 @@
         },
         {
           "type": "paragraph",
-          "text": "15.4. Requests are made at contact@harx.ai. Refunds are made by the same payment method."
+          "text": "15.4. Requests are made at support@harx.ai. Refunds are made by the same payment method."
         },
         {
           "type": "heading",
@@ -1434,7 +1434,7 @@
         },
         {
           "type": "paragraph",
-          "text": "3.3. Automated decisions and human review. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a call, may be taken automatically on the basis of these scores, where this is necessary for the performance of the contract. You may request the intervention of a member of the HARX team, express your point of view and contest the decision at contact@harx.ai, or at repssupport@harx.ai if you are a REP."
+          "text": "3.3. Automated decisions and human review. Certain decisions, in particular access to the marketplace, positioning on a Gig or the validation of a call, may be taken automatically on the basis of these scores, where this is necessary for the performance of the contract. You may request the intervention of a member of the HARX team, express your point of view and contest the decision at contact@harx.ai, or at support@harx.ai if you are a REP."
         },
         {
           "type": "paragraph",

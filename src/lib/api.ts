@@ -474,3 +474,76 @@ export const files = {
   },
   
 };
+export type SupportConversationSummary = {
+  waId: string;
+  profileName: string;
+  language: string | null;
+  linked: boolean;
+  handoff: boolean;
+  updatedAt: string;
+  messageCount: number;
+  last: { role: string; text: string; ts: string } | null;
+};
+
+export type SupportMessage = { role: 'user' | 'assistant' | 'human_agent' | 'system'; text: string; ts: string };
+
+export type SupportConversationDetail = {
+  waId: string;
+  profileName: string;
+  language: string | null;
+  linked: boolean;
+  handoff: { active?: boolean };
+  notes: Array<{ key: string; value: string }>;
+  messages: SupportMessage[];
+};
+
+export type SupportTicket = {
+  id: string;
+  waId: string;
+  status: string;
+  reason: string;
+  summary: string;
+  urgency: string;
+};
+
+/**
+ * Inbox du support : conversations de l'assistant IA (WhatsApp Business et chat du site), servies par l'orchestrateur.
+ * L'orchestrateur reconnaît la connexion admin du tableau de bord (même jeton que les autres appels /admin).
+ */
+const supportInboxBase = () =>
+  `${String(
+    import.meta.env.VITE_COMPORCHESTRATOR_BACK_URL ||
+      import.meta.env.VITE_COMPANY_ORCHESTRATOR_URL ||
+      'https://v25comporchestratorback-production.up.railway.app',
+  ).replace(/\/$/, '')}/api/whatsapp/admin`;
+
+/** Page d'administration des vérifications d'identité (servie par l'orchestrateur) : décision sur une demande « Identité » de l'Inbox. */
+export const identityAdminUrl = (base: string = supportInboxBase()): string => base.replace(/\/api\/whatsapp\/admin\/?$/, '') + '/admin/identity';
+
+/** URL du WebSocket temps réel de l'Inbox (https -> wss, http -> ws) ; le jeton passe en sous-protocole, jamais dans l'URL. */
+export const supportInboxSocketUrl = (base: string = supportInboxBase()): string =>
+  base.replace(/^http/i, 'ws').replace(/\/api\/whatsapp\/admin\/?$/, '') + '/support-inbox';
+
+const supportInboxCall = async <T>(method: 'get' | 'post' | 'delete', path: string, data?: unknown): Promise<T> => {
+  const token = localStorage.getItem('token');
+  const response = await axios.request<T>({
+    method,
+    url: `${supportInboxBase()}${path}`,
+    data,
+    timeout: 20000,
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  return response.data;
+};
+
+export const supportInboxApi = {
+  conversations: (channel: '' | 'whatsapp' | 'web' | 'salesiq' | 'identity' = '', limit = 100) =>
+    supportInboxCall<{ conversations: SupportConversationSummary[] }>('get', `/conversations?channel=${channel}&limit=${limit}`),
+  conversation: (id: string) =>
+    supportInboxCall<SupportConversationDetail>('get', `/conversations/${encodeURIComponent(id)}`),
+  tickets: () => supportInboxCall<{ tickets: SupportTicket[] }>('get', '/tickets'),
+  deleteConversation: (id: string) =>
+    supportInboxCall<{ deleted: boolean }>('delete', `/conversations/${encodeURIComponent(id)}`),
+  reply: (ticketId: string, text: string, resolve: boolean) =>
+    supportInboxCall<{ sent: boolean }>('post', `/tickets/${ticketId}/reply`, { text, resolve }),
+};
