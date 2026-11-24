@@ -37,10 +37,10 @@ afterEach(() => vi.unstubAllGlobals());
 const login = () => getPostLoginRedirectUrl('u1', 'tok');
 
 describe('porte NOMAD → portail', () => {
-  it('navigateur neuf : connexion par la porte NOMAD → /telephony, profil « solo » transmis, produit toujours « callcentre »', async () => {
+  it('navigateur neuf : connexion par la porte NOMAD → /nomad/poste (adresses NOMAD), profil « solo » transmis, produit toujours « callcentre »', async () => {
     captureProductFromUrl('?product=nomad');
     checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
-    expect(await login()).toBe('/telephony');
+    expect(await login()).toBe('/nomad/poste');
     expect(localStorage.getItem('harx_cc_pending_profile')).toBe('solo');
     expect(localStorage.getItem('harx_product')).toBe('callcentre');
     expect(isCallcentreProduct()).toBe(true);
@@ -110,5 +110,24 @@ describe('adresses NOMAD (24/11/2026) : arrivée après connexion et inscription
     expect(telephonySignupDestination('/auth/register-call-center')).toBe('/telephony');
     localStorage.setItem('harx_cc_pending_plan', 'accueil');
     expect(telephonySignupDestination('/fr/auth/register-call-center')).toBe('/telephony');
+  });
+
+  it('« Tableau de bord » depuis l’accueil (/fr) : compte NOMAD → /nomad/poste, selon le meilleur signal du navigateur', async () => {
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
+    at('/fr');
+    // Profil « solo » laissé par une connexion NOMAD précédente (ou par le parcours Nomad Solo).
+    localStorage.setItem('harx_cc_pending_profile', 'solo');
+    expect(await login()).toBe('/nomad/poste');
+    localStorage.clear();
+    // Porte NOMAD prise dans cet onglet.
+    sessionStorage.setItem('harx_nomad_door', '1');
+    expect(await login()).toBe('/nomad/poste');
+    sessionStorage.clear();
+    localStorage.clear(); // la connexion par la porte NOMAD a transmis le profil « solo » : retiré pour le cas suivant
+    // Aucun signal : /telephony (le portail renverra un compte NOMAD vers /nomad).
+    expect(await login()).toBe('/telephony');
+    // Compte CLOUD avec une offre CLOUD mémorisée : /telephony.
+    localStorage.setItem('harx_cc_pending_plan', 'accueil');
+    expect(await login()).toBe('/telephony');
   });
 });

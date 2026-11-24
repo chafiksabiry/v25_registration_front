@@ -92,6 +92,21 @@ export function handNomadProfileToPortal(): void {
   }
 }
 
+/**
+ * Meilleur signal NOMAD disponible côté navigateur pour un compte Téléphonie connecté (bouton « Tableau de bord » de l'accueil,
+ * arrivée après connexion) : adresse ou parcours NOMAD (`isNomadVisitor` : adresse NOMAD, offre `nomad_solo` ou profil « solo »
+ * mémorisés, ce dernier étant aussi écrit à la connexion par la porte NOMAD), ou porte NOMAD prise dans cet onglet.
+ * Le portail renvoie de toute façon un compte NOMAD arrivé sur /telephony vers ses écrans /nomad.
+ */
+export function isNomadAccountHint(pathname: string = currentPathname()): boolean {
+  if (isNomadVisitor(pathname)) return true;
+  try {
+    return sessionStorage.getItem(NOMAD_DOOR_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 export function isCallcentreProduct(): boolean {
   try {
     return localStorage.getItem(PRODUCT_KEY) === CALLCENTRE_PRODUCT;

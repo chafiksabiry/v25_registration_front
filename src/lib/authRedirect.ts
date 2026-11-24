@@ -5,7 +5,7 @@ import { auth } from "./api";
 import { INVITATIONS_SEEN_KEY, fetchPendingInvitations } from "./agentInvitations";
 import { hardNavigate } from "./appNavigation";
 import { readStoredAuthToken } from "./authSync";
-import { CALLCENTRE_PATH, NOMAD_POST_LOGIN_PATH, clearProduct, companyWorkspacePath, handNomadProfileToPortal, isCallcentreProduct, isNomadVisitor } from "./product";
+import { CALLCENTRE_PATH, NOMAD_POST_LOGIN_PATH, clearProduct, companyWorkspacePath, handNomadProfileToPortal, isCallcentreProduct, isNomadAccountHint } from "./product";
 
 interface TokenPayload {
   userId?: string;
@@ -308,10 +308,10 @@ async function computePostLoginRedirectUrl(
         auth.setProduct("callcentre", token).catch(() => undefined);
       }
       // Compte Call Center : application /telephony (l'ancienne /call-center est retirée, arbitrage 12).
-      // Visiteur NOMAD (porte /nomad/connexion, parcours Nomad Solo) : poste NOMAD /nomad/poste (adresses NOMAD du 24/11/2026) ;
+      // Visiteur ou compte NOMAD (porte /nomad/connexion, parcours Nomad Solo, bouton « Tableau de bord ») : poste NOMAD /nomad/poste (adresses NOMAD du 24/11/2026) ;
       // le portail renvoie vers /nomad/mise-en-route tant que la mise en route n'est pas finie. Les autres comptes gardent
       // /telephony (le portail y redirige lui-même les comptes NOMAD).
-      const dest = callcentre && isNomadVisitor() ? NOMAD_POST_LOGIN_PATH : companyWorkspacePath(checkUserType.userType, callcentre);
+      const dest = callcentre && isNomadAccountHint() ? NOMAD_POST_LOGIN_PATH : companyWorkspacePath(checkUserType.userType, callcentre);
       // Porte NOMAD : le portail ouvre le parcours Nomad (profil « solo »), même dans un navigateur neuf.
       if (callcentre) handNomadProfileToPortal();
       try {
