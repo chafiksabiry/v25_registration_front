@@ -39,12 +39,15 @@ test('adresse inconnue : page 404 à la charte HARX, sans erreur de développeur
 
 for (const [from, to, lang] of [
   ['/en/telephony', '/telephony', 'en'],
-  ['/en/telephony/nomad', '/telephony/nomad', 'en'],
+  // Page NOMAD : adresse NOMAD /nomad (24/11/2026).
+  ['/en/telephony/nomad', '/nomad', 'en'],
+  ['/en/nomad', '/nomad', 'en'],
+  ['/ar/nomad/poste', '/nomad/poste', 'ar'],
   ['/fr/telephony', '/telephony', 'fr'],
 ] as const) {
   test(`${from} monté par erreur dans ce module : renvoi vers ${to} en « ${lang} »`, async ({ page }) => {
     await isolate(page);
-    await page.route(/\/telephony(\/|\?|$)/, (route) =>
+    await page.route(/\/(telephony|nomad)(\/|\?|$)/, (route) =>
       route.request().resourceType() === 'document' && !/^\/(fr|en|es|ar)\//.test(new URL(route.request().url()).pathname)
         ? route.fulfill({ status: 200, contentType: 'text/html', body: '<html><body><h1>telephonie</h1></body></html>' })
         : route.continue(),

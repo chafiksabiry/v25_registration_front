@@ -15,7 +15,7 @@ vi.mock('axios', () => ({ default: { get: vi.fn(() => Promise.reject({ response:
 vi.mock('js-cookie', () => ({ default: { set: vi.fn(), remove: vi.fn(), get: vi.fn() } }));
 
 import { getPostLoginRedirectUrl } from './authRedirect';
-import { captureProductFromUrl, isCallcentreProduct } from './product';
+import { captureProductFromUrl, isCallcentreProduct, telephonySignupDestination } from './product';
 
 function memoryStorage() {
   const m = new Map<string, string>();
@@ -68,5 +68,47 @@ describe('porte NOMAD → portail', () => {
     checkUserType.mockResolvedValue({ userType: 'company', product: 'taas' });
     await login();
     expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+});
+
+describe('adresses NOMAD (24/11/2026) : arrivée après connexion et inscription', () => {
+  const at = (pathname: string, search = '') => vi.stubGlobal('window', { location: { pathname, search } });
+
+  it('connexion par /nomad/connexion → poste NOMAD /nomad/poste, profil « solo » transmis', async () => {
+    at('/nomad/connexion');
+    captureProductFromUrl('', '/nomad/connexion');
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
+    expect(await login()).toBe('/nomad/poste');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBe('solo');
+    expect(localStorage.getItem('harx_product')).toBe('callcentre');
+  });
+
+  it('ancienne porte /auth/signin?product=nomad → /nomad/poste', async () => {
+    at('/auth/signin', '?product=nomad');
+    captureProductFromUrl('?product=nomad', '/auth/signin');
+    checkUserType.mockResolvedValue({ userType: 'call-center', product: 'callcentre' });
+    expect(await login()).toBe('/nomad/poste');
+  });
+
+  it('CLOUD inchangé : connexion Téléphonie (?product=callcentre) → /telephony', async () => {
+    at('/auth/signin', '?product=callcentre');
+    captureProductFromUrl('?product=callcentre', '/auth/signin');
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'callcentre' });
+    expect(await login()).toBe('/telephony');
+    expect(localStorage.getItem('harx_cc_pending_profile')).toBeNull();
+  });
+
+  it('compte hors Téléphonie (TAAS) à /nomad/connexion : jamais /nomad/poste', async () => {
+    at('/nomad/connexion');
+    checkUserType.mockResolvedValue({ userType: 'company', product: 'taas' });
+    expect(await login()).toBe('/company');
+  });
+
+  it('après l’inscription : /nomad/mise-en-route pour NOMAD, /telephony pour CLOUD', () => {
+    expect(telephonySignupDestination('/nomad/inscription')).toBe('/nomad/mise-en-route');
+    expect(telephonySignupDestination('/auth/register-nomad')).toBe('/nomad/mise-en-route');
+    expect(telephonySignupDestination('/auth/register-call-center')).toBe('/telephony');
+    localStorage.setItem('harx_cc_pending_plan', 'accueil');
+    expect(telephonySignupDestination('/fr/auth/register-call-center')).toBe('/telephony');
   });
 });

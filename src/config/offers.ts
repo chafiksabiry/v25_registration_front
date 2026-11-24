@@ -84,8 +84,13 @@ export interface OfferConfig {
 /** Textes du haut de l'accueil (clés i18n). */
 export const HUB_HERO_KEYS = { title1: 'hub.hero.title1', title2: 'hub.hero.title2', sub: 'hub.hero.sub' } as const;
 
-/** Page de l'offre NOMAD (Nomad Solo), servie par l'application Téléphonie, même origine. */
-export const NOMAD_PAGE = '/telephony/nomad';
+/**
+ * Adresses NOMAD validées par le fondateur (24/11/2026) : tout le parcours NOMAD vit sous `/nomad`, jamais sous `/telephony`
+ * (CLOUD garde `/telephony`). Page de l'offre (application Téléphonie, même origine), connexion et inscription (ce module).
+ */
+export const NOMAD_PAGE = '/nomad';
+export const NOMAD_SIGN_IN_PATH = '/nomad/connexion';
+export const NOMAD_REGISTER_PATH = '/nomad/inscription';
 
 const TELEPHONY_SIGN_IN = { route: '/auth/signin?product=callcentre', langPrefixed: false } as const;
 
@@ -141,11 +146,12 @@ export const OFFERS: readonly OfferConfig[] = [
     ctaKey: 'hub.offers.nomad.cta',
     targetKey: 'hub.offers.nomad.target',
     benefitKeys: ['hub.offers.nomad.benefit1', 'hub.offers.nomad.benefit2', 'hub.offers.nomad.benefit3'],
-    // Lien direct vers l'abonnement Nomad Solo (planStartPath de l'application Téléphonie), comme les offres CLOUD.
+    // Lien direct vers l'inscription NOMAD (/nomad/inscription : l'offre Nomad Solo y est mémorisée, comme le faisait le relais).
     children: [
-      { id: 'nomad_solo', labelKey: 'hub.offers.nomad.solo', kind: 'route', route: '/telephony/start?profil=solo&plan=nomad_solo', langPrefixed: false },
+      { id: 'nomad_solo', labelKey: 'hub.offers.nomad.solo', kind: 'route', route: NOMAD_REGISTER_PATH, langPrefixed: false },
     ],
-    signIn: TELEPHONY_SIGN_IN,
+    // « Déjà client ? » : connexion NOMAD (porte NOMAD), plus la connexion CLOUD.
+    signIn: { route: NOMAD_SIGN_IN_PATH, langPrefixed: false },
   },
 ];
 
@@ -154,12 +160,12 @@ export type MarkId = 'taas' | 'cloud' | 'nomad';
 export const MARK_IDS: readonly MarkId[] = ['taas', 'cloud', 'nomad'];
 
 /**
- * Pastille de l'offre courante : NOMAD quand l'adresse courante est la page NOMAD (/telephony/nomad, avec ou sans préfixe de
- * langue) ; sinon aucune sur l'accueil et les pages légales (`hub`), CLOUD sur les parcours Téléphonie, NOMAD sur les parcours
+ * Pastille de l'offre courante : NOMAD quand l'adresse courante est une adresse NOMAD (/nomad, /nomad/connexion,
+ * /nomad/inscription…, ou l'ancienne page /telephony/nomad, avec ou sans préfixe de langue) ; sinon aucune sur l'accueil et les pages légales (`hub`), CLOUD sur les parcours Téléphonie, NOMAD sur les parcours
  * Nomad Solo (plan nomad_solo / profil solo), TAAS partout ailleurs (pages TAAS, choix du profil, inscription et connexion).
  */
 export function activeMark(ctx: { hub?: boolean; taas?: string; telephony?: boolean; nomad?: boolean; pathname?: string }): MarkId | null {
-  if (ctx.pathname && /^(\/(fr|en|es|ar))?\/telephony\/nomad\/?$/.test(ctx.pathname)) return 'nomad';
+  if (ctx.pathname && /^(\/(fr|en|es|ar))?(\/telephony\/nomad\/?|\/nomad(\/.*)?)$/.test(ctx.pathname)) return 'nomad';
   if (ctx.hub) return null;
   if (ctx.telephony) return ctx.nomad ? 'nomad' : 'cloud';
   return 'taas';

@@ -48,6 +48,8 @@ export const REGISTER_ROUTE_PATHS = [
   '/auth/register-rep',
   '/auth/register-call-center',
   '/auth/register-nomad',
+  // Inscription NOMAD (adresses NOMAD du 24/11/2026) : les étapes (?step=…) restent sur /nomad/inscription.
+  '/nomad/inscription',
 ] as const;
 
 export type RegisterRoutePath = (typeof REGISTER_ROUTE_PATHS)[number];

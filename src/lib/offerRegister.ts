@@ -1,18 +1,23 @@
-import { NOMAD_PAGE } from '../config/offers';
-import { getLangFromPath, stripLangPrefix, withLangPrefix } from './langRoutes';
+import { NOMAD_PAGE, NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH } from '../config/offers';
+import { stripLangPrefix } from './langRoutes';
+
+export { NOMAD_REGISTER_PATH, NOMAD_SIGN_IN_PATH };
 
 /**
  * Inscription propre à l'offre choisie (constat du fondateur, 22/11/2026, parcours Nomad).
  *
- * 1. Adresse nommée selon l'offre : Nomad s'inscrit sur `/auth/register-nomad?product=nomad` (au lieu de
- *    `/auth/register-call-center?product=callcentre`). L'ancienne adresse reste valable : pour un visiteur du parcours Nomad
- *    elle est remplacée par la nouvelle (liens de prod, e-mails, application). Les offres CLOUD gardent
- *    `/auth/register-call-center?product=callcentre`.
+ * 1. Adresse nommée selon l'offre : Nomad s'inscrit sur `/nomad/inscription` (adresses NOMAD du 24/11/2026 ; avant :
+ *    `/auth/register-nomad?product=nomad`, avant encore `/auth/register-call-center?product=callcentre`). Les anciennes adresses
+ *    restent valables et sont remplacées par la nouvelle (liens de prod, e-mails, application) : `/auth/register-nomad` toujours,
+ *    `/auth/register-call-center` pour un visiteur du parcours Nomad. La connexion NOMAD est `/nomad/connexion` (avant :
+ *    `/auth/signin?product=nomad`). Les offres CLOUD gardent `/auth/register-call-center?product=callcentre` et
+ *    `/auth/signin?product=callcentre`.
  * 2. Bouton « Retour » : retour à la page d'origine de l'offre, jamais vers `/auth/choice` (page TAAS) depuis Nomad.
  */
-export const NOMAD_REGISTER_PATH = '/auth/register-nomad';
+/** Ancienne adresse d'inscription NOMAD (22/11/2026), remplacée par `/nomad/inscription`. */
+export const LEGACY_NOMAD_REGISTER_PATH = '/auth/register-nomad';
 export const CALL_CENTER_REGISTER_PATH = '/auth/register-call-center';
-/** Valeur de `?product=` de l'inscription Nomad (compte du produit Téléphonie, comme `callcentre`). */
+/** Valeur de `?product=` des anciennes adresses NOMAD (compte du produit Téléphonie, comme `callcentre`). */
 export const NOMAD_PRODUCT = 'nomad';
 
 /** Note écrite par l'hôte (v25_process_connections, lib/redirectHop.ts) : page de l'offre quittée juste avant l'inscription. */
@@ -22,34 +27,57 @@ function cleanPath(pathname: string): string {
   return stripLangPrefix(pathname).replace(/\/+$/, '') || '/';
 }
 
-/** `/auth/register-nomad`, avec ou sans préfixe de langue (ou basename déjà retiré). */
+/** Inscription NOMAD : `/nomad/inscription` ou l'ancienne `/auth/register-nomad`, avec ou sans préfixe de langue (ou basename déjà retiré). */
 export function isNomadRegisterPath(pathname: string): boolean {
-  return cleanPath(pathname) === NOMAD_REGISTER_PATH;
+  const p = cleanPath(pathname);
+  return p === NOMAD_REGISTER_PATH || p === LEGACY_NOMAD_REGISTER_PATH;
 }
 
-/** `?product=callcentre&step=email` → `?product=nomad&step=email` (les autres paramètres sont gardés). */
+/** Connexion NOMAD : `/nomad/connexion`, avec ou sans préfixe de langue. */
+export function isNomadSignInPath(pathname: string): boolean {
+  return cleanPath(pathname) === NOMAD_SIGN_IN_PATH;
+}
+
+/** Porte NOMAD par l'adresse : `/nomad/connexion` ou `/nomad/inscription` (ou l'ancienne `/auth/register-nomad`). */
+export function isNomadDoorPath(pathname: string): boolean {
+  return isNomadSignInPath(pathname) || isNomadRegisterPath(pathname);
+}
+
+/** Requête d'une adresse NOMAD : `?product=callcentre&step=email` → `?step=email` (le produit est porté par l'adresse, les autres paramètres sont gardés). */
 export function nomadRegisterSearch(search: string): string {
   const params = new URLSearchParams(search);
-  params.set('product', NOMAD_PRODUCT);
-  return `?${params.toString()}`;
+  params.delete('product');
+  const s = params.toString();
+  return s ? `?${s}` : '';
 }
 
 /**
- * Ancienne adresse d'inscription (`/auth/register-call-center`, avec ou sans préfixe de langue) d'un visiteur du parcours Nomad
- * → adresse de l'offre (`/auth/register-nomad?product=nomad`, préfixe, étape, autres paramètres et ancre gardés) ; `null` sinon.
- * Appliqué avant le montage du routeur (arrivée par chargement complet depuis /telephony/start, liens d'e-mails, application).
+ * Ancienne adresse du parcours NOMAD (avec ou sans préfixe de langue) → adresse NOMAD (sans préfixe : la langue est mémorisée par
+ * l'appelant, voir main.tsx ; étape, autres paramètres et ancre gardés) ; `null` sinon :
+ * - `/auth/register-nomad` → `/nomad/inscription` ;
+ * - `/auth/register-call-center` d'un visiteur du parcours Nomad → `/nomad/inscription` ;
+ * - `/auth/signin?product=nomad` → `/nomad/connexion` ;
+ * - `/:lang/nomad/connexion`, `/:lang/nomad/inscription` → sans préfixe.
+ * Appliqué avant le montage du routeur (arrivée par chargement complet, liens d'e-mails, application).
  */
 export function nomadRegisterRedirect(loc: { pathname: string; search?: string; hash?: string }, nomad: boolean): string | null {
-  if (!nomad || cleanPath(loc.pathname) !== CALL_CENTER_REGISTER_PATH) return null;
-  const lang = getLangFromPath(loc.pathname);
-  const path = lang ? withLangPrefix(NOMAD_REGISTER_PATH, lang) : NOMAD_REGISTER_PATH;
-  return `${path}${nomadRegisterSearch(loc.search || '')}${loc.hash || ''}`;
+  const p = cleanPath(loc.pathname);
+  const hash = loc.hash || '';
+  if (p === LEGACY_NOMAD_REGISTER_PATH || (nomad && p === CALL_CENTER_REGISTER_PATH)) {
+    return `${NOMAD_REGISTER_PATH}${nomadRegisterSearch(loc.search || '')}${hash}`;
+  }
+  if (p === '/auth/signin' && new URLSearchParams(loc.search || '').get('product') === NOMAD_PRODUCT) {
+    return `${NOMAD_SIGN_IN_PATH}${nomadRegisterSearch(loc.search || '')}${hash}`;
+  }
+  if ((p === NOMAD_REGISTER_PATH || p === NOMAD_SIGN_IN_PATH) && p !== loc.pathname) {
+    return `${p}${loc.search || ''}${hash}`;
+  }
+  return null;
 }
 
-/** Page de l'offre Nomad pour un retour par chargement complet, avec la langue de l'adresse si elle y figure. */
-export function nomadPageUrl(currentPathname: string): string {
-  const lang = getLangFromPath(currentPathname);
-  return lang ? withLangPrefix(NOMAD_PAGE, lang) : NOMAD_PAGE;
+/** Page de l'offre Nomad pour un retour par chargement complet (`/nomad`, sans préfixe : la langue est mémorisée). */
+export function nomadPageUrl(): string {
+  return NOMAD_PAGE;
 }
 
 /** Note de l'hôte, si elle désigne bien la page Nomad (sinon `null`). */
@@ -59,7 +87,9 @@ export function readNomadReturn(raw: string | null | undefined): string | null {
     const url = (JSON.parse(raw) as { url?: unknown })?.url;
     if (typeof url !== 'string' || !url.startsWith('/') || url.startsWith('//')) return null;
     const pathname = new URL(url, 'https://harx.invalid').pathname;
-    return cleanPath(pathname) === NOMAD_PAGE ? url : null;
+    // Page NOMAD : `/nomad` (ou l'ancienne `/telephony/nomad`, notée avant le changement d'adresse).
+    const p = cleanPath(pathname);
+    return p === NOMAD_PAGE || p === '/telephony/nomad' ? url : null;
   } catch {
     return null;
   }
@@ -79,7 +109,7 @@ export type RegisterBackAction =
  * Destination du bouton « Retour » de l'inscription.
  * - Historique du module disponible : on y revient (inchangé).
  * - Parcours Nomad : page Nomad (retour navigateur quand l'hôte a noté qu'on en vient, ce qui garde la langue et le pays de
- *   l'adresse ; sinon chargement de /telephony/nomad). Jamais /auth/choice.
+ *   l'adresse ; sinon chargement de /nomad). Jamais /auth/choice.
  * - Sinon : `returnTo` ou `/auth/choice` (inchangé pour TAAS et CLOUD).
  */
 export function resolveRegisterBack(input: {
@@ -92,7 +122,7 @@ export function resolveRegisterBack(input: {
   if (input.canGoBack) return { type: 'history' };
   if (input.nomad) {
     if (input.nomadReturn) return { type: 'browser-back' };
-    return { type: 'hard', url: nomadPageUrl(input.pathname) };
+    return { type: 'hard', url: nomadPageUrl() };
   }
   return { type: 'route', to: input.returnTo ?? '/auth/choice' };
 }

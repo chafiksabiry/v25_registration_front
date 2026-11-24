@@ -3,12 +3,20 @@
  * remembered from the link the visitor came from (`?product=callcentre`) so
  * sign-in and sign-up can land on that product instead of the marketplace.
  */
-import { NOMAD_PRODUCT, isNomadRegisterPath } from './offerRegister';
+import { NOMAD_PRODUCT, isNomadDoorPath, isNomadRegisterPath } from './offerRegister';
 
 const PRODUCT_KEY = 'harx_product';
 
 export const CALLCENTRE_PRODUCT = 'callcentre';
 export const CALLCENTRE_PATH = '/telephony';
+/** Adresses NOMAD (24/11/2026) : arrivée d'un visiteur NOMAD après la connexion (poste) et après l'inscription (mise en route). */
+export const NOMAD_POST_LOGIN_PATH = '/nomad/poste';
+export const NOMAD_POST_SIGNUP_PATH = '/nomad/mise-en-route';
+
+/** Arrivée après l'inscription d'un compte Téléphonie : mise en route NOMAD pour un visiteur NOMAD, sinon `/telephony` (CLOUD, inchangé). */
+export function telephonySignupDestination(pathname: string = currentPathname()): string {
+  return isNomadVisitor(pathname) ? NOMAD_POST_SIGNUP_PATH : CALLCENTRE_PATH;
+}
 
 /**
  * Espace d'arrivée d'un compte entreprise après connexion (arbitrage 12 du 18/11/2026) :
@@ -20,22 +28,54 @@ export function companyWorkspacePath(userType: string | null | undefined, callce
   return '/company';
 }
 
-/** Remember the product named in the address bar, if any. */
-export function captureProductFromUrl(search: string = window.location.search): void {
+/**
+ * Remember the product named in the address bar, if any. Adresses NOMAD (24/11/2026) : `/nomad/connexion` et `/nomad/inscription`
+ * valent `?product=nomad` (porte NOMAD) ; l'arrivée sur `/nomad/inscription` mémorise en plus l'offre Nomad Solo, comme le relais
+ * `/telephony/start?profil=solo` de l'application Téléphonie (voir `rememberNomadSoloOffer`).
+ */
+export function captureProductFromUrl(search: string = window.location.search, pathname: string = currentPathname()): void {
   try {
-    const product = new URLSearchParams(search).get('product');
-    // `?product=nomad` (inscription Nomad, /auth/register-nomad) : compte du produit Téléphonie, comme `callcentre`.
+    const nomadDoor = isNomadDoorPath(pathname);
+    const product = nomadDoor ? NOMAD_PRODUCT : new URLSearchParams(search).get('product');
+    // `?product=nomad` (porte NOMAD : /nomad/connexion, /nomad/inscription) : compte du produit Téléphonie, comme `callcentre`.
     if (product === CALLCENTRE_PRODUCT || product === NOMAD_PRODUCT) localStorage.setItem(PRODUCT_KEY, CALLCENTRE_PRODUCT);
     // Porte NOMAD : retenue pour cet onglet jusqu'à la connexion, puis transmise au portail (voir `handNomadProfileToPortal`).
     // La porte Téléphonie l'efface. Le produit, lui, reste « callcentre » dans les deux cas.
     if (product === NOMAD_PRODUCT) sessionStorage.setItem(NOMAD_DOOR_KEY, '1');
     else if (product === CALLCENTRE_PRODUCT) sessionStorage.removeItem(NOMAD_DOOR_KEY);
+    if (nomadDoor && isNomadRegisterPath(pathname)) rememberNomadSoloOffer(search);
   } catch {
     /* ignore storage errors */
   }
 }
 
-/** Marqueur de session : la personne est entrée par la porte NOMAD (`?product=nomad`). */
+/** Clés du portail Téléphonie (même origine, v25_callcenter_front src/lib/session.ts), écrites par le relais Solo. */
+const PORTAL_PLAN_KEY = 'harx_cc_pending_plan';
+const PORTAL_NAME_KEY = 'harx_cc_pending_name';
+const PORTAL_PRICE_KEY = 'harx_cc_pending_price';
+
+/**
+ * Inscription NOMAD (`/nomad/inscription`) : même mémoire que le relais `/telephony/start?profil=solo&plan=nomad_solo` qu'elle
+ * remplace (StartCenter.tsx de v25_callcenter_front) : offre `nomad_solo`, profil « solo », ancien nom de centre effacé, prix
+ * Stripe de `?price=` (sinon effacé). Le portail les lit après l'inscription.
+ */
+export function rememberNomadSoloOffer(search: string = ''): void {
+  try {
+    // Appelé à chaque affichage de l'écran : l'arrivée (offre pas encore Nomad Solo) efface les restes d'un autre parcours ;
+    // les étapes suivantes (?step=…, sans ?price=) ne les effacent plus.
+    const arrival = localStorage.getItem(PORTAL_PLAN_KEY) !== 'nomad_solo';
+    localStorage.setItem(PORTAL_PLAN_KEY, 'nomad_solo');
+    localStorage.setItem(PORTAL_PROFILE_KEY, 'solo');
+    if (arrival) localStorage.removeItem(PORTAL_NAME_KEY);
+    const price = new URLSearchParams(search).get('price');
+    if (price) localStorage.setItem(PORTAL_PRICE_KEY, price);
+    else if (arrival) localStorage.removeItem(PORTAL_PRICE_KEY);
+  } catch {
+    /* ignore storage errors */
+  }
+}
+
+/** Marqueur de session : la personne est entrée par la porte NOMAD (`/nomad/connexion`, `/nomad/inscription`, `?product=nomad`). */
 const NOMAD_DOOR_KEY = 'harx_nomad_door';
 /** Clé du portail Téléphonie (même origine, v25_callcenter_front src/lib/session.ts) : profil « solo » = parcours Nomad. */
 const PORTAL_PROFILE_KEY = 'harx_cc_pending_profile';
@@ -90,12 +130,13 @@ function currentPathname(): string {
 }
 
 /**
- * Visiteur d'un parcours Nomad Solo : adresse d'inscription Nomad (/auth/register-nomad, prioritaire), sinon offre choisie ou
- * profil « solo » mémorisé par l'application Téléphonie. Pastille NOMAD du bandeau, panneau de gauche, adresse et bouton Retour.
+ * Visiteur d'un parcours Nomad Solo : adresse NOMAD (/nomad/connexion, /nomad/inscription, ancienne /auth/register-nomad,
+ * prioritaire), sinon offre choisie ou profil « solo » mémorisé par l'application Téléphonie. Pastille NOMAD du bandeau, panneau
+ * de gauche, adresse, bouton Retour et destination après connexion ou inscription.
  */
 export function isNomadVisitor(pathname: string = currentPathname()): boolean {
-  if (isNomadRegisterPath(pathname)) return true;
-  // Lien « Se connecter » de la page Nomad : /auth/signin?product=nomad (porte NOMAD).
+  if (isNomadDoorPath(pathname)) return true;
+  // Ancien lien « Se connecter » de la page Nomad : /auth/signin?product=nomad (porte NOMAD).
   try {
     if (typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('product') === 'nomad') return true;
   } catch {
