@@ -9,6 +9,9 @@ import { rowTypeUserLabel } from './adminUserRowUtils';
 import { InfoCard, SectionCard, formatDate } from './adminUiUtils';
 import AdminAccountClosure, { DisabledAccountBanner } from './AdminAccountClosure';
 import { companyNumbers, isAccountDisabled } from './accountClosureUtils';
+import AccountOfferBadge from './AccountOfferBadge';
+import { legacyTypeDetail, showsAccountOffer, type AccountOffer } from './accountOfferUtils';
+import NomadProfileCard, { type NomadProfile } from './NomadProfileCard';
 
 type UserDetail = {
   user: {
@@ -17,6 +20,8 @@ type UserDetail = {
     email: string;
     phone?: string;
     typeUser?: string | null;
+    /** Type historique (« callcentre ») : commun à toute inscription téléphonie, ne dit pas l'offre. */
+    product?: string | null;
     isVerified?: boolean;
     createdAt?: string;
     disabled?: boolean;
@@ -36,6 +41,10 @@ type UserDetail = {
     onboardingProgress?: Record<string, unknown> | null;
   } | null;
   financials?: { gigsCount?: number; phoneNumbers?: Array<{ phoneNumber?: string }> } | null;
+  /** Offre réelle du compte (NOMAD / CLOUD + produit), lue par le serveur. */
+  accountOffer?: AccountOffer | null;
+  /** Profil NOMAD (société titulaire, profil « solo » du portail) quand l'offre est NOMAD. */
+  nomadProfile?: NomadProfile | null;
 };
 
 export default function AdminUserDetailPage() {
@@ -101,6 +110,10 @@ export default function AdminUserDetailPage() {
     ? (company?.logo as string | undefined)
     : repAgent?.personalInfo?.photo?.url || repAgent?.photo?.url || undefined;
 
+  const showOffer = showsAccountOffer(detail.user.typeUser, detail.accountOffer);
+  const isNomad = detail.accountOffer?.offer === 'nomad';
+  const technicalDetail = legacyTypeDetail(detail.user.typeUser, detail.user.product);
+
   const heroEmail = isCompany
     ? String(companyContact.email || company?.displayEmail || detail.user.email)
     : detail.user.email;
@@ -149,6 +162,7 @@ export default function AdminUserDetailPage() {
         onboardingStatus={detail.onboarding?.statusLabel}
         photoUrl={photoUrl}
         accountDisabled={isAccountDisabled(detail.user)}
+        offerBadge={!showOffer ? undefined : <AccountOfferBadge value={detail.accountOffer} size="md" />}
       />
 
       {isCompany && company ? (
@@ -183,10 +197,17 @@ export default function AdminUserDetailPage() {
           <SectionCard title="Compte plateforme">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <InfoCard label="Email" value={detail.user.email} />
-              <InfoCard label="Type de compte" value={rowTypeUserLabel(detail.user.typeUser, t)} />
+              {showOffer ? (
+                <InfoCard label="Offre" value={<AccountOfferBadge value={detail.accountOffer} size="md" />} />
+              ) : (
+                <InfoCard label="Type de compte" value={rowTypeUserLabel(detail.user.typeUser, t)} />
+              )}
               <InfoCard label="Phase onboarding" value={detail.onboarding?.display || '—'} />
               <InfoCard label="Statut onboarding" value={detail.onboarding?.statusLabel || '—'} />
             </div>
+            {showOffer && technicalDetail ? (
+              <p className="mt-3 text-[11px] text-slate-400" data-testid="legacy-type-detail">{technicalDetail}</p>
+            ) : null}
           </SectionCard>
         </>
       )}
@@ -213,7 +234,12 @@ export default function AdminUserDetailPage() {
         />
       )}
 
-      {!isRep && !isCompany && (
+      {!isRep && !isCompany && isNomad && detail.nomadProfile ? (
+        <NomadProfileCard profile={detail.nomadProfile} />
+      ) : null}
+
+      {/* Compte NOMAD sans profil lisible : pas de carte vide « Aucun profil ». */}
+      {!isRep && !isCompany && !isNomad && (
         <SectionCard title="Profil métier">
           <p className="text-sm text-slate-500">Aucun profil company ou rep associé à ce compte.</p>
         </SectionCard>

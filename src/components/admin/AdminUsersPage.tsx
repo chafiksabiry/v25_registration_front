@@ -10,6 +10,8 @@ import AdminUserFilters, {
 import { rowCreatedAt, rowName, rowTypeUserLabel } from './adminUserRowUtils';
 import { Info } from 'lucide-react';
 import { formatDay, isAccountDisabled, type AccountStatusFilter } from './accountClosureUtils';
+import AccountOfferBadge from './AccountOfferBadge';
+import { showsAccountOffer, type AccountOffer, type OfferFilter } from './accountOfferUtils';
 
 type OnboardingInfo = {
   phase: number | null;
@@ -29,6 +31,8 @@ type UserRow = {
   createdAt?: string;
   disabled?: boolean;
   disabledAt?: string | null;
+  /** Offre réelle du compte (NOMAD / CLOUD + produit), lue par le serveur. */
+  accountOffer?: AccountOffer | null;
   onboarding?: OnboardingInfo | null;
   displayName?: string;
   displayEmail?: string;
@@ -78,6 +82,7 @@ export default function AdminUsersPage() {
   const [verifiedFilter, setVerifiedFilter] = useState<VerifiedFilter>('all');
   const [onboardingFilter, setOnboardingFilter] = useState<OnboardingFilter>('all');
   const [statusFilter, setStatusFilter] = useState<AccountStatusFilter>('all');
+  const [offerFilter, setOfferFilter] = useState<OfferFilter>('all');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -94,6 +99,7 @@ export default function AdminUsersPage() {
         verified: verifiedFilter === 'all' ? undefined : verifiedFilter,
         onboardingStatus: onboardingFilter === 'all' ? undefined : onboardingFilter,
         status: statusFilter === 'all' ? undefined : statusFilter,
+        offer: offerFilter === 'all' ? undefined : offerFilter,
       })
       .then((response) => {
         setUsers(response.data.users);
@@ -101,7 +107,7 @@ export default function AdminUsersPage() {
       })
       .catch(() => setError('Impossible de charger la liste des utilisateurs.'))
       .finally(() => setLoading(false));
-  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter]);
 
   return (
     <div className="space-y-6 admin-stagger">
@@ -136,6 +142,11 @@ export default function AdminUsersPage() {
           setPage(1);
           setStatusFilter(value);
         }}
+        offerFilter={offerFilter}
+        onOfferFilterChange={(value) => {
+          setPage(1);
+          setOfferFilter(value);
+        }}
       />
 
       {loading ? (
@@ -151,7 +162,7 @@ export default function AdminUsersPage() {
                   <th className="px-6 py-3 font-semibold">Nom / Entreprise</th>
                   <th className="px-6 py-3 font-semibold">Email</th>
                   <th className="px-6 py-3 font-semibold">Téléphone</th>
-                  <th className="px-6 py-3 font-semibold">Type</th>
+                  <th className="px-6 py-3 font-semibold">Offre</th>
                   <th className="px-6 py-3 font-semibold">Plan</th>
                   <th className="px-6 py-3 font-semibold">Onboarding</th>
                   <th className="px-6 py-3 font-semibold">Vérifié</th>
@@ -191,7 +202,13 @@ export default function AdminUsersPage() {
                         )}
                     </td>
                     <td className="px-6 py-3 text-slate-600">{rowPhone(user)}</td>
-                    <td className="px-6 py-3">{rowTypeUserLabel(user.typeUser, t)}</td>
+                    <td className="px-6 py-3">
+                      {showsAccountOffer(user.typeUser, user.accountOffer) ? (
+                        <AccountOfferBadge value={user.accountOffer} />
+                      ) : (
+                        rowTypeUserLabel(user.typeUser, t)
+                      )}
+                    </td>
                     <td className="px-6 py-3">
                       {user.planName ? (
                         <div className="space-y-1">
