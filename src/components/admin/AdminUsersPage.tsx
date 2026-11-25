@@ -12,6 +12,7 @@ import { Info } from 'lucide-react';
 import { formatDay, isAccountDisabled, type AccountStatusFilter } from './accountClosureUtils';
 import AccountOfferBadge from './AccountOfferBadge';
 import { showsAccountOffer, type AccountOffer, type OfferFilter } from './accountOfferUtils';
+import { journeyRowLabel, type JourneyFilter, type SignupJourneyRow } from './signupJourneyUtils';
 import { BulkDeleteDialog, BulkDeleteResults, BulkSelectionBar } from './AdminBulkDelete';
 import {
   bulkLockReason,
@@ -45,6 +46,8 @@ type UserRow = {
   protectedAccount?: boolean;
   /** Offre réelle du compte (NOMAD / CLOUD + produit), lue par le serveur. */
   accountOffer?: AccountOffer | null;
+  /** Parcours d'inscription (statut, dernière étape atteinte). */
+  signupJourney?: SignupJourneyRow | null;
   onboarding?: OnboardingInfo | null;
   displayName?: string;
   displayEmail?: string;
@@ -95,6 +98,7 @@ export default function AdminUsersPage() {
   const [onboardingFilter, setOnboardingFilter] = useState<OnboardingFilter>('all');
   const [statusFilter, setStatusFilter] = useState<AccountStatusFilter>('all');
   const [offerFilter, setOfferFilter] = useState<OfferFilter>('all');
+  const [journeyFilter, setJourneyFilter] = useState<JourneyFilter>('all');
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -107,7 +111,7 @@ export default function AdminUsersPage() {
 
   useEffect(() => {
     setSelection(new Map());
-  }, [search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter]);
+  }, [search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter, journeyFilter]);
 
   useEffect(() => {
     setLoading(true);
@@ -121,6 +125,7 @@ export default function AdminUsersPage() {
         onboardingStatus: onboardingFilter === 'all' ? undefined : onboardingFilter,
         status: statusFilter === 'all' ? undefined : statusFilter,
         offer: offerFilter === 'all' ? undefined : offerFilter,
+        journey: journeyFilter === 'all' ? undefined : journeyFilter,
       })
       .then((response) => {
         setUsers(response.data.users);
@@ -128,7 +133,7 @@ export default function AdminUsersPage() {
       })
       .catch(() => setError('Impossible de charger la liste des utilisateurs.'))
       .finally(() => setLoading(false));
-  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter, reloadKey]);
+  }, [page, search, typeFilter, verifiedFilter, onboardingFilter, statusFilter, offerFilter, journeyFilter, reloadKey]);
 
   const pageState = pageSelectionState(selection, users);
   const pageHasSelectable = users.some((u) => bulkLockReason(u) === null);
@@ -178,6 +183,11 @@ export default function AdminUsersPage() {
         onOfferFilterChange={(value) => {
           setPage(1);
           setOfferFilter(value);
+        }}
+        journeyFilter={journeyFilter}
+        onJourneyFilterChange={(value) => {
+          setPage(1);
+          setJourneyFilter(value);
         }}
       />
 
@@ -281,6 +291,9 @@ export default function AdminUsersPage() {
                       ) : (
                         rowTypeUserLabel(user.typeUser, t)
                       )}
+                      {journeyRowLabel(user.signupJourney) ? (
+                        <p className="text-xs text-slate-500 mt-0.5" data-testid="journey-row">{journeyRowLabel(user.signupJourney)}</p>
+                      ) : null}
                     </td>
                     <td className="px-6 py-3">
                       {user.planName ? (

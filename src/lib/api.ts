@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { SignupJourney } from './signupJourney';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -25,7 +26,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const auth = {
-  register: async (data: { fullName: string; email: string; password: string; phone?: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string> }) => {
+  register: async (data: { fullName: string; email: string; password: string; phone?: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string>; /** Parcours d'entrée (offre / produit de l'adresse d'inscription), voir lib/signupJourney.ts. */ signup?: SignupJourney }) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   },
@@ -165,6 +166,8 @@ export const adminApi = {
     status?: 'active' | 'disabled';
     /** Offre réelle du compte : nomad, cloud ou unknown (offre inconnue). */
     offer?: 'nomad' | 'cloud' | 'unknown';
+    /** Parcours d'inscription : finished, unrecorded ou stuck:<étape> (dernière étape atteinte). */
+    journey?: string;
   }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
