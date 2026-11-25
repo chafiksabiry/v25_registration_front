@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { SignupJourney } from './signupJourney';
 
 const API_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
 
@@ -25,7 +26,7 @@ api.interceptors.request.use((config) => {
 });
 
 export const auth = {
-  register: async (data: { fullName: string; email: string; password: string; phone?: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string> }) => {
+  register: async (data: { fullName: string; email: string; password: string; phone?: string; metaEventId?: string; marketingConsent?: boolean; fbp?: string; fbc?: string; sourceUrl?: string; attribution?: Record<string, string>; /** Parcours d'entrée (offre / produit de l'adresse d'inscription), voir lib/signupJourney.ts. */ signup?: SignupJourney }) => {
     const response = await api.post('/auth/register', data);
     return response.data;
   },
@@ -161,6 +162,12 @@ export const adminApi = {
     verified?: string;
     onboardingStatus?: string;
     planName?: string;
+    /** Statut du compte : actif ou désactivé (maquette A1). */
+    status?: 'active' | 'disabled';
+    /** Offre réelle du compte : nomad, cloud ou unknown (offre inconnue). */
+    offer?: 'nomad' | 'cloud' | 'unknown';
+    /** Parcours d'inscription : finished, unrecorded ou stuck:<étape> (dernière étape atteinte). */
+    journey?: string;
   }) => {
     const response = await api.get('/admin/users', { params });
     return response.data;
@@ -168,6 +175,27 @@ export const adminApi = {
   userDetail: async (userId: string) => {
     const response = await api.get(`/admin/users/${userId}`);
     return response.data;
+  },
+  /** Désactive (réversible) ou réactive un compte : connexion refusée tout de suite, abonnement et numéro inchangés (maquettes A2, A2b). */
+  setUserStatus: async (userId: string, payload: { disabled: boolean; reason?: string }) => {
+    const response = await api.patch(`/admin/users/${encodeURIComponent(userId)}/status`, payload);
+    return response.data as {
+      success: boolean;
+      data: { userId: string; disabled: boolean; disabledAt: string | null; disabledReason: string | null; disabledBy: { name: string | null } | null };
+    };
+  },
+  /** Supprime définitivement un compte ; `confirmEmail` = l'email du compte retapé par l'admin (maquette A3). */
+  deleteUser: async (userId: string, confirmEmail: string) => {
+    const response = await api.delete(`/admin/users/${encodeURIComponent(userId)}`, { data: { confirmEmail } });
+    return response.data as {
+      success: boolean;
+      data: { userId: string; deletedAt: string; subscriptionsCanceled: number; numbersReturned: number; emailFreed: boolean };
+    };
+  },
+  /** Suppression en masse (≤ 50 comptes) ; `confirmText` = « SUPPRIMER N » tapé par l'admin. Résultat par compte. */
+  bulkDeleteUsers: async (userIds: string[], confirmText: string) => {
+    const response = await api.post('/admin/users/bulk-delete', { userIds, confirmText });
+    return response.data as { success: boolean; data: import('../components/admin/bulkDeleteUtils').BulkResponse };
   },
   updateFinancials: async (
     userId: string,

@@ -3,6 +3,8 @@ import { ChevronDown, ExternalLink, LogOut, Menu, Shield, UserCircle } from 'luc
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { HARX_BAR_SHADOW, HARX_NAVBAR_BG, HARX_TEXT_SHADOW } from '../../lib/harxBrand';
 import { ADMIN_SECTIONS, findAdminSection } from './adminSections';
+import { RecetteHeaderBadge } from '../RecetteMarker';
+import { isRecette } from '../../lib/appEnv';
 
 type AdminTopBarProps = {
   isSidebarOpen: boolean;
@@ -26,6 +28,7 @@ export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout 
   const [adminEmail, setAdminEmail] = useState('');
   const currentSection = findAdminSection(location.pathname);
   const CurrentIcon = currentSection.icon;
+  const recette = isRecette();
 
   useEffect(() => {
     setDisplayName(localStorage.getItem('userFullName') || 'Admin');
@@ -63,6 +66,8 @@ export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout 
         >
           <Menu className="h-5 w-5" />
         </button>
+        {/* Hors production : badge court sur petit écran (« Administration » n'y est pas affiché). */}
+        {recette ? <span className="ml-2 lg:hidden"><RecetteHeaderBadge compact /></span> : null}
       </div>
 
       <nav className="flex lg:hidden items-center justify-center gap-1.5 min-w-0 overflow-x-auto px-1">
@@ -113,7 +118,10 @@ export default function AdminTopBar({ isSidebarOpen, setIsSidebarOpen, onLogout 
             <CurrentIcon className="w-4 h-4" />
           </div>
           <div className="min-w-0 text-left">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-white/60">Administration</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-white/60">
+              Administration
+              {recette ? <span className="ml-2 normal-case tracking-normal"><RecetteHeaderBadge /></span> : null}
+            </p>
             <p className="text-sm font-black text-white truncate">{currentSection.label}</p>
           </div>
         </div>

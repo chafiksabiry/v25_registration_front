@@ -943,6 +943,8 @@ export function ProfileHero({
   onboardingDisplay,
   onboardingStatus,
   photoUrl,
+  accountDisabled,
+  offerBadge,
 }: {
   fullName: string;
   email: string;
@@ -950,6 +952,10 @@ export function ProfileHero({
   onboardingDisplay?: string;
   onboardingStatus?: string;
   photoUrl?: string;
+  /** Statut du compte (maquettes A2, A2b) : pastille « Actif » / « Désactivé ». Absent : pas de pastille. */
+  accountDisabled?: boolean;
+  /** Offre réelle du compte (logo NOMAD / CLOUD + produit) : remplace la pastille du type historique quand elle est fournie. */
+  offerBadge?: React.ReactNode;
 }) {
   const Icon = typeUser === 'company' ? Building2 : typeUser === 'rep' ? User : Globe;
 
@@ -975,9 +981,15 @@ export function ProfileHero({
           <h1 className="text-2xl sm:text-3xl font-black truncate drop-shadow-sm">{fullName}</h1>
           <p className="text-white/90 mt-1 truncate">{email}</p>
           <div className="flex flex-wrap gap-2 mt-3">
-            <span className="admin-tag">
-              {typeUser || 'compte'}
-            </span>
+            {offerBadge ? (
+              <span className="admin-tag" data-testid="hero-offer">
+                {offerBadge}
+              </span>
+            ) : (
+              <span className="admin-tag">
+                {typeUser || 'compte'}
+              </span>
+            )}
             {onboardingDisplay && (
               <span className="admin-tag">
                 {onboardingDisplay}
@@ -987,6 +999,11 @@ export function ProfileHero({
               <span className="admin-tag bg-black/20">
                 {onboardingStatus}
               </span>
+            )}
+            {accountDisabled === undefined ? null : accountDisabled ? (
+              <span className="admin-tag !bg-red-600/80 !border-red-300">Désactivé</span>
+            ) : (
+              <span className="admin-tag !bg-emerald-500/40">Actif</span>
             )}
           </div>
         </div>

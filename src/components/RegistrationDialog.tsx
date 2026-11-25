@@ -17,7 +17,8 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
-import { isCallcentreProduct, isNomadVisitor, telephonySignupDestination } from '../lib/product';
+import { isCallcentreProduct, isNomadVisitor, readPendingPlan, telephonySignupDestination } from '../lib/product';
+import { signupJourneyFor } from '../lib/signupJourney';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
 import { OFFER_RETURN_KEY, readNomadReturn, resolveRegisterBack } from '../lib/offerRegister';
@@ -361,6 +362,13 @@ export default function RegistrationDialog({
                 phone,
                 ...metaCtx,
                 attribution: signUpAttribution(capturedOrigin.current),
+                // Parcours d'entrée (offre / produit de cette adresse d'inscription), pour le suivi des parcours dans l'administration.
+                signup: signupJourneyFor({
+                  pathname: window.location.pathname,
+                  plan: readPendingPlan(),
+                  nomadVisitor: isNomadVisitor(),
+                  lang: i18n.language,
+                }),
               });
               try { sessionStorage.setItem('harx_meta_event_id', metaCtx.metaEventId); } catch { /* ignore */ }
 

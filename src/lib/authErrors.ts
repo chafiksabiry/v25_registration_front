@@ -69,6 +69,11 @@ export function mapSignInError(
     );
   }
 
+  // Compte désactivé par un administrateur (connexion ou code de vérification) : message clair, jamais « mot de passe incorrect ».
+  if (code === 'ACCOUNT_DISABLED') {
+    return t('signIn.errAccountDisabled', 'Ce compte est désactivé. Pour en savoir plus, écrivez à support@harx.ai.');
+  }
+
   // Login: email unknown vs wrong password (before generic / 2FA mappings)
   if (context === 'login') {
     if (code === 'ACCOUNT_NOT_VERIFIED') {
