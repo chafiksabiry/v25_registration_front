@@ -1,5 +1,4 @@
 import { isNomadRegisterPath, CALL_CENTER_REGISTER_PATH } from './offerRegister';
-import { isCloudReceptionistAccountPath } from './cloudReceptionist';
 import { stripLangPrefix } from './langRoutes';
 import type { TelephonyPlan } from './product';
 
@@ -34,7 +33,6 @@ export function signupJourneyFor({
   const entry = stripLangPrefix(pathname).replace(/\/+$/, '') || '/';
   const base = { entry, lang: lang ? lang.slice(0, 2).toLowerCase() : null };
   if (isNomadRegisterPath(entry)) return { ...base, offer: 'nomad', product: null };
-  if (isCloudReceptionistAccountPath(entry)) return { ...base, offer: 'cloud', product: 'receptionist' };
   if (entry === '/auth/register-company') return { ...base, offer: 'taas', product: null };
   if (entry === '/auth/register-rep') return { ...base, offer: null, product: null };
   if (entry === CALL_CENTER_REGISTER_PATH) {
