@@ -12,6 +12,8 @@ import { companyNumbers, isAccountDisabled } from './accountClosureUtils';
 import AccountOfferBadge from './AccountOfferBadge';
 import { legacyTypeDetail, showsAccountOffer, type AccountOffer } from './accountOfferUtils';
 import NomadProfileCard, { type NomadProfile } from './NomadProfileCard';
+import SignupJourneyCard from './SignupJourneyCard';
+import type { SignupJourneySummary } from './signupJourneyUtils';
 
 type UserDetail = {
   user: {
@@ -45,6 +47,8 @@ type UserDetail = {
   accountOffer?: AccountOffer | null;
   /** Profil NOMAD (société titulaire, profil « solo » du portail) quand l'offre est NOMAD. */
   nomadProfile?: NomadProfile | null;
+  /** Parcours d'inscription (offre d'entrée, étapes datées) ; `recorded: false` pour un compte antérieur au suivi. */
+  signupJourney?: SignupJourneySummary | null;
 };
 
 export default function AdminUserDetailPage() {
@@ -211,6 +215,8 @@ export default function AdminUserDetailPage() {
           </SectionCard>
         </>
       )}
+
+      {detail.user.typeUser !== 'admin' && <SignupJourneyCard journey={detail.signupJourney} />}
 
       {detail.user.typeUser !== 'admin' && (
         <AdminAccountClosure

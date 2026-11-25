@@ -17,7 +17,8 @@ import {
 import { clearSessionUserId, isSessionActive, syncSessionUserIdCookie } from '../lib/authRedirect';
 import { canGoBackInHistory } from '../hooks/useHistoryBack';
 import { hardNavigate } from '../lib/appNavigation';
-import { isCallcentreProduct, isNomadVisitor, telephonySignupDestination } from '../lib/product';
+import { isCallcentreProduct, isNomadVisitor, readPendingPlan, telephonySignupDestination } from '../lib/product';
+import { signupJourneyFor } from '../lib/signupJourney';
 import { isCloudReceptionistAccountPath } from '../lib/cloudReceptionist';
 import { OFFERS, activeMark } from '../config/offers';
 import { OfferWordmark } from './Hub/OfferWordmark';
@@ -355,6 +356,13 @@ export default function RegistrationDialog({
                 email: formData.email,
                 password: formData.password,
                 phone,
+                // Parcours d'entrée (offre / produit de cette adresse d'inscription), pour le suivi des parcours dans l'administration.
+                signup: signupJourneyFor({
+                  pathname: window.location.pathname,
+                  plan: readPendingPlan(),
+                  nomadVisitor: isNomadVisitor(),
+                  lang: i18n.language,
+                }),
               });
 
               if (RegisterResult?.data?._id) {

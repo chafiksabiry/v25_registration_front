@@ -3,6 +3,7 @@ import { Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { ACCOUNT_STATUS_FILTERS, type AccountStatusFilter } from './accountClosureUtils';
 import { OFFER_FILTERS, type OfferFilter } from './accountOfferUtils';
+import { JOURNEY_FILTERS, type JourneyFilter } from './signupJourneyUtils';
 
 export type TypeFilter = 'all' | 'rep' | 'company' | 'call-center';
 
@@ -53,6 +54,9 @@ type AdminUserFiltersProps = {
   /** Offre réelle du compte (NOMAD / CLOUD / inconnue) : affiché seulement si `onOfferFilterChange` est fourni. */
   offerFilter?: OfferFilter;
   onOfferFilterChange?: (value: OfferFilter) => void;
+  /** Parcours d'inscription (terminé, bloqué à une étape, non enregistré) : affiché seulement si `onJourneyFilterChange` est fourni. */
+  journeyFilter?: JourneyFilter;
+  onJourneyFilterChange?: (value: JourneyFilter) => void;
   onSearchChange: (value: string) => void;
   onTypeFilterChange: (value: TypeFilter) => void;
   onVerifiedFilterChange?: (value: VerifiedFilter) => void;
@@ -96,6 +100,8 @@ export default function AdminUserFilters({
   onStatusFilterChange,
   offerFilter = 'all',
   onOfferFilterChange,
+  journeyFilter = 'all',
+  onJourneyFilterChange,
   onSearchChange,
   onTypeFilterChange,
   onVerifiedFilterChange,
@@ -159,6 +165,20 @@ export default function AdminUserFilters({
             <span className="text-xs font-bold text-slate-500 mr-1">Offre</span>
             <FilterPills filters={OFFER_FILTERS} active={offerFilter} onChange={onOfferFilterChange} />
           </div>
+        ) : null}
+        {onJourneyFilterChange ? (
+          <label className="flex flex-wrap items-center gap-2" data-testid="journey-filter">
+            <span className="text-xs font-bold text-slate-500 mr-1">Parcours</span>
+            <select
+              className="admin-filter-pill admin-filter-pill--idle"
+              value={journeyFilter}
+              onChange={(e) => onJourneyFilterChange(e.target.value as JourneyFilter)}
+            >
+              {JOURNEY_FILTERS.map((f) => (
+                <option key={f.value} value={f.value}>{f.label}</option>
+              ))}
+            </select>
+          </label>
         ) : null}
       </div>
     </div>
