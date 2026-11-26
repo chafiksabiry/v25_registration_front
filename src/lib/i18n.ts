@@ -1,4 +1,5 @@
 import i18n from 'i18next';
+import { browserRegisterPrefill } from './registerPrefill';
 import { initReactI18next } from 'react-i18next';
 
 import { DEFAULT_SITE_LANG, getLangFromPath, isRtlLang, normalizeSiteLang, resolveSiteLanguage, SITE_LANGS, type SiteLang } from './langRoutes';
@@ -120,6 +121,11 @@ const resources = {
 if (typeof window !== 'undefined') {
   const urlLang = getLangFromPath(window.location.pathname);
   if (urlLang) persistHarxLanguage(urlLang, { explicit: true });
+  // Lien de l'e-mail d'activation de l'app mobile (/nomad/inscription?lang=…) : langue de l'app (adresse sans préfixe de langue).
+  else {
+    const prefill = browserRegisterPrefill();
+    if (prefill.lang) persistHarxLanguage(prefill.lang, { explicit: true });
+  }
 }
 
 void i18n.use(initReactI18next).init({
