@@ -1,5 +1,6 @@
 import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { browserRegisterPrefill } from '../lib/registerPrefill';
 import { Check, Lock, Mail, Phone, User, Eye, EyeOff, ArrowRight, ArrowLeft, ShieldCheck, KeyRound } from 'lucide-react';
 import { auth } from '../lib/api';
 import { useAuth } from '../contexts/AuthContext';
@@ -61,15 +62,16 @@ export default function RegistrationDialog({
   const [showPassword, setShowPassword] = useState(false);
   // Confirmation du mot de passe : saisie locale, jamais envoyée au serveur.
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     fullName: '',
-    email: '',
+    // Lien de l'e-mail d'activation (compte créé dans l'app mobile) : e-mail prérempli, validé (lib/registerPrefill.ts).
+    email: browserRegisterPrefill().email ?? '',
     password: '',
     phone: '',
     termsAccepted: false,
     emailOTP: '',
     phoneOTP: '',
-  });
+  }));
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [smsOtpAvailable, setSmsOtpAvailable] = useState(false);
