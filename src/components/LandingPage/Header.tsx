@@ -181,7 +181,7 @@ export function Header({ onSignIn, onGetStarted, telephony = false, hub = false,
           {authActions(false)}
         </div>
 
-        <button className="rounded-lg p-2 text-white transition-colors hover:bg-white/10 md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}>
+        <button className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-white transition-colors hover:bg-white/10 md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}>
           {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </nav>

@@ -544,7 +544,7 @@ export default function RegistrationDialog({
           <div className="lg:col-span-3 bg-slate-900/40 p-8 lg:p-14 [@media(min-width:1024px)_and_(max-height:1000px)]:!py-8 flex flex-col justify-center relative">
             <div className="max-w-md mx-auto w-full">
               {step !== 'success' && (
-                <button onClick={goBack} className="flex items-center text-sm text-slate-450 hover:text-white mb-6 transition-colors">
+                <button onClick={goBack} className="flex min-h-[44px] items-center text-sm text-slate-450 hover:text-white mb-4 transition-colors">
                   <ArrowLeft className="h-4 w-4 mr-1.5" />
                   {t('register.back', 'Back')}
                 </button>
@@ -880,7 +880,7 @@ export default function RegistrationDialog({
                   <div className="mt-8 text-center border-t border-white/[0.06] pt-6">
                     <p className="text-slate-400 text-sm">
                       {t('register.alreadyHaveAccount', 'Already have an account?')} {' '}
-                      <button onClick={onSignIn} className="text-harx-400 font-semibold hover:text-harx-300 hover:underline transition-colors">
+                      <button onClick={onSignIn} className="inline-flex min-h-[44px] items-center text-harx-400 font-semibold hover:text-harx-300 hover:underline transition-colors">
                         {t('register.signIn', 'Sign in')}
                       </button>
                     </p>
